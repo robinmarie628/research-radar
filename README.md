@@ -35,8 +35,8 @@ research-radar/
 │   ├── build_digest.py            # 调 LLM 生成「创新 / 看点」
 │   └── qa.js                      # 无头浏览器 QA
 └── .github/workflows/
-    ├── refresh-snapshots.yml      # 每天 07:20 (CST) 刷新兜底快照
-    └── daily-digest.yml           # 每天 07:30 (CST) 生成创新/看点
+    ├── refresh-snapshots.yml      # 每天 05:40 (CST) 刷新兜底快照
+    └── daily-digest.yml           # 每天 06:00 (CST) 生成通俗版摘要
 ```
 
 ---

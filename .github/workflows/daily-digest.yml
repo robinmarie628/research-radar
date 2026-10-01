@@ -10,8 +10,8 @@ name: Daily digest (创新 / 看点)
 
 on:
   schedule:
-    # 23:30 UTC = 07:30 Asia/Shanghai (10 min after the snapshot refresh)
-    - cron: '30 23 * * *'
+    # 22:00 UTC = 06:00 Asia/Shanghai (next day). GitHub cron is UTC-only.
+    - cron: '0 22 * * *'
   workflow_dispatch:
 
 permissions:
