@@ -83,6 +83,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     journals: window.__rr.jr.all.length,
     picks: window.__rr.jr.picks.length,
     picksBasic: window.__rr.jr.picks.filter(p => p.basic).length,
+    picksClinical: window.__rr.jr.picks.filter(p => !p.basic).length,
     err: window.__rr.jr.error,
     updated: window.__rr.jr.updated,
     domains: Object.fromEntries(Object.entries(window.__rr.jr.byKey)
@@ -98,6 +99,8 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     head: document.querySelector('#researchHead')?.textContent,
     sub: document.querySelector('#researchSub')?.textContent,
     litDate: document.querySelector('#litDate')?.textContent,
+    verLabel: document.querySelector('#verLabel')?.textContent,
+    verBtn: !!document.querySelector('#verBtn'),
     topPick: !!document.querySelector('#researchCards .art.top-pick'),
     ribbon: document.querySelector('.pick-ribbon')?.textContent,
     digestLoaded: window.__rr.digest.loaded,

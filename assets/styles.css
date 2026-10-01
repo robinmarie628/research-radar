@@ -523,10 +523,29 @@ table.idx .b{width:42px;text-align:center}
 
 /* ---------- footer ---------- */
 .foot{
-  display:flex;flex-wrap:wrap;gap:4px 12px;justify-content:center;
+  display:flex;flex-wrap:wrap;gap:4px 12px;justify-content:center;align-items:center;
   margin:26px 0 4px;padding-top:14px;border-top:1px solid var(--line-2);
   font-size:10.5px;color:var(--ink-4);font-weight:600;text-align:center;
 }
+
+/* ---- 版本更新按钮 ---- */
+.verbtn{
+  display:inline-flex;align-items:center;gap:5px;
+  font-family:inherit;font-size:10.5px;font-weight:800;color:#6b86a8;
+  background:#f3f8ff;border:1px solid #e2ecfa;border-radius:7px;
+  padding:5px 9px;cursor:pointer;line-height:1.2;
+  transition:transform .16s cubic-bezier(.34,1.4,.64,1),background .2s,color .2s;
+}
+.verbtn:active{transform:scale(.94);background:#e9f2ff}
+.verbtn.has-update{
+  color:#8a6100;background:#fdf3dd;border-color:#f0dc9e;
+  animation:verpulse 1.9s ease-in-out infinite;
+}
+@keyframes verpulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(201,162,39,.38)}
+  50%{box-shadow:0 0 0 5px rgba(201,162,39,0)}
+}
+.verdot{width:6px;height:6px;border-radius:50%;background:#d9871a;flex:0 0 auto}
 
 /* ---------- glossary sheet ---------- */
 .sheet{position:fixed;inset:0;z-index:60;display:flex;flex-direction:column;justify-content:flex-end}

@@ -7,6 +7,8 @@
 (() => {
 'use strict';
 
+const APP_VERSION = '2026.10.01';   // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
 const CROSSREF = 'https://api.crossref.org/works';
@@ -15,7 +17,9 @@ const DAYS     = 30;        // discovery window — abstracts lag 2–4 days, so
 const MAXJ     = 100;       // Europe PMC cap per request with resultType=core
 const CHUNKS   = 3;         // split the ISSN list so one journal can't flood the pool
 const CAP_PER_JOURNAL = 8;
-const PICK_N   = 5;         // 今日精选 size (per the task prompt)
+const PICK_N   = 8;         // 今日精选 size
+const PICK_BASIC    = 4;    // …其中基础 / 分子医学
+const PICK_CLINICAL = 4;    // …其中临床研究
 const TTL      = 30 * 60e3; // cache freshness
 const LS_KEY   = 'rr.cache.v2';
 const SEEN_KEY = 'rr.seen.v1';
@@ -338,13 +342,15 @@ function balanceByJournal(items) {
   return items.filter(a => (per[a.journal] = (per[a.journal] || 0) + 1) <= CAP_PER_JOURNAL);
 }
 
-/** 今日精选: N papers, 1–2 basic/molecular, max 2 per journal, domain-diverse.
- *  The two basic slots prefer *distinct* journals — otherwise one journal can fill
- *  both with two near-identical papers. */
+/** 今日精选：8 篇 = 4 篇临床 + 4 篇基础/分子医学。
+ *  · 基础名额一刊一篇 —— 否则一本刊（如 Cell）能占满，出现两篇几乎雷同的论文
+ *  · 临床名额优先覆盖不同领域
+ *  · 某一边候选不足时，用另一边补足总数 */
 function curate(items, n = PICK_N) {
   const rank = a => a.studyRank * 1000 + (a.imp || 0) + (a.structured ? 40 : 0);
   const pool = [...items].sort((a, b) => rank(b) - rank(a));
   const picked = [], perJ = {}, perD = {};
+  const cnt = basic => picked.filter(p => !!p.basic === basic).length;
   const add = (it, jCap) => {
     if (!it || picked.includes(it)) return false;
     if ((perJ[it.journal] || 0) >= jCap) return false;
@@ -353,16 +359,21 @@ function curate(items, n = PICK_N) {
     perD[it.domain] = (perD[it.domain] || 0) + 1;
     return true;
   };
-  // 1) reserve 1–2 basic papers, one per journal (the prompt's clinical/basic balance rule)
+  // 1) 基础 / 分子医学：目标 4 篇，一刊一篇
   for (const it of pool) {
-    if (picked.filter(p => p.basic).length >= 2) break;
+    if (cnt(true) >= PICK_BASIC) break;
     if (it.basic) add(it, 1);
   }
-  // 2) fill with clinical, preferring fresh domains
+  // 2) 临床研究：目标 4 篇，优先覆盖不同领域
   for (const it of pool) {
-    if (picked.length >= n) break;
+    if (cnt(false) >= PICK_CLINICAL) break;
     if (!it.basic && !perD[it.domain]) add(it, 2);
   }
+  for (const it of pool) {
+    if (cnt(false) >= PICK_CLINICAL) break;
+    if (!it.basic) add(it, 2);
+  }
+  // 3) 某一边不足时补足总数
   for (const it of pool) { if (picked.length >= n) break; add(it, 2); }
   return picked.slice(0, n).sort((a, b) => rank(b) - rank(a));
 }
@@ -652,7 +663,7 @@ function renderResearch() {
   const isPick = S.jFilter === 'pick';
   $('#researchHead').textContent = headLabel(list.length, isPick);
   $('#researchSub').textContent = isPick
-    ? `每日精选 ${PICK_N} 篇 · 保证 1–2 篇基础/分子医学 · 点卡片展开结构化摘要`
+    ? `每日精选 ${PICK_N} 篇 · ${PICK_CLINICAL} 篇临床 + ${PICK_BASIC} 篇基础/分子 · 点卡片展开摘要`
     : '点卡片任意位置展开摘要（摘要较长可在框内滚动）';
 
   if (S.jView === 'index') renderIndexTable($('#researchCards'), list);
@@ -1073,9 +1084,52 @@ if (markAll) markAll.addEventListener('click', () => {
   renderResearch();
 });
 
-boot();
-
-if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-  window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+/* ---------------- 版本更新 ---------------- */
+function markUpdateReady() {
+  const dot = $('#verDot'), lab = $('#verLabel'), b = $('#verBtn');
+  if (dot) dot.hidden = false;
+  if (lab) lab.textContent = '发现新版本 · 点此更新';
+  if (b) b.classList.add('has-update');
 }
+
+/** 强制拉最新版本：注销 SW + 清空所有缓存 + 带 cache-busting 重新加载 */
+async function forceUpdate() {
+  const b = $('#verBtn');
+  if (b) b.classList.add('spin');
+  toast('正在检查新版本…', 1600);
+  try {
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(r => r.update().catch(() => {})));
+      await Promise.all(regs.map(r => r.unregister().catch(() => {})));
+    }
+    if (window.caches) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map(k => caches.delete(k).catch(() => {})));
+    }
+  } catch { /* 忽略 —— 下面照样硬刷新 */ }
+  const u = new URL(location.href);
+  u.searchParams.set('_u', Date.now().toString(36));
+  location.replace(u.toString());
+}
+
+(function wireVersion() {
+  const b = $('#verBtn'), lab = $('#verLabel');
+  if (lab) lab.textContent = '版本 ' + APP_VERSION;
+  if (b) b.addEventListener('click', forceUpdate);
+
+  if (!('serviceWorker' in navigator) || !location.protocol.startsWith('http')) return;
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').then(reg => {
+      const watch = w => w && w.addEventListener('statechange', () => {
+        if (w.state === 'installed' && navigator.serviceWorker.controller) markUpdateReady();
+      });
+      watch(reg.installing);
+      reg.addEventListener('updatefound', () => watch(reg.installing));
+      setInterval(() => reg.update().catch(() => {}), 30 * 60e3);   // 每 30 分钟问一次
+    }).catch(() => {});
+  });
+})();
+
+boot();
 })();

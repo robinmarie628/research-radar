@@ -202,33 +202,55 @@ def get(url, tries=4, timeout=45):
     raise RuntimeError(f"{url[:90]} -> {last}")
 
 
-def curate(items, n=5):
-    """今日精选: n papers, 1–2 basic, max 2 per journal, domain-diverse.
+def curate(items, n=8, n_basic=4, n_clinical=4):
+    """今日精选：n 篇 = n_clinical 篇临床 + n_basic 篇基础/分子医学。
 
-    The two basic slots additionally prefer *distinct* journals — otherwise a journal
-    like Cell can fill both with two near-identical structural-biology papers.
+    · 基础名额一刊一篇 —— 否则一本刊（如 Cell）能占满，出现两篇几乎雷同的论文
+    · 临床名额优先覆盖不同领域
+    · 某一边候选不足时，用另一边补足总数
     """
     def rank(a):
         return a["studyRank"] * 1000 + (a.get("imp") or 0) + (40 if a["structured"] else 0)
+
     pool = sorted(items, key=rank, reverse=True)
     picked, per_j, per_d = [], {}, {}
-    for it in pool:                                    # reserve 1–2 basic, one journal each
-        if sum(1 for p in picked if p["basic"]) >= 2:
+
+    def add(it, j_cap):
+        if it in picked:
+            return False
+        if per_j.get(it["journal"], 0) >= j_cap:
+            return False
+        picked.append(it)
+        per_j[it["journal"]] = per_j.get(it["journal"], 0) + 1
+        per_d[it["domain"]] = per_d.get(it["domain"], 0) + 1
+        return True
+
+    def cnt(basic):
+        return sum(1 for p in picked if bool(p["basic"]) is basic)
+
+    for it in pool:                                    # 基础：目标 n_basic，一刊一篇
+        if cnt(True) >= n_basic:
             break
-        if it["basic"] and per_j.get(it["journal"], 0) < 1:
-            picked.append(it); per_j[it["journal"]] = per_j.get(it["journal"], 0) + 1
-    for it in pool:                                    # clinical, fresh domains first
+        if it["basic"]:
+            add(it, 1)
+
+    for it in pool:                                    # 临床：目标 n_clinical，优先不同领域
+        if cnt(False) >= n_clinical:
+            break
+        if not it["basic"] and not per_d.get(it["domain"]):
+            add(it, 2)
+
+    for it in pool:
+        if cnt(False) >= n_clinical:
+            break
+        if not it["basic"]:
+            add(it, 2)
+
+    for it in pool:                                    # 补足
         if len(picked) >= n:
             break
-        if not it["basic"] and not per_d.get(it["domain"]) and per_j.get(it["journal"], 0) < 2:
-            picked.append(it)
-            per_j[it["journal"]] = per_j.get(it["journal"], 0) + 1
-            per_d[it["domain"]] = per_d.get(it["domain"], 0) + 1
-    for it in pool:                                    # top up
-        if len(picked) >= n:
-            break
-        if it not in picked and per_j.get(it["journal"], 0) < 2:
-            picked.append(it); per_j[it["journal"]] = per_j.get(it["journal"], 0) + 1
+        add(it, 2)
+
     return sorted(picked[:n], key=rank, reverse=True)
 
 

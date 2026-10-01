@@ -167,7 +167,7 @@ def extract_json(text):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--n", type=int, default=5, help="papers per day")
+    ap.add_argument("--n", type=int, default=8, help="papers per day")
     ap.add_argument("--days", type=int, default=30, help="Europe PMC window")
     ap.add_argument("--dry-run", action="store_true",
                     help="build the prompt and print it, but do not call the model")
