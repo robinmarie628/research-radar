@@ -127,6 +127,8 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
         chars: (r.querySelector('.en-txt')?.textContent || '').length,
       })),
       abstractFallback: (c?.querySelector('.art-abstract')?.textContent || '').length,
+      rawToggle: !!c?.querySelector('.rawtoggle'),
+      rawBoxHidden: c?.querySelector('.rawbox')?.hidden === true,
       links: [...(c?.querySelectorAll('.art-links .lnk') || [])].map(a => a.textContent.trim()),
       ckHref: c?.querySelector('.lnk.ck')?.getAttribute('href') || null,
       badges: [...(c?.querySelectorAll('.art-badges .badge') || [])].map(b => b.textContent.trim()),

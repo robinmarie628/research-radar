@@ -91,6 +91,15 @@ const SEC_HEAD = [
 const SEC_SKIP = /^(clinical trial registration|trial registration|registration|funding|systematic review registration|conflict of interest|declarations? of interest|financial disclosure|transparency|author contributions?|copyright|data (availability|sharing)|acknowledg|supplementary|ethics|role of the funding|abbreviations)/i;
 const SEC_LABEL = { objective:'目的', methods:'方法', results:'结果', conclusion:'结论' };
 
+/** 通俗版摘要的五个字段（由每日 LLM digest 生成），按此顺序展示 */
+const DIGEST_FIELDS = [
+  ['background', '背景'],
+  ['innovation', '创新点'],
+  ['methods',    '怎么做'],
+  ['takeaway',   '看点'],
+  ['future',     '未来方向'],
+];
+
 /** pubTypes is usually just ["Journal Article"], but when a journal does supply real
  *  design tags they are authoritative — so check them before reading the text. */
 const PT_STRONG = [
@@ -719,43 +728,55 @@ function articleCard(a, isPick, pickRank) {
 
 function buildArticleBody(a, card) {
   const body = el('div', 'art-body');
+  const d = a.digest;
+  const hasDigest = !!(d && DIGEST_FIELDS.some(([k]) => d[k]));
 
-  // 创新 / 看点 — editorial notes from the daily LLM digest, shown first because
-  // they are the most useful part. Absent when no digest covers this DOI.
-  if (a.digest && (a.digest.innovation || a.digest.takeaway)) {
+  // 通俗版五段（背景 / 创新点 / 怎么做的 / 看点·临床含义 / 未来方向）—— 每日 LLM 生成，
+  // 放在最前面，因为它们比英文摘要更好读。没有 digest 时不显示。
+  if (hasDigest) {
     const note = el('div', 'editor-note');
-    if (a.digest.topPick && a.digest.topReason) {
+    if (d.topPick && d.topReason) {
       const why = el('div', 'en-row en-why');
       why.append(el('span', 'en-lab', '首选理由'));
-      why.append(el('span', 'en-txt', a.digest.topReason));
+      why.append(el('span', 'en-txt', d.topReason));
       note.append(why);
     }
-    if (a.digest.innovation) {
-      const r = el('div', 'en-row en-innovation');
-      r.append(el('span', 'en-lab', '创新'));
-      r.append(el('span', 'en-txt', a.digest.innovation));
-      note.append(r);
-    }
-    if (a.digest.takeaway) {
-      const r = el('div', 'en-row en-takeaway');
-      r.append(el('span', 'en-lab', '看点'));
-      r.append(el('span', 'en-txt', a.digest.takeaway));
+    for (const [key, label] of DIGEST_FIELDS) {
+      const txt = String(d[key] || '').trim();
+      if (!txt) continue;
+      const r = el('div', 'en-row en-' + key);
+      r.append(el('span', 'en-lab', label));
+      r.append(el('span', 'en-txt', txt));
       note.append(r);
     }
     body.append(note);
   }
 
+  // 英文摘要原文。有通俗版就折叠（点一下展开），否则直接铺开。
   if (a.structured && a.sections) {
+    const box = el('div', 'rawbox');
     for (const k of ['objective', 'methods', 'results', 'conclusion', 'other']) {
       const txt = a.sections[k];
       if (!txt) continue;
       const row = el('div', 'sec sec-' + k);
       row.append(el('span', 'sec-lab', SEC_LABEL[k] || '其他'));
       row.append(el('p', 'sec-txt', txt));
-      body.append(row);
+      box.append(row);
     }
-  } else {
-    body.append(el('p', 'art-abstract', a.abstract || '（该记录暂无摘要）'));
+    if (hasDigest) {
+      const t = el('button', 'rawtoggle', '▸ 查看英文摘要原文');
+      t.type = 'button';
+      box.hidden = true;
+      t.addEventListener('click', () => {
+        box.hidden = !box.hidden;
+        t.textContent = box.hidden ? '▸ 查看英文摘要原文' : '▾ 收起英文摘要原文';
+      });
+      body.append(t, box);
+    } else {
+      body.append(box);
+    }
+  } else if (a.abstract) {
+    body.append(el('p', 'art-abstract', a.abstract));
   }
 
   const meta = el('div', 'art-meta');

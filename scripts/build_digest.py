@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""Generate 创新 / 看点 for the daily shortlist via an OpenAI-compatible LLM.
+"""Generate 通俗版五段摘要 for the daily shortlist via an OpenAI-compatible LLM.
+
+Fields: 背景 / 创新点 / 怎么做的 / 看点·临床含义 / 未来研究方向
 
 Reuses build_snapshot.py for the Europe PMC fetch + 今日精选 curation, so the
 digest always matches what the page shows.
 
-Output  data/digest.json   — read by the app; 创新/看点 keyed by DOI
+Output  data/digest.json   — read by the app; fields keyed by DOI
         data/pushed.txt    — DOIs already covered, so days don't repeat
 
 Provider defaults to DeepSeek but any OpenAI-compatible endpoint works:
@@ -37,30 +39,41 @@ DEFAULT_MODEL = "deepseek-chat"
 MAX_ABSTRACT = 2600          # chars per paper fed to the model
 PUSHED_KEEP = 400            # remember this many DOIs
 
+# field order used when writing digest.json (and rendered in this order by the page)
+FIELDS = ["background", "innovation", "methods", "takeaway", "future"]
+FIELD_ZH = {"background": "背景", "innovation": "创新", "methods": "做法",
+            "takeaway": "看点", "future": "未来"}
+
 SYSTEM = (
     "你是临床医学编辑，为医生撰写每日顶刊速递。"
+    "你的读者是临床医生和医学生，不是本领域的专家。"
     "你只依据给出的摘要原文写作，绝不推测或编造任何信息。"
 )
 
 PROMPT = """下面是从顶刊筛选出的 {n} 篇论文，每篇附标题、期刊、研究类型与摘要原文。
 
-请为每一篇写出两个字段：
-- innovation（创新）：1 句，说明新在哪里——新机制 / 新人群 / 新终点 / 首个……，必须来自摘要。
-- takeaway（看点）：1 句，说明对临床决策的影响、争议点，或尚待验证之处，必须来自摘要。
+请用**通俗语言**为每一篇写五个字段（读得懂、看得快）：
+
+- background（背景）：这个领域现在面临什么问题？为什么值得做这项研究？2–3 句。
+- innovation（创新点）：这篇新在哪里——新机制 / 新人群 / 新终点 / 首个……？1–2 句。
+- methods（怎么做的）：研究设计、研究对象、样本量、主要终点是什么？2–3 句，用大白话讲清楚。
+- takeaway（看点 / 临床含义）：关键结果数字是什么？对临床决策意味着什么？2–3 句。
+- future（未来研究方向）：还有哪些问题没解决？下一步该验证什么？1–2 句。
 
 再从这 {n} 篇中选出 1 篇作为「今日首选」，给出 1 句理由（选证据等级最高、临床影响最大的一篇）。
 
-硬性约束：
-1. 只能使用摘要中明确写出的信息。不得推测、不得编造、不得引入摘要之外的知识。
-2. 摘要没写的不要写。若某篇摘要信息不足，innovation 写「摘要信息有限，建议阅读原文」，takeaway 写摘要中最关键的结论。
-3. 中文撰写，专业术语保留英文原词（hazard ratio、intention-to-treat、non-inferiority 等）。
-4. 提到的所有数字必须与摘要完全一致；不得把亚组结果说成主要终点。
-5. 每句话不超过 80 字。
+写作要求：
+1. **通俗**：像给非本专业的同事讲解。句子短，避免堆砌术语，不要照抄英文句式。
+2. 必须出现的专业名词保留英文原词（hazard ratio、intention-to-treat、non-inferiority 等），必要时用一句话解释。
+3. **只能使用摘要中明确写出的信息**。不得推测、不得编造、不得引入摘要之外的知识。
+4. 数字必须与摘要完全一致；不得把亚组结果说成主要终点。
+5. 若摘要确实没有某个字段的内容，该字段写「摘要未提及」。
+6. 每个字段不超过 120 字。
 
 只输出 JSON，不要 markdown 代码块，不要任何解释文字：
 {{
   "items": [
-    {{"index": 1, "innovation": "…", "takeaway": "…"}}
+    {{"index": 1, "background": "…", "innovation": "…", "methods": "…", "takeaway": "…", "future": "…"}}
   ],
   "topPick": {{"index": 2, "reason": "…"}}
 }}
@@ -204,7 +217,7 @@ def main():
     out_items = []
     for i, p in enumerate(picks, start=1):
         got = by_idx.get(i, {})
-        out_items.append({
+        row = {
             "doi": (p.get("doi") or "").lower(),
             "title": p.get("title"),
             "journal": p.get("journal"),
@@ -213,11 +226,12 @@ def main():
             "studyKey": p.get("studyKey"),
             "studyZh": p.get("studyZh"),
             "date": p.get("date"),
-            "innovation": (got.get("innovation") or "").strip(),
-            "takeaway": (got.get("takeaway") or "").strip(),
             "topPick": i == top_idx,
             "topReason": (top.get("reason") or "").strip() if i == top_idx else "",
-        })
+        }
+        for f in FIELDS:
+            row[f] = (got.get(f) or "").strip()
+        out_items.append(row)
 
     digest = {
         "date": date.today().isoformat(),
@@ -235,8 +249,8 @@ def main():
     for x in out_items:
         flag = " ★今日首选" if x["topPick"] else ""
         print(f"      [{x['studyZh']}] {x['journal']:<16} {x['doi'][:38]}{flag}")
-        print(f"        创新: {x['innovation'][:70]}")
-        print(f"        看点: {x['takeaway'][:70]}")
+        for f in FIELDS:
+            print(f"        {FIELD_ZH[f]}: {(x.get(f) or '')[:62]}")
     return 0
 
 
