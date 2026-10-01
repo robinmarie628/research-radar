@@ -1,0 +1,6 @@
+name = "research-radar-trigger"
+main = "trigger.js"
+compatibility_date = "2024-09-23"
+
+# GitHub PAT 通过 `wrangler secret put GITHUB_PAT` 设置，千万不要写在这个文件里。
+# 这个 Worker 不读任何请求体 / 不含敏感信息，CORS 用 * 即可。

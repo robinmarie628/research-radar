@@ -7,12 +7,17 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.01.5';   // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.01.6';   // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
 const CROSSREF = 'https://api.crossref.org/works';
 const FEED     = 'https://raw.githubusercontent.com/zarazhangrui/follow-builders/main/';
+
+/* 前端 → Cloudflare Worker → 触发 GitHub Actions 重新生成数据。
+   部署好 Worker 后，把下面这个 URL 换成你自己的 *.workers.dev 地址
+   （或绑定的自定义域名）。详见 research-radar/worker/README-deploy.md */
+const WORKER_URL = 'https://REPLACE-ME.workers.dev';
 const DAYS     = 30;        // discovery window — abstracts lag 2–4 days, so never use 1
 const MAXJ     = 100;       // Europe PMC cap per request with resultType=core
 const CHUNKS   = 3;         // split the ISSN list so one journal can't flood the pool
@@ -1109,12 +1114,41 @@ async function refresh(force = true) {
   toast('正在拉取最新数据…', 1600);
   try {
     await Promise.all([loadResearch(true), loadBuilders(true)]);
+    await loadDigest();                       // 让「重新生成」后新生成的 digest 立刻生效
     const ok = (S.jr.all.length ? 1 : 0) + (S.ai.all.length ? 1 : 0);
     toast(ok === 2 ? '已更新到最新' : ok === 1 ? '部分数据已更新' : '暂时取不到数据，稍后重试');
   } catch { toast('刷新失败，请检查网络'); }
   finally { btn.classList.remove('spin'); stampFoot(); }
 }
 function stampFoot() { $('#footTime').textContent = '更新于 ' + relTime(new Date()); }
+
+/* ---------------- 远程触发 GitHub Actions 重新生成 ----------------
+   前端点「🔁 重新生成」→ POST 到 Cloudflare Worker → 它用 PAT 调两个
+   workflow_dispatch。GitHub 跑完（约 1–2 分钟）后再点 🔄 就能看到新数据。 */
+async function triggerRegenerate() {
+  const btn = $('#regenBtn');
+  if (!WORKER_URL || WORKER_URL.includes('REPLACE-ME')) {
+    toast('未配置 Worker 地址，无法远程触发');
+    return;
+  }
+  btn.classList.add('spin');
+  toast('正在请求 GitHub 重新生成今日数据…', 2600);
+  try {
+    const r = await fetch(WORKER_URL, { method: 'POST', mode: 'cors', cache: 'no-store' });
+    const data = await r.json().catch(() => ({}));
+    if (r.ok && data.ok) {
+      toast('已触发 ✅ GitHub 正在重新生成，约 1–2 分钟后点 🔄 刷新', 3800);
+    } else {
+      const fails = data.failed || (data.results || []).filter(x => !x.ok) || [];
+      const names = fails.map(f => f.workflow).join('、');
+      toast('触发失败：' + (names ? names + ' ' : '') + (data.error || ('HTTP ' + r.status)), 4000);
+    }
+  } catch {
+    toast('触发失败：检查网络或 Worker 地址', 3800);
+  } finally {
+    btn.classList.remove('spin');
+  }
+}
 
 /* ---------------- boot ---------------- */
 async function boot() {
@@ -1156,6 +1190,7 @@ async function boot() {
 /* ---------------- wire up ---------------- */
 $$('.seg').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
 $('#refreshBtn').addEventListener('click', () => refresh(true));
+$('#regenBtn').addEventListener('click', triggerRegenerate);
 $('#glossSearch').addEventListener('input', e => renderGlossary(e.target.value));
 $('#glossSheet').addEventListener('click', e => { if (e.target.closest('[data-close]')) closeGlossary(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeGlossary(); });

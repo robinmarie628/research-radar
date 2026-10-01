@@ -555,6 +555,7 @@ table.idx .b{width:42px;text-align:center}
   transition:transform .16s cubic-bezier(.34,1.4,.64,1),background .2s,color .2s;
 }
 .verbtn:active{transform:scale(.94);background:#e9f2ff}
+.verbtn.spin{opacity:.5;pointer-events:none}
 .verbtn.has-update{
   color:#8a6100;background:#fdf3dd;border-color:#f0dc9e;
   animation:verpulse 1.9s ease-in-out infinite;
