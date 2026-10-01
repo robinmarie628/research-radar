@@ -1,0 +1,62 @@
+name: Daily digest (创新 / 看点)
+
+# Generates 创新 / 看点 for the day's shortlist with an OpenAI-compatible LLM and
+# commits the result as static data (data/digest.json). The page then reads it.
+#
+# Requires ONE repo secret:  DEEPSEEK_API_KEY
+#   Settings → Secrets and variables → Actions → New repository secret
+# Optional repo *variables* to switch provider without touching code:
+#   LLM_BASE_URL (e.g. https://api.deepseek.com)   LLM_MODEL (e.g. deepseek-chat)
+
+on:
+  schedule:
+    # 23:30 UTC = 07:30 Asia/Shanghai (10 min after the snapshot refresh)
+    - cron: '30 23 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# shared with refresh-snapshots.yml so the two never push at the same time
+concurrency:
+  group: data-refresh
+  cancel-in-progress: false
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Check API key
+        env:
+          KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: |
+          if [ -z "$KEY" ]; then
+            echo "::error title=缺少 API key::请到 Settings → Secrets and variables → Actions 添加一个名为 DEEPSEEK_API_KEY 的 secret（在 platform.deepseek.com 获取）。"
+            exit 1
+          fi
+
+      - name: Generate digest
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          LLM_BASE_URL: ${{ vars.LLM_BASE_URL }}
+          LLM_MODEL: ${{ vars.LLM_MODEL }}
+        run: python scripts/build_digest.py --n 5
+
+      - name: Commit
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/digest.json data/pushed.txt
+          if git diff --cached --quiet; then
+            echo "no change"
+            exit 0
+          fi
+          git commit -m "chore: daily digest [skip ci]"
+          git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
+          git push

@@ -14,8 +14,8 @@ permissions:
   contents: write
 
 concurrency:
-  group: snapshots
-  cancel-in-progress: true
+  group: data-refresh
+  cancel-in-progress: false
 
 jobs:
   refresh:

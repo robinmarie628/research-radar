@@ -105,6 +105,7 @@ const S = {
   cfg: [], gloss: [], domains: [],
   jr: { all: [], picks: [], byKey: {}, updated: null, loaded: false, error: null },
   ai: { all: [], updated: null, loaded: false, error: null },
+  digest: { date: null, items: [], byDoi: new Map(), loaded: false },
   jFilter: 'pick',
   jView: 'card',
   aFilter: 'all',
@@ -328,30 +329,32 @@ function balanceByJournal(items) {
   return items.filter(a => (per[a.journal] = (per[a.journal] || 0) + 1) <= CAP_PER_JOURNAL);
 }
 
-/** 今日精选: N papers, 1–2 basic/molecular, max 2 per journal, domain-diverse. */
+/** 今日精选: N papers, 1–2 basic/molecular, max 2 per journal, domain-diverse.
+ *  The two basic slots prefer *distinct* journals — otherwise one journal can fill
+ *  both with two near-identical papers. */
 function curate(items, n = PICK_N) {
   const rank = a => a.studyRank * 1000 + (a.imp || 0) + (a.structured ? 40 : 0);
   const pool = [...items].sort((a, b) => rank(b) - rank(a));
   const picked = [], perJ = {}, perD = {};
-  const add = it => {
+  const add = (it, jCap) => {
     if (!it || picked.includes(it)) return false;
-    if ((perJ[it.journal] || 0) >= 2) return false;
+    if ((perJ[it.journal] || 0) >= jCap) return false;
     picked.push(it);
     perJ[it.journal] = (perJ[it.journal] || 0) + 1;
     perD[it.domain] = (perD[it.domain] || 0) + 1;
     return true;
   };
-  // 1) reserve 1–2 basic papers (the prompt's clinical/basic balance rule)
+  // 1) reserve 1–2 basic papers, one per journal (the prompt's clinical/basic balance rule)
   for (const it of pool) {
     if (picked.filter(p => p.basic).length >= 2) break;
-    if (it.basic) add(it);
+    if (it.basic) add(it, 1);
   }
   // 2) fill with clinical, preferring fresh domains
   for (const it of pool) {
     if (picked.length >= n) break;
-    if (!it.basic && !perD[it.domain]) add(it);
+    if (!it.basic && !perD[it.domain]) add(it, 2);
   }
-  for (const it of pool) { if (picked.length >= n) break; add(it); }
+  for (const it of pool) { if (picked.length >= n) break; add(it, 2); }
   return picked.slice(0, n).sort((a, b) => rank(b) - rank(a));
 }
 
@@ -359,6 +362,7 @@ async function loadResearch(force) {
   const c = readCache();
   if (!force && c.jr && Date.now() - c.jr.at < TTL) {
     S.jr = { ...S.jr, ...c.jr.data, loaded: true, fromCache: true };
+    applyDigest();
     renderResearch();
     loadPII(S.jr.picks);
     return;
@@ -407,6 +411,7 @@ async function loadResearch(force) {
       }
     }
   }
+  applyDigest();
   renderResearch();
 }
 
@@ -531,6 +536,37 @@ async function trySnapshot(path) {
   try { return await fetchJSON(path, 12000); } catch { return null; }
 }
 
+/* ---------------- 创新 / 看点 digest ----------------
+   Generated daily by scripts/build_digest.py (GitHub Action) and committed as
+   static JSON. When it is fresh, its DOIs *define* 今日精选 so the editorial
+   notes always line up with the shortlist. Falls back to live curation otherwise. */
+async function loadDigest() {
+  const d = await trySnapshot('data/digest.json');
+  if (!d || !Array.isArray(d.items) || !d.items.length) return;
+  S.digest = {
+    date: d.date || null,
+    items: d.items,
+    byDoi: new Map(d.items.map(x => [String(x.doi || '').toLowerCase(), x])),
+    model: d.model || '',
+    loaded: true,
+  };
+  applyDigest();
+  renderResearch();
+}
+
+function applyDigest() {
+  if (!S.digest.loaded) return;
+  const ageDays = S.digest.date ? (Date.now() - Date.parse(S.digest.date)) / 864e5 : 999;
+  if (ageDays > 5) return;                       // stale — trust live curation instead
+  const byDoi = new Map(S.jr.all.map(a => [a.doi.toLowerCase(), a]));
+  const picked = [];
+  for (const d of S.digest.items) {
+    const a = byDoi.get(String(d.doi || '').toLowerCase());
+    if (a) { a.digest = d; picked.push(a); }
+  }
+  if (picked.length >= 3) S.jr.picks = picked;
+}
+
 /* ---------------- cache ---------------- */
 function readCache() { try { return JSON.parse(localStorage.getItem(LS_KEY) || '{}'); } catch { return {}; } }
 function writeCache(slot, data) {
@@ -641,13 +677,15 @@ function setJFilter(k) {
 function articleCard(a, isPick, pickRank) {
   const c = el('article', 'card art');
   c.dataset.id = a.id;
-  if (isPick && pickRank === 1) c.classList.add('top-pick');
+  // the LLM digest can nominate the top pick; otherwise the first curated slot wins
+  const isTop = !!(a.digest && a.digest.topPick) || (isPick && pickRank === 1);
+  if (isPick && isTop) c.classList.add('top-pick');
 
   const top = el('div', 'art-top');
   const caret = el('span', 'caret');
   caret.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   const titleWrap = el('div', 'art-titlewrap');
-  if (isPick && pickRank === 1) titleWrap.append(el('span', 'pick-ribbon', '⭐ 今日首选'));
+  if (isPick && isTop) titleWrap.append(el('span', 'pick-ribbon', '⭐ 今日首选'));
   else if (isPick) titleWrap.append(el('span', 'pick-num', 'NO.' + pickRank));
   titleWrap.append(el('h3', 'art-title', a.title));
   top.append(caret, titleWrap);
@@ -681,6 +719,31 @@ function articleCard(a, isPick, pickRank) {
 
 function buildArticleBody(a, card) {
   const body = el('div', 'art-body');
+
+  // 创新 / 看点 — editorial notes from the daily LLM digest, shown first because
+  // they are the most useful part. Absent when no digest covers this DOI.
+  if (a.digest && (a.digest.innovation || a.digest.takeaway)) {
+    const note = el('div', 'editor-note');
+    if (a.digest.topPick && a.digest.topReason) {
+      const why = el('div', 'en-row en-why');
+      why.append(el('span', 'en-lab', '首选理由'));
+      why.append(el('span', 'en-txt', a.digest.topReason));
+      note.append(why);
+    }
+    if (a.digest.innovation) {
+      const r = el('div', 'en-row en-innovation');
+      r.append(el('span', 'en-lab', '创新'));
+      r.append(el('span', 'en-txt', a.digest.innovation));
+      note.append(r);
+    }
+    if (a.digest.takeaway) {
+      const r = el('div', 'en-row en-takeaway');
+      r.append(el('span', 'en-lab', '看点'));
+      r.append(el('span', 'en-txt', a.digest.takeaway));
+      note.append(r);
+    }
+    body.append(note);
+  }
 
   if (a.structured && a.sections) {
     for (const k of ['objective', 'methods', 'results', 'conclusion', 'other']) {
@@ -956,6 +1019,7 @@ async function boot() {
   renderBuilders();
 
   await loadResearch(false);
+  await loadDigest();                    // maps 创新/看点 onto S.jr.all, then re-renders
   if (S.tab === 'builders') await loadBuilders(false);
   stampFoot();
 

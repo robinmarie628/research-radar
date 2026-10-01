@@ -203,15 +203,19 @@ def get(url, tries=4, timeout=45):
 
 
 def curate(items, n=5):
-    """今日精选: n papers, 1–2 basic, max 2 per journal, domain-diverse."""
+    """今日精选: n papers, 1–2 basic, max 2 per journal, domain-diverse.
+
+    The two basic slots additionally prefer *distinct* journals — otherwise a journal
+    like Cell can fill both with two near-identical structural-biology papers.
+    """
     def rank(a):
         return a["studyRank"] * 1000 + (a.get("imp") or 0) + (40 if a["structured"] else 0)
     pool = sorted(items, key=rank, reverse=True)
     picked, per_j, per_d = [], {}, {}
-    for it in pool:                                    # reserve 1–2 basic
+    for it in pool:                                    # reserve 1–2 basic, one journal each
         if sum(1 for p in picked if p["basic"]) >= 2:
             break
-        if it["basic"] and per_j.get(it["journal"], 0) < 2:
+        if it["basic"] and per_j.get(it["journal"], 0) < 1:
             picked.append(it); per_j[it["journal"]] = per_j.get(it["journal"], 0) + 1
     for it in pool:                                    # clinical, fresh domains first
         if len(picked) >= n:

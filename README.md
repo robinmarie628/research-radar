@@ -25,14 +25,18 @@ research-radar/
 ├── data/
 │   ├── journals.config.json       # 55 本期刊 + ISSN + 领域 + 临床/基础 + 影响因子
 │   ├── glossary.json              # 96 条专业词汇
+│   ├── digest.json                # 每日「创新 / 看点」（由 GitHub Action 生成）
+│   ├── pushed.txt                 # 已推送过的 DOI，避免隔天重复
 │   ├── snapshot-journals.json     # 兜底快照（接口挂了也能看）
 │   └── snapshot-builders.json     # 兜底快照
 ├── scripts/
 │   ├── build_config.py            # 校验 ISSN、抓期刊名、输出配置
-│   ├── build_snapshot.py          # 生成兜底快照
+│   ├── build_snapshot.py          # 生成兜底快照 + 今日精选算法
+│   ├── build_digest.py            # 调 LLM 生成「创新 / 看点」
 │   └── qa.js                      # 无头浏览器 QA
 └── .github/workflows/
-    └── refresh-snapshots.yml      # 可选：每天 07:20 (CST) 刷新快照
+    ├── refresh-snapshots.yml      # 每天 07:20 (CST) 刷新兜底快照
+    └── daily-digest.yml           # 每天 07:30 (CST) 生成创新/看点
 ```
 
 ---
@@ -112,6 +116,31 @@ Europe PMC 返回的摘要**自带小标题**（`<h4>Background</h4>…<h4>Resul
 - 排序权重 = 研究类型等级 ×1000 + 影响因子 + 结构化摘要加成
 
 第 1 篇标 **⭐ 今日首选**。
+
+### 创新 / 看点（LLM 生成）
+
+任务文档要求的「创新 / 看点」需要模型精读摘要才能写，静态前端做不到。做法是**每天用 GitHub Action 调 LLM 生成，结果提交成静态数据** `data/digest.json`，页面直接读——不需要任何服务器。
+
+- **脚本**：`scripts/build_digest.py`，OpenAI 兼容格式，默认 DeepSeek（`deepseek-chat`）
+- **提示词**：把当日精选 5 篇的**摘要原文**一起发给模型，要求每篇输出
+  - `innovation` 创新：1 句，新机制 / 新人群 / 新终点 / 首个……
+  - `takeaway` 看点：1 句，对临床决策的影响、争议点或待验证之处
+  - 并选出 1 篇「今日首选」+ 理由
+- **硬性约束写死在提示词里**：只能用摘要明确写出的信息，不得推测编造；数字必须与摘要一致；中文撰写但保留英文术语（hazard ratio、intention-to-treat…）；每句 ≤80 字
+- **去重**：选中的 DOI 追加到 `data/pushed.txt`，次日不会再推同样的文章
+- **成本**：每天 1 次调用、约 6k input tokens
+
+页面上的呈现：展开卡片后，**创新 / 看点**以绿色编辑注的形式显示在摘要分段**之前**（信息密度最高，不用滚动就能看到）；「今日首选」的卡片带金色边框和 ⭐ 角标。
+
+> **digest 存在时，它定义「今日精选」**——页面用 digest 里的 DOI 顺序作为精选列表，保证编辑注和精选永远对得上。digest 缺失或超过 5 天，则回落到浏览器端的实时精选算法。
+
+**启用步骤**（一次性）：
+
+1. 去 platform.deepseek.com 拿一个 API key
+2. 仓库 **Settings → Secrets and variables → Actions → New repository secret**，名字填 `DEEPSEEK_API_KEY`
+3. 到 **Actions** 页面点 **Daily digest (创新 / 看点) → Run workflow** 手动跑一次验证
+
+换厂商只需改仓库 **Variables**（不用改代码）：`LLM_BASE_URL` + `LLM_MODEL`，key 放 `LLM_API_KEY` 即可（任何 OpenAI 兼容端点都行，如通义千问、Kimi、OpenAI）。
 
 ### 原文链接
 

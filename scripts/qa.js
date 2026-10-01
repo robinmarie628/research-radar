@@ -100,6 +100,9 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     litDate: document.querySelector('#litDate')?.textContent,
     topPick: !!document.querySelector('#researchCards .art.top-pick'),
     ribbon: document.querySelector('.pick-ribbon')?.textContent,
+    digestLoaded: window.__rr.digest.loaded,
+    digestDate: window.__rr.digest.date,
+    digestItems: window.__rr.digest.items.length,
     chips: [...document.querySelectorAll('#researchChips .chip')].map(c => c.textContent.trim()),
   }));
   console.log('  state:', JSON.stringify(report.state).slice(0, 900));
@@ -119,6 +122,10 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     return {
       open: !!c,
       sections: secs,
+      editorNote: [...(c?.querySelectorAll('.editor-note .en-row') || [])].map(r => ({
+        lab: r.querySelector('.en-lab')?.textContent,
+        chars: (r.querySelector('.en-txt')?.textContent || '').length,
+      })),
       abstractFallback: (c?.querySelector('.art-abstract')?.textContent || '').length,
       links: [...(c?.querySelectorAll('.art-links .lnk') || [])].map(a => a.textContent.trim()),
       ckHref: c?.querySelector('.lnk.ck')?.getAttribute('href') || null,

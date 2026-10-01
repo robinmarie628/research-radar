@@ -1,0 +1,79 @@
+{
+ "date": "2026-10-01",
+ "generatedAt": "2026-10-01T05:05:00Z",
+ "model": "manual-preview",
+ "note": "手工生成的首日样例（严格依据摘要原文）。之后由 .github/workflows/daily-digest.yml 每天 07:30 用 DeepSeek 自动重写。",
+ "count": 5,
+ "items": [
+  {
+   "doi": "10.1016/s0140-6736(26)01804-0",
+   "title": "Radiotherapy versus observation following surgical resection of WHO grade 2 atypical meningioma (ROAM/EORTC-1308): an international, multicentre, open-label, phase 3, randomised controlled trial.",
+   "journal": "Lancet",
+   "domain": "综合医学",
+   "basic": false,
+   "studyKey": "rct",
+   "studyZh": "随机对照试验",
+   "date": "2026-09-25",
+   "innovation": "首个评估 WHO 2 级非典型脑膜瘤完全切除后辅助放疗的 3 期 RCT：5 年 disease-free survival 由 64.3% 升至 79.9%。",
+   "takeaway": "放疗组 HR 0.51（95% CI 0.27–0.97，p=0.0396），但 8% 出现 2–3 级放射性严重不良事件，需与复发风险权衡。",
+   "topPick": true,
+   "topReason": "3 期 RCT、主要终点阳性、结论直接指向临床实践改变，证据等级与可操作性在今日 5 篇中最高。"
+  },
+  {
+   "doi": "10.1016/s1474-4422(26)00277-2",
+   "title": "Safety, tolerability, and efficacy of RIPK1 inhibitor, SAR443820, in amyotrophic lateral sclerosis (HIMALAYA): a multicentre, randomised, double-blind, placebo-controlled, phase 2 trial.",
+   "journal": "Lancet Neurol",
+   "domain": "神经",
+   "basic": false,
+   "studyKey": "rct",
+   "studyZh": "随机对照试验",
+   "date": "2026-10-01",
+   "innovation": "首次在 ALS 中检验口服、CNS 穿透性 RIPK1 抑制剂 SAR443820，以 24 周 ALSFRS-R 变化为主要终点。",
+   "takeaway": "阴性结果：ALSFRS-R 组间差异无统计学意义（−0.41，95% CI −1.71 至 0.88），且肝酶升高更常见，不支持继续研发。",
+   "topPick": false,
+   "topReason": ""
+  },
+  {
+   "doi": "10.1016/s1470-2045(26)00450-x",
+   "title": "Iberdomide plus daratumumab and dexamethasone versus daratumumab, bortezomib, and dexamethasone in patients with relapsed or refractory multiple myeloma (EXCALIBER-RRMM): an open-label, randomised, controlled, phase 3 trial.",
+   "journal": "Lancet Oncol",
+   "domain": "肿瘤",
+   "basic": false,
+   "studyKey": "rct",
+   "studyZh": "随机对照试验",
+   "date": "2026-09-25",
+   "innovation": "首次报告以 MRD 阴性完全缓解为双主要终点之一的 3 期结果：iberdomide 三联方案用于复发/难治多发性骨髓瘤。",
+   "takeaway": "MRD 阴性 CR 由 21% 升至 41%（OR 2.8，95% CI 1.8–4.3），但 3/4 级不良事件 92% vs 70%、中性粒细胞减少 84% vs 11%；PFS 尚未成熟。",
+   "topPick": false,
+   "topReason": ""
+  },
+  {
+   "doi": "10.1016/j.cell.2026.08.055",
+   "title": "In-cell discovery and characterization of a non-canonical bacterial protein translocation-folding complex.",
+   "journal": "Cell",
+   "domain": "基础医学",
+   "basic": true,
+   "studyKey": "basic",
+   "studyZh": "基础研究",
+   "date": "2026-09-25",
+   "innovation": "首次获得完整细菌 Sec 转位机器的亚纳米分辨率原位图谱，并发现其与一个此前未知的胞外蛋白折叠系统协同。",
+   "takeaway": "Mdps 与周质折叠酶 PrsA 结构同源、Mdp444 保留催化活性，提示跨膜转运与胞外折叠存在未知耦合，或成抗菌新靶点。",
+   "topPick": false,
+   "topReason": ""
+  },
+  {
+   "doi": "10.1038/s41587-026-03328-5",
+   "title": "Photolabile oligonucleotides with topological light gradients enable spatially resolved single-cell transcriptomics and epigenomics.",
+   "journal": "Nat Biotechnol",
+   "domain": "基础医学",
+   "basic": true,
+   "studyKey": "basic",
+   "studyZh": "基础研究",
+   "date": "2026-09-25",
+   "innovation": "提出 scSTAMP-seq：用光可裂解 hashtag 寡核苷酸加图案化光照，在标准单细胞平台上为细胞「盖章」记录空间坐标。",
+   "takeaway": "在人类胚状体中同时读出空间组织与表观遗传状态，无需专用空间组学仪器即可完成空间分辨的单细胞转录组与表观组分析。",
+   "topPick": false,
+   "topReason": ""
+  }
+ ]
+}
