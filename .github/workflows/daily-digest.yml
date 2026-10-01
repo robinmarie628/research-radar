@@ -1,4 +1,4 @@
-name: Daily digest (创新 / 看点)
+name: Daily digest (顶刊摘要 + AI 动态)
 
 # Generates 创新 / 看点 for the day's shortlist with an OpenAI-compatible LLM and
 # commits the result as static data (data/digest.json). The page then reads it.
@@ -48,11 +48,18 @@ jobs:
           LLM_MODEL: ${{ vars.LLM_MODEL }}
         run: python scripts/build_digest.py --n 8
 
+      - name: Generate AI-builder digest
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          LLM_BASE_URL: ${{ vars.LLM_BASE_URL }}
+          LLM_MODEL: ${{ vars.LLM_MODEL }}
+        run: python scripts/build_builder_digest.py
+
       - name: Commit
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/digest.json data/pushed.txt
+          git add data/digest.json data/pushed.txt data/builder-digest.json
           if git diff --cached --quiet; then
             echo "no change"
             exit 0

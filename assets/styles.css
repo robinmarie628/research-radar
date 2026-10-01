@@ -623,3 +623,46 @@ table.idx .b{width:42px;text-align:center}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
 }
+
+/* ============ 今日 AI 动态总览方框 ============ */
+.aisum{
+  position:relative;
+  margin:0 0 14px;padding:15px 15px 14px;
+  background:linear-gradient(150deg,#f4f1ff,#eef7ff 55%,#f0fbf7);
+  border:1px solid #ded7f7;border-radius:var(--r-md);
+  box-shadow:0 4px 16px rgba(103,80,180,.10);
+}
+.aisum::before{
+  content:'';position:absolute;left:0;right:0;top:0;height:3px;
+  border-radius:var(--r-md) var(--r-md) 0 0;
+  background:linear-gradient(90deg,#7c5cff,#2f80ed,#0f9d8c);
+}
+.aisum-head{display:flex;align-items:center;gap:6px;margin-bottom:9px}
+.aisum-ico{font-size:13px;line-height:1}
+.aisum-title{font-size:12.5px;font-weight:800;color:#4b3a8f;letter-spacing:.3px}
+.aisum-date{margin-left:auto;font-size:10px;font-weight:700;color:#8d97ad}
+.aisum-headline{margin:0 0 10px;font-size:13px;line-height:1.65;font-weight:800;color:#2a2440}
+.aisum-list{margin:0;padding-left:18px;display:grid;gap:7px}
+.aisum-list li{font-size:12.5px;line-height:1.68;color:#3b3a52}
+.aisum-list li::marker{color:#7c5cff}
+.aisum-senti{
+  display:flex;gap:7px;align-items:flex-start;margin-top:11px;
+  padding:8px 10px;background:rgba(255,255,255,.78);border-radius:8px;
+}
+.aisum-senti-lab{
+  flex:0 0 auto;font-size:10px;font-weight:800;color:#fff;background:#7c5cff;
+  border-radius:5px;padding:2px 6px;line-height:1.4;
+}
+.aisum-senti-txt{flex:1;min-width:0;font-size:12px;line-height:1.62;color:#4b4668}
+
+/* ============ 每条动态的中文一句话 ============ */
+.post-zh{
+  display:flex;gap:7px;align-items:flex-start;
+  margin:0 0 9px;padding:8px 10px;
+  background:#f2f8ff;border-left:3px solid var(--brand-2);border-radius:7px;
+}
+.post-zh-lab{
+  flex:0 0 auto;font-size:9.5px;font-weight:800;color:#fff;background:var(--brand-2);
+  border-radius:4px;padding:2px 5px;line-height:1.4;margin-top:1px;
+}
+.post-zh-txt{flex:1;min-width:0;font-size:12.5px;line-height:1.66;color:#20496b;font-weight:600}

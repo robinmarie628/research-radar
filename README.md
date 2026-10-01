@@ -26,6 +26,7 @@ research-radar/
 │   ├── journals.config.json       # 55 本期刊 + ISSN + 领域 + 临床/基础 + 影响因子
 │   ├── glossary.json              # 96 条专业词汇
 │   ├── digest.json                # 每日「创新 / 看点」（由 GitHub Action 生成）
+│   ├── builder-digest.json        # 今日 AI 动态总览 + 每条动态的中文一句话
 │   ├── pushed.txt                 # 已推送过的 DOI，避免隔天重复
 │   ├── snapshot-journals.json     # 兜底快照（接口挂了也能看）
 │   └── snapshot-builders.json     # 兜底快照
@@ -33,6 +34,7 @@ research-radar/
 │   ├── build_config.py            # 校验 ISSN、抓期刊名、输出配置
 │   ├── build_snapshot.py          # 生成兜底快照 + 今日精选算法
 │   ├── build_digest.py            # 调 LLM 生成「创新 / 看点」
+│   ├── build_builder_digest.py    # 调 LLM 生成 AI 动态总览 + 每条的中文总结
 │   └── qa.js                      # 无头浏览器 QA
 └── .github/workflows/
     ├── refresh-snapshots.yml      # 每天 05:40 (CST) 刷新兜底快照
@@ -176,6 +178,24 @@ Europe PMC 返回的摘要**自带小标题**（`<h4>Background</h4>…<h4>Resul
 - `feed-podcasts.json` — Latent Space、No Priors、Training Data 等 6 档播客
 
 该仓库的理念是 **follow builders, not influencers**——跟的是真正在做产品的人，不是搬运信息的网红。
+
+### 今日 AI 动态 + 每条动态的中文一句话
+
+`scripts/build_builder_digest.py` 每天把三份 feed 的最新动态（默认最近 40 条）一起发给模型，
+**一次调用**产出两样东西：
+
+1. **今日 AI 动态方框**（页面顶部）—— 用大白话总结当天最值得知道的事：
+   - `headline` 一句话概括
+   - `bullets` 3–5 条要点，重点抓**新发布的 agent / 模型 / 产品**、新功能、价格政策、
+     以及 builder 们反复在讨论的同一件事
+   - `sentiment` 一句话说 builder 整体什么情绪（兴奋 / 焦虑 / 吐槽 / 观望），并说清是对什么
+2. **每条动态的一句话中文总结**（`summaryZh`）—— 让人不用读英文就知道作者想说什么：
+   观点/吐槽抓核心主张，产品发布说清「谁发布了什么、有什么用」
+
+结果写入 `data/builder-digest.json`，页面直接读。约束同样是**不得编造产品名、功能、版本号或数字**，
+产品名保留英文原文。
+
+> 页面上的位置：**中文总结放在英文原文之前**——先看懂再看原文。
 
 ---
 

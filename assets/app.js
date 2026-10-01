@@ -7,7 +7,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.01.3';   // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.01.4';   // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -126,6 +126,7 @@ const S = {
   jr: { all: [], picks: [], byKey: {}, updated: null, loaded: false, error: null },
   ai: { all: [], updated: null, loaded: false, error: null },
   digest: { date: null, items: [], byDoi: new Map(), loaded: false },
+  bd: { date: null, headline: '', bullets: [], sentiment: '', byId: new Map(), loaded: false },
   jFilter: 'pick',
   jView: 'card',
   aFilter: 'all',
@@ -385,11 +386,18 @@ function curate(items, n = PICK_N) {
   return picked.slice(0, n).sort((a, b) => rank(b) - rank(a));
 }
 
+/** 文章列表 + 精选的指纹。后台重新校验时用它判断「数据有没有真的变」，
+ *  没变就不重渲染 —— 否则会把用户正在读的卡片关掉。 */
+function jrSignature() {
+  return S.jr.all.map(x => x.id).join('|') + '#' + S.jr.picks.map(x => x.id).join('|');
+}
+
 async function loadResearch(force) {
   const c = readCache();
   if (!force && c.jr && Date.now() - c.jr.at < TTL) {
     S.jr = { ...S.jr, ...c.jr.data, loaded: true, fromCache: true };
     applyDigest();
+    S.jr._sig = jrSignature();
     renderResearch();
     loadPII(S.jr.picks);
     return;
@@ -439,6 +447,10 @@ async function loadResearch(force) {
     }
   }
   applyDigest();
+  const sig = jrSignature();
+  const prev = S.jr._sig;
+  S.jr._sig = sig;
+  if (sig === prev && S.jr.loaded) return;   // 数据没变，保持界面原样
   renderResearch();
 }
 
@@ -513,6 +525,7 @@ function mapBuilderFeeds(x, blogs, pods) {
         text: cleanText(t.text), ts: Date.parse(t.createdAt || '') || 0,
         date: t.createdAt || '', url: t.url || (b.handle ? `https://x.com/${b.handle}` : ''),
         likes: t.likes ?? 0, rt: t.retweets ?? 0, replies: t.replies ?? 0,
+        id: t.url || '',
       });
     }
   }
@@ -579,6 +592,21 @@ async function loadDigest() {
   };
   applyDigest();
   renderResearch();
+}
+
+/** 今日 AI 动态总览 + 每条动态的中文一句话（由 scripts/build_builder_digest.py 生成） */
+async function loadBuilderDigest() {
+  const d = await trySnapshot('data/builder-digest.json');
+  if (!d || !Array.isArray(d.posts)) return;
+  S.bd = {
+    date: d.date || null,
+    headline: d.headline || '',
+    bullets: Array.isArray(d.bullets) ? d.bullets : [],
+    sentiment: d.sentiment || '',
+    byId: new Map(d.posts.map(x => [String(x.id || ''), x.summaryZh || ''])),
+    loaded: true,
+  };
+  renderBuilders();
 }
 
 function applyDigest() {
@@ -910,6 +938,8 @@ function renderBuilders() {
     host.append(chip({ text:'@' + h }, arr.length, S.aFilter === 'h:' + h, () => setAFilter('h:' + h)));
   }
 
+  renderAiSummary();
+
   $('#aiDate').textContent = S.ai.updated ? fmtDate(S.ai.updated) : '—';
   const list = filteredPosts();
   $('#builderHead').textContent = S.aFilter.startsWith('h:')
@@ -929,6 +959,39 @@ function setAFilter(k) {
   $('#scrollArea').scrollTo({ top: Math.max(0, $('#builderChips').offsetTop - 96), behavior: 'smooth' });
 }
 
+/** 今日 AI 动态总览方框 —— 产品发布 / 新功能 / builder 情绪，用大白话 */
+function renderAiSummary() {
+  const host = $('#aiSummary');
+  if (!host) return;
+  const bd = S.bd;
+  const has = bd.loaded && (bd.headline || bd.bullets.length || bd.sentiment);
+  if (!has) { host.hidden = true; host.replaceChildren(); return; }
+
+  host.hidden = false;
+  host.replaceChildren();
+
+  const head = el('div', 'aisum-head');
+  head.append(el('span', 'aisum-ico', '✨'));
+  head.append(el('span', 'aisum-title', '今日 AI 动态'));
+  if (bd.date) head.append(el('span', 'aisum-date', fmtDate(bd.date)));
+  host.append(head);
+
+  if (bd.headline) host.append(el('p', 'aisum-headline', bd.headline));
+
+  if (bd.bullets.length) {
+    const ul = el('ul', 'aisum-list');
+    for (const b of bd.bullets) ul.append(el('li', '', b));
+    host.append(ul);
+  }
+
+  if (bd.sentiment) {
+    const srow = el('div', 'aisum-senti');
+    srow.append(el('span', 'aisum-senti-lab', '情绪'));
+    srow.append(el('span', 'aisum-senti-txt', bd.sentiment));
+    host.append(srow);
+  }
+}
+
 function postCard(p) {
   const c = el('article', 'card post');
   const top = el('div', 'post-top');
@@ -943,6 +1006,15 @@ function postCard(p) {
   const txt = el('p', 'post-text clamp');
   txt.textContent = p.text;
 
+  // 一句话中文总结（每日 LLM 生成）—— 放在英文原文之前，先看懂再看原文
+  const zh = S.bd.byId.get(p.url || p.id) || '';
+  let zhNode = null;
+  if (zh) {
+    zhNode = el('div', 'post-zh');
+    zhNode.append(el('span', 'post-zh-lab', '一句话'));
+    zhNode.append(el('span', 'post-zh-txt', zh));
+  }
+
   const foot = el('div', 'post-foot');
   if (p.type === 'x') {
     // ♥ / 💬 render as colour glyphs; the retweet arrow does not on Windows, so use RT.
@@ -954,7 +1026,9 @@ function postCard(p) {
     a.href = p.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
     foot.append(a);
   }
-  c.append(top, txt, foot);
+  c.append(top);
+  if (zhNode) c.append(zhNode);
+  c.append(txt, foot);
 
   if ((p.text || '').length > 220) {
     const more = el('button', 'post-more', '展开全文');
@@ -1024,6 +1098,7 @@ function setTab(tab) {
   $('#scrollArea').scrollTop = 0;
   $('#brandSub').textContent = tab === 'research' ? '临床顶刊 + 基础医学 · 每日速递' : 'AI Builder · 一手动态';
   if (tab === 'builders' && !S.ai.loaded) loadBuilders(false);
+  if (tab === 'builders' && !S.bd.loaded) loadBuilderDigest();
 }
 
 /* ---------------- refresh ---------------- */
@@ -1069,6 +1144,7 @@ async function boot() {
 
   await loadResearch(false);
   await loadDigest();                    // maps 创新/看点 onto S.jr.all, then re-renders
+  await loadBuilderDigest();             // 今日 AI 动态总览 + 每条动态的中文一句话
   if (S.tab === 'builders') await loadBuilders(false);
   stampFoot();
 

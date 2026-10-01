@@ -255,11 +255,20 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   await page.evaluate(() => document.querySelector('.seg[data-tab="builders"]').click());
   await page.waitForFunction(() => window.__rr.ai.loaded, { timeout: 45000, polling: 500 }).catch(() => {});
   await sleep(900);
-  report.checks.builders = await page.evaluate(() => ({
-    posts: document.querySelectorAll('#builderCards .post').length,
-    head: document.querySelector('#builderHead')?.textContent,
-    aiDate: document.querySelector('#aiDate')?.textContent,
-  }));
+  report.checks.builders = await page.evaluate(() => {
+    const box = document.querySelector('#aiSummary');
+    return {
+      posts: document.querySelectorAll('#builderCards .post').length,
+      head: document.querySelector('#builderHead')?.textContent,
+      aiDate: document.querySelector('#aiDate')?.textContent,
+      summaryBoxVisible: !!box && !box.hidden,
+      headline: box?.querySelector('.aisum-headline')?.textContent?.slice(0, 46),
+      bullets: box?.querySelectorAll('.aisum-list li').length,
+      sentiment: box?.querySelector('.aisum-senti-txt')?.textContent?.slice(0, 40),
+      postsWithZh: document.querySelectorAll('#builderCards .post-zh').length,
+      firstZh: document.querySelector('#builderCards .post-zh .post-zh-txt')?.textContent?.slice(0, 40),
+    };
+  });
   console.log('  builders:', JSON.stringify(report.checks.builders));
   report.checks.overflowBuilders = await overflow();
   await shot('07-builders');
