@@ -596,6 +596,12 @@ function renderResearch() {
   }
 
   $('#litDate').textContent = S.jr.updated ? fmtDate(S.jr.updated) : '—';
+  // derive the banner counts from the config so they can never drift from reality
+  const nClin = S.cfg.filter(c => !c.basic).length;
+  const nBas  = S.cfg.filter(c => c.basic).length;
+  const eClin = $('#jClin'), eBas = $('#jBasic');
+  if (eClin) eClin.textContent = nClin || '—';
+  if (eBas)  eBas.textContent  = nBas  || '—';
 
   const list = filteredArticles();
   const isPick = S.jFilter === 'pick';
