@@ -1,0 +1,378 @@
+[
+  {
+    "issn": "0028-4793",
+    "title": "New England Journal of Medicine",
+    "short": "NEJM",
+    "if": 96.2,
+    "group": "top",
+    "n90": 220
+  },
+  {
+    "issn": "0140-6736",
+    "title": "The Lancet",
+    "short": "Lancet",
+    "if": 98.4,
+    "group": "top",
+    "n90": 266
+  },
+  {
+    "issn": "0098-7484",
+    "title": "JAMA",
+    "short": "JAMA",
+    "if": 63.1,
+    "group": "top",
+    "n90": 456
+  },
+  {
+    "issn": "0959-8138",
+    "title": "BMJ",
+    "short": "BMJ",
+    "if": 93.6,
+    "group": "top",
+    "n90": 575
+  },
+  {
+    "issn": "1078-8956",
+    "title": "Nature Medicine",
+    "short": "Nat Med",
+    "if": 58.7,
+    "group": "top",
+    "n90": 197
+  },
+  {
+    "issn": "0009-7322",
+    "title": "Circulation",
+    "short": "Circulation",
+    "if": 35.5,
+    "group": "cvd",
+    "n90": 201
+  },
+  {
+    "issn": "0195-668X",
+    "title": "European Heart Journal",
+    "short": "Eur Heart J",
+    "if": 37.6,
+    "group": "cvd",
+    "n90": 427
+  },
+  {
+    "issn": "0735-1097",
+    "title": "Journal of the American College of Cardiology",
+    "short": "JACC",
+    "if": 21.7,
+    "group": "cvd",
+    "n90": 129
+  },
+  {
+    "issn": "1936-8798",
+    "title": "JACC: Cardiovascular Interventions",
+    "short": "JACC Interv",
+    "if": 11.7,
+    "group": "cvd",
+    "n90": 71
+  },
+  {
+    "issn": "1936-878X",
+    "title": "JACC: Cardiovascular Imaging",
+    "short": "JACC Imaging",
+    "if": 10.9,
+    "group": "cvd",
+    "n90": 51
+  },
+  {
+    "issn": "2405-5018",
+    "title": "JACC: Clinical Electrophysiology",
+    "short": "JACC EP",
+    "if": 4.0,
+    "group": "cvd",
+    "n90": 88
+  },
+  {
+    "issn": "0009-7330",
+    "title": "Circulation Research",
+    "short": "Circ Res",
+    "if": 16.5,
+    "group": "cvd",
+    "n90": 79
+  },
+  {
+    "issn": "1355-6037",
+    "title": "Heart",
+    "short": "Heart",
+    "if": 5.7,
+    "group": "cvd",
+    "n90": 116
+  },
+  {
+    "issn": "0002-8703",
+    "title": "American Heart Journal",
+    "short": "Am Heart J",
+    "if": 4.3,
+    "group": "cvd",
+    "n90": 43
+  },
+  {
+    "issn": "1941-7640",
+    "title": "Circulation: Cardiovascular Interventions",
+    "short": "Circ Interv",
+    "if": 6.7,
+    "group": "cvd",
+    "n90": 40
+  },
+  {
+    "issn": "2047-9980",
+    "title": "Journal of the American Heart Association",
+    "short": "JAHA",
+    "if": 5.0,
+    "group": "cvd",
+    "n90": 407
+  },
+  {
+    "issn": "1759-5002",
+    "title": "Nature Reviews Cardiology",
+    "short": "Nat Rev Cardiol",
+    "if": 41.7,
+    "group": "cvd",
+    "n90": 46
+  },
+  {
+    "issn": "2047-2404",
+    "title": "European Heart Journal - Cardiovascular Imaging",
+    "short": "EHJ Imaging",
+    "if": 6.2,
+    "group": "cvd",
+    "n90": 112
+  },
+  {
+    "issn": "1099-5129",
+    "title": "Europace",
+    "short": "Europace",
+    "if": 6.1,
+    "group": "cvd",
+    "n90": 90
+  },
+  {
+    "issn": "1774-024X",
+    "title": "EuroIntervention",
+    "short": "EuroIntervention",
+    "if": 7.6,
+    "group": "cvd",
+    "n90": 49
+  },
+  {
+    "issn": "2213-1779",
+    "title": "JACC: Heart Failure",
+    "short": "JACC HF",
+    "if": 10.4,
+    "group": "hf",
+    "n90": 68
+  },
+  {
+    "issn": "1388-9842",
+    "title": "European Journal of Heart Failure",
+    "short": "Eur J Heart Fail",
+    "if": 16.9,
+    "group": "hf",
+    "n90": 130
+  },
+  {
+    "issn": "1941-3289",
+    "title": "Circulation: Heart Failure",
+    "short": "Circ HF",
+    "if": 7.9,
+    "group": "hf",
+    "n90": 54
+  },
+  {
+    "issn": "1053-2498",
+    "title": "Journal of Heart and Lung Transplantation",
+    "short": "JHLT",
+    "if": 6.4,
+    "group": "hf",
+    "n90": 88
+  },
+  {
+    "issn": "0194-911X",
+    "title": "Hypertension",
+    "short": "Hypertension",
+    "if": 6.9,
+    "group": "htn",
+    "n90": 54
+  },
+  {
+    "issn": "0263-6352",
+    "title": "Journal of Hypertension",
+    "short": "J Hypertens",
+    "if": 3.3,
+    "group": "htn",
+    "n90": 55
+  },
+  {
+    "issn": "0741-5214",
+    "title": "Journal of Vascular Surgery",
+    "short": "J Vasc Surg",
+    "if": 3.9,
+    "group": "aortic",
+    "n90": 103
+  },
+  {
+    "issn": "1078-5884",
+    "title": "European Journal of Vascular and Endovascular Surgery",
+    "short": "EJVES",
+    "if": 5.7,
+    "group": "aortic",
+    "n90": 134
+  },
+  {
+    "issn": "1010-7940",
+    "title": "European Journal of Cardio-Thoracic Surgery",
+    "short": "EJCTS",
+    "if": 3.4,
+    "group": "aortic",
+    "n90": 27
+  },
+  {
+    "issn": "0022-5223",
+    "title": "Journal of Thoracic and Cardiovascular Surgery",
+    "short": "JTCVS",
+    "if": 4.9,
+    "group": "aortic",
+    "n90": 82
+  },
+  {
+    "issn": "0003-4975",
+    "title": "Annals of Thoracic Surgery",
+    "short": "Ann Thorac Surg",
+    "if": 3.6,
+    "group": "aortic",
+    "n90": 130
+  },
+  {
+    "issn": "2045-8932",
+    "title": "Pulmonary Circulation",
+    "short": "Pulm Circ",
+    "if": 2.4,
+    "group": "ph",
+    "n90": 34
+  },
+  {
+    "issn": "0342-4642",
+    "title": "Intensive Care Medicine",
+    "short": "Intensive Care Med",
+    "if": 27.1,
+    "group": "icu",
+    "n90": 69
+  },
+  {
+    "issn": "0090-3493",
+    "title": "Critical Care Medicine",
+    "short": "Crit Care Med",
+    "if": 7.7,
+    "group": "icu",
+    "n90": 90
+  },
+  {
+    "issn": "1364-8535",
+    "title": "Critical Care",
+    "short": "Crit Care",
+    "if": 8.8,
+    "group": "icu",
+    "n90": 115
+  },
+  {
+    "issn": "1073-449X",
+    "title": "American Journal of Respiratory and Critical Care Medicine",
+    "short": "AJRCCM",
+    "if": 19.3,
+    "group": "icu",
+    "n90": 286
+  },
+  {
+    "issn": "0012-3692",
+    "title": "CHEST",
+    "short": "Chest",
+    "if": 9.5,
+    "group": "icu",
+    "n90": 155
+  },
+  {
+    "issn": "2110-5820",
+    "title": "Annals of Intensive Care",
+    "short": "Ann Intensive Care",
+    "if": 5.7,
+    "group": "icu",
+    "n90": 45
+  },
+  {
+    "issn": "1073-2322",
+    "title": "Shock",
+    "short": "Shock",
+    "if": 2.6,
+    "group": "icu",
+    "n90": 37
+  },
+  {
+    "issn": "2052-0492",
+    "title": "Journal of Intensive Care",
+    "short": "J Intensive Care",
+    "if": 3.5,
+    "group": "icu",
+    "n90": 44
+  },
+  {
+    "issn": "0883-9441",
+    "title": "Journal of Critical Care",
+    "short": "J Crit Care",
+    "if": 3.2,
+    "group": "icu",
+    "n90": 66
+  },
+  {
+    "issn": "0300-9572",
+    "title": "Resuscitation",
+    "short": "Resuscitation",
+    "if": 6.5,
+    "group": "icu",
+    "n90": 103
+  },
+  {
+    "issn": "2329-6933",
+    "title": "Annals of the American Thoracic Society",
+    "short": "Ann Am Thorac Soc",
+    "if": 4.4,
+    "group": "icu",
+    "n90": 151
+  },
+  {
+    "issn": "2213-2600",
+    "title": "Lancet Respiratory Medicine",
+    "short": "Lancet Respir Med",
+    "if": 38.7,
+    "group": "icu",
+    "n90": 49
+  },
+  {
+    "issn": "0903-1936",
+    "title": "European Respiratory Journal",
+    "short": "Eur Respir J",
+    "if": 16.6,
+    "group": "icu",
+    "n90": 122
+  },
+  {
+    "issn": "0040-6376",
+    "title": "Thorax",
+    "short": "Thorax",
+    "if": 9.0,
+    "group": "icu",
+    "n90": 115
+  },
+  {
+    "issn": "2197-425X",
+    "title": "Intensive Care Medicine Experimental",
+    "short": "ICM Exp",
+    "if": 3.0,
+    "group": "icu",
+    "n90": 38
+  }
+]

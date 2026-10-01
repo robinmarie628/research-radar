@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5" />
+<meta name="theme-color" content="#eaf2fe" />
+<title>科研雷达 · 顶刊速递 &amp; AI Builder</title>
+<meta name="description" content="每日更新的心血管与重症医学顶刊速递，以及 AI Builder 一手动态。" />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="assets/icon-180.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="科研雷达" />
+<link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+
+<div class="phone">
+
+  <!-- ══ 顶部栏 ══ -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">🩺</div>
+      <div class="brand-text">
+        <h1 id="brandTitle">科研雷达</h1>
+        <p id="brandSub">顶刊速递 · AI Builder</p>
+      </div>
+    </div>
+    <button class="icon-btn" id="refreshBtn" type="button" aria-label="刷新数据" title="刷新数据">
+      <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true">
+        <path d="M20 11a8 8 0 1 0-2.3 6.3" fill="none" stroke="currentColor" stroke-width="2.1"
+              stroke-linecap="round"/>
+        <path d="M20.5 4.5v6h-6" fill="none" stroke="currentColor" stroke-width="2.1"
+              stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </header>
+
+  <!-- ══ 切换按钮 ══ -->
+  <div class="segmented" id="segmented" role="tablist" aria-label="内容切换">
+    <span class="seg-thumb" id="segThumb" aria-hidden="true"></span>
+    <button class="seg is-active" data-tab="research" role="tab" aria-selected="true" type="button">
+      <span class="seg-ico">🔬</span>科研顶刊
+    </button>
+    <button class="seg" data-tab="builders" role="tab" aria-selected="false" type="button">
+      <span class="seg-ico">🤖</span>AI Builder
+    </button>
+  </div>
+
+  <main class="scroll" id="scrollArea">
+
+    <!-- ══════════════ 科研顶刊 ══════════════ -->
+    <section class="panel" id="panel-research" role="tabpanel">
+
+      <div class="banner">
+        <div class="banner-glow" aria-hidden="true"></div>
+        <h2 class="banner-title">心血管 + 重症前沿 · 顶刊速递</h2>
+        <div class="banner-meta">
+          <span class="bm"><i>🔄</i>每日更新</span>
+          <span class="bm"><i>🧭</i>六大方向分类</span>
+          <span class="bm"><i>📅</i>文献更新 <b id="litDate">—</b></span>
+          <span class="bm"><i>⭐</i>按影响因子标注</span>
+        </div>
+      </div>
+
+      <div class="chips" id="researchChips"></div>
+
+      <div class="listhead">
+        <span id="researchHead">最新推送 — 篇</span>
+        <small>点卡片任意位置展开摘要（摘要较长可在框内滚动）</small>
+      </div>
+
+      <div class="cards" id="researchCards">
+        <div class="skeleton-wrap">
+          <div class="sk"></div><div class="sk"></div><div class="sk"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════ AI Builder ══════════════ -->
+    <section class="panel" id="panel-builders" role="tabpanel" hidden>
+
+      <div class="banner banner-ai">
+        <div class="banner-glow" aria-hidden="true"></div>
+        <h2 class="banner-title">AI Builders · 一手动态</h2>
+        <div class="banner-meta">
+          <span class="bm"><i>🐦</i>26 位一线 Builder</span>
+          <span class="bm"><i>📻</i>6 档播客</span>
+          <span class="bm"><i>📘</i>官方博客</span>
+          <span class="bm"><i>📅</i>更新 <b id="aiDate">—</b></span>
+        </div>
+      </div>
+
+      <div class="chips" id="builderChips"></div>
+
+      <div class="listhead">
+        <span id="builderHead">最新动态 — 条</span>
+        <small>来源：X / Podcast / 官方博客，跟随 builder 而非网红</small>
+      </div>
+
+      <div class="cards" id="builderCards">
+        <div class="skeleton-wrap">
+          <div class="sk"></div><div class="sk"></div><div class="sk"></div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <span id="footStatus">数据源：Europe PMC · follow-builders</span>
+      <span id="footTime"></span>
+    </footer>
+  </main>
+</div>
+
+<!-- ══ 专业词汇抽屉 ══ -->
+<div class="sheet" id="glossSheet" hidden>
+  <div class="sheet-mask" data-close></div>
+  <div class="sheet-body" role="dialog" aria-modal="true" aria-label="专业词汇">
+    <div class="sheet-grip" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <h3>专业词汇</h3>
+      <button class="icon-btn" type="button" data-close aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+    <input class="sheet-search" id="glossSearch" type="search" placeholder="搜索术语 / 中文 / 释义…" />
+    <div class="sheet-list" id="glossList"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="assets/app.js"></script>
+</body>
+</html>
