@@ -7,7 +7,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.01.4';   // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.01.5';   // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -43,6 +43,7 @@ const DOMAIN_META = {
   '肾脏':       { ico:'💧', hue:206 },
   '皮肤':       { ico:'✋', hue:14  },
   '泌尿':       { ico:'🚹', hue:236 },
+  '血管外科':   { ico:'🦵', hue:256 },
   '全球健康':   { ico:'🌏', hue:158 },
   '数字医疗':   { ico:'📱', hue:246 },
   '老年医学':   { ico:'🧓', hue:30  },
