@@ -57,8 +57,15 @@ const dm = d => DOMAIN_META[d] || { ico:'📄', hue:212 };
 const STUDY = [
   { key:'guideline', zh:'指南/共识', rank:6,
     re:/(clinical )?practice guideline|consensus (statement|document|recommendation)|expert consensus|society (guideline|recommendation)|guideline[- ]directed/i },
+  // NB: a bare "meta-analys" is NOT enough — GWAS papers routinely report a "combined
+  // meta-analysis" as a statistical step. Require meta-analysis to be the study design.
   { key:'meta', zh:'荟萃分析', rank:6,
-    re:/systematic review and meta-analys|meta-analys|individual participant data|pooled analysis of \d|network meta-analys/i },
+    re:/systematic review and meta-analys|in this meta-analys|we (conducted|performed|did) a meta-analys|meta-analysis of \d|network meta-analys|individual participant data|pooled analysis of \d/i },
+  { key:'gwas', zh:'遗传关联研究', rank:5,
+    re:/genome[- ]wide association stud|(?<![A-Za-z])GWAS(?![A-Za-z])|mendelian randomi[sz]ation|exome[- ]wide association|polygenic (risk )?score/i },
+  // target trial emulation uses observational data to mimic a trial — NOT an RCT
+  { key:'emulation', zh:'目标试验模拟', rank:4,
+    re:/target trial emulation|emulat(e|ing|ed) a (pragmatic |hypothetical )?target trial/i },
   { key:'rct', zh:'随机对照试验', rank:6,
     re:/randomi[sz]ed (controlled |clinical |placebo[- ]controlled )?(trial|study)|randomly (assigned|allocated)|double[- ]blind|placebo[- ]controlled|1:1 (ratio )?randomi/i },
   { key:'gdb', zh:'疾病负担分析', rank:5,
@@ -98,8 +105,8 @@ const SEC_LABEL = { objective:'目的', methods:'方法', results:'结果', conc
 /** 通俗版摘要的五个字段（由每日 LLM digest 生成），按此顺序展示 */
 const DIGEST_FIELDS = [
   ['background', '背景'],
-  ['innovation', '创新点'],
   ['methods',    '怎么做'],
+  ['innovation', '创新点'],
   ['takeaway',   '看点'],
   ['future',     '未来方向'],
 ];

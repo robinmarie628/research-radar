@@ -41,9 +41,16 @@ STUDY = [
     ("guideline", "指南/共识", 6,
      r"(clinical )?practice guideline|consensus (statement|document|recommendation)|"
      r"expert consensus|society (guideline|recommendation)|guideline[- ]directed"),
+    # a bare "meta-analys" is not enough — GWAS papers report a "combined meta-analysis"
     ("meta", "荟萃分析", 6,
-     r"systematic review and meta-analys|meta-analys|individual participant data|"
-     r"pooled analysis of \d|network meta-analys"),
+     r"systematic review and meta-analys|in this meta-analys|"
+     r"we (conducted|performed|did) a meta-analys|meta-analysis of \d|"
+     r"network meta-analys|individual participant data|pooled analysis of \d"),
+    ("gwas", "遗传关联研究", 5,
+     r"genome[- ]wide association stud|(?<![A-Za-z])GWAS(?![A-Za-z])|mendelian randomi[sz]ation|"
+     r"exome[- ]wide association|polygenic (risk )?score"),
+    ("emulation", "目标试验模拟", 4,
+     r"target trial emulation|emulat(e|ing|ed) a (pragmatic |hypothetical )?target trial"),
     ("rct", "随机对照试验", 6,
      r"randomi[sz]ed (controlled |clinical |placebo[- ]controlled )?(trial|study)|"
      r"randomly (assigned|allocated)|double[- ]blind|placebo[- ]controlled|1:1 (ratio )?randomi"),
