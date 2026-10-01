@@ -6,7 +6,7 @@ name: Daily digest (顶刊摘要 + AI 动态)
 # Requires ONE repo secret:  DEEPSEEK_API_KEY
 #   Settings → Secrets and variables → Actions → New repository secret
 # Optional repo *variables* to switch provider without touching code:
-#   LLM_BASE_URL (e.g. https://api.deepseek.com)   LLM_MODEL (e.g. deepseek-chat)
+#   LLM_BASE_URL (e.g. https://api.deepseek.com)   LLM_MODEL (e.g. deepseek-flash)
 
 on:
   schedule:

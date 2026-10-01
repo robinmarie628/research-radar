@@ -11,7 +11,7 @@ Output  data/digest.json   — read by the app; fields keyed by DOI
 
 Provider defaults to DeepSeek but any OpenAI-compatible endpoint works:
     LLM_BASE_URL   (default https://api.deepseek.com)
-    LLM_MODEL      (default deepseek-chat)
+    LLM_MODEL      (default deepseek-flash)
     LLM_API_KEY / DEEPSEEK_API_KEY
 
 stdlib only.  Usage:  python build_digest.py [--n 5] [--dry-run]
@@ -35,7 +35,7 @@ DIGEST = os.path.join(DATA, "digest.json")
 PUSHED = os.path.join(DATA, "pushed.txt")
 
 DEFAULT_BASE = "https://api.deepseek.com"
-DEFAULT_MODEL = "deepseek-chat"
+DEFAULT_MODEL = "deepseek-flash"
 MAX_ABSTRACT = 2600          # chars per paper fed to the model
 PUSHED_KEEP = 400            # remember this many DOIs
 
@@ -129,6 +129,10 @@ def call_llm(base, key, model, prompt, tries=3, timeout=180):
     url = base.rstrip("/") + "/chat/completions"
     payload = json.dumps({
         "model": model,
+        # deepseek-flash defaults to thinking mode (high effort); for this simple
+        # structured-extraction task we turn it off so reasoning tokens aren't
+        # billed as output and latency stays low. Mirrors old deepseek-chat behavior.
+        "thinking": {"type": "disabled"},
         "messages": [
             {"role": "system", "content": SYSTEM},
             {"role": "user", "content": prompt},
