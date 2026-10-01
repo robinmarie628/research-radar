@@ -1,44 +1,114 @@
 /* ============================================================
    科研雷达 · Research Radar
-   Live data: Europe PMC (journals) + follow-builders (AI builders)
+   Live data: Europe PMC (journals) + Crossref (PII/ClinicalKey)
+              + follow-builders (AI builders)
    Zero build, zero backend, zero API keys.
    ============================================================ */
 (() => {
 'use strict';
 
-/* ---------------- config ---------------- */
-const EPMC   = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
-const FEED   = 'https://raw.githubusercontent.com/zarazhangrui/follow-builders/main/';
-const DAYS   = 14;        // discovery window (abstracts lag 2-4 days)
-const MAXJ   = 100;       // max articles pulled
-const TTL    = 30 * 60e3; // cache freshness: 30 min
-const LS_KEY = 'rr.cache.v1';
+/* ---------------- endpoints / tuning ---------------- */
+const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
+const CROSSREF = 'https://api.crossref.org/works';
+const FEED     = 'https://raw.githubusercontent.com/zarazhangrui/follow-builders/main/';
+const DAYS     = 30;        // discovery window — abstracts lag 2–4 days, so never use 1
+const MAXJ     = 100;       // Europe PMC cap per request with resultType=core
+const CHUNKS   = 3;         // split the ISSN list so one journal can't flood the pool
+const CAP_PER_JOURNAL = 8;
+const PICK_N   = 5;         // 今日精选 size (per the task prompt)
+const TTL      = 30 * 60e3; // cache freshness
+const LS_KEY   = 'rr.cache.v2';
+const SEEN_KEY = 'rr.seen.v1';
 
-const DIRS = [
-  { key:'ph',     zh:'肺动脉高压', ico:'🌬️',
-    re:/pulmonary (arterial )?hypertension|pulmonary vascular resistance|pulmonary artery pressure|precapillary|pulmonary endarterectomy|right ventricular (failure|dysfunction)/i },
-  { key:'aortic', zh:'主动脉夹层', ico:'🩺',
-    re:/aortic dissection|aortic aneurysm|thoracic aortic|aortic root|aortopathy|tevar|evar|endovascular (aneurysm|aortic|repair)|type [ab] (aortic )?dissection|abdominal aortic|aortic (stent|repair)/i },
-  { key:'hf',     zh:'心力衰竭', ico:'💜',
-    re:/heart failure|hfpef|hfref|hfmref|cardiac failure|ventricular assist|lvad|ejection fraction|cardiac resynchroni|myocardial recovery|pulmonary oedema|pulmonary edema/i },
-  { key:'htn',    zh:'高血压', ico:'🩸',
-    re:/hypertension|blood pressure|antihypertensive|hypertensive|resistant hypertension|aldosterone|renin-angiotensin/i },
-  { key:'icu',    zh:'重症医学', ico:'🚑',
-    re:/sepsis|septic shock|critically ill|intensive care|mechanical ventilation|acute respiratory distress|\bards\b|extracorporeal|\becmo\b|vasopressor|delirium|acute kidney injury|organ (dys)?function|resuscitation|cardiac arrest|sedation|weaning|prone position/i },
-  { key:'cvd',    zh:'心血管疾病', ico:'❤️',
-    re:/coronary|myocardial infarction|percutaneous coronary|atrial fibrillation|valve|tavr|tavi|stent|atherosclerosis|arrhythmi|stroke|cardiac surgery|cabg|thrombectomy|transcatheter|cardiovascular|lipid|statin|cardiac magnetic/i },
+/* ---------------- 领域 (domain) ---------------- */
+const DOMAIN_META = {
+  '综合医学':   { ico:'🏥', hue:212 },
+  '心血管':     { ico:'❤️', hue:352 },
+  '呼吸与重症': { ico:'🌬️', hue:196 },
+  '肿瘤':       { ico:'🎗️', hue:330 },
+  '神经':       { ico:'🧠', hue:268 },
+  '感染':       { ico:'🦠', hue:150 },
+  '血液':       { ico:'🩸', hue:0   },
+  '内分泌代谢': { ico:'🧪', hue:36  },
+  '消化肝病':   { ico:'⚕️', hue:20  },
+  '公共卫生':   { ico:'🌍', hue:172 },
+  '眼科':       { ico:'👁️', hue:220 },
+  '儿科':       { ico:'🧒', hue:44  },
+  '精神心理':   { ico:'🧩', hue:288 },
+  '风湿免疫':   { ico:'🛡️', hue:186 },
+  '肾脏':       { ico:'💧', hue:206 },
+  '皮肤':       { ico:'✋', hue:14  },
+  '泌尿':       { ico:'🚹', hue:236 },
+  '全球健康':   { ico:'🌏', hue:158 },
+  '数字医疗':   { ico:'📱', hue:246 },
+  '老年医学':   { ico:'🧓', hue:30  },
+  '基础医学':   { ico:'🧬', hue:300 },
+};
+const DOMAIN_ORDER = Object.keys(DOMAIN_META);
+const dm = d => DOMAIN_META[d] || { ico:'📄', hue:212 };
+
+/* ---------------- 研究类型 (study design) ----------------
+   pubTypes is useless (almost always just "Journal Article"), so the design has
+   to be read out of the abstract text. Array order == priority.            */
+const STUDY = [
+  { key:'guideline', zh:'指南/共识', rank:6,
+    re:/(clinical )?practice guideline|consensus (statement|document|recommendation)|expert consensus|society (guideline|recommendation)|guideline[- ]directed/i },
+  { key:'meta', zh:'荟萃分析', rank:6,
+    re:/systematic review and meta-analys|meta-analys|individual participant data|pooled analysis of \d|network meta-analys/i },
+  { key:'rct', zh:'随机对照试验', rank:6,
+    re:/randomi[sz]ed (controlled |clinical |placebo[- ]controlled )?(trial|study)|randomly (assigned|allocated)|double[- ]blind|placebo[- ]controlled|1:1 (ratio )?randomi/i },
+  { key:'gdb', zh:'疾病负担分析', rank:5,
+    re:/global burden of disease|global, regional, and national (burden|prevalence|estimates)|disability[- ]adjusted life|\bdalys?\b/i },
+  { key:'multicenter', zh:'多中心研究', rank:5,
+    re:/multicent(er|re)|multinational|multisite|\d+ (sites|centres|centers|hospitals) (in|across)|across \d+ countries/i },
+  { key:'cohort', zh:'前瞻队列', rank:5,
+    re:/prospective (cohort|observational|population|registry|study)|population[- ]based cohort|nationwide (cohort|register)|longitudinal (cohort|study)|community[- ]based cohort/i },
+  { key:'registry', zh:'注册研究', rank:4,
+    re:/\bregistry\b|real[- ]world (evidence|data|cohort)|nationwide (register|database)/i },
+  { key:'basic', zh:'基础研究', rank:4,
+    re:/\bmice\b|\bmurine\b|\brats?\b|in vitro|in vivo|knockout|organoid|single[- ]cell (rna|sequencing|transcriptom)|transcriptom|CRISPR|western blot|cryo-?EM|xenograft|cell line/i },
+  { key:'casecontrol', zh:'病例对照', rank:3,
+    re:/case[- ]control|nested case[- ]control/i },
+  { key:'retrospective', zh:'回顾性研究', rank:3,
+    re:/retrospective (cohort|study|analysis|review)|chart review|medical records/i },
+  { key:'review', zh:'综述', rank:2,
+    re:/this review|we review|narrative review|state[- ]of[- ]the[- ]art review|review (summari[sz]es|discusses|highlights)|in this (review|overview)|scoping review/i },
+  { key:'editorial', zh:'评论/社论', rank:1,
+    re:/this (editorial|commentary|viewpoint)|we (argue|contend) that/i },
 ];
-const DIR_BY_KEY = Object.fromEntries(DIRS.map(d => [d.key, d]));
-const GROUP_ZH = { top:'心血管疾病', cvd:'心血管疾病', hf:'心力衰竭', htn:'高血压',
-                   aortic:'主动脉夹层', ph:'肺动脉高压', icu:'重症医学' };
+const STUDY_BY_KEY = Object.fromEntries(STUDY.map(s => [s.key, s]));
+const STUDY_OTHER = { key:'other', zh:'研究论文', rank:3 };
+
+/* ---------------- abstract section headings ----------------
+   Europe PMC returns real structure: <h4>Background</h4>…<h4>Results</h4>…
+   Mapped onto the prompt's 目的 / 方法 / 结果 / 结论.                        */
+const SEC_HEAD = [
+  ['objective', /^(background|objectives?|aims?|purpose|research question|rationale|introduction|importance|context|question|hypothesis|why (did|do) we|what is known|unmet need|significance of this study|summary|overview|topic|topic importance|impact and implications)/i],
+  ['methods',   /^(methods?|materials and methods|study design|design|patients and methods|setting|approach|experimental approach|patients|participants|subjects?|data sources|study selection|study population|exposure|interventions?|procedures?|measurements?|main outcomes? (and )?measures?|outcomes? and measures|data collection|statistical analysis|study (design|population|setting|sample)|structure)/i],
+  ['results',   /^(results?|findings|main results|results? and discussion|measurements? and main results?|outcomes?|analysis|key results|review findings)/i],
+  ['conclusion',/^(conclusions?|interpretation|discussion|significance|outlook|perspectives?|implications?|meaning|conclusions? and relevance|clinical (implications?|relevance)|future (directions|perspectives)|concluding remarks|translations?)/i],
+];
+const SEC_SKIP = /^(clinical trial registration|trial registration|registration|funding|systematic review registration|conflict of interest|declarations? of interest|financial disclosure|transparency|author contributions?|copyright|data (availability|sharing)|acknowledg|supplementary|ethics|role of the funding|abbreviations)/i;
+const SEC_LABEL = { objective:'目的', methods:'方法', results:'结果', conclusion:'结论' };
+
+/** pubTypes is usually just ["Journal Article"], but when a journal does supply real
+ *  design tags they are authoritative — so check them before reading the text. */
+const PT_STRONG = [
+  [/Randomized Controlled Trial|Clinical Trial, Phase (II|III|IV)/i, 'rct'],
+  [/Practice Guideline|Guideline/i, 'guideline'],
+  [/Meta-Analysis/i, 'meta'],
+  [/Multicenter Study/i, 'multicenter'],
+];
 
 /* ---------------- state ---------------- */
 const S = {
-  cfg: [], gloss: [],
-  jr:  { all: [], byKey: {}, updated: null, loaded: false, error: null },
-  ai:  { all: [], updated: null, loaded: false, error: null },
-  jFilter: 'top',
+  cfg: [], gloss: [], domains: [],
+  jr: { all: [], picks: [], byKey: {}, updated: null, loaded: false, error: null },
+  ai: { all: [], updated: null, loaded: false, error: null },
+  jFilter: 'pick',
+  jView: 'card',
   aFilter: 'all',
+  seen: new Set(),
   tab: 'research',
 };
 
@@ -47,13 +117,12 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
 /* ---------------- utils ---------------- */
 const iso = d => d.toISOString().slice(0, 10);
-const esc = s => String(s ?? '');
 
-function decodeEntities(s) {
-  // Decode entities FIRST, then strip tags — Europe PMC double-encodes markup, so a
-  // tag-strip before decoding leaves `&lt;sup&gt;` behind as a literal `<sup>`.
+/** Decode entities FIRST, then strip tags — Europe PMC double-encodes markup, so a
+ *  tag-strip before decoding leaves `&lt;sup&gt;` behind as a literal `<sup>`. */
+function cleanText(s) {
   let out = String(s || '');
-  for (let pass = 0; pass < 2; pass++) {
+  for (let p = 0; p < 2; p++) {
     out = out
       .replace(/&lt;/g, '<').replace(/&gt;/g, '>')
       .replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'")
@@ -66,14 +135,64 @@ function decodeEntities(s) {
   return out.replace(/\s+/g, ' ').trim();
 }
 
+/** Parse a structured abstract into 目的/方法/结果/结论. Runs on the RAW text
+ *  (before tag-stripping) because the headings ARE the tags. */
+function parseAbstract(raw) {
+  const text = String(raw || '');
+  const headRe = /<(h[1-6]|b|strong)>([^<]{2,60}?)<\/\1>/gi;
+  const marks = [];
+  let m;
+  while ((m = headRe.exec(text))) {
+    const label = m[2].replace(/[:\s]+$/, '').trim();
+    const known = SEC_HEAD.some(([, re]) => re.test(label)) || SEC_SKIP.test(label);
+    if (known) marks.push({ label, start: m.index, end: headRe.lastIndex });
+  }
+  if (!marks.length) return { structured: false, sections: null, text: cleanText(text) };
+
+  const acc = { objective: [], methods: [], results: [], conclusion: [], other: [] };
+  if (marks[0].start > 0) {
+    const lead = cleanText(text.slice(0, marks[0].start));
+    if (lead) acc.other.push(lead);
+  }
+  for (let i = 0; i < marks.length; i++) {
+    const body = text.slice(marks[i].end, i + 1 < marks.length ? marks[i + 1].start : text.length);
+    const label = marks[i].label;
+    if (SEC_SKIP.test(label)) continue;
+    let slot = 'other';
+    for (const [key, re] of SEC_HEAD) if (re.test(label)) { slot = key; break; }
+    const c = cleanText(body);
+    if (c) acc[slot].push(c);
+  }
+  const sections = {};
+  for (const k of Object.keys(acc)) sections[k] = acc[k].join(' ').trim();
+
+  if (!sections.objective && !sections.methods && !sections.results && !sections.conclusion) {
+    return { structured: false, sections: null, text: cleanText(text) };
+  }
+  return { structured: true, sections, text: '' };
+}
+
+function detectStudy(title, abstract, isBasic, pubTypes) {
+  const t = ((title || '') + ' ' + (abstract || '')).slice(0, 5000);
+  const pt = (pubTypes || []).join(' | ');
+  if (isBasic) {
+    const rv = STUDY.find(s => s.key === 'review');
+    return (rv.re.test(t) || /\bReview\b/i.test(pt)) ? rv : STUDY_BY_KEY.basic;
+  }
+  for (const [re, key] of PT_STRONG) if (re.test(pt)) return STUDY_BY_KEY[key];
+  for (const s of STUDY) if (s.re.test(t)) return s;
+  if (/\bReview\b/i.test(pt)) return STUDY_BY_KEY.review;
+  return STUDY_OTHER;
+}
+
 function relTime(input) {
   if (!input) return '';
   const d = input instanceof Date ? input : new Date(input);
   if (isNaN(d)) return String(input).slice(0, 10);
   const s = (Date.now() - d.getTime()) / 1000;
-  if (s < 60)    return '刚刚';
-  if (s < 3600)  return `${Math.floor(s / 60)} 分钟前`;
-  if (s < 86400) return `${Math.floor(s / 3600)} 小时前`;
+  if (s < 60)     return '刚刚';
+  if (s < 3600)   return `${Math.floor(s / 60)} 分钟前`;
+  if (s < 86400)  return `${Math.floor(s / 3600)} 小时前`;
   if (s < 172800) return '昨天';
   if (s < 604800) return `${Math.floor(s / 86400)} 天前`;
   return `${d.getMonth() + 1}月${d.getDate()}日`;
@@ -96,10 +215,10 @@ function hueOf(str) {
   return h;
 }
 function initials(name) {
-  const parts = String(name || '?').trim().split(/[\s_-]+/).filter(Boolean);
-  if (!parts.length) return '?';
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-  return (parts[0][0] + parts[1][0]).toUpperCase();
+  const p = String(name || '?').trim().split(/[\s_-]+/).filter(Boolean);
+  if (!p.length) return '?';
+  if (p.length === 1) return p[0].slice(0, 2).toUpperCase();
+  return (p[0][0] + p[1][0]).toUpperCase();
 }
 function toast(msg, ms = 2200) {
   const t = $('#toast');
@@ -130,24 +249,26 @@ async function fetchJSONRetry(url, tries = 3, ms = 30000) {
   throw last;
 }
 
-/* ---------------- classifier ---------------- */
-/** Returns {dir, score}. dir is null when nothing matched; score 0 means no match. */
-function classify(title, abstract, group) {
-  const t = title || '', a = abstract || '';
-  let best = null, bestScore = 0;
-  for (const d of DIRS) {
-    const tm = (t.match(new RegExp(d.re.source, 'gi')) || []).length;
-    const am = (a.match(new RegExp(d.re.source, 'gi')) || []).length;
-    const score = tm * 3 + Math.min(am, 6);
-    if (score > bestScore) { bestScore = score; best = d; }
-  }
-  return { dir: best, score: bestScore };
+/* ---------------- seen / 去重 ---------------- */
+function readSeen() { try { return new Set(JSON.parse(localStorage.getItem(SEEN_KEY) || '[]')); } catch { return new Set(); } }
+function writeSeen() {
+  try { localStorage.setItem(SEEN_KEY, JSON.stringify([...S.seen].slice(-3000))); } catch { /* ignore */ }
+}
+function markSeen(a) {
+  if (!a || !a.id || S.seen.has(a.id)) return;
+  S.seen.add(a.id);
+  writeSeen();
+  bumpUnread();
+}
+function bumpUnread() {
+  const chip = $('#researchChips .chip[data-k="unread"]');
+  if (!chip) return;
+  const n = S.jr.all.filter(a => !S.seen.has(a.id)).length;
+  const c = chip.querySelector('.cnt');
+  if (c) c.textContent = `(${n})`;
 }
 
 /* ---------------- Europe PMC ---------------- */
-const CHUNKS = 3;   // split the ISSN list so one high-volume journal can't flood the pool
-const CAP_PER_JOURNAL = 8;
-
 function epmcURLs(issns) {
   const hi = iso(new Date());
   const lo = iso(new Date(Date.now() - DAYS * 864e5));
@@ -157,13 +278,49 @@ function epmcURLs(issns) {
     const slice = issns.slice(i, i + step);
     const q = `(${slice.map(x => `ISSN:"${x}"`).join(' OR ')}) AND SRC:MED `
             + `AND HAS_ABSTRACT:Y AND FIRST_PDATE:[${lo} TO ${hi}]`;
-    const p = new URLSearchParams({
+    urls.push(EPMC + '?' + new URLSearchParams({
       query: q, format: 'json', pageSize: String(MAXJ),
       resultType: 'core', sort: 'P_PDATE_D desc',
-    });
-    urls.push(EPMC + '?' + p.toString());
+    }).toString());
   }
   return urls;
+}
+
+function mapArticle(r) {
+  const j = r.journalInfo?.journal || {};
+  const issn = j.issn || j.essn || '';
+  const meta = S.cfg.find(c => c.issn === issn) || null;
+  const title = cleanText(r.title);
+  if (!title) return null;
+
+  const parsed = parseAbstract(r.abstractText);
+  const isBasic = !!(meta && meta.basic);
+  const study = detectStudy(title, parsed.text || (parsed.sections
+    ? Object.values(parsed.sections).join(' ') : ''), isBasic,
+    r.pubTypeList?.pubType || []);
+  const date = r.firstPublicationDate || r.electronicPublicationDate || r.dateOfCreation || '';
+
+  return {
+    id: (r.doi || r.id || r.pmid || '').toLowerCase(),
+    title,
+    abstract: parsed.text,
+    sections: parsed.sections,
+    structured: parsed.structured,
+    journal: meta?.short || j.medlineAbbreviation || j.isoabbreviation || '—',
+    domain: meta?.domain || '综合医学',
+    imp: meta?.if ?? 0,
+    basic: isBasic,
+    studyKey: study.key, studyZh: study.zh, studyRank: study.rank,
+    stars: starTier(meta?.if ?? 0),
+    date,
+    ts: date ? Date.parse(date) : 0,
+    year: r.pubYear || (date ? date.slice(0, 4) : ''),
+    authors: cleanText(r.authorString || '').split(',')[0] || '',
+    pmid: r.pmid || '',
+    doi: r.doi || '',
+    oa: !!r.isOpenAccess,
+    pii: undefined,
+  };
 }
 
 function balanceByJournal(items) {
@@ -171,40 +328,31 @@ function balanceByJournal(items) {
   return items.filter(a => (per[a.journal] = (per[a.journal] || 0) + 1) <= CAP_PER_JOURNAL);
 }
 
-function mapArticle(r) {
-  const j = r.journalInfo?.journal || {};
-  const issn = j.issn || j.essn || '';
-  const meta = S.cfg.find(c => c.issn === issn)
-            || S.cfg.find(c => c.issn === j.essn || c.issn === j.issn)
-            || null;
-  const journal = meta?.short || j.medlineAbbreviation || j.isoabbreviation || j.title || '—';
-  const imp = meta?.if ?? 0;
-  const group = meta?.group || 'cvd';
-  const title = decodeEntities(r.title);
-  const abstract = decodeEntities(r.abstractText);
-  const cls = classify(title, abstract, group);
-
-  // General medical journals (NEJM / Lancet / JAMA / BMJ / Nat Med) publish far beyond
-  // cardiology — keep only articles that actually match one of the six directions.
-  if (group === 'top' && cls.score === 0) return null;
-
-  const dir = cls.dir || DIR_BY_KEY[GROUP_ZH[group]] || DIRS[5];
-  const date = r.firstPublicationDate || r.electronicPublicationDate || r.dateOfCreation || '';
-  return {
-    id: r.doi || r.id || r.pmid,
-    title,
-    abstract,
-    journal, imp, group,
-    dir: dir.key, dirZh: dir.zh,
-    stars: starTier(imp),
-    date,
-    ts: date ? Date.parse(date) : 0,
-    year: r.pubYear || (date ? date.slice(0, 4) : ''),
-    authors: decodeEntities(r.authorString || '').split(',')[0] || '',
-    pmid: r.pmid || '',
-    doi: r.doi || '',
-    oa: !!r.isOpenAccess,
+/** 今日精选: N papers, 1–2 basic/molecular, max 2 per journal, domain-diverse. */
+function curate(items, n = PICK_N) {
+  const rank = a => a.studyRank * 1000 + (a.imp || 0) + (a.structured ? 40 : 0);
+  const pool = [...items].sort((a, b) => rank(b) - rank(a));
+  const picked = [], perJ = {}, perD = {};
+  const add = it => {
+    if (!it || picked.includes(it)) return false;
+    if ((perJ[it.journal] || 0) >= 2) return false;
+    picked.push(it);
+    perJ[it.journal] = (perJ[it.journal] || 0) + 1;
+    perD[it.domain] = (perD[it.domain] || 0) + 1;
+    return true;
   };
+  // 1) reserve 1–2 basic papers (the prompt's clinical/basic balance rule)
+  for (const it of pool) {
+    if (picked.filter(p => p.basic).length >= 2) break;
+    if (it.basic) add(it);
+  }
+  // 2) fill with clinical, preferring fresh domains
+  for (const it of pool) {
+    if (picked.length >= n) break;
+    if (!it.basic && !perD[it.domain]) add(it);
+  }
+  for (const it of pool) { if (picked.length >= n) break; add(it); }
+  return picked.slice(0, n).sort((a, b) => rank(b) - rank(a));
 }
 
 async function loadResearch(force) {
@@ -212,9 +360,9 @@ async function loadResearch(force) {
   if (!force && c.jr && Date.now() - c.jr.at < TTL) {
     S.jr = { ...S.jr, ...c.jr.data, loaded: true, fromCache: true };
     renderResearch();
+    loadPII(S.jr.picks);
     return;
   }
-  if (!S.jr.loaded) { /* keep skeleton */ }
   try {
     const raws = await Promise.all(
       epmcURLs(S.cfg.map(x => x.issn)).map(u => fetchJSONRetry(u, 3, 35000))
@@ -228,32 +376,98 @@ async function loadResearch(force) {
       }
     }
     const items = balanceByJournal(
-      raw.map(mapArticle).filter(x => x && x.title).sort((a, b) => b.ts - a.ts)
+      raw.map(mapArticle).filter(Boolean).sort((a, b) => b.ts - a.ts)
     );
-
     const byKey = {};
-    for (const it of items) (byKey[it.dir] ||= []).push(it);
-
+    for (const it of items) {
+      (byKey[it.domain] ||= []).push(it);
+      (byKey[it.basic ? 'basic' : 'clinical'] ||= []).push(it);
+    }
     S.jr = {
-      all: items, byKey,
+      all: items, byKey, picks: curate(items),
       updated: items.length ? items[0].date : null,
       loaded: true, error: null,
     };
-    writeCache('jr', { all: items, byKey, updated: S.jr.updated });
+    writeCache('jr', { all: items, byKey, picks: S.jr.picks, updated: S.jr.updated });
+    loadPII(S.jr.picks);
   } catch (e) {
     console.warn('[research] live fetch failed:', e);
     if (!S.jr.loaded) {
       const snap = await trySnapshot('data/snapshot-journals.json');
       if (snap?.items?.length) {
         const byKey = {};
-        for (const it of snap.items) (byKey[it.dir] ||= []).push(it);
-        S.jr = { all: snap.items, byKey, updated: snap.updated, loaded: true, error: 'snapshot' };
+        for (const it of snap.items) {
+          (byKey[it.domain] ||= []).push(it);
+          (byKey[it.basic ? 'basic' : 'clinical'] ||= []).push(it);
+        }
+        S.jr = { all: snap.items, byKey, picks: curate(snap.items),
+                 updated: snap.updated, loaded: true, error: 'snapshot' };
       } else {
         S.jr = { ...S.jr, loaded: true, error: e.message };
       }
     }
   }
   renderResearch();
+}
+
+/* ---------------- Crossref PII → ClinicalKey deep link ----------------
+   Europe PMC exposes no PII, so it comes from Crossref's alternative-id.
+   `filter=doi:a,doi:b` batches ~20 DOIs per request.                      */
+const PII_RE = /^S[0-9X]{10,}$/;
+const PII_KEY = 'rr.pii.v1';
+let piiCache = readPiiMap();
+
+function readPiiMap() { try { return JSON.parse(localStorage.getItem(PII_KEY) || '{}'); } catch { return {}; } }
+function savePiiMap() { try { localStorage.setItem(PII_KEY, JSON.stringify(piiCache)); } catch { /* quota */ } }
+
+/** PII never changes for a DOI, so it is cached forever. On failure the DOI is left
+ *  uncached so a later attempt retries; the DOI link is always the visible fallback. */
+async function loadPII(items) {
+  const targets = (items || []).filter(a => a && a.doi);
+  if (!targets.length) return;
+
+  const miss = [];
+  for (const a of targets) {
+    const k = a.doi.toLowerCase();
+    if (k in piiCache) a.pii = piiCache[k];
+    else if (a.pii === undefined) miss.push(k);
+  }
+
+  const uniq = [...new Set(miss)];
+  for (let i = 0; i < uniq.length; i += 20) {
+    const chunk = uniq.slice(i, i + 20);
+    try {
+      const d = await fetchJSONRetry(CROSSREF + '?' + new URLSearchParams({
+        filter: chunk.map(x => 'doi:' + x).join(','),
+        rows: String(chunk.length + 5), select: 'DOI,alternative-id',
+      }), 2, 20000);
+      const got = {};
+      for (const it of (d.message?.items || [])) {
+        const alt = (it['alternative-id'] || [])[0] || '';
+        got[String(it.DOI || '').toLowerCase()] = PII_RE.test(alt) ? alt : '';
+      }
+      for (const k of chunk) piiCache[k] = got[k] || '';
+      savePiiMap();
+    } catch { /* transient — leave uncached so a later expand retries */ }
+  }
+
+  for (const a of targets) {
+    const k = a.doi.toLowerCase();
+    if (a.pii === undefined && k in piiCache) a.pii = piiCache[k];
+  }
+
+  $$('#researchCards .art').forEach(node => {
+    const a = S.jr.all.find(x => x.id === node.dataset.id);
+    if (a && a.pii) addCkLink(node, a);
+  });
+}
+function addCkLink(node, a) {
+  const links = node.querySelector('.art-links');
+  if (!links || links.querySelector('.lnk.ck') || !a.pii) return;
+  const ck = el('a', 'lnk ck', 'ClinicalKey ↗');
+  ck.href = 'https://www.clinicalkey.com/#!/content/playContent/1-s2.0-' + a.pii;
+  ck.target = '_blank'; ck.rel = 'noopener noreferrer';
+  links.prepend(ck);
 }
 
 /* ---------------- follow-builders ---------------- */
@@ -264,35 +478,23 @@ function mapBuilderFeeds(x, blogs, pods) {
       out.push({
         type: 'x', kind: 'X 动态',
         name: b.name || b.handle, handle: b.handle || '',
-        text: decodeEntities(t.text),
-        ts: Date.parse(t.createdAt || '') || 0,
-        date: t.createdAt || '',
-        url: t.url || (b.handle ? `https://x.com/${b.handle}` : ''),
+        text: cleanText(t.text), ts: Date.parse(t.createdAt || '') || 0,
+        date: t.createdAt || '', url: t.url || (b.handle ? `https://x.com/${b.handle}` : ''),
         likes: t.likes ?? 0, rt: t.retweets ?? 0, replies: t.replies ?? 0,
       });
     }
   }
   for (const b of (blogs?.blogs || [])) {
-    out.push({
-      type: 'blog', kind: '官方博客',
-      name: b.name || 'Blog', handle: '',
-      text: decodeEntities(b.description || b.content || '').slice(0, 1200),
-      ts: Date.parse(b.publishedAt || '') || 0,
-      date: b.publishedAt || '',
-      url: b.url || '',
-      title: decodeEntities(b.title || ''),
-    });
+    out.push({ type: 'blog', kind: '官方博客', name: b.name || 'Blog', handle: '',
+      text: cleanText(b.description || b.content || '').slice(0, 1200),
+      ts: Date.parse(b.publishedAt || '') || 0, date: b.publishedAt || '',
+      url: b.url || '', title: cleanText(b.title || '') });
   }
   for (const p of (pods?.podcasts || [])) {
-    out.push({
-      type: 'podcast', kind: '播客',
-      name: p.name || p.show || 'Podcast', handle: '',
-      text: decodeEntities(p.description || p.summary || ''),
+    out.push({ type: 'podcast', kind: '播客', name: p.name || p.show || 'Podcast', handle: '',
+      text: cleanText(p.description || p.summary || ''),
       ts: Date.parse(p.publishedAt || p.date || '') || 0,
-      date: p.publishedAt || p.date || '',
-      url: p.url || '',
-      title: decodeEntities(p.title || ''),
-    });
+      date: p.publishedAt || p.date || '', url: p.url || '', title: cleanText(p.title || '') });
   }
   return out.filter(o => o.text || o.title).sort((a, b) => b.ts - a.ts);
 }
@@ -311,21 +513,15 @@ async function loadBuilders(force) {
       fetchJSONRetry(FEED + 'feed-podcasts.json', 2, 25000).catch(() => ({ podcasts: [] })),
     ]);
     const items = mapBuilderFeeds(x, blogs, pods);
-    S.ai = {
-      all: items,
-      updated: x?.generatedAt || items[0]?.date || null,
-      loaded: true, error: null,
-    };
+    S.ai = { all: items, updated: x?.generatedAt || items[0]?.date || null, loaded: true, error: null };
     writeCache('ai', { all: items, updated: S.ai.updated });
   } catch (e) {
     console.warn('[builders] live fetch failed:', e);
     if (!S.ai.loaded) {
       const snap = await trySnapshot('data/snapshot-builders.json');
-      if (snap?.items?.length) {
-        S.ai = { all: snap.items, updated: snap.updated, loaded: true, error: 'snapshot' };
-      } else {
-        S.ai = { ...S.ai, loaded: true, error: e.message };
-      }
+      S.ai = snap?.items?.length
+        ? { all: snap.items, updated: snap.updated, loaded: true, error: 'snapshot' }
+        : { ...S.ai, loaded: true, error: e.message };
     }
   }
   renderBuilders();
@@ -336,21 +532,20 @@ async function trySnapshot(path) {
 }
 
 /* ---------------- cache ---------------- */
-function readCache() {
-  try { return JSON.parse(localStorage.getItem(LS_KEY) || '{}'); } catch { return {}; }
-}
+function readCache() { try { return JSON.parse(localStorage.getItem(LS_KEY) || '{}'); } catch { return {}; } }
 function writeCache(slot, data) {
   try {
     const c = readCache();
     c[slot] = { at: Date.now(), data };
     localStorage.setItem(LS_KEY, JSON.stringify(c));
-  } catch { /* quota / private mode - ignore */ }
+  } catch { /* quota / private mode */ }
 }
 
-/* ---------------- render: research ---------------- */
-function chip(label, count, pressed, onClick, cls = '') {
+/* ---------------- render helpers ---------------- */
+function chip(label, count, pressed, onClick, cls = '', key = '') {
   const b = el('button', 'chip' + (cls ? ' ' + cls : ''));
   b.type = 'button';
+  if (key) b.dataset.k = key;
   b.setAttribute('aria-pressed', String(!!pressed));
   if (label.ico) b.append(el('span', 'ci', label.ico));
   b.append(document.createTextNode(label.text));
@@ -358,141 +553,16 @@ function chip(label, count, pressed, onClick, cls = '') {
   b.addEventListener('click', onClick);
   return b;
 }
-
-function renderResearch() {
-  const host = $('#researchChips');
-  const all = S.jr.all;
-  const topCount = all.filter(a => a.imp >= 20).length;
-
-  host.replaceChildren();
-  host.append(
-    chip({ ico:'🏆', text:'顶刊速递' }, topCount, S.jFilter === 'top', () => setJFilter('top')),
-    chip({ ico:'🌐', text:'全部' }, all.length, S.jFilter === 'all', () => setJFilter('all')),
-    chip({ ico:'📚', text:'专业词汇' }, S.gloss.length, false, openGlossary),
-  );
-  for (const d of DIRS) {
-    const n = (S.jr.byKey[d.key] || []).length;
-    host.append(chip({ ico:d.ico, text:d.zh }, n, S.jFilter === d.key, () => setJFilter(d.key)));
-  }
-
-  $('#litDate').textContent = S.jr.updated ? fmtDate(S.jr.updated) : '—';
-
-  const list = filteredArticles();
-  $('#researchHead').textContent = headLabel(list.length);
-  renderArticleList($('#researchCards'), list);
-}
-
-function headLabel(n) {
-  if (S.jFilter === 'top')   return `顶刊速递 ${n} 篇`;
-  if (S.jFilter === 'all')   return `最新推送 ${n} 篇`;
-  return `${DIR_BY_KEY[S.jFilter]?.zh || ''} ${n} 篇`;
-}
-
-function filteredArticles() {
-  if (S.jFilter === 'all') return S.jr.all;
-  if (S.jFilter === 'top') return S.jr.all.filter(a => a.imp >= 20);
-  return S.jr.byKey[S.jFilter] || [];
-}
-
-function setJFilter(k) {
-  S.jFilter = k;
-  renderResearch();
-  const sc = $('#scrollArea');
-  const y = $('#researchChips').offsetTop;
-  sc.scrollTo({ top: Math.max(0, y - 96), behavior: 'smooth' });
-}
-
 function starsNode(n) {
   const w = el('span', 'stars');
-  for (let i = 1; i <= 5; i++) {
-    const s = el('span', i <= n ? '' : 'off', '★');
-    w.append(s);
-  }
+  for (let i = 1; i <= 5; i++) w.append(el('span', i <= n ? '' : 'off', '★'));
   return w;
 }
-
-function articleCard(a) {
-  const c = el('article', 'card art');
-  c.dataset.id = a.id;
-
-  const top = el('div', 'art-top');
-  const caret = el('span', 'caret');
-  caret.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  top.append(caret, el('h3', 'art-title', a.title));
-
-  const badges = el('div', 'art-badges');
-  badges.append(el('span', 'badge dir dir-' + a.dir, a.dirZh));
-  badges.append(el('span', 'badge jr', a.journal));
-  badges.append(starsNode(a.stars));
-  if (a.year) badges.append(el('span', 'yr', a.year));
-
-  c.append(top, badges);
-
-  let body = null;
-  c.addEventListener('click', ev => {
-    if (ev.target.closest('a')) return;
-    const open = c.classList.toggle('open');
-    if (open) {
-      if (!body) {
-        body = el('div', 'art-body');
-        const p = el('p', 'art-abstract');
-        p.append(...highlight(a.abstract || '（该记录暂无摘要）', a.dir));
-        const meta = el('div', 'art-meta');
-        if (a.authors) meta.append(el('span', '', '👤 ' + a.authors));
-        if (a.date)    meta.append(el('span', '', '🗓 ' + a.date));
-        if (a.imp)     meta.append(el('span', '', `⭐ IF ≈ ${a.imp}`));
-        if (a.oa)      meta.append(el('span', '', '🔓 开放获取'));
-        const links = el('div', 'art-links');
-        if (a.doi)  links.append(link('https://doi.org/' + a.doi, 'DOI 全文', ''));
-        if (a.pmid) links.append(link('https://pubmed.ncbi.nlm.nih.gov/' + a.pmid + '/', 'PubMed', 'alt'));
-        body.append(p, meta, links);
-      }
-      c.append(body);
-      requestAnimationFrame(() => c.scrollIntoView({ block: 'nearest', behavior: 'smooth' }));
-    } else if (body) {
-      body.remove();
-    }
-  });
-  return c;
-}
-
 function link(href, label, cls) {
   const a = el('a', 'lnk' + (cls ? ' ' + cls : ''), label + ' ↗');
   a.href = href; a.target = '_blank'; a.rel = 'noopener noreferrer';
   return a;
 }
-
-function highlight(text, dirKey) {
-  const d = DIR_BY_KEY[dirKey];
-  if (!d || !text) return [document.createTextNode(text || '')];
-  const re = new RegExp('(' + d.re.source + ')', 'gi');
-  const parts = String(text).split(re);
-  const out = [];
-  for (let i = 0; i < parts.length; i++) {
-    if (!parts[i]) continue;
-    out.push(i % 2 === 1 ? el('span', 'hl', parts[i]) : document.createTextNode(parts[i]));
-  }
-  return out.length ? out : [document.createTextNode(text)];
-}
-
-function renderArticleList(host, list) {
-  host.replaceChildren();
-  if (!S.jr.loaded) return;
-  if (S.jr.error && !list.length) {
-    host.append(emptyBox('📡', '数据暂时取不到',
-      '网络或接口波动，稍后重试。也可以先看看缓存内容。', '重新加载', () => refresh(true)));
-    return;
-  }
-  if (!list.length) {
-    host.append(emptyBox('🔍', '这个方向今天还没有新文章',
-      '摘要入库通常滞后 2–4 天。换个方向，或切换到「全部」看看。', null, null));
-    return;
-  }
-  const frag = document.createDocumentFragment();
-  for (const a of list) frag.append(articleCard(a));
-  host.append(frag);
-}
-
 function emptyBox(ico, title, desc, btn, onClick) {
   const b = el('div', 'empty');
   b.append(el('div', 'em-ico', ico), el('h4', '', title), el('p', '', desc));
@@ -503,6 +573,203 @@ function emptyBox(ico, title, desc, btn, onClick) {
     b.append(bt);
   }
   return b;
+}
+
+/* ---------------- render: research ---------------- */
+function renderResearch() {
+  const host = $('#researchChips');
+  const all = S.jr.all;
+  const unread = all.filter(a => !S.seen.has(a.id)).length;
+
+  host.replaceChildren();
+  host.append(
+    chip({ ico:'⭐', text:'今日精选' }, S.jr.picks.length, S.jFilter === 'pick', () => setJFilter('pick'), '', 'pick'),
+    chip({ ico:'🌐', text:'全部' }, all.length, S.jFilter === 'all', () => setJFilter('all'), '', 'all'),
+    chip({ ico:'✨', text:'未读' }, unread, S.jFilter === 'unread', () => setJFilter('unread'), '', 'unread'),
+    chip({ ico:'🧬', text:'基础/分子' }, (S.jr.byKey.basic || []).length, S.jFilter === 'basic', () => setJFilter('basic'), '', 'basic'),
+    chip({ ico:'📚', text:'专业词汇' }, S.gloss.length, false, openGlossary),
+  );
+  for (const d of DOMAIN_ORDER) {
+    const n = (S.jr.byKey[d] || []).length;
+    if (!n) continue;
+    host.append(chip({ ico: dm(d).ico, text: d, hue: dm(d).hue }, n, S.jFilter === d, () => setJFilter(d)));
+  }
+
+  $('#litDate').textContent = S.jr.updated ? fmtDate(S.jr.updated) : '—';
+
+  const list = filteredArticles();
+  const isPick = S.jFilter === 'pick';
+  $('#researchHead').textContent = headLabel(list.length, isPick);
+  $('#researchSub').textContent = isPick
+    ? `每日精选 ${PICK_N} 篇 · 保证 1–2 篇基础/分子医学 · 点卡片展开结构化摘要`
+    : '点卡片任意位置展开摘要（摘要较长可在框内滚动）';
+
+  if (S.jView === 'index') renderIndexTable($('#researchCards'), list);
+  else renderArticleList($('#researchCards'), list, isPick);
+}
+
+function headLabel(n, isPick) {
+  if (S.jFilter === 'pick')   return `今日精选 ${n} 篇`;
+  if (S.jFilter === 'all')    return `最新推送 ${n} 篇`;
+  if (S.jFilter === 'unread') return `未读 ${n} 篇`;
+  if (S.jFilter === 'basic')  return `基础/分子医学 ${n} 篇`;
+  return `${S.jFilter} ${n} 篇`;
+}
+
+function filteredArticles() {
+  const k = S.jFilter;
+  if (k === 'pick')   return S.jr.picks;
+  if (k === 'all')    return S.jr.all;
+  if (k === 'unread') return S.jr.all.filter(a => !S.seen.has(a.id));
+  if (k === 'basic')  return S.jr.byKey.basic || [];
+  return S.jr.byKey[k] || [];
+}
+
+function setJFilter(k) {
+  S.jFilter = k;
+  renderResearch();
+  const sc = $('#scrollArea');
+  sc.scrollTo({ top: Math.max(0, $('#researchChips').offsetTop - 96), behavior: 'smooth' });
+}
+
+function articleCard(a, isPick, pickRank) {
+  const c = el('article', 'card art');
+  c.dataset.id = a.id;
+  if (isPick && pickRank === 1) c.classList.add('top-pick');
+
+  const top = el('div', 'art-top');
+  const caret = el('span', 'caret');
+  caret.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const titleWrap = el('div', 'art-titlewrap');
+  if (isPick && pickRank === 1) titleWrap.append(el('span', 'pick-ribbon', '⭐ 今日首选'));
+  else if (isPick) titleWrap.append(el('span', 'pick-num', 'NO.' + pickRank));
+  titleWrap.append(el('h3', 'art-title', a.title));
+  top.append(caret, titleWrap);
+
+  const badges = el('div', 'art-badges');
+  const db = el('span', 'badge dom', a.domain);
+  db.style.background = `hsl(${dm(a.domain).hue} 72% 44%)`;
+  badges.append(db);
+  badges.append(el('span', 'badge study s-' + a.studyKey, a.studyZh));
+  badges.append(el('span', 'badge ' + (a.basic ? 'bas' : 'clin'), a.basic ? '基础' : '临床'));
+  badges.append(el('span', 'badge jr', a.journal));
+  badges.append(starsNode(a.stars));
+  if (a.year) badges.append(el('span', 'yr', a.year));
+
+  c.append(top, badges);
+
+  let body = null;
+  c.addEventListener('click', ev => {
+    if (ev.target.closest('a')) return;
+    const open = c.classList.toggle('open');
+    if (!open) { if (body) body.remove(); return; }
+
+    if (!body) body = buildArticleBody(a, c);
+    c.append(body);
+    markSeen(a);
+    if (a.pii === undefined) loadPII([a]).then(() => { if (a.pii) addCkLink(c, a); });
+    requestAnimationFrame(() => c.scrollIntoView({ block: 'nearest', behavior: 'smooth' }));
+  });
+  return c;
+}
+
+function buildArticleBody(a, card) {
+  const body = el('div', 'art-body');
+
+  if (a.structured && a.sections) {
+    for (const k of ['objective', 'methods', 'results', 'conclusion', 'other']) {
+      const txt = a.sections[k];
+      if (!txt) continue;
+      const row = el('div', 'sec sec-' + k);
+      row.append(el('span', 'sec-lab', SEC_LABEL[k] || '其他'));
+      row.append(el('p', 'sec-txt', txt));
+      body.append(row);
+    }
+  } else {
+    body.append(el('p', 'art-abstract', a.abstract || '（该记录暂无摘要）'));
+  }
+
+  const meta = el('div', 'art-meta');
+  if (a.authors) meta.append(el('span', '', '👤 ' + a.authors));
+  if (a.date)    meta.append(el('span', '', '🗓 ' + a.date));
+  if (a.imp)     meta.append(el('span', '', `⭐ IF ≈ ${a.imp}`));
+  if (a.oa)      meta.append(el('span', '', '🔓 开放获取'));
+  body.append(meta);
+
+  const links = el('div', 'art-links');
+  if (a.pii)  links.append(link('https://www.clinicalkey.com/#!/content/playContent/1-s2.0-' + a.pii, 'ClinicalKey', 'ck'));
+  if (a.doi)  links.append(link('https://doi.org/' + a.doi, 'DOI 全文', a.pii ? 'alt' : ''));
+  if (a.pmid) links.append(link('https://pubmed.ncbi.nlm.nih.gov/' + a.pmid + '/', 'PubMed', 'alt'));
+  body.append(links);
+  return body;
+}
+
+function renderArticleList(host, list, isPick) {
+  host.replaceChildren();
+  if (!S.jr.loaded) return;
+  if (S.jr.error && !list.length) {
+    host.append(emptyBox('📡', '数据暂时取不到',
+      '网络或接口波动，稍后重试。', '重新加载', () => refresh(true)));
+    return;
+  }
+  if (!list.length) {
+    const msg = S.jFilter === 'unread'
+      ? ['✅', '都读完了', '这一轮的新文章你都看过了，等明天的更新吧。']
+      : ['🔍', '这里今天还没有新文章', '摘要入库通常滞后 2–4 天。换个筛选看看。'];
+    host.append(emptyBox(msg[0], msg[1], msg[2], null, null));
+    return;
+  }
+  const frag = document.createDocumentFragment();
+  list.forEach((a, i) => frag.append(articleCard(a, isPick, i + 1)));
+  host.append(frag);
+}
+
+/** 窄索引表 — # / 期刊 / 类型 / 领域 / 临床或基础 */
+function renderIndexTable(host, list) {
+  host.replaceChildren();
+  if (!list.length) {
+    host.append(emptyBox('🔍', '这里今天还没有新文章', '换个筛选看看。', null, null));
+    return;
+  }
+  const wrap = el('div', 'idxwrap');
+  const t = el('table', 'idx');
+  const thead = el('thead');
+  const hr = el('tr');
+  ['#', '期刊', '类型', '领域', '临/基'].forEach(h => hr.append(el('th', '', h)));
+  thead.append(hr);
+  const tb = el('tbody');
+  list.forEach((a, i) => {
+    const tr = el('tr');
+    tr.append(el('td', 'n', String(i + 1)));
+    tr.append(el('td', 'j', a.journal));
+    const ts = el('td', 't');
+    ts.append(el('span', 'mini s-' + a.studyKey, a.studyZh));
+    tr.append(ts);
+    const td = el('td', 'd');
+    const dot = el('span', 'dot');
+    dot.style.background = `hsl(${dm(a.domain).hue} 72% 46%)`;
+    td.append(dot, document.createTextNode(a.domain));
+    tr.append(td);
+    const tb2 = el('td', 'b');
+    tb2.append(el('span', 'mini ' + (a.basic ? 'bas' : 'clin'), a.basic ? '基础' : '临床'));
+    tr.append(tb2);
+    tr.addEventListener('click', () => openFromIndex(a));
+    tb.append(tr);
+  });
+  t.append(thead, tb);
+  wrap.append(t);
+  host.append(wrap);
+}
+
+function openFromIndex(a) {
+  S.jView = 'card';
+  S.jFilter = S.jFilter === 'pick' ? 'pick' : 'all';
+  renderResearch();
+  const node = $(`#researchCards .art[data-id="${CSS.escape(a.id)}"]`);
+  if (node) {
+    node.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    node.click();
+  }
 }
 
 /* ---------------- render: builders ---------------- */
@@ -519,18 +786,13 @@ function renderBuilders() {
     chip({ ico:'📻', text:'播客' }, counts.podcast, S.aFilter === 'podcast', () => setAFilter('podcast')),
     chip({ ico:'📘', text:'官方博客' }, counts.blog, S.aFilter === 'blog', () => setAFilter('blog')),
   );
-
-  // per-builder chips (top 8 by post count)
   const byHandle = {};
   for (const p of all) if (p.type === 'x' && p.handle) (byHandle[p.handle] ||= []).push(p);
-  const top = Object.entries(byHandle).sort((a, b) => b[1].length - a[1].length).slice(0, 8);
-  for (const [h, arr] of top) {
-    host.append(chip({ text:'@' + h }, arr.length, S.aFilter === 'h:' + h,
-      () => setAFilter('h:' + h)));
+  for (const [h, arr] of Object.entries(byHandle).sort((a, b) => b[1].length - a[1].length).slice(0, 8)) {
+    host.append(chip({ text:'@' + h }, arr.length, S.aFilter === 'h:' + h, () => setAFilter('h:' + h)));
   }
 
   $('#aiDate').textContent = S.ai.updated ? fmtDate(S.ai.updated) : '—';
-
   const list = filteredPosts();
   $('#builderHead').textContent = S.aFilter.startsWith('h:')
     ? `@${S.aFilter.slice(2)} 的动态 ${list.length} 条`
@@ -543,17 +805,14 @@ function filteredPosts() {
   if (S.aFilter.startsWith('h:')) return S.ai.all.filter(p => p.handle === S.aFilter.slice(2));
   return S.ai.all.filter(p => p.type === S.aFilter);
 }
-
 function setAFilter(k) {
   S.aFilter = k;
   renderBuilders();
-  const sc = $('#scrollArea');
-  sc.scrollTo({ top: Math.max(0, $('#builderChips').offsetTop - 96), behavior: 'smooth' });
+  $('#scrollArea').scrollTo({ top: Math.max(0, $('#builderChips').offsetTop - 96), behavior: 'smooth' });
 }
 
 function postCard(p) {
   const c = el('article', 'card post');
-
   const top = el('div', 'post-top');
   const av = el('div', 'avatar', initials(p.name));
   const h = hueOf(p.handle || p.name || 'x');
@@ -569,18 +828,14 @@ function postCard(p) {
   const foot = el('div', 'post-foot');
   if (p.type === 'x') {
     // ♥ / 💬 render as colour glyphs; the retweet arrow does not on Windows, so use RT.
-    foot.append(
-      el('span', 'm', '♥ ' + p.likes),
-      el('span', 'm', 'RT ' + p.rt),
-      el('span', 'm', '💬 ' + p.replies),
-    );
+    foot.append(el('span', 'm', '♥ ' + p.likes), el('span', 'm', 'RT ' + p.rt),
+                el('span', 'm', '💬 ' + p.replies));
   }
   if (p.url) {
     const a = el('a', 'go', '查看原文 ↗');
     a.href = p.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
     foot.append(a);
   }
-
   c.append(top, txt, foot);
 
   if ((p.text || '').length > 220) {
@@ -599,13 +854,11 @@ function renderPostList(host, list) {
   host.replaceChildren();
   if (!S.ai.loaded) return;
   if (S.ai.error && !list.length) {
-    host.append(emptyBox('📡', '资讯暂时取不到',
-      '上游 feed 波动，稍后重试。', '重新加载', () => refresh(true)));
+    host.append(emptyBox('📡', '资讯暂时取不到', '上游 feed 波动，稍后重试。', '重新加载', () => refresh(true)));
     return;
   }
   if (!list.length) {
-    host.append(emptyBox('🌙', '这个筛选下暂时没有动态',
-      '换个筛选，或稍后再来看看。', null, null));
+    host.append(emptyBox('🌙', '这个筛选下暂时没有动态', '换个筛选，或稍后再来看看。', null, null));
     return;
   }
   const frag = document.createDocumentFragment();
@@ -615,25 +868,18 @@ function renderPostList(host, list) {
 
 /* ---------------- glossary ---------------- */
 function openGlossary() {
-  const sh = $('#glossSheet');
-  sh.hidden = false;
+  $('#glossSheet').hidden = false;
   $('#glossSearch').value = '';
   renderGlossary('');
   setTimeout(() => $('#glossSearch').focus(), 320);
 }
 function closeGlossary() { $('#glossSheet').hidden = true; }
-
 function renderGlossary(q) {
   const host = $('#glossList');
   const key = q.trim().toLowerCase();
-  const list = key
-    ? S.gloss.filter(g => (g.en + g.zh + g.def).toLowerCase().includes(key))
-    : S.gloss;
+  const list = key ? S.gloss.filter(g => (g.en + g.zh + g.def).toLowerCase().includes(key)) : S.gloss;
   host.replaceChildren();
-  if (!list.length) {
-    host.append(emptyBox('🔍', '没有匹配的术语', '换个关键词试试。', null, null));
-    return;
-  }
+  if (!list.length) { host.append(emptyBox('🔍', '没有匹配的术语', '换个关键词试试。', null, null)); return; }
   const frag = document.createDocumentFragment();
   for (const g of list) {
     const d = el('div', 'gl');
@@ -653,16 +899,12 @@ function setTab(tab) {
     b.classList.toggle('is-active', on);
     b.setAttribute('aria-selected', String(on));
   });
-  $('#segmented').dataset.i = tab === 'research' ? '0' : '1';
+  const seg = $('#segmented');
+  if (seg) seg.dataset.i = tab === 'research' ? '0' : '1';
   $('#panel-research').hidden = tab !== 'research';
   $('#panel-builders').hidden = tab !== 'builders';
   $('#scrollArea').scrollTop = 0;
-
-  const sub = tab === 'research'
-    ? '顶刊速递 · 心血管 + 重症'
-    : 'AI Builder · 一手动态';
-  $('#brandSub').textContent = sub;
-
+  $('#brandSub').textContent = tab === 'research' ? '临床顶刊 + 基础医学 · 每日速递' : 'AI Builder · 一手动态';
   if (tab === 'builders' && !S.ai.loaded) loadBuilders(false);
 }
 
@@ -675,25 +917,24 @@ async function refresh(force = true) {
     await Promise.all([loadResearch(true), loadBuilders(true)]);
     const ok = (S.jr.all.length ? 1 : 0) + (S.ai.all.length ? 1 : 0);
     toast(ok === 2 ? '已更新到最新' : ok === 1 ? '部分数据已更新' : '暂时取不到数据，稍后重试');
-  } catch {
-    toast('刷新失败，请检查网络');
-  } finally {
-    btn.classList.remove('spin');
-    stampFoot();
-  }
+  } catch { toast('刷新失败，请检查网络'); }
+  finally { btn.classList.remove('spin'); stampFoot(); }
 }
-
-function stampFoot() {
-  $('#footTime').textContent = '更新于 ' + relTime(new Date());
-}
+function stampFoot() { $('#footTime').textContent = '更新于 ' + relTime(new Date()); }
 
 /* ---------------- boot ---------------- */
-window.__rr = S;   // debug hook for the QA harness
-
 async function boot() {
-  // instant paint from cache
+  window.__rr = S;                 // debug/QA hook
+  S.seen = readSeen();
+
   const c = readCache();
-  if (c.jr?.data?.all?.length) { S.jr = { ...c.jr.data, loaded: true }; renderResearch(); }
+  if (c.jr?.data?.all?.length) {
+    const d = c.jr.data;
+    d.picks = d.picks?.length ? d.picks : curate(d.all);
+    S.jr = { ...d, loaded: true };
+    renderResearch();
+    loadPII(S.jr.picks);
+  }
   if (c.ai?.data?.all?.length) { S.ai = { ...c.ai.data, loaded: true }; renderBuilders(); }
 
   try {
@@ -703,10 +944,8 @@ async function boot() {
     ]);
     S.cfg = cfg || [];
     S.gloss = gloss || [];
-  } catch (e) {
-    console.warn('[boot] config load failed:', e);
-    S.cfg = []; S.gloss = [];
-  }
+  } catch (e) { console.warn('[boot] config load failed:', e); S.cfg = []; S.gloss = []; }
+
   renderResearch();
   renderBuilders();
 
@@ -714,10 +953,7 @@ async function boot() {
   if (S.tab === 'builders') await loadBuilders(false);
   stampFoot();
 
-  // background warm-up of the other tab
   setTimeout(() => { if (!S.ai.loaded) loadBuilders(false); }, 1200);
-
-  // always re-validate in the background on open
   setTimeout(() => { loadResearch(true); loadBuilders(true); }, 2500);
 }
 
@@ -728,11 +964,27 @@ $('#glossSearch').addEventListener('input', e => renderGlossary(e.target.value))
 $('#glossSheet').addEventListener('click', e => { if (e.target.closest('[data-close]')) closeGlossary(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeGlossary(); });
 
+$$('.viewtog button').forEach(b => b.addEventListener('click', () => {
+  S.jView = b.dataset.view;
+  $$('.viewtog button').forEach(x => {
+    const on = x.dataset.view === S.jView;
+    x.classList.toggle('is-active', on);
+    x.setAttribute('aria-pressed', String(on));
+  });
+  renderResearch();
+}));
+
+const markAll = $('#markAllRead');
+if (markAll) markAll.addEventListener('click', () => {
+  S.jr.all.forEach(a => S.seen.add(a.id));
+  writeSeen();
+  toast('已把 ' + S.jr.all.length + ' 篇标为已读');
+  renderResearch();
+});
+
 boot();
 
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
-  });
+  window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
 }
 })();

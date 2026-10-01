@@ -28,7 +28,7 @@ jobs:
           python-version: '3.12'
 
       - name: Rebuild snapshots
-        run: python scripts/build_snapshot.py --days 14
+        run: python scripts/build_snapshot.py --days 30
 
       - name: Commit if changed
         run: |

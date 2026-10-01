@@ -279,6 +279,122 @@ body{
   border:1px solid #d5e6ff;font-weight:700;
   max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
+
+/* ---- 领域 / 研究类型 / 临床或基础 ---- */
+.badge.dom{color:#fff}
+.badge.study{background:#eef4ff;color:#3a5f96;border:1px solid #dbe7f9}
+.s-rct{background:#e3f6ec;color:#137a48;border-color:#c4e9d6}
+.s-meta{background:#f0e9fb;color:#6b3fb0;border-color:#e0d2f6}
+.s-guideline{background:#fdf3dd;color:#8a6100;border-color:#f4e2b4}
+.s-gdb{background:#e2f5f4;color:#0f6f6a;border-color:#c3e9e7}
+.s-multicenter{background:#e6f0fd;color:#1f5aa8;border-color:#cfe1fa}
+.s-cohort{background:#eaf2fd;color:#2f6294;border-color:#d8e6f8}
+.s-registry{background:#eef1f6;color:#4c5b70;border-color:#dde2ea}
+.s-basic{background:#f3e9fb;color:#7a3fb8;border-color:#e5d3f5}
+.s-casecontrol{background:#fdf1e4;color:#8a5310;border-color:#f5e0c6}
+.s-retrospective,.s-review,.s-editorial{background:#f2f4f7;color:#63707f;border-color:#e4e8ee}
+.s-other{background:#f1f5fb;color:#5b6c86;border-color:#e3eaf4}
+.badge.bas{background:linear-gradient(140deg,#a855c9,#7c3aed);color:#fff}
+.badge.clin{background:#d9f2e3;color:#0d6135;border:1px solid #b6e3cb}
+
+/* ---- 今日精选 ---- */
+.art-titlewrap{flex:1;min-width:0}
+.pick-ribbon{
+  display:inline-block;font-size:10px;font-weight:800;color:#8a6100;
+  background:#fdf0cd;border:1px solid #f0dc9e;border-radius:5px;
+  padding:2px 6px;margin-bottom:5px;letter-spacing:.2px;
+}
+.pick-num{
+  display:inline-block;font-size:9.5px;font-weight:800;color:#8ea6c4;
+  letter-spacing:.6px;margin-bottom:4px;
+}
+.card.top-pick{
+  background:linear-gradient(180deg,#fffdf6,#fff 62%);
+  border-color:#eedca6;
+  box-shadow:0 0 0 1px #f6e9c4, 0 6px 20px rgba(190,145,20,.13);
+}
+
+/* ---- 结构化摘要：目的 / 方法 / 结果 / 结论 ---- */
+.sec{display:flex;gap:8px;margin:0 0 9px}
+.sec:last-of-type{margin-bottom:0}
+.sec-lab{
+  flex:0 0 32px;height:17px;line-height:17px;text-align:center;
+  font-size:10px;font-weight:800;color:#fff;border-radius:5px;
+  letter-spacing:.5px;margin-top:1px;
+}
+.sec-txt{
+  margin:0;flex:1;min-width:0;
+  font-size:12.5px;line-height:1.72;color:var(--ink-2);
+  max-height:168px;overflow-y:auto;padding-right:5px;
+  scrollbar-width:thin;
+}
+.sec-txt::-webkit-scrollbar{width:4px}
+.sec-txt::-webkit-scrollbar-thumb{background:#cfdcf0;border-radius:4px}
+.sec-objective  .sec-lab{background:#2f80ed}
+.sec-methods    .sec-lab{background:#0f9d8c}
+.sec-results    .sec-lab{background:#1c9b57}
+.sec-conclusion .sec-lab{background:#7c3aed}
+.sec-other      .sec-lab{background:#8496ad}
+
+/* ---- 列表头工具条 ---- */
+.lh-top{display:flex;align-items:center;gap:10px}
+.lh-top > span{
+  flex:1;min-width:0;font-size:13.5px;font-weight:800;color:var(--ink);letter-spacing:.2px;
+}
+.lh-tools{display:flex;align-items:center;gap:7px;flex:0 0 auto}
+.ghost-btn{
+  font-family:inherit;font-size:10.5px;font-weight:800;color:#4a6b96;
+  background:#f3f8ff;border:1px solid #dbe7f9;border-radius:7px;
+  padding:5px 8px;cursor:pointer;line-height:1.2;
+  transition:transform .16s cubic-bezier(.34,1.4,.64,1),background .2s;
+}
+.ghost-btn:active{transform:scale(.93);background:#e9f2ff}
+.viewtog{display:flex;background:#eef4fd;border:1px solid #dbe7f9;border-radius:8px;padding:2px;gap:2px}
+.viewtog button{
+  font-family:inherit;font-size:10.5px;font-weight:800;color:#5b7ba6;
+  background:transparent;border:0;border-radius:6px;padding:4px 8px;cursor:pointer;
+  line-height:1.2;transition:background .18s,color .18s;
+}
+.viewtog button.is-active{background:#fff;color:var(--brand);box-shadow:0 1px 3px rgba(19,58,110,.13)}
+
+/* ---- 窄索引表 ---- */
+.idxwrap{
+  background:#fff;border:1px solid var(--line);border-radius:var(--r-md);
+  overflow:hidden;box-shadow:var(--sh-1);
+}
+table.idx{width:100%;border-collapse:collapse;table-layout:fixed;font-size:11.5px}
+table.idx th{
+  background:#f2f7ff;color:#3a5f96;font-weight:800;font-size:10px;
+  padding:8px 6px;text-align:left;border-bottom:1px solid var(--line);
+  letter-spacing:.3px;
+}
+table.idx td{
+  padding:9px 6px;border-bottom:1px solid var(--line-2);
+  vertical-align:middle;color:var(--ink-2);font-weight:600;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+table.idx tr:last-child td{border-bottom:0}
+table.idx tbody tr{cursor:pointer}
+table.idx tbody tr:active{background:#f7fbff}
+table.idx .n{width:22px;text-align:center;color:var(--ink-4);font-weight:800}
+table.idx .j{
+  width:30%;font-weight:800;color:var(--brand-ink);
+  white-space:normal;line-height:1.28;word-break:break-word;   /* journal names wrap, never "Lancet …" */
+}
+table.idx .t{width:24%}
+table.idx .d{width:24%}
+table.idx .b{width:42px;text-align:center}
+.dot{
+  display:inline-block;width:7px;height:7px;border-radius:50%;
+  margin-right:5px;vertical-align:middle;
+}
+.mini{
+  display:inline-block;font-size:9.5px;font-weight:800;
+  padding:2px 5px;border-radius:5px;line-height:1.35;
+  background:#eef4ff;color:#3a5f96;
+}
+.mini.bas{background:#f3e9fb;color:#7a3fb8}
+.mini.clin{background:#eaf6ef;color:#1c7a45}
 .stars{font-size:10.5px;letter-spacing:.6px;color:var(--gold);font-weight:700;line-height:1}
 .stars .off{color:#dbe4f0}
 .yr{font-size:10.5px;color:var(--ink-4);font-weight:700;margin-left:auto}

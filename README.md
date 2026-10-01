@@ -4,10 +4,10 @@
 
 | 标签页 | 内容 | 数据来源 |
 |---|---|---|
-| 🔬 **科研顶刊** | 心血管 + 重症前沿顶刊速递，按六大方向分类，按期影响因子标注 | [Europe PMC](https://europepmc.org/) REST API |
+| 🔬 **科研顶刊** | 临床顶刊 + 基础/分子医学每日速递，按领域分类，标注研究类型与临床/基础 | [Europe PMC](https://europepmc.org/) + [Crossref](https://api.crossref.org) |
 | 🤖 **AI Builder** | 26 位一线 AI builder 的 X 动态、播客、官方博客 | [follow-builders](https://github.com/zarazhangrui/follow-builders) 公共 feed |
 
-**打开即最新**：页面每次打开都直接向两个上游实时抓取，没有后端、没有定时任务、没有 API key。抓到的数据会缓存在浏览器本地（30 分钟），所以第二次打开是秒开的，同时后台再静默校验一次。
+**打开即最新**：页面每次打开都直接向上游实时抓取，没有后端、没有定时任务、没有 API key。数据缓存在浏览器本地（30 分钟），第二次打开秒开，后台再静默校验一次。
 
 ---
 
@@ -21,14 +21,14 @@ research-radar/
 ├── assets/
 │   ├── styles.css                 # 全部样式（浅色，移动优先）
 │   ├── app.js                     # 全部逻辑（零依赖，原生 JS）
-│   ├── icon.svg / icon-*.png      # 应用图标
+│   └── icon.svg / icon-*.png      # 应用图标
 ├── data/
-│   ├── journals.config.json       # 47 本期刊 + ISSN + 影响因子 + 方向（唯一需要改的配置）
+│   ├── journals.config.json       # 55 本期刊 + ISSN + 领域 + 临床/基础 + 影响因子
 │   ├── glossary.json              # 96 条专业词汇
 │   ├── snapshot-journals.json     # 兜底快照（接口挂了也能看）
 │   └── snapshot-builders.json     # 兜底快照
 ├── scripts/
-│   ├── validate_issns.py          # 校验 ISSN 是否有效（改期刊列表后跑一次）
+│   ├── build_config.py            # 校验 ISSN、抓期刊名、输出配置
 │   ├── build_snapshot.py          # 生成兜底快照
 │   └── qa.js                      # 无头浏览器 QA
 └── .github/workflows/
@@ -37,58 +37,105 @@ research-radar/
 
 ---
 
+## 期刊池
+
+**40 本临床顶刊 + 17 本 CNS / 基础医学期刊**，全部逐个校验过 ISSN。
+
+- **临床**：Lancet 全家族（肿瘤/神经/感染/呼吸/内分泌/消化肝病/血液/风湿/精神/公共卫生/全球健康/数字医疗/儿科/老年/HIV/微生物）、JACC 全家族、CHEST、Ophthalmology 家族、Annals of Oncology、Journal of Hepatology、Kidney International、JAAD、European Urology、NEJM、EClinicalMedicine
+- **基础/分子**：Cell、Nature、Science、Nature Genetics、Nature Immunology、Cell Stem Cell、Science Translational Medicine、Science Advances、Nature Communications、Cell Reports、Cell Host & Microbe、Cell Systems、Nature Biomedical Engineering、Nature Biotechnology、Nature Neuroscience、Neuron、JACC: Basic to Translational Science
+
+> 原任务文档里的 **CHEST Pulmonary (2949-7884)** 和 **CHEST Critical Care (2949-7892)** 在 Europe PMC 返回 0 条——两本刊太新，尚未被 MEDLINE 收录，因此未纳入。**Nature Biomedical Engineering** 的正确 ISSN 是 `2157-846X`（`2372-7705` 无效）。
+
+---
+
 ## 科研顶刊是怎么来的
 
-**一句话：Europe PMC 一次查询拿到 47 本顶刊近 14 天带摘要的全部新文章，再在浏览器里分类。**
+**一句话：Europe PMC 一次查询拿到 55 本顶刊近 30 天带摘要的全部新文章，在浏览器里解析结构、判定研究类型、按规则精选。**
 
-选 Europe PMC 而不是 Scopus / PubMed 的原因：
-
-- **免 key、免配额**，可以直接从浏览器调用（`Access-Control-Allow-Origin: *`）。
-- **带摘要**。Crossref 对 Elsevier 系期刊完全不返回摘要（NEJM、Lancet、JACC 全部 0/20），只有标题没结论。
-- **支持多 ISSN 联合查询**，47 本期刊一次请求搞定，不用逐本循环。
-
-查询语句长这样：
+选 Europe PMC 而不是 Scopus / PubMed 的原因：**免 key、免配额、带摘要、支持多 ISSN 联合查询**。（Crossref 对 Elsevier 系期刊完全不返回摘要，NEJM、Lancet、JACC 全部 0/20。）
 
 ```
 (ISSN:"0140-6736" OR ISSN:"0028-4793" OR …)
-  AND SRC:MED
-  AND HAS_ABSTRACT:Y
-  AND FIRST_PDATE:[2026-09-17 TO 2026-10-01]
+  AND SRC:MED AND HAS_ABSTRACT:Y AND FIRST_PDATE:[<lo> TO <hi>]
 ```
 
-几个关键设计：
+### 关键设计
 
-1. **必须加 `HAS_ABSTRACT:Y`。** Europe PMC 的 `journal-article` 类型太粗，会混进勘误（`Department of Error`）、讣告、通讯、评论。「有摘要」是唯一能把真正的研究论文干净分出来的条件。
-2. **窗口取 14 天，不是 1 天。** 摘要入库比文章发表滞后 2–4 天，1 天窗口基本是空的。用 14 天窗口 + 前端去重，才是稳定可用的做法。
-3. **拆成 3 段查询再合并。** 单次查询会被高产的期刊淹没——JAHA 两周发 33 篇，会把 NEJM、Lancet 全部挤出去。拆段 + 每刊最多 8 篇（`CAP_PER_JOURNAL`），保证顶刊一定在列表里。
-4. **不写「今日发表」。** 页面显示的是文章真实的 `firstPublicationDate`，不美化。
+1. **必须加 `HAS_ABSTRACT:Y`。** `journal-article` 类型太粗，会混进勘误（`Department of Error`）、讣告、通讯、评论。「有摘要」是唯一能干净分出真正研究论文的条件。
+2. **窗口取 30 天，不是 1 天。** 摘要入库滞后发表 2–4 天，1 天窗口基本是空的。
+3. **拆成 3 段查询再合并。** 单次查询会被高产期刊淹没——Nature Communications 一季度 2282 篇。拆段 + **每刊最多 8 篇**，保证小刊也能露脸。
+4. **不写「今日发表」。** 显示的是文章真实的 `firstPublicationDate`。
 
-### 六大方向是怎么分的
+### 领域（20 个）
 
-`app.js` 里的 `DIRS` 用正则给标题（权重 ×3）和摘要打分，取最高分的方向；都没命中就回落到期刊本身的分类。顺序即优先级：
+领域直接来自期刊本身，不做关键词猜测——Lancet Oncology 就是肿瘤，JACC 就是心血管，准确率 100%。
 
-`肺动脉高压 → 主动脉夹层 → 心力衰竭 → 高血压 → 重症医学 → 心血管疾病`
+综合医学 · 心血管 · 呼吸与重症 · 肿瘤 · 神经 · 感染 · 血液 · 内分泌代谢 · 消化肝病 · 公共卫生 · 眼科 · 儿科 · 精神心理 · 风湿免疫 · 肾脏 · 皮肤 · 泌尿 · 全球健康 · 数字医疗 · 老年医学 · 基础医学
 
-### 影响因子 → 星级
+### 研究类型（12 类）
 
-| IF | ★ |
+**`pubTypes` 几乎没用**——实测绝大多数文章只返回 `['Journal Article']`。所以研究类型是从**摘要正文**里读出来的：
+
+| 优先级 | 类型 | 判定依据 |
+|---|---|---|
+| 6 | 指南/共识 · 荟萃分析 · 随机对照试验 | practice guideline / meta-analysis / randomized controlled trial |
+| 5 | 疾病负担分析 · 多中心研究 · 前瞻队列 | global burden of disease / multicenter / prospective cohort |
+| 4 | 注册研究 · 基础研究 | registry / in vivo, knockout, single-cell |
+| 3 | 病例对照 · 回顾性研究 · 研究论文 | case-control / retrospective |
+| 1–2 | 综述 · 评论/社论 | this review / this editorial |
+
+期刊若真的提供了 `pubTypes`（NEJM 会返回 `Randomized Controlled Trial` 等），则以它为准——它是权威标签。
+
+### 结构化摘要：目的 / 方法 / 结果 / 结论
+
+Europe PMC 返回的摘要**自带小标题**（`<h4>Background</h4>…<h4>Results</h4>…`）。解析成中文四段，比一整块文字好读得多：
+
+| 原小标题 | 映射 |
 |---|---|
-| ≥ 30 | ★★★★★ |
-| ≥ 15 | ★★★★ |
-| ≥ 8 | ★★★ |
-| ≥ 4 | ★★ |
-| < 4 | ★ |
+| Background / Objective / Purpose / Research question / Aims | **目的** |
+| Methods / Design / Patients and participants / Main outcome measures | **方法** |
+| Results / Findings / Main results | **结果** |
+| Conclusions / Interpretation / Discussion / Translation | **结论** |
+| Funding / Trial registration / Financial disclosure | 丢弃 |
 
-IF 取 2024 JCR 的近似值，只用来做视觉分级，**不要当作引用依据**。展开卡片里会显示精确数值。
+当前 189 篇里有 101 篇是结构化摘要（53%），其余回退成整段原文。
+
+> **陷阱**：基因名也用小标题标签包裹（`TRAF7`、`Cxcl1`、`BBX28`、`IAA19`…）。解析器只在标签文本**命中已知小标题词表**时才当作分段，否则忽略——否则一篇分子生物学论文会被切成十几个假章节。
+
+### 今日精选（默认视图）
+
+按任务文档的规则，从当日池子里精选 **5 篇**：
+
+- **保证 1–2 篇基础/分子医学**（先预留 2 个名额给 `basic` 论文）
+- **同刊最多 2 篇**
+- **尽量覆盖不同领域**（优先补还没出现过的领域）
+- 排序权重 = 研究类型等级 ×1000 + 影响因子 + 结构化摘要加成
+
+第 1 篇标 **⭐ 今日首选**。
+
+### 原文链接
+
+- **ClinicalKey 深链**：Europe PMC 不提供 PII，所以向 Crossref 取 `alternative-id`。`filter=doi:a,doi:b` 支持一次批量查 20 个 DOI，因此整个列表只需几次请求。只有真的 PII（`^S[0-9X]{10,}$`）才生成 ClinicalKey 链接。
+  `https://www.clinicalkey.com/#!/content/playContent/1-s2.0-<PII>`
+- **DOI 全文**：`https://doi.org/<DOI>`（无 ClinicalKey 订阅权限时的兜底，始终显示）
+- **PubMed**：`https://pubmed.ncbi.nlm.nih.gov/<PMID>/`
+
+### 去重记录（未读）
+
+任务文档第 5 步要求维护 `pushed.txt` 避免次日重复推送。浏览器里等价物是 localStorage：**展开过的卡片自动标为已读**，`🆕 未读` 筛选只显示没读过的，列表头有「全部已读」一键清空。
+
+### 索引表视图
+
+列表头可切 **卡片 / 索引表**。索引表就是任务文档要的窄索引表：`# / 期刊 / 类型 / 领域 / 临·基`，点任意一行跳回对应卡片并展开。
 
 ---
 
 ## AI Builder 资讯是怎么来的
 
-直接读 [follow-builders](https://github.com/zarazhangrui/follow-builders) 仓库每天自动更新的三个公共 feed（`raw.githubusercontent.com` 同样允许跨域）：
+直接读 [follow-builders](https://github.com/zarazhangrui/follow-builders) 每天自动更新的三个公共 feed（`raw.githubusercontent.com` 允许跨域）：
 
 - `feed-x.json` — 26 位 builder 的 X 动态（Karpathy、swyx、Amjad Masad、Guillermo Rauch、Sam Altman…）
-- `feed-blogs.json` — Anthropic Engineering、Claude Blog 等官方博客全文
+- `feed-blogs.json` — Anthropic Engineering、Claude Blog 等官方博客
 - `feed-podcasts.json` — Latent Space、No Priors、Training Data 等 6 档播客
 
 该仓库的理念是 **follow builders, not influencers**——跟的是真正在做产品的人，不是搬运信息的网红。
@@ -103,7 +150,7 @@ python -m http.server 8777
 # 手机浏览器打开 http://<你的电脑IP>:8777
 ```
 
-必须用 HTTP 服务，直接双击 `index.html`（`file://`）会导致 fetch 和 Service Worker 失效。
+必须走 HTTP，直接双击 `index.html`（`file://`）会让 fetch 和 Service Worker 失效。
 
 ---
 
@@ -113,43 +160,42 @@ python -m http.server 8777
 cd research-radar
 git init -b main
 git add -A
-git commit -m "feat: 科研雷达 — 顶刊速递 + AI Builder"
+git commit -m "feat: 科研雷达"
 git remote add origin https://github.com/<你的用户名>/research-radar.git
 git push -u origin main
 ```
 
-然后仓库 **Settings → Pages → Source 选 `Deploy from a branch` → `main` / `/ (root)`**，等 1 分钟。
+然后仓库 **Settings → Pages → Source 选 `Deploy from a branch` → `main` / `/ (root)`**。
 
-手机访问 `https://<你的用户名>.github.io/research-radar/`，Safari/Chrome 里「添加到主屏幕」就是一个 App 图标。
-
-> 仓库里的 `.nojekyll` 不能删——否则 GitHub Pages 的 Jekyll 会忽略下划线开头的路径。
+> `.nojekyll` 不能删——否则 GitHub Pages 的 Jekyll 会忽略下划线开头的路径。
 
 ---
 
-## 怎么改成你自己的方向
+## 怎么改
 
-编辑 `data/journals.config.json`，一行一本期刊：
+**换期刊**：编辑 `data/journals.config.json`，一行一本：
 
 ```json
 { "issn": "0140-6736", "title": "The Lancet", "short": "Lancet",
-  "if": 98.4, "group": "top" }
+  "domain": "综合医学", "basic": false, "if": 98.4 }
 ```
 
-`group` 可选：`top` `cvd` `hf` `htn` `aortic` `ph` `icu`。
+`domain` 取上面 20 个领域之一；`basic: true` 表示基础/分子医学期刊。
 
-**加完必须校验 ISSN**，错的 ISSN 会静默返回 0 条：
+**加完必须校验 ISSN**——错的 ISSN 会静默返回 0 条，不报错：
 
 ```bash
-python scripts/validate_issns.py     # 逐本查询并报告 90 天内的文章数
+python scripts/build_config.py --sample   # 逐本查询 + 抽样摘要小标题
 ```
 
-要改方向（比如换成肿瘤、神经），同步改 `app.js` 的 `DIRS` 数组和 `data/glossary.json` 即可。
+**改方向**（比如专做肿瘤）：在 `journals.config.json` 里只留目标期刊，`app.js` 的 `DOMAIN_META` 和 `data/glossary.json` 同步调整即可。
 
 ---
 
 ## 已知边界
 
-- **摘要有 2–4 天滞后**，这是 Europe PMC 的入库节奏，不是 bug。所以页面显示的是「最新推送」而不是「今日推送」。
-- **IF 是近似值**，用于星级分级，会随 JCR 年度更新而漂移。
-- **顶刊速递筛选阈值是 IF ≥ 20**，想更严/更松就改 `app.js` 里 `renderResearch()` 的那个 `20`。
-- 上游接口偶发波动时，页面会自动回落到 `data/snapshot-*.json` 快照并给出提示。
+- **摘要有 2–4 天滞后**，这是 Europe PMC 的入库节奏，不是 bug。所以标题写「最新推送」而非「今日推送」。
+- **影响因子是 2024 JCR 近似值**，只用于星级分级和排序权重，不要当引用依据；展开卡片会显示精确数值。
+- **「今日精选」是启发式排序，不是 LLM 精读**。任务文档里的「创新 / 看点」需要模型读摘要才能写，静态前端做不到——因此只呈现**摘要原文的分段**（目的/方法/结果/结论），**不生成任何摘要里没有的结论**，符合文档「不得编造」的硬性约束。
+- **基础/分子论文**判定依据是期刊名（Cell / Nature / Science / Neuron / JACC: Basic 片段），与任务文档一致。
+- 上游波动时页面自动回落到 `data/snapshot-*.json` 并给出提示。

@@ -55,20 +55,29 @@
 
       <div class="banner">
         <div class="banner-glow" aria-hidden="true"></div>
-        <h2 class="banner-title">心血管 + 重症前沿 · 顶刊速递</h2>
+        <h2 class="banner-title">临床顶刊 + 基础医学 · 每日速递</h2>
         <div class="banner-meta">
           <span class="bm"><i>🔄</i>每日更新</span>
-          <span class="bm"><i>🧭</i>六大方向分类</span>
+          <span class="bm"><i>🏥</i>40 本临床顶刊</span>
+          <span class="bm"><i>🧬</i>18 本 CNS / 基础</span>
           <span class="bm"><i>📅</i>文献更新 <b id="litDate">—</b></span>
-          <span class="bm"><i>⭐</i>按影响因子标注</span>
         </div>
       </div>
 
       <div class="chips" id="researchChips"></div>
 
       <div class="listhead">
-        <span id="researchHead">最新推送 — 篇</span>
-        <small>点卡片任意位置展开摘要（摘要较长可在框内滚动）</small>
+        <div class="lh-top">
+          <span id="researchHead">今日精选 — 篇</span>
+          <div class="lh-tools">
+            <button id="markAllRead" class="ghost-btn" type="button">全部已读</button>
+            <div class="viewtog" role="group" aria-label="视图切换">
+              <button type="button" data-view="card" class="is-active" aria-pressed="true">卡片</button>
+              <button type="button" data-view="index" aria-pressed="false">索引表</button>
+            </div>
+          </div>
+        </div>
+        <small id="researchSub">每日精选 5 篇 · 保证 1–2 篇基础/分子医学 · 点卡片展开结构化摘要</small>
       </div>
 
       <div class="cards" id="researchCards">

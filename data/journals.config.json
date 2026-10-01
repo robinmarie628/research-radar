@@ -1,378 +1,497 @@
 [
   {
-    "issn": "0028-4793",
-    "title": "New England Journal of Medicine",
-    "short": "NEJM",
-    "if": 96.2,
-    "group": "top",
-    "n90": 220
-  },
-  {
     "issn": "0140-6736",
-    "title": "The Lancet",
+    "title": "Lancet",
     "short": "Lancet",
+    "domain": "综合医学",
+    "basic": false,
     "if": 98.4,
-    "group": "top",
     "n90": 266
   },
   {
-    "issn": "0098-7484",
-    "title": "JAMA",
-    "short": "JAMA",
-    "if": 63.1,
-    "group": "top",
-    "n90": 456
+    "issn": "1470-2045",
+    "title": "Lancet Oncol",
+    "short": "Lancet Oncol",
+    "domain": "肿瘤",
+    "basic": false,
+    "if": 41.6,
+    "n90": 87
   },
   {
-    "issn": "0959-8138",
-    "title": "BMJ",
-    "short": "BMJ",
-    "if": 93.6,
-    "group": "top",
-    "n90": 575
+    "issn": "1474-4422",
+    "title": "Lancet Neurol",
+    "short": "Lancet Neurol",
+    "domain": "神经",
+    "basic": false,
+    "if": 46.5,
+    "n90": 67
   },
   {
-    "issn": "1078-8956",
-    "title": "Nature Medicine",
-    "short": "Nat Med",
-    "if": 58.7,
-    "group": "top",
-    "n90": 197
+    "issn": "1473-3099",
+    "title": "Lancet Infect Dis",
+    "short": "Lancet Infect",
+    "domain": "感染",
+    "basic": false,
+    "if": 36.4,
+    "n90": 101
   },
   {
-    "issn": "0009-7322",
-    "title": "Circulation",
-    "short": "Circulation",
-    "if": 35.5,
-    "group": "cvd",
-    "n90": 201
+    "issn": "2213-2600",
+    "title": "Lancet Respir Med",
+    "short": "Lancet Respir",
+    "domain": "呼吸与重症",
+    "basic": false,
+    "if": 38.7,
+    "n90": 49
   },
   {
-    "issn": "0195-668X",
-    "title": "European Heart Journal",
-    "short": "Eur Heart J",
-    "if": 37.6,
-    "group": "cvd",
-    "n90": 427
+    "issn": "2213-8587",
+    "title": "Lancet Diabetes Endo",
+    "short": "Lancet Diabetes",
+    "domain": "内分泌代谢",
+    "basic": false,
+    "if": 44.0,
+    "n90": 28
+  },
+  {
+    "issn": "2468-1253",
+    "title": "Lancet Gastro Hepat",
+    "short": "Lancet Gastro Hepat",
+    "domain": "消化肝病",
+    "basic": false,
+    "if": 30.9,
+    "n90": 56
+  },
+  {
+    "issn": "2352-3026",
+    "title": "Lancet Haematol",
+    "short": "Lancet Haematol",
+    "domain": "血液",
+    "basic": false,
+    "if": 24.7,
+    "n90": 30
+  },
+  {
+    "issn": "2215-0366",
+    "title": "Lancet Psychiatry",
+    "short": "Lancet Psychiatry",
+    "domain": "精神心理",
+    "basic": false,
+    "if": 30.8,
+    "n90": 55
+  },
+  {
+    "issn": "2468-2667",
+    "title": "Lancet Public Health",
+    "short": "Lancet Public Hlth",
+    "domain": "公共卫生",
+    "basic": false,
+    "if": 25.4,
+    "n90": 40
+  },
+  {
+    "issn": "2214-109X",
+    "title": "Lancet Glob Health",
+    "short": "Lancet Glob Health",
+    "domain": "全球健康",
+    "basic": false,
+    "if": 19.9,
+    "n90": 46
+  },
+  {
+    "issn": "2589-7500",
+    "title": "Lancet Digit Health",
+    "short": "Lancet Digit Health",
+    "domain": "数字医疗",
+    "basic": false,
+    "if": 23.8,
+    "n90": 41
+  },
+  {
+    "issn": "2352-4642",
+    "title": "Lancet Child Adolesc",
+    "short": "Lancet Child Adol",
+    "domain": "儿科",
+    "basic": false,
+    "if": 19.9,
+    "n90": 36
+  },
+  {
+    "issn": "2665-9913",
+    "title": "Lancet Rheumatol",
+    "short": "Lancet Rheumatol",
+    "domain": "风湿免疫",
+    "basic": false,
+    "if": 15.0,
+    "n90": 38
+  },
+  {
+    "issn": "2352-3018",
+    "title": "Lancet HIV",
+    "short": "Lancet HIV",
+    "domain": "感染",
+    "basic": false,
+    "if": 12.8,
+    "n90": 38
+  },
+  {
+    "issn": "2666-5247",
+    "title": "Lancet Microbe",
+    "short": "Lancet Microbe",
+    "domain": "感染",
+    "basic": false,
+    "if": 20.9,
+    "n90": 68
+  },
+  {
+    "issn": "2589-5370",
+    "title": "EClinicalMedicine",
+    "short": "EClinicalMedicine",
+    "domain": "综合医学",
+    "basic": false,
+    "if": 9.6,
+    "n90": 150
+  },
+  {
+    "issn": "2542-5196",
+    "title": "Lancet Planet Health",
+    "short": "Lancet Planet Health",
+    "domain": "公共卫生",
+    "basic": false,
+    "if": 24.1,
+    "n90": 25
+  },
+  {
+    "issn": "2666-7568",
+    "title": "Lancet Healthy Longev",
+    "short": "Lancet Healthy",
+    "domain": "老年医学",
+    "basic": false,
+    "if": 13.1,
+    "n90": 19
   },
   {
     "issn": "0735-1097",
-    "title": "Journal of the American College of Cardiology",
+    "title": "JACC",
     "short": "JACC",
+    "domain": "心血管",
+    "basic": false,
     "if": 21.7,
-    "group": "cvd",
     "n90": 129
   },
   {
     "issn": "1936-8798",
-    "title": "JACC: Cardiovascular Interventions",
+    "title": "JACC Interv",
     "short": "JACC Interv",
+    "domain": "心血管",
+    "basic": false,
     "if": 11.7,
-    "group": "cvd",
     "n90": 71
   },
   {
+    "issn": "2213-1779",
+    "title": "JACC Heart Fail",
+    "short": "JACC Heart Fail",
+    "domain": "心血管",
+    "basic": false,
+    "if": 10.4,
+    "n90": 68
+  },
+  {
     "issn": "1936-878X",
-    "title": "JACC: Cardiovascular Imaging",
+    "title": "JACC Imaging",
     "short": "JACC Imaging",
+    "domain": "心血管",
+    "basic": false,
     "if": 10.9,
-    "group": "cvd",
     "n90": 51
   },
   {
     "issn": "2405-5018",
-    "title": "JACC: Clinical Electrophysiology",
-    "short": "JACC EP",
+    "title": "JACC Clin EP",
+    "short": "JACC Clin EP",
+    "domain": "心血管",
+    "basic": false,
     "if": 4.0,
-    "group": "cvd",
     "n90": 88
   },
   {
-    "issn": "0009-7330",
-    "title": "Circulation Research",
-    "short": "Circ Res",
-    "if": 16.5,
-    "group": "cvd",
-    "n90": 79
+    "issn": "2452-302X",
+    "title": "JACC Basic Transl",
+    "short": "JACC Basic",
+    "domain": "基础医学",
+    "basic": true,
+    "if": 8.0,
+    "n90": 51
   },
   {
-    "issn": "1355-6037",
-    "title": "Heart",
-    "short": "Heart",
-    "if": 5.7,
-    "group": "cvd",
-    "n90": 116
+    "issn": "2666-0873",
+    "title": "JACC CardioOncol",
+    "short": "JACC CardioOncol",
+    "domain": "肿瘤",
+    "basic": false,
+    "if": 10.0,
+    "n90": 29
   },
   {
-    "issn": "0002-8703",
-    "title": "American Heart Journal",
-    "short": "Am Heart J",
-    "if": 4.3,
-    "group": "cvd",
-    "n90": 43
-  },
-  {
-    "issn": "1941-7640",
-    "title": "Circulation: Cardiovascular Interventions",
-    "short": "Circ Interv",
-    "if": 6.7,
-    "group": "cvd",
-    "n90": 40
-  },
-  {
-    "issn": "2047-9980",
-    "title": "Journal of the American Heart Association",
-    "short": "JAHA",
-    "if": 5.0,
-    "group": "cvd",
-    "n90": 407
-  },
-  {
-    "issn": "1759-5002",
-    "title": "Nature Reviews Cardiology",
-    "short": "Nat Rev Cardiol",
-    "if": 41.7,
-    "group": "cvd",
-    "n90": 46
-  },
-  {
-    "issn": "2047-2404",
-    "title": "European Heart Journal - Cardiovascular Imaging",
-    "short": "EHJ Imaging",
-    "if": 6.2,
-    "group": "cvd",
-    "n90": 112
-  },
-  {
-    "issn": "1099-5129",
-    "title": "Europace",
-    "short": "Europace",
-    "if": 6.1,
-    "group": "cvd",
-    "n90": 90
-  },
-  {
-    "issn": "1774-024X",
-    "title": "EuroIntervention",
-    "short": "EuroIntervention",
-    "if": 7.6,
-    "group": "cvd",
-    "n90": 49
-  },
-  {
-    "issn": "2213-1779",
-    "title": "JACC: Heart Failure",
-    "short": "JACC HF",
-    "if": 10.4,
-    "group": "hf",
-    "n90": 68
-  },
-  {
-    "issn": "1388-9842",
-    "title": "European Journal of Heart Failure",
-    "short": "Eur J Heart Fail",
-    "if": 16.9,
-    "group": "hf",
-    "n90": 130
-  },
-  {
-    "issn": "1941-3289",
-    "title": "Circulation: Heart Failure",
-    "short": "Circ HF",
-    "if": 7.9,
-    "group": "hf",
-    "n90": 54
-  },
-  {
-    "issn": "1053-2498",
-    "title": "Journal of Heart and Lung Transplantation",
-    "short": "JHLT",
-    "if": 6.4,
-    "group": "hf",
-    "n90": 88
-  },
-  {
-    "issn": "0194-911X",
-    "title": "Hypertension",
-    "short": "Hypertension",
-    "if": 6.9,
-    "group": "htn",
-    "n90": 54
-  },
-  {
-    "issn": "0263-6352",
-    "title": "Journal of Hypertension",
-    "short": "J Hypertens",
-    "if": 3.3,
-    "group": "htn",
-    "n90": 55
-  },
-  {
-    "issn": "0741-5214",
-    "title": "Journal of Vascular Surgery",
-    "short": "J Vasc Surg",
-    "if": 3.9,
-    "group": "aortic",
-    "n90": 103
-  },
-  {
-    "issn": "1078-5884",
-    "title": "European Journal of Vascular and Endovascular Surgery",
-    "short": "EJVES",
-    "if": 5.7,
-    "group": "aortic",
-    "n90": 134
-  },
-  {
-    "issn": "1010-7940",
-    "title": "European Journal of Cardio-Thoracic Surgery",
-    "short": "EJCTS",
-    "if": 3.4,
-    "group": "aortic",
-    "n90": 27
-  },
-  {
-    "issn": "0022-5223",
-    "title": "Journal of Thoracic and Cardiovascular Surgery",
-    "short": "JTCVS",
-    "if": 4.9,
-    "group": "aortic",
-    "n90": 82
-  },
-  {
-    "issn": "0003-4975",
-    "title": "Annals of Thoracic Surgery",
-    "short": "Ann Thorac Surg",
-    "if": 3.6,
-    "group": "aortic",
-    "n90": 130
-  },
-  {
-    "issn": "2045-8932",
-    "title": "Pulmonary Circulation",
-    "short": "Pulm Circ",
-    "if": 2.4,
-    "group": "ph",
-    "n90": 34
-  },
-  {
-    "issn": "0342-4642",
-    "title": "Intensive Care Medicine",
-    "short": "Intensive Care Med",
-    "if": 27.1,
-    "group": "icu",
-    "n90": 69
-  },
-  {
-    "issn": "0090-3493",
-    "title": "Critical Care Medicine",
-    "short": "Crit Care Med",
-    "if": 7.7,
-    "group": "icu",
-    "n90": 90
-  },
-  {
-    "issn": "1364-8535",
-    "title": "Critical Care",
-    "short": "Crit Care",
-    "if": 8.8,
-    "group": "icu",
-    "n90": 115
-  },
-  {
-    "issn": "1073-449X",
-    "title": "American Journal of Respiratory and Critical Care Medicine",
-    "short": "AJRCCM",
-    "if": 19.3,
-    "group": "icu",
-    "n90": 286
+    "issn": "2772-963X",
+    "title": "JACC Adv",
+    "short": "JACC Adv",
+    "domain": "心血管",
+    "basic": false,
+    "if": 3.0,
+    "n90": 242
   },
   {
     "issn": "0012-3692",
-    "title": "CHEST",
+    "title": "Chest",
     "short": "Chest",
+    "domain": "呼吸与重症",
+    "basic": false,
     "if": 9.5,
-    "group": "icu",
     "n90": 155
   },
   {
-    "issn": "2110-5820",
-    "title": "Annals of Intensive Care",
-    "short": "Ann Intensive Care",
-    "if": 5.7,
-    "group": "icu",
+    "issn": "0161-6420",
+    "title": "Ophthalmology",
+    "short": "Ophthalmology",
+    "domain": "眼科",
+    "basic": false,
+    "if": 13.1,
+    "n90": 96
+  },
+  {
+    "issn": "2468-6530",
+    "title": "Ophthalmol Retina",
+    "short": "Ophthalmol Retina",
+    "domain": "眼科",
+    "basic": false,
+    "if": 5.9,
+    "n90": 76
+  },
+  {
+    "issn": "2589-4196",
+    "title": "Ophthalmol Glaucoma",
+    "short": "Ophthalmol Glaucoma",
+    "domain": "眼科",
+    "basic": false,
+    "if": 3.5,
+    "n90": 31
+  },
+  {
+    "issn": "2666-9145",
+    "title": "Ophthalmol Sci",
+    "short": "Ophthalmol Sci",
+    "domain": "眼科",
+    "basic": false,
+    "if": 4.2,
     "n90": 45
   },
   {
-    "issn": "1073-2322",
-    "title": "Shock",
-    "short": "Shock",
-    "if": 2.6,
-    "group": "icu",
-    "n90": 37
+    "issn": "0002-9394",
+    "title": "Am J Ophthalmol",
+    "short": "Am J Ophthalmol",
+    "domain": "眼科",
+    "basic": false,
+    "if": 4.1,
+    "n90": 150
   },
   {
-    "issn": "2052-0492",
-    "title": "Journal of Intensive Care",
-    "short": "J Intensive Care",
-    "if": 3.5,
-    "group": "icu",
-    "n90": 44
+    "issn": "0923-7534",
+    "title": "Ann Oncol",
+    "short": "Ann Oncol",
+    "domain": "肿瘤",
+    "basic": false,
+    "if": 56.7,
+    "n90": 27
   },
   {
-    "issn": "0883-9441",
-    "title": "Journal of Critical Care",
-    "short": "J Crit Care",
-    "if": 3.2,
-    "group": "icu",
-    "n90": 66
+    "issn": "0168-8278",
+    "title": "J Hepatol",
+    "short": "J Hepatol",
+    "domain": "消化肝病",
+    "basic": false,
+    "if": 26.8,
+    "n90": 95
   },
   {
-    "issn": "0300-9572",
-    "title": "Resuscitation",
-    "short": "Resuscitation",
-    "if": 6.5,
-    "group": "icu",
-    "n90": 103
+    "issn": "0085-2538",
+    "title": "Kidney Int",
+    "short": "Kidney Int",
+    "domain": "肾脏",
+    "basic": false,
+    "if": 14.8,
+    "n90": 132
   },
   {
-    "issn": "2329-6933",
-    "title": "Annals of the American Thoracic Society",
-    "short": "Ann Am Thorac Soc",
-    "if": 4.4,
-    "group": "icu",
-    "n90": 151
+    "issn": "0190-9622",
+    "title": "JAAD",
+    "short": "JAAD",
+    "domain": "皮肤",
+    "basic": false,
+    "if": 12.8,
+    "n90": 392
   },
   {
-    "issn": "2213-2600",
-    "title": "Lancet Respiratory Medicine",
-    "short": "Lancet Respir Med",
-    "if": 38.7,
-    "group": "icu",
-    "n90": 49
+    "issn": "0302-2838",
+    "title": "Eur Urol",
+    "short": "Eur Urol",
+    "domain": "泌尿",
+    "basic": false,
+    "if": 25.3,
+    "n90": 82
   },
   {
-    "issn": "0903-1936",
-    "title": "European Respiratory Journal",
-    "short": "Eur Respir J",
-    "if": 16.6,
-    "group": "icu",
-    "n90": 122
+    "issn": "0092-8674",
+    "title": "Cell",
+    "short": "Cell",
+    "domain": "基础医学",
+    "basic": true,
+    "if": 45.5,
+    "n90": 127
   },
   {
-    "issn": "0040-6376",
-    "title": "Thorax",
-    "short": "Thorax",
+    "issn": "0028-0836",
+    "title": "Nature",
+    "short": "Nature",
+    "domain": "基础医学",
+    "basic": true,
+    "if": 50.5,
+    "n90": 878
+  },
+  {
+    "issn": "0036-8075",
+    "title": "Science",
+    "short": "Science",
+    "domain": "基础医学",
+    "basic": true,
+    "if": 44.7,
+    "n90": 453
+  },
+  {
+    "issn": "0028-4793",
+    "title": "NEJM",
+    "short": "NEJM",
+    "domain": "综合医学",
+    "basic": false,
+    "if": 96.2,
+    "n90": 220
+  },
+  {
+    "issn": "1061-4036",
+    "title": "Nat Genet",
+    "short": "Nat Genet",
+    "domain": "基础医学",
+    "basic": true,
+    "if": 31.7,
+    "n90": 104
+  },
+  {
+    "issn": "1529-2908",
+    "title": "Nat Immunol",
+    "short": "Nat Immunol",
+    "domain": "基础医学",
+    "basic": true,
+    "if": 27.7,
+    "n90": 89
+  },
+  {
+    "issn": "1934-5909",
+    "title": "Cell Stem Cell",
+    "short": "Cell Stem Cell",
+    "domain": "基础医学",
+    "basic": true,
+    "if": 19.8,
+    "n90": 35
+  },
+  {
+    "issn": "1946-6234",
+    "title": "Sci Transl Med",
+    "short": "Sci Transl Med",
+    "domain": "基础医学",
+    "basic": true,
+    "if": 15.8,
+    "n90": 93
+  },
+  {
+    "issn": "2375-2548",
+    "title": "Sci Adv",
+    "short": "Sci Adv",
+    "domain": "基础医学",
+    "basic": true,
+    "if": 11.7,
+    "n90": 1081
+  },
+  {
+    "issn": "2041-1723",
+    "title": "Nat Commun",
+    "short": "Nat Commun",
+    "domain": "基础医学",
+    "basic": true,
+    "if": 14.7,
+    "n90": 2282
+  },
+  {
+    "issn": "2211-1247",
+    "title": "Cell Rep",
+    "short": "Cell Rep",
+    "domain": "基础医学",
+    "basic": true,
+    "if": 7.5,
+    "n90": 408
+  },
+  {
+    "issn": "1553-7358",
+    "title": "Cell Host Microbe",
+    "short": "Cell Host Microbe",
+    "domain": "基础医学",
+    "basic": true,
+    "if": 20.6,
+    "n90": 261
+  },
+  {
+    "issn": "2405-4712",
+    "title": "Cell Syst",
+    "short": "Cell Syst",
+    "domain": "基础医学",
+    "basic": true,
     "if": 9.0,
-    "group": "icu",
-    "n90": 115
+    "n90": 31
   },
   {
-    "issn": "2197-425X",
-    "title": "Intensive Care Medicine Experimental",
-    "short": "ICM Exp",
-    "if": 3.0,
-    "group": "icu",
-    "n90": 38
+    "issn": "2157-846X",
+    "title": "Nat Biomed Eng",
+    "short": "Nat Biomed Eng",
+    "domain": "基础医学",
+    "basic": true,
+    "if": 26.8,
+    "n90": 71
+  },
+  {
+    "issn": "1087-0156",
+    "title": "Nat Biotechnol",
+    "short": "Nat Biotechnol",
+    "domain": "基础医学",
+    "basic": true,
+    "if": 33.1,
+    "n90": 114
+  },
+  {
+    "issn": "1097-6256",
+    "title": "Nat Neurosci",
+    "short": "Nat Neurosci",
+    "domain": "神经",
+    "basic": true,
+    "if": 21.2,
+    "n90": 93
+  },
+  {
+    "issn": "0896-6273",
+    "title": "Neuron",
+    "short": "Neuron",
+    "domain": "神经",
+    "basic": true,
+    "if": 14.7,
+    "n90": 65
   }
 ]
