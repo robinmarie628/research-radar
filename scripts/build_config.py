@@ -55,6 +55,7 @@ POOL = {
     "2452-302X": ("基础医学",   True,  "JACC Basic Transl",    8.0),
     "2666-0873": ("肿瘤",       False, "JACC CardioOncol",    10.0),
     "2772-963X": ("心血管",     False, "JACC Adv",             3.0),
+    "1524-4539": ("心血管",     False, "Circulation",          38.0),  # 印刷 ISSN 0009-7328 在 MEDLINE 源返回 0，须用联机 ISSN
     "0012-3692": ("呼吸与重症", False, "Chest",                9.5),
     # NOTE: the prompt lists CHEST Pulmonary (2949-7884) and CHEST Critical Care (2949-7892);
     # both are too new for MEDLINE and return 0 hits from Europe PMC, so they are omitted.
@@ -68,6 +69,15 @@ POOL = {
     "0085-2538": ("肾脏",       False, "Kidney Int",          14.8),
     "0190-9622": ("皮肤",       False, "JAAD",                12.8),
     "0302-2838": ("泌尿",       False, "Eur Urol",            25.3),
+    # ── 血管外科（用户 2026-10-01 新增）────────────────────────────
+    "0741-5214": ("血管外科",   False, "J Vasc Surg",         4.0),
+    "1078-5884": ("血管外科",   False, "Eur J Vasc Endovasc",  5.5),
+    "2213-333X": ("血管外科",   False, "J Vasc Surg Venous",   2.5),
+    "1526-6028": ("血管外科",   False, "J Endovasc Ther",      3.0),
+    "0890-5096": ("血管外科",   False, "Ann Vasc Surg",        1.1),
+    "0895-7967": ("血管外科",   False, "Semin Vasc Surg",      4.6),
+    "1708-5381": ("血管外科",   False, "Vascular",             1.0),  # 90d 仅 ~1 篇，量很低
+    "1538-5744": ("血管外科",   False, "Vasc Endovasc Surg",   1.0),
     # ── 18 本基础 / 分子医学（CNS 及其生物医学子刊）──────────────────
     "0092-8674": ("基础医学",   True,  "Cell",                45.5),
     "0028-0836": ("基础医学",   True,  "Nature",              50.5),

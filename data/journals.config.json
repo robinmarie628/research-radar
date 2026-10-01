@@ -29,7 +29,7 @@
   {
     "issn": "1473-3099",
     "title": "Lancet Infect Dis",
-    "short": "Lancet Infect",
+    "short": "Lancet Infect Dis",
     "domain": "感染",
     "basic": false,
     "if": 36.4,
@@ -38,7 +38,7 @@
   {
     "issn": "2213-2600",
     "title": "Lancet Respir Med",
-    "short": "Lancet Respir",
+    "short": "Lancet Respir Med",
     "domain": "呼吸与重症",
     "basic": false,
     "if": 38.7,
@@ -47,7 +47,7 @@
   {
     "issn": "2213-8587",
     "title": "Lancet Diabetes Endo",
-    "short": "Lancet Diabetes",
+    "short": "Lancet Diabetes Endo",
     "domain": "内分泌代谢",
     "basic": false,
     "if": 44.0,
@@ -83,7 +83,7 @@
   {
     "issn": "2468-2667",
     "title": "Lancet Public Health",
-    "short": "Lancet Public Hlth",
+    "short": "Lancet Public Health",
     "domain": "公共卫生",
     "basic": false,
     "if": 25.4,
@@ -110,7 +110,7 @@
   {
     "issn": "2352-4642",
     "title": "Lancet Child Adolesc",
-    "short": "Lancet Child Adol",
+    "short": "Lancet Child Adolesc",
     "domain": "儿科",
     "basic": false,
     "if": 19.9,
@@ -164,7 +164,7 @@
   {
     "issn": "2666-7568",
     "title": "Lancet Healthy Longev",
-    "short": "Lancet Healthy",
+    "short": "Lancet Healthy Longev",
     "domain": "老年医学",
     "basic": false,
     "if": 13.1,
@@ -218,7 +218,7 @@
   {
     "issn": "2452-302X",
     "title": "JACC Basic Transl",
-    "short": "JACC Basic",
+    "short": "JACC Basic Transl",
     "domain": "基础医学",
     "basic": true,
     "if": 8.0,
@@ -241,6 +241,15 @@
     "basic": false,
     "if": 3.0,
     "n90": 242
+  },
+  {
+    "issn": "1524-4539",
+    "title": "Circulation",
+    "short": "Circulation",
+    "domain": "心血管",
+    "basic": false,
+    "if": 38.0,
+    "n90": 201
   },
   {
     "issn": "0012-3692",
@@ -340,6 +349,78 @@
     "basic": false,
     "if": 25.3,
     "n90": 82
+  },
+  {
+    "issn": "0741-5214",
+    "title": "J Vasc Surg",
+    "short": "J Vasc Surg",
+    "domain": "血管外科",
+    "basic": false,
+    "if": 4.0,
+    "n90": 103
+  },
+  {
+    "issn": "1078-5884",
+    "title": "Eur J Vasc Endovasc",
+    "short": "Eur J Vasc Endovasc",
+    "domain": "血管外科",
+    "basic": false,
+    "if": 5.5,
+    "n90": 134
+  },
+  {
+    "issn": "2213-333X",
+    "title": "J Vasc Surg Venous",
+    "short": "J Vasc Surg Venous",
+    "domain": "血管外科",
+    "basic": false,
+    "if": 2.5,
+    "n90": 46
+  },
+  {
+    "issn": "1526-6028",
+    "title": "J Endovasc Ther",
+    "short": "J Endovasc Ther",
+    "domain": "血管外科",
+    "basic": false,
+    "if": 3.0,
+    "n90": 68
+  },
+  {
+    "issn": "0890-5096",
+    "title": "Ann Vasc Surg",
+    "short": "Ann Vasc Surg",
+    "domain": "血管外科",
+    "basic": false,
+    "if": 1.1,
+    "n90": 158
+  },
+  {
+    "issn": "0895-7967",
+    "title": "Semin Vasc Surg",
+    "short": "Semin Vasc Surg",
+    "domain": "血管外科",
+    "basic": false,
+    "if": 4.6,
+    "n90": 9
+  },
+  {
+    "issn": "1708-5381",
+    "title": "Vascular",
+    "short": "Vascular",
+    "domain": "血管外科",
+    "basic": false,
+    "if": 1.0,
+    "n90": 1
+  },
+  {
+    "issn": "1538-5744",
+    "title": "Vasc Endovasc Surg",
+    "short": "Vasc Endovasc Surg",
+    "domain": "血管外科",
+    "basic": false,
+    "if": 1.0,
+    "n90": 9
   },
   {
     "issn": "0092-8674",
