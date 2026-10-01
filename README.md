@@ -39,7 +39,7 @@ research-radar/
 
 ## 期刊池
 
-**40 本临床顶刊 + 17 本 CNS / 基础医学期刊**，全部逐个校验过 ISSN。
+**38 本临床顶刊 + 17 本 CNS / 基础医学期刊（共 55 本）**，全部逐个校验过 ISSN。
 
 - **临床**：Lancet 全家族（肿瘤/神经/感染/呼吸/内分泌/消化肝病/血液/风湿/精神/公共卫生/全球健康/数字医疗/儿科/老年/HIV/微生物）、JACC 全家族、CHEST、Ophthalmology 家族、Annals of Oncology、Journal of Hepatology、Kidney International、JAAD、European Urology、NEJM、EClinicalMedicine
 - **基础/分子**：Cell、Nature、Science、Nature Genetics、Nature Immunology、Cell Stem Cell、Science Translational Medicine、Science Advances、Nature Communications、Cell Reports、Cell Host & Microbe、Cell Systems、Nature Biomedical Engineering、Nature Biotechnology、Nature Neuroscience、Neuron、JACC: Basic to Translational Science
@@ -66,7 +66,7 @@ research-radar/
 3. **拆成 3 段查询再合并。** 单次查询会被高产期刊淹没——Nature Communications 一季度 2282 篇。拆段 + **每刊最多 8 篇**，保证小刊也能露脸。
 4. **不写「今日发表」。** 显示的是文章真实的 `firstPublicationDate`。
 
-### 领域（20 个）
+### 领域（21 个）
 
 领域直接来自期刊本身，不做关键词猜测——Lancet Oncology 就是肿瘤，JACC 就是心血管，准确率 100%。
 
@@ -180,7 +180,7 @@ git push -u origin main
   "domain": "综合医学", "basic": false, "if": 98.4 }
 ```
 
-`domain` 取上面 20 个领域之一；`basic: true` 表示基础/分子医学期刊。
+`domain` 取上面 21 个领域之一；`basic: true` 表示基础/分子医学期刊。
 
 **加完必须校验 ISSN**——错的 ISSN 会静默返回 0 条，不报错：
 
