@@ -139,7 +139,32 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     };
   });
   console.log('  expanded:', JSON.stringify(report.checks.expanded).slice(0, 700));
+  report.checks.titleZh = await page.evaluate(() => {
+    const c = document.querySelector('#researchCards .art.open');
+    const t = c?.querySelector('.art-title')?.textContent || '';
+    return { text: t.slice(0, 60), isChinese: /[一-龥]/.test(t) };
+  });
+  console.log('  title:', JSON.stringify(report.checks.titleZh));
   await shot('02-research-expanded');
+
+  /* ---- 点「查看英文原标题与摘要」不能把卡片折叠掉 ---- */
+  await page.evaluate(() => {
+    const t = document.querySelector('#researchCards .art.open .rawtoggle');
+    if (t) t.click();
+  });
+  await sleep(700);
+  report.checks.rawToggle = await page.evaluate(() => {
+    const c = document.querySelector('#researchCards .art.open');
+    return {
+      cardStillOpen: !!c,
+      rawVisible: c ? c.querySelector('.rawbox')?.hidden === false : null,
+      hasEnTitle: !!c?.querySelector('.rawtitle .rawtitle-txt'),
+      enTitleChars: (c?.querySelector('.rawtitle .rawtitle-txt')?.textContent || '').length,
+      label: c?.querySelector('.rawtoggle')?.textContent,
+    };
+  });
+  console.log('  raw toggle:', JSON.stringify(report.checks.rawToggle));
+  await shot('02b-raw-expanded');
 
   /* ---- 未读 tracking ---- */
   report.checks.unread = await page.evaluate(() => {

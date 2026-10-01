@@ -707,7 +707,9 @@ function articleCard(a, isPick, pickRank) {
   const titleWrap = el('div', 'art-titlewrap');
   if (isPick && isTop) titleWrap.append(el('span', 'pick-ribbon', '⭐ 今日首选'));
   else if (isPick) titleWrap.append(el('span', 'pick-num', 'NO.' + pickRank));
-  titleWrap.append(el('h3', 'art-title', a.title));
+  // 有中文标题就用中文（英文原标题收进下方的「英文原标题与摘要」折叠块）
+  const titleZh = (a.digest && a.digest.titleZh) || '';
+  titleWrap.append(el('h3', 'art-title', titleZh || a.title));
   top.append(caret, titleWrap);
 
   const badges = el('div', 'art-badges');
@@ -724,7 +726,8 @@ function articleCard(a, isPick, pickRank) {
 
   let body = null;
   c.addEventListener('click', ev => {
-    if (ev.target.closest('a')) return;
+    // 忽略链接和按钮 —— 否则点「查看英文摘要」会冒泡到这里，把整张卡片折叠掉
+    if (ev.target.closest('a, button, input, select, textarea')) return;
     const open = c.classList.toggle('open');
     if (!open) { if (body) body.remove(); return; }
 
@@ -763,9 +766,14 @@ function buildArticleBody(a, card) {
     body.append(note);
   }
 
-  // 英文摘要原文。有通俗版就折叠（点一下展开），否则直接铺开。
+  // 英文原标题 + 摘要原文，放在同一个折叠块里。有通俗版时默认折叠。
+  const box = el('div', 'rawbox');
+  const enTitle = el('div', 'rawtitle');
+  enTitle.append(el('span', 'rawtitle-lab', 'EN'));
+  enTitle.append(el('span', 'rawtitle-txt', a.title));
+  box.append(enTitle);
+
   if (a.structured && a.sections) {
-    const box = el('div', 'rawbox');
     for (const k of ['objective', 'methods', 'results', 'conclusion', 'other']) {
       const txt = a.sections[k];
       if (!txt) continue;
@@ -774,20 +782,22 @@ function buildArticleBody(a, card) {
       row.append(el('p', 'sec-txt', txt));
       box.append(row);
     }
-    if (hasDigest) {
-      const t = el('button', 'rawtoggle', '▸ 查看英文摘要原文');
-      t.type = 'button';
-      box.hidden = true;
-      t.addEventListener('click', () => {
-        box.hidden = !box.hidden;
-        t.textContent = box.hidden ? '▸ 查看英文摘要原文' : '▾ 收起英文摘要原文';
-      });
-      body.append(t, box);
-    } else {
-      body.append(box);
-    }
   } else if (a.abstract) {
-    body.append(el('p', 'art-abstract', a.abstract));
+    box.append(el('p', 'art-abstract', a.abstract));
+  }
+
+  if (hasDigest) {
+    const t = el('button', 'rawtoggle', '▸ 查看英文原标题与摘要');
+    t.type = 'button';
+    box.hidden = true;
+    t.addEventListener('click', ev => {
+      ev.stopPropagation();                       // 双保险：不要冒泡到卡片
+      box.hidden = !box.hidden;
+      t.textContent = box.hidden ? '▸ 查看英文原标题与摘要' : '▾ 收起英文原标题与摘要';
+    });
+    body.append(t, box);
+  } else {
+    body.append(box);
   }
 
   const meta = el('div', 'art-meta');

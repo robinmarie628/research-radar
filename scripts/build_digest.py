@@ -60,6 +60,11 @@ PROMPT = """下面是从顶刊筛选出的 {n} 篇论文，每篇附标题、期
 - takeaway（看点 / 临床含义）：关键结果数字是什么？对临床决策意味着什么？2–3 句。
 - future（未来研究方向）：还有哪些问题没解决？下一步该验证什么？1–2 句。
 
+另外，为每一篇把英文标题**翻译成中文**，字段名 titleZh：
+- 保留专有名词、药物名、试验名称、基因名的英文原文（如 ROAM/EORTC-1308、APOE4、BCL11A）
+- 中文要通顺，像中文期刊标题，不要逐字直译
+- 不加书名号，结尾不加句号，长度控制在 40 字以内
+
 再从这 {n} 篇中选出 1 篇作为「今日首选」，给出 1 句理由（选证据等级最高、临床影响最大的一篇）。
 
 写作要求：
@@ -73,7 +78,7 @@ PROMPT = """下面是从顶刊筛选出的 {n} 篇论文，每篇附标题、期
 只输出 JSON，不要 markdown 代码块，不要任何解释文字：
 {{
   "items": [
-    {{"index": 1, "background": "…", "innovation": "…", "methods": "…", "takeaway": "…", "future": "…"}}
+    {{"index": 1, "titleZh": "…", "background": "…", "innovation": "…", "methods": "…", "takeaway": "…", "future": "…"}}
   ],
   "topPick": {{"index": 2, "reason": "…"}}
 }}
@@ -229,6 +234,7 @@ def main():
             "topPick": i == top_idx,
             "topReason": (top.get("reason") or "").strip() if i == top_idx else "",
         }
+        row["titleZh"] = (got.get("titleZh") or "").strip()
         for f in FIELDS:
             row[f] = (got.get(f) or "").strip()
         out_items.append(row)
@@ -249,6 +255,8 @@ def main():
     for x in out_items:
         flag = " ★今日首选" if x["topPick"] else ""
         print(f"      [{x['studyZh']}] {x['journal']:<16} {x['doi'][:38]}{flag}")
+        if x.get("titleZh"):
+            print(f"        标题: {x['titleZh'][:56]}")
         for f in FIELDS:
             print(f"        {FIELD_ZH[f]}: {(x.get(f) or '')[:62]}")
     return 0

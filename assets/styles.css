@@ -370,6 +370,22 @@ body{
 .rawtoggle:active{background:#e9f2ff}
 .rawbox{margin-top:10px}
 
+/* ---- 英文原标题（与摘要放在同一个折叠块里）---- */
+.rawtitle{
+  display:flex;gap:8px;align-items:flex-start;
+  padding:8px 10px;margin:0 0 10px;
+  background:#f6f9fe;border:1px solid #e3ecf9;border-radius:8px;
+}
+.rawtitle-lab{
+  flex:0 0 22px;height:16px;line-height:16px;text-align:center;
+  font-size:9px;font-weight:800;color:#fff;background:#5b7ba6;
+  border-radius:4px;margin-top:1px;letter-spacing:.3px;
+}
+.rawtitle-txt{
+  flex:1;min-width:0;font-size:11.5px;line-height:1.5;
+  color:#3d5b85;font-weight:700;
+}
+
 /* ---- 列表头工具条 ---- */
 .lh-top{display:flex;align-items:center;gap:10px}
 .lh-top > span{
