@@ -7,7 +7,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.01.6';   // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.01.7';   // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -1115,6 +1115,7 @@ async function refresh(force = true) {
   try {
     await Promise.all([loadResearch(true), loadBuilders(true)]);
     await loadDigest();                       // 让「重新生成」后新生成的 digest 立刻生效
+    await loadBuilderDigest();                // 同上：AI Builder 总览 + 每条动态的一句话也立即生效
     const ok = (S.jr.all.length ? 1 : 0) + (S.ai.all.length ? 1 : 0);
     toast(ok === 2 ? '已更新到最新' : ok === 1 ? '部分数据已更新' : '暂时取不到数据，稍后重试');
   } catch { toast('刷新失败，请检查网络'); }
