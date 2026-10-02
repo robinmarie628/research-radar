@@ -10,6 +10,30 @@
 
 ---
 
+## 方式 A（推荐，最简单）：纯网页部署，不用装任何软件
+
+不需要装 Node、npm、wrangler，全程在浏览器里点。
+
+1. 登录 <https://dash.cloudflare.com>（没有账号先免费注册）
+2. 左侧 **Workers & Pages** → **Create** → 选 **Create Worker**
+3. Worker 名字填 `research-radar-trigger` → **Deploy**（先随便部署一版占位）
+4. 部署后点 **Edit code**，把编辑器里的示例代码**全部删掉**，
+   粘贴 `trigger.js` 的完整内容 → **Save**
+5. 点 **Settings** → **Variables** → **Add variable**：
+   - Name：`GITHUB_PAT`
+   - Value：粘贴下面「生成 PAT」那一步拿到的口令
+   - 勾选 **Encrypt**（设为 Secret）→ **Add**
+6. 回到代码页 **Redeploy**（或 Deploy）让变量生效
+7. 部署完成会显示地址 `https://research-radar-trigger.<子域>.workers.dev`，**复制它**
+
+拿到地址后跳到「步骤 4 — 把地址填进前端」。
+
+## 方式 B：wrangler 命令行（如果你本就装了 Node）
+
+（见下方「步骤 2 / 3」）
+
+---
+
 ## 步骤 1 — 在 GitHub 生成一个 PAT
 
 用**细粒度 PAT（fine-grained）**，权限最小、最安全：
@@ -56,8 +80,12 @@ https://research-radar-trigger.<你的子域>.workers.dev
 const WORKER_URL = 'https://REPLACE-ME.workers.dev';
 ```
 
-把 `https://REPLACE-ME.workers.dev` 换成步骤 3 拿到的真实地址。然后像平时一样
-用 `push-research-radar.bat` 推上去即可。
+把 `https://REPLACE-ME.workers.dev` 换成拿到的真实地址（方式 A 是第 7 步、方式 B 是步骤 3）。
+
+然后要**先提交、再推送**（`.bat` 只负责推送，不负责提交）：
+- 用 **GitHub Desktop**（图形界面，点一下 Commit）或命令：
+  `git add assets/app.js && git commit -m "set worker url"`
+- 再**双击 `push-research-radar.bat`** 推上去
 
 （如果绑定了自定义域名，就填你的自定义域名。）
 
