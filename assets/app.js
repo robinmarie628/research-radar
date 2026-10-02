@@ -7,7 +7,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.01.7';   // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.01.8';   // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -431,9 +431,10 @@ async function loadResearch(force) {
     S.jr = {
       all: items, byKey, picks: curate(items),
       updated: items.length ? items[0].date : null,
+      fetchedAt: new Date().toISOString(),       // 数据实际拉取时间（≠ 最新文章发表日；Europe PMC 索引有 1-2 天延迟，发表日会滞后）
       loaded: true, error: null,
     };
-    writeCache('jr', { all: items, byKey, picks: S.jr.picks, updated: S.jr.updated });
+    writeCache('jr', { all: items, byKey, picks: S.jr.picks, updated: S.jr.updated, fetchedAt: S.jr.fetchedAt });
     loadPII(S.jr.picks);
   } catch (e) {
     console.warn('[research] live fetch failed:', e);
@@ -446,7 +447,7 @@ async function loadResearch(force) {
           (byKey[it.basic ? 'basic' : 'clinical'] ||= []).push(it);
         }
         S.jr = { all: snap.items, byKey, picks: curate(snap.items),
-                 updated: snap.updated, loaded: true, error: 'snapshot' };
+                 updated: snap.updated, fetchedAt: snap.generatedAt, loaded: true, error: 'snapshot' };
       } else {
         S.jr = { ...S.jr, loaded: true, error: e.message };
       }
@@ -692,7 +693,7 @@ function renderResearch() {
     host.append(chip({ ico: dm(d).ico, text: d, hue: dm(d).hue }, n, S.jFilter === d, () => setJFilter(d)));
   }
 
-  $('#litDate').textContent = S.jr.updated ? fmtDate(S.jr.updated) : '—';
+  $('#litDate').textContent = S.jr.fetchedAt ? fmtDate(S.jr.fetchedAt) : '—';
   // derive the banner counts from the config so they can never drift from reality
   const nClin = S.cfg.filter(c => !c.basic).length;
   const nBas  = S.cfg.filter(c => c.basic).length;
