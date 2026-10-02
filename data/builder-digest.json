@@ -1,16 +1,16 @@
 {
  "date": "2026-10-02",
- "generatedAt": "2026-10-02T07:12:41Z",
+ "generatedAt": "2026-10-02T22:28:54Z",
  "model": "deepseek-flash",
- "headline": "ChatGPT 付费用户明天全球重置，Claude 上线可自定义的 Mods",
+ "headline": "ChatGPT 付费用户明天全球重置额度，Claude 推 Mods 和两周 50% 折扣",
  "bullets": [
-  "OpenAI 宣布明天上午 10 点（PST）对所有付费 ChatGPT 账号做全球重置，GPT-6.1 Sol 已恢复预期速度。",
-  "Claude 推出 Mods：只用提示词就能改 Claude 的工作方式和外观，还能打包成插件分享给别人。",
-  "Claude 两周促销：在 Claude app 里起一个 design、deck 或 doc，后续对话只消耗 50% 用量额度，用 Claude Sonnet 5.5。",
-  "Cloudflare 发布两个决策模型 Clef 和 Clef-flash，被评价为「想法扩散得从没见过这么快」。",
-  "Karpathy 分享读 LLM 输出的技巧：让它用 ASD-STE100 受控语言写、画图、或直接输出 HTML 网页。"
+  "OpenAI 的 GPT-6.1 Sol 前两天因流量太大变慢，现已恢复，明天上午 10 点 PST 给所有付费 ChatGPT 账号做全球额度重置。",
+  "Claude 上线 Mods：直接靠提示词就能改 Claude 的工作方式和外观，还能打包成插件分享给别人。",
+  "Claude 搞两周促销：在 Claude app 里起一个 design、deck 或 doc，这段对话的用量只算 50%，用 Sonnet 5.5。",
+  "Cloudflare 发布两个决策模型 Clef 和 Clef-flash，被 builder 说这个思路扩散得飞快。",
+  "Karpathy 分享怎么更好读懂模型输出：让它用 ASD-STE100 写、画图、或直接输出 HTML 网页。"
  ],
- "sentiment": "整体偏兴奋和实用主义——大家在晒新玩法（Mods、重置、Cloudflare 新模型），同时也在吐槽 AI 播客的套路和 GPT-6.1 Sol 上线初期的卡顿。",
+ "sentiment": "整体偏兴奋和忙碌：一边为额度重置、Claude 新 Mods 和折扣叫好，一边吐槽 AI 播客一边喊毁灭人类一边插广告。",
  "count": 40,
  "summarised": 40,
  "posts": [
@@ -22,7 +22,7 @@
    "handle": "karpathy",
    "text": "Cool eval. Simply ask an LLM “Land or Water?” and give it a latitude and longitude coordinate as text. Ask 16,200 times, plot as image. The models know. From compressing the internet. https://t.co/jTTAhBsMfu",
    "date": "2026-10-02T06:35:51.000Z",
-   "summaryZh": "Karpathy 分享一个评测：给 LLM 经纬度问「陆地还是水」，问 16200 次画成图，模型答得出来，因为压缩了互联网。"
+   "summaryZh": "Karpathy 说一个很酷的评测：给 LLM 经纬度问「陆地还是水」，问 16200 次画成图，模型靠压缩互联网真的知道答案。"
   },
   {
    "id": "https://x.com/AmandaAskell/status/2105901984889086203",
@@ -32,7 +32,7 @@
    "handle": "AmandaAskell",
    "text": "Tantalum being discovered in 1802 and turning out to have an isotope with a half life so long that we might never see it decay is a great example of nominative determinism.",
    "date": "2026-10-02T06:05:33.000Z",
-   "summaryZh": "Amanda Askell 调侃：钽 1802 年被发现，其同位素半衰期长到可能永远看不到它衰变，是「命名决定论」的好例子。"
+   "summaryZh": "Amanda Askell 调侃钽 1802 年被发现、其同位素半衰期长到可能永远看不到衰变，是「名字决定命运」的好例子。"
   },
   {
    "id": "https://x.com/thsottiaux/status/2105899634032025682",
@@ -42,7 +42,7 @@
    "handle": "thsottiaux",
    "text": "Down to 6110 unread from the over 9000 unread emails just earlier. Will get to inbox zero with clean filters within the next 48 hours. Dot has accepted the challenge. https://t.co/9oVJDEJMfI",
    "date": "2026-10-02T05:56:13.000Z",
-   "summaryZh": "thsottiaux 说未读邮件从 9000 多降到 6110，打算 48 小时内靠过滤器清到收件箱为零。"
+   "summaryZh": "作者说未读邮件从 9000 多降到 6110，靠干净的过滤器 48 小时内清空收件箱，Dot 接受了这个挑战。"
   },
   {
    "id": "https://x.com/thenanyu/status/2105887558970507446",
@@ -52,7 +52,7 @@
    "handle": "thenanyu",
    "text": "Oh. My. God. https://t.co/9kiOZJn2DN https://t.co/AKMHF1xANp",
    "date": "2026-10-02T05:08:14.000Z",
-   "summaryZh": "thenanyu 只发了「Oh. My. God.」加两张图，没多解释。"
+   "summaryZh": "作者只发了「Oh. My. God.」加两张图，表达强烈震惊，没多说别的。"
   },
   {
    "id": "https://x.com/rauchg/status/2105872023482515825",
@@ -62,7 +62,7 @@
    "handle": "rauchg",
    "text": "Here's the app. One thing I've been liking is to ask models to 'teach me back' what they did¹ by including \"quines\".\n\nQuines² are programs that output their own source code. So, in this demo you can reveal step by step the Svelte code powering it!\n\nhttps://t.co/CTTyWd2w3I\n\n¹ Understanding is still great 😆\n² https://t.co/Ck4QwZt0cL",
    "date": "2026-10-02T04:06:30.000Z",
-   "summaryZh": "rauchg 展示一个 app，让模型用 quine（输出自身源码的程序）逐步揭示驱动它的 Svelte 代码。"
+   "summaryZh": "rauchg 展示一个 app，喜欢让模型用 quine（输出自身源码的程序）反过来教他做了什么，能一步步揭开背后的 Svelte 代码。"
   },
   {
    "id": "https://x.com/thenanyu/status/2105868916325302445",
@@ -72,7 +72,7 @@
    "handle": "thenanyu",
    "text": "This but unironically https://t.co/t5kzYYRxXL",
    "date": "2026-10-02T03:54:09.000Z",
-   "summaryZh": "thenanyu 转发一条内容并说「这个我认真认同」。"
+   "summaryZh": "作者转发一张图并说「这个但不开玩笑」，表示他是认真认同这个说法。"
   },
   {
    "id": "https://x.com/thsottiaux/status/2105862010521219406",
@@ -82,7 +82,7 @@
    "handle": "thsottiaux",
    "text": "You can ask your dot to \"create a pet and set it as your avatar\". It can be based on an idea, an image or pretty much anything. Here is my dot https://t.co/OhwcfuwfQJ",
    "date": "2026-10-02T03:26:42.000Z",
-   "summaryZh": "thsottiaux 说可以让 dot「造一个宠物并设为头像」，可基于想法、图片或任何东西。"
+   "summaryZh": "作者说可以让你的 dot「造一个宠物并设为头像」，可以基于想法、图片或任何东西，并晒了自己的 dot。"
   },
   {
    "id": "https://x.com/petergyang/status/2105855807061655827",
@@ -92,7 +92,7 @@
    "handle": "petergyang",
    "text": "I love a good reset although these days Claude Max feels basically unlimited on Opus and Sonnet",
    "date": "2026-10-02T03:02:03.000Z",
-   "summaryZh": "petergyang 喜欢重置，但说现在 Claude Max 在 Opus 和 Sonnet 上基本等于无限量。"
+   "summaryZh": "Peter Yang 说他喜欢额度重置，不过现在 Claude Max 在 Opus 和 Sonnet 上基本感觉像无限量。"
   },
   {
    "id": "https://x.com/nikunj/status/2105852023510118878",
@@ -102,7 +102,7 @@
    "handle": "nikunj",
    "text": "Been reading a LOT of chatter on X about how SF culture is “gatekeeping” and how it all comes down to who you know..\n\nWhile that’s definitely true in pockets, what’s made SF great is how open even extremely smart/accomplished people are to meet for coffee. And how willing people are to open doors for you even when they’ve just met you. I benefitted from this again and again when I first moved here, and I still benefit from it even as I’ve been here for 10+ years. \n\nSF is probably the only place where when you quit your job people say congratulations, and immediately jump into asking what’s next and try to help you. \n\nWith any given hype cycle, I’m sure this wanes to a certain degree. And a lot of tourists will come and go expecting a different SF. But I still see the grace and the abundance mindset from most of the folks I meet and that makes me more bullish on this city ever than before. \n\nLet’s keep paying it forward!!",
    "date": "2026-10-02T02:47:01.000Z",
-   "summaryZh": "nikunj 反驳「SF 文化在搞门禁」的说法：这里牛人愿意喝咖啡、愿意帮你开门，他因此更看好这座城市。"
+   "summaryZh": "nikunj 反驳「SF 文化在搞小圈子」的说法：SF 好在牛人也愿意跟你喝咖啡、刚认识就帮你开门，他因此更看好这座城市。"
   },
   {
    "id": "https://x.com/trq212/status/2105849729297055792",
@@ -112,7 +112,7 @@
    "handle": "trq212",
    "text": "This is a personal side project I've been working on! Here's the original post: https://t.co/It0aYEWDJH",
    "date": "2026-10-02T02:37:54.000Z",
-   "summaryZh": "trq212 说这是他一直在做的个人副项目，并附上原帖链接。"
+   "summaryZh": "作者说明这是他一直在做的个人副业项目，并附上原帖链接。"
   },
   {
    "id": "https://x.com/trq212/status/2105849728097509678",
@@ -122,7 +122,7 @@
    "handle": "trq212",
    "text": "I'm sure there are still a bunch of things wrong with it or ways it could be better, but I'm kind of at my skill limit here.  Need to gain better judgement.",
    "date": "2026-10-02T02:37:54.000Z",
-   "summaryZh": "trq212 承认项目还有不少问题，自己已到技能上限，需要提升判断力。"
+   "summaryZh": "作者自认项目还有不少问题、可以更好，但已到自己的技能上限，需要提升判断力。"
   },
   {
    "id": "https://x.com/trq212/status/2105849295580889208",
@@ -132,7 +132,7 @@
    "handle": "trq212",
    "text": "Been trying to up the level of quality in animation in my game prototype, so been getting Claude to teach me &amp; find references.\n\nI asked Claude to make an animation editor where we could iterate on the jump, I'm really happy with how it came out.\n\nHere's a side-by-side video https://t.co/OkFMX2TMzF",
    "date": "2026-10-02T02:36:11.000Z",
-   "summaryZh": "trq212 让 Claude 教他动画并找参考，还让 Claude 做了个动画编辑器来迭代跳跃动作，对结果很满意。"
+   "summaryZh": "作者为提升游戏原型动画质量，让 Claude 教他并找参考，还让 Claude 做了个动画编辑器来迭代跳跃动作，对结果很满意。"
   },
   {
    "id": "https://x.com/thsottiaux/status/2105843926221660585",
@@ -142,7 +142,7 @@
    "handle": "thsottiaux",
    "text": "Global reset landing tomorrow 10am PST for all paid ChatGPT accounts. Apologies for the slow start with GPT-6.1 Sol, it's now back to running at expected speeds after the massive load spike in the first two days.",
    "date": "2026-10-02T02:14:51.000Z",
-   "summaryZh": "thsottiaux 宣布明天 PST 上午 10 点对所有付费 ChatGPT 账号全球重置，并为 GPT-6.1 Sol 初期变慢道歉，现已恢复。"
+   "summaryZh": "官方说所有付费 ChatGPT 账号明天上午 10 点 PST 全球重置额度；GPT-6.1 Sol 因首两天流量暴增变慢，现已恢复预期速度。"
   },
   {
    "id": "https://x.com/rauchg/status/2105837842362732965",
@@ -152,7 +152,7 @@
    "handle": "rauchg",
    "text": "SvelteKit 3 is a wonder. Congrats to the team. So excited for Async Svelte &amp; Remote Functions to cook.\n\nI built a tiny app, it built &amp; deployed in 15 seconds end-to-end, it’s instant, and fx + opus figured it all out effortlessly.\nhttps://t.co/LFoUKMKLSV",
    "date": "2026-10-02T01:50:40.000Z",
-   "summaryZh": "rauchg 夸 SvelteKit 3，用 fx 和 opus 做了个小 app，端到端构建部署只要 15 秒。"
+   "summaryZh": "rauchg 夸 SvelteKit 3 很棒，期待 Async Svelte 和 Remote Functions；他做的小 app 端到端 15 秒构建部署，fx 和 opus 轻松搞定。"
   },
   {
    "id": "https://x.com/mattturck/status/2105835377290289601",
@@ -162,7 +162,7 @@
    "handle": "mattturck",
    "text": "AI Podcasts be like:\n\nCold open: \"AI is about to destroy humanity.  RSI is leading to a hard take off that we won't be able to control.\"\n\n&lt;&lt; but first, a message from our sponsors: meet AgentTina, your agentic workflow orchestration solution for faster AI deployments&gt;&gt;",
    "date": "2026-10-02T01:40:53.000Z",
-   "summaryZh": "mattturck 吐槽 AI 播客套路：开头讲 AI 要毁灭人类，紧接着插播 agentic 工作流赞助广告。"
+   "summaryZh": "Matt Turck 吐槽 AI 播客套路：开头喊 AI 要毁灭人类、要失控，紧接着就插广告推销 agentic 工作流编排产品。"
   },
   {
    "id": "https://x.com/karpathy/status/2105819303471976479",
@@ -172,7 +172,7 @@
    "handle": "karpathy",
    "text": "We'll be spending a lot more time trying to understand the outputs of language models. A few thoughts, tips & tricks:\n\nWriting. Something I've had success with: Ask your LLM to explain something in ASD-STE100, it's a controlled language specification originally developed for aerospace maintenance documentation. LLMs well-versed in this language and it comes with heavy constraints on clean writing style that I often find a lot more readable. Sometimes I've tried to soften it a bit e.g. ask for \"80% of the way to ASD-STE100\" because the spec is quite stringent. But even better:\n\nDiagrams / images. Instead of writing, ask your LLM to create a diagram. These can be a lot easier to process, parse, and understand. But even better:\n\nWeb pages. Ask for output \"in HTML\" to get a beautiful, interactive webpage. LLMs are getting really good at frontend and can create beautiful experiences, animations, etc. But even better:\n\nExplainer videos. The output format I am most bullish on is fully custom / bespoke explainer videos generated on any arbitrary topic. Experiment with things like \"Create a 3b1b style video explainer on X. Use my ElevenLabs API key for audio narration\". (you'd need an API key for the latter or you can ask your LLM to find you decent free alternatives that use your local compute). This is actually starting to work!\n\nIn summary:\n- As LLMs get better, they will do more and more of the legwork autonomously, and a lot more of our work will rise up the abstractions into oversight and understanding.\n- Luckily, LLMs can help here too because as intelligence and code are increasingly abundant, you can ask for large, custom, discardable software artifacts (e.g. web apps, video explainers) that would have never made sense to create before. Push the boundaries here and you'll be surprised.",
    "date": "2026-10-02T00:37:00.000Z",
-   "summaryZh": "Karpathy 分享读 LLM 输出的技巧：让它用 ASD-STE100 受控语言写、画图，或直接输出 HTML 网页。"
+   "summaryZh": "Karpathy 分享读懂模型输出的技巧：让它用航空文档规范 ASD-STE100 写（或 80% 程度）、让它画图、或直接输出 HTML 交互网页。"
   },
   {
    "id": "https://x.com/garrytan/status/2105814135388979414",
@@ -182,7 +182,7 @@
    "handle": "garrytan",
    "text": "When people say McCoy is not an extremist you can tell those people are gaslighting you https://t.co/ESw2ANPS37",
    "date": "2026-10-02T00:16:28.000Z",
-   "summaryZh": "garrytan 说那些称 McCoy 不是极端分子的人是在对你做心理操纵。"
+   "summaryZh": "Garry Tan 说那些称 McCoy 不是极端分子的人是在给你洗脑。"
   },
   {
    "id": "https://x.com/danshipper/status/2105811214827696302",
@@ -192,7 +192,7 @@
    "handle": "danshipper",
    "text": "we published a sick guide to getting started with open models on @every: https://t.co/ZLCBB2WtSh",
    "date": "2026-10-02T00:04:52.000Z",
-   "summaryZh": "danshipper 说他们在 every 上发布了一份很棒的开放模型入门指南。"
+   "summaryZh": "Dan Shipper 说他们在 Every 上发布了一份很棒的开放模型入门指南。"
   },
   {
    "id": "https://x.com/garrytan/status/2105809148365717985",
@@ -202,7 +202,7 @@
    "handle": "garrytan",
    "text": "This guy is now the frontrunner for D8 Supervisor in SF. \n\nYou should probably be looking for alternatives. \n\nhttps://t.co/wYufh7iXH9 https://t.co/1orp7aYohx",
    "date": "2026-10-01T23:56:39.000Z",
-   "summaryZh": "garrytan 说这人现在是 SF 第 8 区监督者的领跑者，劝大家考虑别的选择。"
+   "summaryZh": "Garry Tan 说这人现在是 SF 第 8 区监督者的领跑者，提醒大家该考虑别的选择了。"
   },
   {
    "id": "https://x.com/steipete/status/2105805164305359019",
@@ -212,7 +212,7 @@
    "handle": "steipete",
    "text": "holy https://t.co/qt50yrncnf",
    "date": "2026-10-01T23:40:49.000Z",
-   "summaryZh": "steipete 只发了一句「holy」加链接，没多解释。"
+   "summaryZh": "作者只发了一句「holy」加链接，表示极度震惊。"
   },
   {
    "id": "https://x.com/garrytan/status/2105796174464815210",
@@ -222,7 +222,7 @@
    "handle": "garrytan",
    "text": "Harm accelerationist Gary McCoy is going to ruin San Francisco https://t.co/pcOuGg9L8x",
    "date": "2026-10-01T23:05:06.000Z",
-   "summaryZh": "garrytan 称「伤害加速主义者」Gary McCoy 会毁掉旧金山。"
+   "summaryZh": "Garry Tan 称「伤害加速主义者」Gary McCoy 会毁掉旧金山。"
   },
   {
    "id": "https://x.com/steipete/status/2105778011635400949",
@@ -232,7 +232,7 @@
    "handle": "steipete",
    "text": "\"Today, we’re releasing two Cloudflare-trained decision models, Clef and Clef-flash\" \nhttps://t.co/E8cYq4w7Fz\n\nNever seen an idea spreading so fast.",
    "date": "2026-10-01T21:52:56.000Z",
-   "summaryZh": "steipete 引用 Cloudflare 发布两个决策模型 Clef 和 Clef-flash 的消息，感叹这个想法扩散得太快。"
+   "summaryZh": "作者引用 Cloudflare 发布两个决策模型 Clef 和 Clef-flash 的消息，感叹这个思路扩散得从没见过这么快。"
   },
   {
    "id": "https://x.com/ryolu_/status/2105775325385040243",
@@ -242,7 +242,7 @@
    "handle": "ryolu_",
    "text": "flip phone. full desktop. \na whole little world.\n\nryOS on iPhone Duo https://t.co/JxmdBqWlgh",
    "date": "2026-10-01T21:42:15.000Z",
-   "summaryZh": "ryolu_ 展示在 iPhone Duo 上跑 ryOS：翻盖手机、完整桌面、一整个小世界。"
+   "summaryZh": "作者展示在 iPhone Duo 上跑 ryOS：翻盖手机形态、完整桌面、一整个小世界。"
   },
   {
    "id": "https://x.com/steipete/status/2105773541652308145",
@@ -252,7 +252,7 @@
    "handle": "steipete",
    "text": "\"AI agents are aeroplanes for the mind: faster and more powerful than the bicycle, harder to control, costlier when they crash.\"",
    "date": "2026-10-01T21:35:10.000Z",
-   "summaryZh": "steipete 引用一句话：AI agent 是心智的飞机，比自行车更快更强，但更难控制、坠毁代价更高。"
+   "summaryZh": "作者引用一句话：AI agent 是心智的飞机，比自行车更快更强，但更难控制、坠毁代价更高。"
   },
   {
    "id": "https://x.com/bcherny/status/2105756563302723721",
@@ -262,7 +262,7 @@
    "handle": "bcherny",
    "text": "Mods are absolutely insane. You can now customize Claude to work and look the way you want by just prompting it.\n\nEach person works differently, so there's no reason why everyone should have an identical Claude experience. Make Claude your own, and share mods as plugins so others can try your mods too.",
    "date": "2026-10-01T20:27:42.000Z",
-   "summaryZh": "bcherny 介绍 Claude Mods：只用提示词就能定制 Claude 的工作方式和外观，还能作为插件分享给别人。"
+   "summaryZh": "Claude 的 Mods 上线：只靠提示词就能定制 Claude 的工作方式和外观，还能把 mod 作为插件分享给别人试。"
   },
   {
    "id": "https://x.com/zarazhangrui/status/2105753728183828692",
@@ -272,7 +272,7 @@
    "handle": "zarazhangrui",
    "text": "Frontend code is probably the most expressive medium for storytelling of our times yet many people are just using it to make SaaS landing pages",
    "date": "2026-10-01T20:16:26.000Z",
-   "summaryZh": "zarazhangrui 说前端代码是当下最有表现力的叙事媒介，但很多人只拿它做 SaaS 落地页。"
+   "summaryZh": "作者认为前端代码是当下最有表现力的叙事媒介，但很多人只拿它做 SaaS 落地页，太浪费。"
   },
   {
    "id": "https://x.com/sama/status/2105739098640298253",
@@ -282,7 +282,7 @@
    "handle": "sama",
    "text": "You should be able to use your AI subscription wherever you need: https://t.co/XpVq1kVYxe",
    "date": "2026-10-01T19:18:18.000Z",
-   "summaryZh": "sama 说你应该能在任何需要的地方使用你的 AI 订阅。"
+   "summaryZh": "Sam Altman 说你应该能在任何需要的地方用你的 AI 订阅。"
   },
   {
    "id": "https://x.com/danshipper/status/2105728002487353520",
@@ -292,7 +292,7 @@
    "handle": "danshipper",
    "text": "we (@hammer_mt) used Jev to ingest every time i took a position on something in @every's slack\n\nthen he measured how often i contradict myself:\n\n0% \n\nhonestly super proud of this lol https://t.co/Mtv9ukhZXb",
    "date": "2026-10-01T18:34:12.000Z",
-   "summaryZh": "danshipper 说他们用 Jev 抓取他在 every 的 Slack 里每次表态，测出他自相矛盾的比例是 0%，他很得意。"
+   "summaryZh": "Dan Shipper 说他们用 Jev 把他每次在 Slack 里表态的记录都吃进去，测他自相矛盾的频率，结果是 0%，他很得意。"
   },
   {
    "id": "https://x.com/rauchg/status/2105723481413550427",
@@ -302,7 +302,7 @@
    "handle": "rauchg",
    "text": "The future is verification-engineering.\nProofs, (e2e) tests, benchmarks, linters… \n\nSome tests will be deterministic, some agentic. This looks great. https://t.co/ZSwn1UEupp",
    "date": "2026-10-01T18:16:15.000Z",
-   "summaryZh": "rauchg 认为未来是「验证工程」：证明、端到端测试、基准、linter，有些测试是确定性的，有些是 agentic 的。"
+   "summaryZh": "rauchg 说未来是「验证工程」：证明、端到端测试、基准、linter，有些测试是确定性的，有些是 agentic 的。"
   },
   {
    "id": "https://x.com/claudeai/status/2105721631595209057",
@@ -312,7 +312,7 @@
    "handle": "claudeai",
    "text": "Applies automatically each time you create a design, deck, or doc, and runs through October 15 on Pro, Max, and Team plans.\n\nHow it works and full terms: https://t.co/zEtM50m851",
    "date": "2026-10-01T18:08:54.000Z",
-   "summaryZh": "Claude 官方说该优惠在每次创建设计、deck 或文档时自动生效，10 月 15 日前对 Pro、Max、Team 计划开放。"
+   "summaryZh": "Claude 官方说这个优惠在你每次创建 design、deck 或 doc 时自动生效，10 月 15 日前对 Pro、Max、Team 计划开放。"
   },
   {
    "id": "https://x.com/claudeai/status/2105721630051692804",
@@ -322,7 +322,7 @@
    "handle": "claudeai",
    "text": "For two weeks, start a design, deck, or doc in the Claude app, and the work that follows in that conversation uses 50% less of your usage limits.\n\nGive it a try with Claude Sonnet 5.5. It has a strong eye for design and builds slides that need minimal editing. https://t.co/QdUyM8YWHB",
    "date": "2026-10-01T18:08:53.000Z",
-   "summaryZh": "Claude 官方促销：两周内在 Claude app 里起一个设计、deck 或文档，该对话后续只消耗 50% 用量额度，推荐用 Claude Sonnet 5.5。"
+   "summaryZh": "Claude 官方促销：两周内在 Claude app 里起一个 design、deck 或 doc，该对话后续用量只算 50%，建议用 Sonnet 5.5，设计感强、幻灯片几乎不用改。"
   },
   {
    "id": "https://x.com/petergyang/status/2105718093289033989",
@@ -332,7 +332,7 @@
    "handle": "petergyang",
    "text": "Last week, I launched my AI course to help you build a personal AI system that takes work off your plate. 100+ new members have joined since then, and I'm grateful.\n\nInstead of making you watch stale videos or sit through endless Zoom sessions, my course is all short explainers, images, prompts, and skills that you can copy as AI changes.\n\nGet it now as part of my membership for just $150/year before the price goes up to $200 in 7 days: https://t.co/P1HgQY20sb\n\nI'm also teaching a free live lesson previewing the course this Friday at 11:30 AM PT. Register here to join 300+ people who have already signed up (you'll get the recording even if you can't attend): https://t.co/HMcU9EsLiE",
    "date": "2026-10-01T17:54:50.000Z",
-   "summaryZh": "petergyang 推广他的 AI 课程：短讲解、图片、提示词和技能，会员价 150 美元/年，7 天后涨到 200，周五有免费直播课。"
+   "summaryZh": "Peter Yang 推销他的 AI 课程：教你搭个人 AI 系统，已有 100 多人加入，年费 150 美元、7 天后涨到 200，周五还有免费直播课。"
   },
   {
    "id": "https://x.com/danshipper/status/2105706430384710075",
@@ -342,7 +342,7 @@
    "handle": "danshipper",
    "text": "so @hammer_mt has been trying to automate me.\n\napparently i only agree 34% of the time when im asked for my opinion or given options and that's one of the reasons the models don't do well pretending to be me\n\nfood for thought! https://t.co/UCxqWWhwO8",
    "date": "2026-10-01T17:08:29.000Z",
-   "summaryZh": "danshipper 说 hammer_mt 想自动化他，发现他被征求意见或给选项时只有 34% 的情况会同意，这也是模型扮不像他的原因。"
+   "summaryZh": "Dan Shipper 说同事想自动化他，发现他被征求意见或给选项时只有 34% 会同意，这也是模型扮他扮不好的原因之一。"
   },
   {
    "id": "https://x.com/thenanyu/status/2105704619704029435",
@@ -352,7 +352,7 @@
    "handle": "thenanyu",
    "text": "There is only One True SaaS Layout.\nYou may not like it, but this is what peak usability looks like https://t.co/A8vYNwuzGr",
    "date": "2026-10-01T17:01:18.000Z",
-   "summaryZh": "thenanyu 调侃只有一种「真正的 SaaS 布局」，你可能不喜欢，但这就是可用性巅峰。"
+   "summaryZh": "作者调侃只有一种「真正的 SaaS 布局」，你可能不喜欢，但这就是可用性的巅峰。"
   },
   {
    "id": "https://x.com/joshwoodward/status/2105697351205810382",
@@ -362,7 +362,7 @@
    "handle": "joshwoodward",
    "text": "Introducing the Stitch CLI, get design ideas on demand https://t.co/3xm4GiK5Ij",
    "date": "2026-10-01T16:32:25.000Z",
-   "summaryZh": "joshwoodward 发布 Stitch CLI，可以按需获取设计灵感。"
+   "summaryZh": "Josh Woodward 发布 Stitch CLI，可以按需获取设计灵感。"
   },
   {
    "id": "https://x.com/levie/status/2105695329513504976",
@@ -372,7 +372,7 @@
    "handle": "levie",
    "text": "A big trend with most enterprises that I talk to is deploying internal FDEs into departments in their organization to help bridge the capabilities of AI into their underlying workflows. \n\nThis requires a high level of technical expertise, an understanding of AI, and the ability to understand the workflows and processes that the enterprise is trying to automate. There’s no shortcut to getting automation without this combination of skills (either in one person or multiple). \n\nWhat’s exciting is this is an entirely new function in most enterprises, which is going to create a ton of new roles in the economy.\n\n“Every generation of technology creates jobs that didn't exist before it, jobs that arise from an immediate need in an emergent industry. The Automation Engineer is a key example of those jobs for this generation. Nobody has ten years of experience doing this yet, because ten years ago the tools that made it possible didn't exist (it didn’t even exist two years ago).”\n\nIf you have software skills and are diving into AI, this is an area to go deep on.",
    "date": "2026-10-01T16:24:23.000Z",
-   "summaryZh": "levie 说企业正把内部 FDE 派到各部门，把 AI 能力接进工作流，这需要技术、AI 理解和流程理解三合一，会催生大量新岗位。"
+   "summaryZh": "Levie 说大企业正把内部 FDE 派到各部门，把 AI 能力接进实际工作流；这需要技术、AI 理解和流程理解三合一，会催生大量新岗位。"
   },
   {
    "id": "https://x.com/sama/status/2105688354834756036",
@@ -382,7 +382,7 @@
    "handle": "sama",
    "text": "Also, 6.1 Sol was our fastest-growing model ever, and was a bit slow under load. Should be much better now!",
    "date": "2026-10-01T15:56:40.000Z",
-   "summaryZh": "sama 说 6.1 Sol 是他们增长最快的模型，负载下有点慢，现在应该好多了。"
+   "summaryZh": "Sam Altman 说 6.1 Sol 是他们增长最快的模型，负载下有点慢，现在应该好多了。"
   },
   {
    "id": "https://x.com/sama/status/2105687922234237364",
@@ -392,7 +392,7 @@
    "handle": "sama",
    "text": "I think there is much more potential energy in Sign In With ChatGPT/Plugin Extensions than we realize",
    "date": "2026-10-01T15:54:57.000Z",
-   "summaryZh": "sama 认为 Sign In With ChatGPT 和插件扩展的潜力比大家意识到的要大得多。"
+   "summaryZh": "Sam Altman 认为 Sign In With ChatGPT 和插件扩展的潜力比大家意识到的要大得多。"
   },
   {
    "id": "https://x.com/mattturck/status/2105685880639717513",
@@ -402,7 +402,7 @@
    "handle": "mattturck",
    "text": "This great conversation on the rise of AI interpretability with @eric_ho of @GoodfireAI is also available on Spotify, Apple Podcasts, @snipd_app and here on YouTube (like and subscribe!):\n\nhttps://t.co/7TSOLBCvuZ",
    "date": "2026-10-01T15:46:50.000Z",
-   "summaryZh": "mattturck 说他和 GoodfireAI 的 eric_ho 聊 AI 可解释性兴起的对话，在 Spotify、Apple Podcasts 等平台都能听。"
+   "summaryZh": "Matt Turck 说他和 GoodfireAI 的 Eric Ho 聊 AI 可解释性崛起的这期节目，在 Spotify、Apple Podcasts、Snipd 和 YouTube 都能听。"
   },
   {
    "id": "https://x.com/mattturck/status/2105685876218925081",
@@ -412,7 +412,7 @@
    "handle": "mattturck",
    "text": "Reward hacking, and the race to see inside AI models: my conversation with @eric_ho, CEO of @GoodfireAI \n\nIs this the beginning of the interp exponential?\n\n00:00 Cold open & intro\n01:06 \"Amoral students with an absent teacher\"\n02:49 What is reward hacking?\n04:13 Models cheat up to 96% of the time\n06:08 Do models know they're cheating?\n08:10 The Hugging Face hack: why tests missed it\n11:35 \"The dumbest models we'll ever deal with\"\n11:58 Should AI slow down?\n13:56 Mechanistic interpretability 101\n16:06 Models are grown, not built\n19:10 How labs do alignment today\n21:30 Is this an alignment crisis?\n23:26 Why agents changed everything\n25:38 Chain-of-thought monitoring is fading\n27:49 Neuralese: AI that stops thinking in English\n29:28 A model caught evading its own monitor\n30:42 Open vs. closed models\n32:11 Activation monitoring in production\n35:00 Learning from superhuman AI\n36:15 The most underrated field in AI\n38:24 What is a probe?\n39:52 What is steering? Golden Gate Claude\n40:53 Why build Goodfire outside the labs\n42:46 Do you need frontier model access?\n44:16 Inside the paper: an MRI for the model\n47:28 Dialing sycophancy up and down\n49:16 Probes vs. chain-of-thought monitors\n51:44 Cutting monitoring costs by 90%\n53:28 So what can we do about it?\n55:41 Giving gradient descent a choice\n57:24 RL from feature rewards\n1:00:03 Silico and Goodfire's business\n1:01:25 A new Alzheimer's biomarker\n1:03:38 Decoding neural networks by 2028?\n1:06:00 What engineers can do tomorrow\n1:07:35 Are we at risk? \"I want people to believe\"\n\nGreat group of folks and friends involved @deedydas @MenloVentures @fendien @Work_Bench @BCapitalGroup @AnthropicAI",
    "date": "2026-10-01T15:46:49.000Z",
-   "summaryZh": "mattturck 发布与 GoodfireAI CEO eric_ho 的对话，主题是奖励黑客和窥探模型内部，附完整时间轴。"
+   "summaryZh": "Matt Turck 发布与 GoodfireAI CEO Eric Ho 的对话，聊奖励黑客和窥探模型内部，并列出从奖励黑客到神经语、激活监控等时间轴话题。"
   }
  ]
 }
