@@ -17,7 +17,7 @@ const FEED     = 'https://raw.githubusercontent.com/zarazhangrui/follow-builders
 /* 前端 → Cloudflare Worker → 触发 GitHub Actions 重新生成数据。
    部署好 Worker 后，把下面这个 URL 换成你自己的 *.workers.dev 地址
    （或绑定的自定义域名）。详见 research-radar/worker/README-deploy.md */
-const WORKER_URL = 'https://REPLACE-ME.workers.dev';
+const WORKER_URL = 'https://research-radar-trigger.robinmarie628.workers.dev';
 const DAYS     = 30;        // discovery window — abstracts lag 2–4 days, so never use 1
 const MAXJ     = 100;       // Europe PMC cap per request with resultType=core
 const CHUNKS   = 3;         // split the ISSN list so one journal can't flood the pool
