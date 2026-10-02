@@ -1,18 +1,18 @@
 {
- "date": "2026-10-01",
- "generatedAt": "2026-10-01T07:58:06Z",
- "model": "manual-preview",
- "headline": "Google 发 Gemini 4，GPT-6.1 Sol 需求爆表，agent 协作成热议",
+ "date": "2026-10-02",
+ "generatedAt": "2026-10-02T00:40:45Z",
+ "model": "deepseek-flash",
+ "headline": "GPT-6.1 Sol 需求爆棚，ChatGPT 里能直接搭 MCP 服务器了",
  "bullets": [
-  "Google 发布 Gemini 4（代号 Argon），builder 们普遍叫好；但认为 Google 在编程工具 Antigravity 和个人 agent Spark 上还得再加把劲。",
-  "OpenAI 的 GPT-6.1 Sol 是史上需求最高的模型，API 和订阅两边都超负荷，团队正在紧急扩容。",
-  "ChatGPT 现在可以直接构建和部署 MCP servers，还能限制访问权限或公开分享——agent 接外部工具的门槛又降了一截。",
-  "多智能体协作成了焦点：Garry Tan 说别的编辑器只能自上而下指挥子 agent，而这里 agent 之间能像同侪一样互相对话、自我协调。",
-  "企业侧在谈「AI 部署层」的机会（Levie），Google Labs 的 Opal 并入 Skills，Meta 支持用 Make 一键发布 VR 应用。"
+  "OpenAI 的 GPT-6.1 Sol 成史上最抢手模型，API 和订阅都超载，官方说几小时内速度会翻倍。",
+  "ChatGPT 现在能直接构建和部署 MCP 服务器，还能控制谁能访问。",
+  "Google 的 Gemini 4 被 builder 们夸爆，但有人吐槽它在编程工具和个人 agent 上还得加把劲。",
+  "Vercel 的 rauchg 推 Connect，想让服务商接入 20M+ 开发者和 agent 生态，解决静态密钥的麻烦。",
+  "Google Labs 的 Opal 要关了，它的能力被整合进 Gemini App 的 Skills 功能，11 月 17 日停服。"
  ],
- "sentiment": "整体是「兴奋 + 吐槽」并存：对 Gemini 4 和新 agent 能力普遍叫好，但同时抱怨 CI/GitHub 拖慢开发、agent 互相刷屏太吵，也担心模型产能跟不上。",
+ "sentiment": "整体偏兴奋，builder 们对 Gemini 4 和 GPT-6.1 Sol 的新能力很买账，同时也在吐槽 agent 通信太吵、CI 太慢这些工程痛点。",
  "count": 35,
- "summarised": 34,
+ "summarised": 35,
  "posts": [
   {
    "id": "https://x.com/swyx/status/2105538561672085751",
@@ -22,7 +22,7 @@
    "handle": "swyx",
    "text": "is it normal to crop out other people's logo and not attribute to a simple youtube video or how does this work in professional tech media https://t.co/RMciDG1IJS https://t.co/Wfmcnmv9b7",
    "date": "2026-10-01T06:01:26.000Z",
-   "summaryZh": "吐槽专业科技媒体直接裁掉别人视频的 logo 却不署名，问这行的规矩到底怎么算。"
+   "summaryZh": "swyx 质疑专业科技媒体把别人 logo 裁掉还不署名的做法是否正常。"
   },
   {
    "id": "https://x.com/nikunj/status/2105532229866942772",
@@ -32,7 +32,7 @@
    "handle": "nikunj",
    "text": "I have automated most of my job away except the following..\n\na) sourcing and writing outbound emails (convinced no amount of tech helps here)\n\nb) meeting founders (primarily in person, zoom sucks)\n\nc) writing pass notes/calls (still write every single one by hand & frankly the hardest part of the job)\n\n(and no I don't have an EA or ever intend to hire one.. might be famous last words)",
    "date": "2026-10-01T05:36:17.000Z",
-   "summaryZh": "说他几乎把工作全自动化了，只剩两件事做不到：写外联邮件和开会。"
+   "summaryZh": "nikunj 说除了找项目写邮件、见创始人、手写投资笔记，其他工作都自动化了。"
   },
   {
    "id": "https://x.com/thsottiaux/status/2105519215092584786",
@@ -42,7 +42,7 @@
    "handle": "thsottiaux",
    "text": "One more thing, you can now build and deploy MCP servers right through ChatGPT. And restrict its access to anyone you want or share it with the world. https://t.co/KZwGmxL9ew",
    "date": "2026-10-01T04:44:34.000Z",
-   "summaryZh": "宣布 ChatGPT 现在能直接构建和部署 MCP servers，可限制访问权限，也能公开分享。"
+   "summaryZh": "thsottiaux 宣布 ChatGPT 现在能直接构建和部署 MCP 服务器，还能限制或公开访问权限。"
   },
   {
    "id": "https://x.com/petergyang/status/2105486915147645063",
@@ -52,7 +52,7 @@
    "handle": "petergyang",
    "text": "People I met at DevDay: I love your channel! Thank you!\n\nPeople in YouTube comments: Fing AI shill \n\n🥲",
    "date": "2026-10-01T02:36:13.000Z",
-   "summaryZh": "自嘲在 DevDay 被现场观众热情夸奖、转头在 YouTube 评论区却被骂「AI 水军」。"
+   "summaryZh": "petergyang 吐槽线下被人夸频道好，线上评论区却骂他是 AI 水军。"
   },
   {
    "id": "https://x.com/rauchg/status/2105476587756138942",
@@ -62,7 +62,7 @@
    "handle": "rauchg",
    "text": "Most token aggregators have extreme noise from ① token promos from/to providers that train on your data or ② providers that *claim* to be ZDR.\n\nVercel AI Gateway is the largest trustworthy datasource to understand global AI token flows, because we have real usage, from real customers, an at-scale platform (400k+ paying customers and thousands of enterprises), and zero markup.\n\nNotably… every week we turn down \"free token\" promos from companies that come to us with dubious claims of Zero Data Retention (ZDR) and questionable reputations. We also don't get a kick out of having the \"most providers\". Most providers suck. You want the *best* providers.\n\nWe put in as much work in engineering our gateway, as in our legal, compliance, privacy, and backoffice operations to responsibly serve trillions of tokens every day. We're here for the long haul.",
    "date": "2026-10-01T01:55:11.000Z",
-   "summaryZh": "说大多数 token 聚合器噪音极大（要么是拿你数据训练的促销、要么自称 ZDR 名不副实），暗示 Vercel 的做法更干净。"
+   "summaryZh": "rauchg 说 Vercel AI Gateway 是最大可信的 token 数据源，因为拒绝可疑的免费 token 推广，坚持零加价。"
   },
   {
    "id": "https://x.com/garrytan/status/2105472268482875898",
@@ -72,7 +72,7 @@
    "handle": "garrytan",
    "text": "*chefs kiss* https://t.co/uJEcB8IPJU",
    "date": "2026-10-01T01:38:01.000Z",
-   "summaryZh": "只发了「chef's kiss」配图，表达对某件事的极度满意。"
+   "summaryZh": "garrytan 发了个表情表示极度赞赏。"
   },
   {
    "id": "https://x.com/thsottiaux/status/2105464274747527543",
@@ -82,7 +82,7 @@
    "handle": "thsottiaux",
    "text": "GPT-6.1 Sol is our most demanded model pretty much ever both across both the API and subscriptions. \n\nWithin ChatGPT & Codex, we were under heavy load, but have brough more capacity online and the speed should get much better in the coming hours, reaching almost twice the speed compared to what we served yesterday.",
    "date": "2026-10-01T01:06:15.000Z",
-   "summaryZh": "GPT-6.1 Sol 是他们史上需求最高的模型，API 和订阅都超负荷，正在紧急扩容。"
+   "summaryZh": "thsottiaux 说 GPT-6.1 Sol 是史上需求最大的模型，已加容量，速度将提升近一倍。"
   },
   {
    "id": "https://x.com/garrytan/status/2105449821645480046",
@@ -92,7 +92,7 @@
    "handle": "garrytan",
    "text": "Other code editors let you top down coordinate child agents\n\nI’ve never really seen this where agent swarms speak to one another as peers and self coordinate allowing you to organically explore the space instead of pre-arrange it, have you?\n\nCapy is special https://t.co/brMCMFttvW",
    "date": "2026-10-01T00:08:49.000Z",
-   "summaryZh": "指出别的代码编辑器只能自上而下指挥子 agent，而这里 agent 之间能像同侪一样对话、自我协调——他说这是他没见过的。"
+   "summaryZh": "garrytan 夸 Capy 的 agent 能像同伴一样互相通信、自组织，而不是自上而下协调。"
   },
   {
    "id": "https://x.com/danshipper/status/2105443942330503416",
@@ -102,7 +102,7 @@
    "handle": "danshipper",
    "text": "we will be ready to vibe check! https://t.co/JPL4r035aG",
    "date": "2026-09-30T23:45:27.000Z",
-   "summaryZh": "说他们准备好接受大家的「vibe check」了。"
+   "summaryZh": "danshipper 表示准备好来一场 vibe check。"
   },
   {
    "id": "https://x.com/petergyang/status/2105427638236180883",
@@ -112,7 +112,7 @@
    "handle": "petergyang",
    "text": "This is getting nuclear 🌶️ https://t.co/vFIgF8GRFH",
    "date": "2026-09-30T22:40:40.000Z",
-   "summaryZh": "用「这越来越核爆了🌶️」形容某件事越来越激烈。"
+   "summaryZh": "petergyang 感叹这事越来越劲爆了。"
   },
   {
    "id": "https://x.com/swyx/status/2105419486383964544",
@@ -122,7 +122,7 @@
    "handle": "swyx",
    "text": "i genuinely dont do anything to optimize for apple  podcasts (and actively hate spotify) so being on the top podcast list here among some industry legends  and even beating @MKBHD is pretty fkin nuts https://t.co/myUbdjzfyr",
    "date": "2026-09-30T22:08:17.000Z",
-   "summaryZh": "说他从没为 Apple Podcasts 做过任何优化（甚至讨厌 Spotify），却上了榜单和行业前辈并列，觉得很不真实。"
+   "summaryZh": "swyx 说自己没为 Apple Podcasts 做优化，却上了热门榜还超过 MKBHD，觉得很疯狂。"
   },
   {
    "id": "https://x.com/danshipper/status/2105399004649689347",
@@ -132,7 +132,7 @@
    "handle": "danshipper",
    "text": "read it on @every: https://t.co/TYqbX7w6Ew",
    "date": "2026-09-30T20:46:53.000Z",
-   "summaryZh": "引导大家去 Every 上读这篇文章。"
+   "summaryZh": "danshipper 分享在 Every 上读到的内容。"
   },
   {
    "id": "https://x.com/nikunj/status/2105397656994652178",
@@ -142,7 +142,7 @@
    "handle": "nikunj",
    "text": "Still looking for this..\n\nIf you are building an insanely good multiplayer experience, please DM or reply here with a demo! https://t.co/xFUQZ2DBhJ",
    "date": "2026-09-30T20:41:32.000Z",
-   "summaryZh": "在找人：如果你在做极其出色的多人体验，欢迎私信或留言给他看 demo。"
+   "summaryZh": "nikunj 还在找极其出色的多人体验产品，邀请大家发 demo。"
   },
   {
    "id": "https://x.com/joshwoodward/status/2105396307250782446",
@@ -152,7 +152,7 @@
    "handle": "joshwoodward",
    "text": "Gemini 4 Argon! https://t.co/my712dCXrs",
    "date": "2026-09-30T20:36:10.000Z",
-   "summaryZh": "只写了「Gemini 4 Argon！」，为 Google 的新模型叫好。"
+   "summaryZh": "joshwoodward 提到 Gemini 4 Argon。"
   },
   {
    "id": "https://x.com/garrytan/status/2105395957357588561",
@@ -162,7 +162,7 @@
    "handle": "garrytan",
    "text": "I asked Secretary Duffy what Americans should be able to do, if we get this decade right, that they can't do today.\n\nSean Duffy is the Secretary of Transportation, and he sat down with me at our Startup Industrial Base event in DC today. He went straight to how our country's air traffic gets managed.\n\nAt the command center, people sit in front of six screens with a paper flight chart above them, trying to make the calls on weather and routing.\n\nHis example: four planes reach the same runway at the same time and only one can land. See it two hours out, speed up two, slow one down, and each one lands when the runway is open. \"Like, not complicated stuff, but we don't do any of this.\"\n\nPaper and pencil and minimal human augmentation from software looks like this: Say an airport can take 15 planes in a 15 minute window. \"Well, the airlines will schedule 32.\" He says he's handing the airlines that data and asking them to spread out.\n\nThe tool is SMART, from Air Space Intelligence, a small company he says competed with the biggest companies and won. It predicts. His stage example: a 2.5 hour ground stop might only need 45 minutes. He's taken heat for supposedly handing air traffic control to AI. Duffy's answer? \"it's dumb AI, not smart AI.\" Controllers still make every call.\n\nNone of this needs a breakthrough. It needs the will of the people to know they need to use software and be ok with AI augmentation instead of insisting on a paper chart and copper wire.",
    "date": "2026-09-30T20:34:47.000Z",
-   "summaryZh": "转述他问美国交通部长 Duffy：如果这个十年走对了，美国人应该能做哪些今天还做不到的事。"
+   "summaryZh": "garrytan 问交通部长 Sean Duffy 美国十年后能做到什么，对方举例说空管还在用纸笔，本可以提前两小时调度航班。"
   },
   {
    "id": "https://x.com/thsottiaux/status/2105395200248156556",
@@ -172,7 +172,7 @@
    "handle": "thsottiaux",
    "text": "Asked my dot to paint me. After sending me something cartoonish, I asked it to try a bit harder and to find a recent picture of me on the internet. It did better.\n\nBelow video is me clicking through my dot's computer. https://t.co/AutVg2erlh",
    "date": "2026-09-30T20:31:46.000Z",
-   "summaryZh": "让他的模型给自己画像，先画得太卡通，于是要求「再努力点、去网上找张我的近照」——然后发生了意想不到的事。"
+   "summaryZh": "thsottiaux 让 dot 画自己，要求找网上近期照片后效果更好，并展示了 dot 的电脑界面。"
   },
   {
    "id": "https://x.com/petergyang/status/2105393240392585359",
@@ -182,7 +182,7 @@
    "handle": "petergyang",
    "text": "Google cooked on Gemini 4! \n\nNow they just need to be more competitive on coding harness (Antigravity) + personal agent (Spark). https://t.co/shCRH678Ow",
    "date": "2026-09-30T20:23:59.000Z",
-   "summaryZh": "夸 Google 在 Gemini 4 上做得很好，但认为他们还得在编程工具 Antigravity 和个人 agent Spark 上更有竞争力。"
+   "summaryZh": "petergyang 夸 Google 在 Gemini 4 上做得好，但编程工具 Antigravity 和个人 agent Spark 还需更有竞争力。"
   },
   {
    "id": "https://x.com/danshipper/status/2105391711950393423",
@@ -192,7 +192,7 @@
    "handle": "danshipper",
    "text": "Okay i thought this model was already out phew. \n\n@sundarpichai would love to vibe check it",
    "date": "2026-09-30T20:17:55.000Z",
-   "summaryZh": "说他以为这个模型早就发布了，并喊话 Sundar Pichai 来试试。"
+   "summaryZh": "danshipper 以为这模型已经发布了，想请 Sundar Pichai 来 vibe check。"
   },
   {
    "id": "https://x.com/rauchg/status/2105390544096841942",
@@ -202,7 +202,7 @@
    "handle": "rauchg",
    "text": "If you run a service and want to get in front of 20M+ developers and the billions of agents they'll ship, add yourself to Connect.\n\nWith code now being 'free', the final boss of building is connecting to stuff. Connect is both easier and more secure¹. For agents and for apps.\n\n¹ The world of building agents is plagued with static credentials. You're supposed to give a bunch of keys to each agent or app you build. It's DX hell, but it's also a massive liability. Connect fixes this.",
    "date": "2026-09-30T20:13:16.000Z",
-   "summaryZh": "邀请跑服务的人加入 Vercel Connect，接触 2000 万开发者以及他们即将上线的数十亿 agent。"
+   "summaryZh": "rauchg 推 Connect，让服务商触达 20M+ 开发者和 agent，解决静态密钥的 DX 和安全问题。"
   },
   {
    "id": "https://www.youtube.com/playlist?list=PLuMcoKK9mKgHtW_o9h5sGO2vXrffKHwJL",
@@ -213,7 +213,7 @@
    "title": "How Sam Altman Uses Dots to Take Back His Time",
    "text": "",
    "date": "2026-09-30T20:05:56.000Z",
-   "summaryZh": ""
+   "summaryZh": "Every 的播客聊 Sam Altman 如何用 Dots 夺回时间。"
   },
   {
    "id": "https://x.com/claudeai/status/2105370681613672773",
@@ -223,7 +223,7 @@
    "handle": "claudeai",
    "text": "Register for San Francisco: https://t.co/B6aqG8jBo7\n\nRegister for Stockholm: https://t.co/FtLED2aeoo",
    "date": "2026-09-30T18:54:21.000Z",
-   "summaryZh": "给出旧金山和斯德哥尔摩两场活动的报名链接。"
+   "summaryZh": "Claude 开放旧金山和斯德哥尔摩活动的注册。"
   },
   {
    "id": "https://x.com/claudeai/status/2105370680485417401",
@@ -233,7 +233,7 @@
    "handle": "claudeai",
    "text": "Claude Founder House is coming to SF Tech Week (Oct 6–8) and Stockholm (Oct 14).\n\nCome for talks, workshops, and office hours with our team, plus time to meet others building with Claude. Whether you're a founder, a CEO, or a builder, there's a session for you. https://t.co/LiXccCEV7t",
    "date": "2026-09-30T18:54:20.000Z",
-   "summaryZh": "Claude Founder House 将登陆旧金山 Tech Week（10 月 6–8 日）和斯德哥尔摩（10 月 14 日），有演讲、工作坊和 office hours。"
+   "summaryZh": "Claude Founder House 将在旧金山 Tech Week 和斯德哥尔摩举办，有讲座、工作坊和办公时间。"
   },
   {
    "id": "https://x.com/steipete/status/2105362785534361996",
@@ -243,7 +243,7 @@
    "handle": "steipete",
    "text": "I'm finding inter-agent communication in the chat stream increasingly irritating. Changed the visibility in the OC harness to just a single line that can be expanded.\n\nPretty sure others will follow. https://t.co/YUcQBzY6P3 https://t.co/PUDFHgTsxt",
    "date": "2026-09-30T18:22:58.000Z",
-   "summaryZh": "觉得聊天流里 agent 之间的互相通信越来越烦人，把可见性改成只显示一行、需要时再展开。"
+   "summaryZh": "steipete 觉得聊天流里的 agent 间通信太烦，改成可展开的单行显示，认为别人也会跟进。"
   },
   {
    "id": "https://x.com/levie/status/2105354449795621179",
@@ -253,7 +253,7 @@
    "handle": "levie",
    "text": "There's a huge opportunity right now in being the deployment layer for AI into the economy. The amount of work it takes to change out workflows in enterprises tends to be far greater than anyone realizes or would prefer. Clearly this is what the applied layer of AI is going to look like in the form of software and agents, but also it opens up new services firms opportunities.\n\nLegacy systems need to be moved to the cloud, data organization and access needs to be updated, software needs to be connected to agents in new ways, workflows need to be reengineered for agents, HITL needs to be figured out for the process, evals need to be generated and maintained, and the entire system needs to be continually updated as new models get released and new capabilities emerge. And the full list may even be longer.\n\nAI is not the same as just deploying software. Software you generally did the implementation of an existing, well understood category of technology, then stepped back and the customer kept running. With AI agents, you're delivering actual work augmentation to the organization, which has a completely different set of complexities associated with it. You're no longer deploying tools that the company is merely enabled by, you're deploying work output in a process. Completely different implementation and enablement process.\n\nAs a result, this is going to open up lots of new kinds of firms and plays for existing firms to diffuse AI into organizations. We're going to see approaches by industry, by size of company, and by problem inside of companies. Traditional SIs will modernize and adapt (some will clearly not adapt as well), and new entrants will also be founded in this period that take advantage of this window. Great time to be an FDE or FDE firm.",
    "date": "2026-09-30T17:49:51.000Z",
-   "summaryZh": "认为当前最大的机会是做「AI 落地到经济中的部署层」——企业改工作流的成本远高于换模型本身。"
+   "summaryZh": "levie 认为 AI 落地到经济中是个大机会，企业换工作流的工作量远超想象，会催生新的服务公司。"
   },
   {
    "id": "https://x.com/GoogleLabs/status/2105352889665564838",
@@ -263,7 +263,7 @@
    "handle": "GoogleLabs",
    "text": "💠 Opal shines on in Skills! 💠\n\nWhen we launched Opal in Google Labs, it was an experiment to learn how you customize your workflows. Your incredible creativity taught us so much — first inspiring Gems made by Labs, and today, supporting the global launch of skills in @GeminiApp! ✨\n\nSkills are a faster way to automate repetitive tasks and save custom instructions right in chat - built from the learnings we had from Opal. As skills roll out globally, we will be saying a bittersweet farewell to Opal. The experiment will be shutting down on Nov 17, 2026.\n\nWhether you built mini-apps on https://t.co/YOHh8P89yg or tried Gems in Gemini, thank you for shaping the future of customizable AI. Opal lives on in every skill you build next. 💙",
    "date": "2026-09-30T17:43:39.000Z",
-   "summaryZh": "宣布 Opal 并入 Skills，感谢用户此前的创意给了他们启发。"
+   "summaryZh": "Google Labs 宣布 Opal 实验将于 2026 年 11 月 17 日关闭，其经验催生了 Gemini App 全球上线的 Skills 功能。"
   },
   {
    "id": "https://x.com/swyx/status/2105348724331606411",
@@ -273,7 +273,7 @@
    "handle": "swyx",
    "text": "Flow is doing for hardware engineering what Git+GitHub did for software engineering. It's enabled so much acceleration due to aligning thousands of stakeholders for complex, irreversible, high value pipelines from cars to rockets. \n\nYou cannot go back to spreadsheet_final_FINAL_v23 once you've been in Flow.\n\nproud to be a friend first, and smol investor second.",
    "date": "2026-09-30T17:27:06.000Z",
-   "summaryZh": "说 Flow 对硬件工程的意义，就像 Git + GitHub 之于软件工程——它让上千个相关方在复杂、不可逆、高风险的决策上对齐。"
+   "summaryZh": "swyx 说 Flow 对硬件工程就像 Git+GitHub 对软件，能协调数千人做复杂不可逆的流程，自己既是朋友也是小投资人。"
   },
   {
    "id": "https://x.com/steipete/status/2105341288958869952",
@@ -283,7 +283,7 @@
    "handle": "steipete",
    "text": "It’s a fierce fight between CI and GitHub on what slows me down. Time to rethink how we work. (love GH tho and fully see their struggles!) https://t.co/b7huPchFxg",
    "date": "2026-09-30T16:57:33.000Z",
-   "summaryZh": "吐槽 CI 和 GitHub 在「谁更拖慢我」这件事上难分高下，说要重新思考工作方式（但强调仍然喜欢 GitHub）。"
+   "summaryZh": "steipete 吐槽 CI 和 GitHub 都在拖慢他，觉得该重新思考工作方式。"
   },
   {
    "id": "https://x.com/adityaag/status/2105339569139056776",
@@ -293,7 +293,7 @@
    "handle": "adityaag",
    "text": "The question I keep on asking everyone @spc is \"What is the maximalist version of this company?\".\n\nPerhaps this has always been true....but if you are building a company today, then the only way is to have the boldest, most audacious and maximalist version of the idea and how it can change the arc of the future.\n\nIf you start small, you will struggle to get funding, hire great people and ultimately to make a dent in the future.\n\nThis is the paradox of AI. It makes building easier but dramatically raises the floor on what it means to be a great startup.",
    "date": "2026-09-30T16:50:43.000Z",
-   "summaryZh": "说他反复问创业者一个问题：「这家公司的极致形态是什么？」——他认为今天创业只有这个答案才重要。"
+   "summaryZh": "adityaag 说现在创业必须做最大胆的版本，AI 让创业变容易但也大幅提高了成为伟大公司的门槛。"
   },
   {
    "id": "https://x.com/trq212/status/2105333509246386546",
@@ -303,7 +303,7 @@
    "handle": "trq212",
    "text": "While prototypes are fun, I think ideally I'd work on this with a small group of 2-3 people. \n\nThe animations, design, etc. are fine but someone with expertise could help make it much better.",
    "date": "2026-09-30T16:26:38.000Z",
-   "summaryZh": "说他更想和 2–3 个人的小团队一起做这个项目，动画和设计还能靠专家做得更好。"
+   "summaryZh": "trq212 说原型好玩，但希望和 2-3 人小团队合作把动画和设计做得更好。"
   },
   {
    "id": "https://x.com/trq212/status/2105333507711271060",
@@ -313,7 +313,7 @@
    "handle": "trq212",
    "text": "This all prototype quality. The graphics and feel are not high quality enough for you to play.\n\nTo make a real game I'd probably go through 3-4 variations of this character, and have maybe 8-10 characters in the game.",
    "date": "2026-09-30T16:26:38.000Z",
-   "summaryZh": "坦承目前都是原型质量，图形和手感还不足以让人玩；要做真正的游戏，角色得改 3–4 版。"
+   "summaryZh": "trq212 说目前只是原型质量，做真游戏得做 3-4 版角色、总共 8-10 个角色。"
   },
   {
    "id": "https://x.com/trq212/status/2105333506226503710",
@@ -323,7 +323,7 @@
    "handle": "trq212",
    "text": "I want this character to have a big jump, but so far I haven't been able to fit into the control scheme in a way I like. \n\nI've tried maybe 2-3 variations. https://t.co/gRoR3HOw9j",
    "date": "2026-09-30T16:26:37.000Z",
-   "summaryZh": "想让角色有个大跳跃，但一直没找到能融进操作方案的实现方式，已经试了 2–3 种。"
+   "summaryZh": "trq212 想让角色有大跳，但试了 2-3 版还没找到满意的操作方案。"
   },
   {
    "id": "https://x.com/amasad/status/2105321112389443805",
@@ -333,7 +333,7 @@
    "handle": "amasad",
    "text": "Make and one-click publish Meta VR apps. https://t.co/LW53Qw7CfJ",
    "date": "2026-09-30T15:37:22.000Z",
-   "summaryZh": "宣布可以用 Make 一键发布 Meta VR 应用。"
+   "summaryZh": "amasad 说可以用 Make 一键发布 Meta VR 应用。"
   },
   {
    "id": "https://x.com/thenanyu/status/2105316751802348005",
@@ -343,7 +343,7 @@
    "handle": "thenanyu",
    "text": "It’s interesting to contrast, what different companies take for granted in their internal cultures\n\nI’ve only been at OpenAI for about a week, and the thing that stands out is absurdly high bias towards action\n\nThis shows up in ways big and small…\n\nSometimes you have a casual discussion about a possible feature, and the PR is sitting in front of you by the time you get back to your desk \n\nOr you meet someone on Slack and say: “let’s grab lunch next week” and the meeting invites on your calendar within the next five minutes\n\nThis has its downsides. because it often feels like everything’s behind a hair trigger, and things just change out from under you— but you can’t really teach this energy, and if you ever lose it, it’s unbelievably hard to get it back\n\nOpen AI is not a tiny company anymore. It’s got several massive buildings in San Francisco, it’s impressive that this energy still persists",
    "date": "2026-09-30T15:20:03.000Z",
-   "summaryZh": "刚加入 OpenAI 一周，最让他印象深刻的是内部文化的「高标准」到了荒谬的程度。"
+   "summaryZh": "thenanyu 在 OpenAI 待了一周，最震撼的是极高的行动偏好，讨论完功能 PR 就已在桌上，但这也让事情变化太快。"
   },
   {
    "id": "https://x.com/rauchg/status/2105285688820400259",
@@ -353,7 +353,7 @@
    "handle": "rauchg",
    "text": "Faster https://t.co/Uw0ftBmUwe",
    "date": "2026-09-30T13:16:37.000Z",
-   "summaryZh": "只发了「更快」一个词配图，没有展开说明。"
+   "summaryZh": "rauchg 只发了一个词：更快。"
   },
   {
    "id": "https://x.com/mattturck/status/2105261211906384132",
@@ -363,7 +363,7 @@
    "handle": "mattturck",
    "text": "SaaS companies seeing Anthropic’s ARR growth flatline https://t.co/n03y57emMG https://t.co/k0Iz0PxQ4P",
    "date": "2026-09-30T11:39:21.000Z",
-   "summaryZh": "贴图调侃 SaaS 公司看到 Anthropic ARR 增长走平（flatline）时的反应。"
+   "summaryZh": "mattturck 说 SaaS 公司看到 Anthropic 的 ARR 增长曲线走平了。"
   }
  ]
 }
