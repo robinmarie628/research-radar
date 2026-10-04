@@ -1,16 +1,16 @@
 {
- "date": "2026-10-03",
- "generatedAt": "2026-10-03T08:45:10Z",
+ "date": "2026-10-04",
+ "generatedAt": "2026-10-04T00:14:05Z",
  "model": "deepseek-flash",
- "headline": "Claude 小企业版大扩容，OpenAI 的 dot 被 Sam 夸爆",
+ "headline": "Claude 小企业版大更新，OpenAI 的 dot 被 Sam 夸成最爱产品",
  "bullets": [
-  "Claude for Small Business 新增 43 个工作流和 27 个集成，接入了 Shopify、Salesforce、Stripe、Zapier 等小企业常用工具，累计安装超 90 万次。",
-  "Sam Altman 说 dot 是他最喜欢的 OpenAI 产品，每天都在变好，能替他做那些他讨厌做的事。",
+  "Claude for Small Business 新增 43 个工作流和 27 个集成，接入了 Shopify、Salesforce、Stripe、Zapier 等小企业常用工具，累计安装已超 90 万次。",
+  "Sam Altman 说 dot 是他最喜欢的 OpenAI 产品，每天用起来都感觉更好，因为它越来越懂他的工作流和风格。",
   "Garry Tan 在推 Capy，说它像给 agent 开的 24/7 站会，还能跨会话协调、不挑模型。",
-  "Claude 官方晒出用 Opus 5.5 和 Sonnet 5.5 做的交互式 3D 喷气发动机和纸折城市 demo。",
-  "swyx 喊话要认真对待 AI 安全，说 rogue agent 和 AI 驱动的攻击在暴增，第二届 AI Security Summit 回归。"
+  "swyx 提醒别忘了 OpenAI 那个「one more thing」，说他们做 dot 已经有一阵子了。",
+  "有人吐槽现在大家都在做一样的东西，也有人感慨读到纯人类写的文字真难得。"
  ],
- "sentiment": "整体偏兴奋和乐观，builder 们对 agent 产品（dot、Capy）和 Claude 的新能力很买账，同时开始认真焦虑 AI 安全问题。",
+ "sentiment": "整体偏兴奋和好奇，builder 们对 dot、Capy 这类能主动帮人干活的 agent 产品讨论最多，同时夹杂一点「同质化严重」的吐槽。",
  "count": 37,
  "summarised": 37,
  "posts": [
@@ -23,7 +23,7 @@
    "title": "Claude for Small Business launches new workflows, integrations, and training programs",
    "text": "Claude for Small Business now includes 43 workflows and 27 new integrations with tools small businesses already use, including Shopify, Salesforce, TikTok, Atlassian, Zoom, Xero, Gusto, Square, Stripe, and Zapier. The new workflows extend Claude from running the back office to growing the business, and they arrive with a fall schedule of free in-person workshops and partner webinars for owners who want help getting started. We launched Claude for Small Business in May as a set of connectors and ready-to-run workflows that put Claude inside the tools owners depend on. It has since been installed more than 900,000 times. Thank you to our original, and continued, partners Intuit Quickbooks, PayPal, HubSpot, Canva, Docusign, Google Workspace, and Microsoft 365.On our spring Claude SMB Tour, more than 1,000 owners in 10 cities told us what they wanted Claude to take on next. About a third asked for help growing the business: generating leads, answering inbound inquiries, and writing proposals. Many also wanted day-to-day reporting handled for them. We built this new release around those requests. The tour returns this fall with free workshops in 10 US cities. More than 150 organizations we&#x27;ve trained as Approved Claude SMB Trainers will run over 750 workshops in their own communities, and 14 integration partners are hosting free webinars about their connectors. Here&#x27;s what small business leaders shared with us during the first leg of our Claude SMB tour: “What used to take me 120 hours now takes me five minutes. I have so much time on my hands that I can now spend more time with my family, do things I like, and pursue parts of my business that I’ve always neglected.” — Pedro Rubio, Founder and CEO, Blackfyre GovCon, Washington, D.C. \"I really see Claude as an equalizer for small businesses, where we can do stuff as big as a 100 person, 200 person firm now. At 40 people and scaling, that&#x27;s how we get time back for our clients and culture.\" — Cara Roellgen, Director of Strategy and Innovation, KBSO Consulting, Carmel, Indiana \"At 6:00 am every morning, it goes and looks through our CRM, gets all of the to-do list items, prioritizes them, and sends out an email saying, here&#x27;s what needs to be done today, here&#x27;s the biggest priorities. We call it the daily briefing.\" — Garrett French, Owner, Driller Design Co., Tulsa, Oklahoma \"I made $20,000 in the last month and a half using Claude to do these professional proposals. I know that&#x27;s getting the business, and it put money in my bank account. How about that?\" — Dan Ninerell, Founder, Modern Classical Chefs, South Jersey, New Jersey \"We tell it [Claude] what the end goal is. It goes and tests, and 90% of the time it gets it right. We&#x27;re a five-person company. I think we&#x27;ve done quite a bit with it.\" — Bill Hood, Co-Founder, TruckingMBA, Chattanooga, Tennessee \"The thing that makes it most beneficial to us are the integrations. We use Slack, and that&#x27;s how we talk to it. It integrates with Intuit QuickBooks. It&#x27;s pulling everything from everywhere instead of us having to find different pieces of information all over. It&#x27;s all in one place.\" — Kati Jo Hodges, Director of Operations, Premier Geotech and Testing, Baton Rouge, Louisiana A week with Claude for Small Business Here’s a week-in-the-life of a small business owner using Claude to run and grow their business, inspired by how small business owners are using Claude today. Your week with Claude Sunday, 8:00pm Install and onboard Connect the tools you already use and pick your first task. Monday, 7:00am The weekly brief Cash, sales, pipeline, and overdue invoices on one page. Monday, 9:40pm Responding to inbound leads After-hours inquiries qualified, answered, and logged. Wednesday Writing proposals A voice memo becomes a priced, branded proposal. Thursday Unblocking marketing campaigns Next week's posts and review replies, ready for your OK. Month end Closing the books Reconciled accounts and a close packet for your accountant.",
    "date": "Sep 15, 2026",
-   "summaryZh": "Claude for Small Business 新增 43 个工作流和 27 个集成，接入 Shopify、Stripe 等工具，累计安装超 90 万次，还配了免费线下工作坊。"
+   "summaryZh": "Claude for Small Business 新增 43 个工作流和 27 个集成，接入 Shopify、Salesforce、Stripe 等工具，并配套免费线下工作坊。"
   },
   {
    "id": "https://x.com/thsottiaux/status/2106252868307271752",
@@ -33,7 +33,7 @@
    "handle": "thsottiaux",
    "text": "Fortunately our future models will be much better at code deletion and simplification. Just in time",
    "date": "2026-10-03T05:19:50.000Z",
-   "summaryZh": "他认为未来的模型会在删代码和简化代码上强很多，而且来得正是时候。"
+   "summaryZh": "他说未来的模型会在删代码和简化代码上强很多，而且来得正是时候。"
   },
   {
    "id": "https://x.com/thsottiaux/status/2106239435461579088",
@@ -43,7 +43,7 @@
    "handle": "thsottiaux",
    "text": "All fixed. Surprising number of Pro 500 users on here. https://t.co/fNbajjszn6",
    "date": "2026-10-03T04:26:28.000Z",
-   "summaryZh": "他说问题都修好了，并惊讶这里有这么多 Pro 500 用户。"
+   "summaryZh": "问题已修好，他惊讶这里有这么多 Pro 500 用户。"
   },
   {
    "id": "https://x.com/amasad/status/2106237645282324709",
@@ -63,7 +63,7 @@
    "handle": "thsottiaux",
    "text": "Seeing some reports that the Pro 500 didn’t get the reset as expected earlier. Investigating and will make up for it",
    "date": "2026-10-03T04:01:28.000Z",
-   "summaryZh": "有人反馈 Pro 500 没按预期重置，他说正在排查并会补偿。"
+   "summaryZh": "有人反馈 Pro 500 没按预期重置，他正在排查并会补偿。"
   },
   {
    "id": "https://x.com/amasad/status/2106191901900915194",
@@ -73,7 +73,7 @@
    "handle": "amasad",
    "text": "Fun meeting Woz at @supabase select! https://t.co/yd2ayF0hf8",
    "date": "2026-10-03T01:17:35.000Z",
-   "summaryZh": "他在 Supabase select 活动上见到 Woz，觉得很有意思。"
+   "summaryZh": "他在 supabase select 活动上见到 Woz，觉得很开心。"
   },
   {
    "id": "https://x.com/sama/status/2106189841813934140",
@@ -83,7 +83,7 @@
    "handle": "sama",
    "text": "The contrast between hanging up the last phone call of the day of high-stakes decisions and then a minute later walking in the door to the pure love of small children who want to laugh and play and show you every discovery they made that day is the strangest and best thing I have ever experienced in life.",
    "date": "2026-10-03T01:09:24.000Z",
-   "summaryZh": "他感慨白天打完最后一个高风险决策电话、一分钟后进门被孩子围着玩，是人生中最奇妙也最好的体验。"
+   "summaryZh": "他感慨白天打完最后一个高风险电话，一分钟后进门被孩子纯真的爱包围，是人生最奇妙最好的体验。"
   },
   {
    "id": "https://x.com/thenanyu/status/2106189530743398867",
@@ -93,7 +93,7 @@
    "handle": "thenanyu",
    "text": "Everyone is making the same thing https://t.co/qqOCCRPhtY",
    "date": "2026-10-03T01:08:09.000Z",
-   "summaryZh": "他吐槽大家都在做一模一样的东西。"
+   "summaryZh": "他吐槽现在所有人都在做同一个东西。"
   },
   {
    "id": "https://x.com/nikunj/status/2106183850544239038",
@@ -103,7 +103,7 @@
    "handle": "nikunj",
    "text": "When in doubt, always make more bubble solution 🫧 https://t.co/OXJ9btVIO0",
    "date": "2026-10-03T00:45:35.000Z",
-   "summaryZh": "他半开玩笑说拿不准的时候就多弄点泡泡水。"
+   "summaryZh": "他开玩笑说拿不准的时候就多弄点泡泡水。"
   },
   {
    "id": "https://x.com/thenanyu/status/2106174759021215922",
@@ -143,7 +143,7 @@
    "handle": "rauchg",
    "text": "Wonderful writeup on Jev + Python https://t.co/imdwexC2nn",
    "date": "2026-10-02T21:48:35.000Z",
-   "summaryZh": "他推荐了一篇关于 Jev 和 Python 的好文章。"
+   "summaryZh": "他推荐一篇关于 Jev 和 Python 的好文章。"
   },
   {
    "id": "https://x.com/thenanyu/status/2106138257801216168",
@@ -153,7 +153,7 @@
    "handle": "thenanyu",
    "text": "concerning https://t.co/uyN7kV060h",
    "date": "2026-10-02T21:44:25.000Z",
-   "summaryZh": "他转了个让他觉得「令人担忧」的东西。"
+   "summaryZh": "他转了个内容并评论说「令人担忧」。"
   },
   {
    "id": "https://x.com/rauchg/status/2106133123973214497",
@@ -163,7 +163,7 @@
    "handle": "rauchg",
    "text": "Amazing. Love to see the https://t.co/ZRAOxqyRNt team ship so fast ▲ https://t.co/xvy2urxGnv",
    "date": "2026-10-02T21:24:01.000Z",
-   "summaryZh": "他夸某个团队交付速度飞快。"
+   "summaryZh": "他夸某个团队交付速度极快。"
   },
   {
    "id": "https://x.com/danshipper/status/2106126787424002158",
@@ -173,7 +173,7 @@
    "handle": "danshipper",
    "text": "oldie but goodie https://t.co/FMTJOtSRGk",
    "date": "2026-10-02T20:58:50.000Z",
-   "summaryZh": "他分享了一个老但好用的东西。"
+   "summaryZh": "他分享了一个老但经典的内容。"
   },
   {
    "id": "https://x.com/claudeai/status/2106125480193913276",
@@ -203,7 +203,7 @@
    "handle": "claudeai",
    "text": "A pop-up city where each building is a paper fold drawn on a flat canvas, Sonnet 5.5.\nhttps://t.co/04cupOr4Tg",
    "date": "2026-10-02T20:53:38.000Z",
-   "summaryZh": "Claude 官方展示用 Sonnet 5.5 做的纸折城市，每栋楼都是画在平面画布上的折纸。"
+   "summaryZh": "Claude 官方展示用 Sonnet 5.5 做的折纸风弹出式城市。"
   },
   {
    "id": "https://x.com/trq212/status/2106119299484221762",
@@ -213,7 +213,7 @@
    "handle": "trq212",
    "text": "\"You should know\" is a great way of staying on top of what's possible with Claude and also a great example of the kind of things mods enable.\n\nYou can really make Claude Code yours. https://t.co/En0OhotxQL",
    "date": "2026-10-02T20:29:05.000Z",
-   "summaryZh": "他说「You should know」是跟进 Claude 能力的好方式，也是 mods 能做什么的好例子，能真正把 Claude Code 变成自己的。"
+   "summaryZh": "他说「You should know」是跟进 Claude 能力的好方式，也是 mods 能实现的好例子，能把 Claude Code 变成自己的。"
   },
   {
    "id": "https://x.com/petergyang/status/2106113169571946560",
@@ -233,7 +233,7 @@
    "handle": "swyx",
    "text": "btw dont forget the \"one more thing...\"\n\ntheyve been working on dots for a while now https://t.co/B83svUV9AC https://t.co/NXGKoFeRoa",
    "date": "2026-10-02T19:28:07.000Z",
-   "summaryZh": "他提醒别忘了那个「one more thing」，说他们做 dots 已经有一阵了。"
+   "summaryZh": "他提醒别忘了那个「one more thing」，说他们做 dot 已经有一阵子了。"
   },
   {
    "id": "https://x.com/realmadhuguru/status/2106102222501376050",
@@ -243,7 +243,7 @@
    "handle": "realmadhuguru",
    "text": "Underrated - the feeling of reading great writing that is 100% human written.\n\nJust love that human-written smell in a doc.",
    "date": "2026-10-02T19:21:13.000Z",
-   "summaryZh": "他觉得读到 100% 人类写的好文字这件事被低估了，就爱文档里那股人味。"
+   "summaryZh": "他说读到 100% 人类写的优秀文字那种感觉被低估了，就爱文档里那股人味。"
   },
   {
    "id": "https://x.com/garrytan/status/2106102038706970794",
@@ -263,7 +263,7 @@
    "handle": "garrytan",
    "text": "Surprising cool @capydotai cross-session coordination I wasn't expecting: My GBrain collaborator Sina started a fix wave that is even steering around all of the things I'm already working on across multiple Capy threads. All model agnostic. https://t.co/P5TUYlEfRs",
    "date": "2026-10-02T18:41:45.000Z",
-   "summaryZh": "他分享 Capy 意外的跨会话协调能力：协作者发起的修复会绕开他正在做的多个线程，且不挑模型。"
+   "summaryZh": "他分享 Capy 意外的跨会话协调能力：协作者发起的修复会自动绕开他正在做的事，且不挑模型。"
   },
   {
    "id": "https://x.com/sama/status/2106085986606403684",
@@ -273,7 +273,7 @@
    "handle": "sama",
    "text": "dot is my favorite openai product so far!\n\nit is amazing to me that each day it feels noticably better as it learns more of my workflow and style.\n\nhaving it do the stuff i don't like doing--and usually just builds up as a gravity well of dread--has me very happy.",
    "date": "2026-10-02T18:16:43.000Z",
-   "summaryZh": "他说 dot 是他目前最喜欢的 OpenAI 产品，每天都能感到它更懂自己的流程和风格，替他做那些讨厌的事让他很开心。"
+   "summaryZh": "他说 dot 是他最喜欢的 OpenAI 产品，每天感觉都在变好，因为它越来越懂他的工作流和风格，帮他做那些讨厌的事。"
   },
   {
    "id": "https://x.com/steipete/status/2106076508020506722",
@@ -283,7 +283,7 @@
    "handle": "steipete",
    "text": "This was by far my favorite slide at DevDay.\nKudos to the team! https://t.co/AQtPzNTZhx",
    "date": "2026-10-02T17:39:03.000Z",
-   "summaryZh": "他说这是 DevDay 上他最喜欢的一张幻灯片，向团队致敬。"
+   "summaryZh": "他说这是 DevDay 上他最喜欢的一页幻灯片，向团队致敬。"
   },
   {
    "id": "https://x.com/mattturck/status/2106076198027890750",
@@ -293,7 +293,7 @@
    "handle": "mattturck",
    "text": "People call the Bay Area a monoculture, but that's totally unfair: it has both neo-clouds AND neo-labs",
    "date": "2026-10-02T17:37:49.000Z",
-   "summaryZh": "他反驳湾区是单一文化的说法，说这里有 neo-clouds 也有 neo-labs。"
+   "summaryZh": "他说人们说湾区是单一文化不公平，因为这里既有 neo-cloud 也有 neo-lab。"
   },
   {
    "id": "https://x.com/petergyang/status/2106072698564874410",
@@ -313,7 +313,7 @@
    "handle": "nikunj",
    "text": "If you are a home automation nerd, this is a fun prompt to try on Claude Code / Codex (edit based on your own setup):\n\n\"Can you sniff network packets in our house and see what else can we automate? For context: We have a Hermes agent that runs a lot of things like the personal Gmail, thermostat, Doordash, Amazon etc. \n\nTrying to see what else we can connect to. We have an Apple TV that we can talk to if we need for HomeKit related stuff but no other bridge that runs home assistant.\n\nGive me a full list of devices that you find and research how they can be connected to an agent.\"",
    "date": "2026-10-02T17:23:18.000Z",
-   "summaryZh": "他给智能家居爱好者分享了一个 Claude Code / Codex 提示词，让 AI 嗅探家里网络包并研究还能自动化连接哪些设备。"
+   "summaryZh": "他给智能家居爱好者分享了一个在 Claude Code / Codex 上跑的提示词，让 AI 嗅探家里网络包并研究还能自动化什么。"
   },
   {
    "id": "https://x.com/petergyang/status/2106071235696447660",
@@ -323,7 +323,7 @@
    "handle": "petergyang",
    "text": "I'm teaching a FREE lightning lesson on building an AI system to take work off your plate today at 11:30 AM pst.\n\nIt works with ChatGPT, Claude, or your favorite AI harness.\n\nJoin 500+ folks who have signed up to attend (you'll get the recording even if you can't make it): https://t.co/HMcU9EsLiE",
    "date": "2026-10-02T17:18:06.000Z",
-   "summaryZh": "他今天开一节免费闪电课，教怎么搭 AI 系统替自己分担工作，ChatGPT、Claude 都能用，已有 500 多人报名。"
+   "summaryZh": "他今天免费开一节闪电课，教怎么搭 AI 系统帮你分担工作，ChatGPT、Claude 都能用，已有 500 多人报名。"
   },
   {
    "id": "https://x.com/garrytan/status/2106063850453991758",
@@ -333,7 +333,7 @@
    "handle": "garrytan",
    "text": "My goal with GBrain:\n\nI want our agents to feel as native, expressive, and inevitable as the web eventually did—not as a chatbot feature, but as a personal Jiminy Cricket that knows you and helps you 24/7 always on, always thinking ahead, always improving.",
    "date": "2026-10-02T16:48:45.000Z",
-   "summaryZh": "他说 GBrain 的目标是让 agent 像当年的 web 一样原生、有表现力、理所当然，成为懂你、24/7 在线的私人「蟋蟀吉明尼」。"
+   "summaryZh": "他说 GBrain 的目标是让 agent 像当年的 web 一样原生、有表现力、理所当然，成为 24/7 懂你的私人「良心蟋蟀」。"
   },
   {
    "id": "https://x.com/nikunj/status/2106053219487228081",
@@ -363,7 +363,7 @@
    "handle": "swyx",
    "text": "It's time to get serious about Security x AI.\n\nOne of the joys of doing AIE is helping others start their own high quality conferences in their countries and domains. Every single 2025 partner has come back — and the 2nd AI Security Summit is now way more important than before. Proud to be back as a founding partner with @snyksec!\n\nJoin the event: https://t.co/2IeM4a3MGO\n\nThe landscape has completely transformed since we started this a year ago. An exploding number of rogue agents, more breaches, more AI-driven attacks. now more than ever, security must be at the center of the AI conversation. With so much more hacks and vulnerabilities, this stuff is no longer theoretical...",
    "date": "2026-10-02T15:25:00.000Z",
-   "summaryZh": "他说该认真对待安全 x AI 了，rogue agent 和 AI 攻击暴增，第二届 AI Security Summit 比以往更重要，他作为创始伙伴回归。"
+   "summaryZh": "他说该认真对待安全 x AI 了，第二届 AI Security Summit 比以往更重要，因为 rogue agent、泄露和 AI 攻击都在暴增。"
   },
   {
    "id": "https://x.com/adityaag/status/2106019411635376471",
@@ -373,7 +373,7 @@
    "handle": "adityaag",
    "text": "We had our second portfolio company IPO this week.\n\nWe are very proud to have partnered with Puneet and Sanjay at Moneyview. They are incredible entrepreneurs who have poured everything they have to building their company. \n\nMoments like these make you feel proud but also deeply appreciative of the founders journey. It is long, hard and tough as nails.\n\nBut yet we do it because to create something new is the highest form of purpose.\n\nOnwards.",
    "date": "2026-10-02T13:52:10.000Z",
-   "summaryZh": "他庆祝本周第二家被投公司 IPO，为 Moneyview 的两位创始人骄傲，感慨创业路漫长艰难但值得。"
+   "summaryZh": "他庆祝本周第二家被投公司 IPO，为 Moneyview 的两位创始人感到骄傲，感慨创业之路漫长艰难但值得。"
   },
   {
    "id": "https://www.youtube.com/@NoPriorsPodcast",
@@ -384,7 +384,7 @@
    "title": "Frontier Chips for Frontier AI Labs, with Walter Goodwin, Founder/CEO of Fractile",
    "text": "",
    "date": "2026-10-02T10:00:00.000Z",
-   "summaryZh": "No Priors 播客对话 Fractile 创始人兼 CEO Walter Goodwin，聊前沿 AI 实验室用的前沿芯片。"
+   "summaryZh": "No Priors 播客请来 Fractile 创始人兼 CEO Walter Goodwin，聊前沿 AI 实验室用的前沿芯片。"
   }
  ]
 }
