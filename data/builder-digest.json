@@ -1,390 +1,290 @@
 {
  "date": "2026-10-04",
- "generatedAt": "2026-10-04T00:14:05Z",
+ "generatedAt": "2026-10-04T08:26:19Z",
  "model": "deepseek-flash",
- "headline": "Claude 小企业版大更新，OpenAI 的 dot 被 Sam 夸成最爱产品",
+ "headline": "Claude 把 Cowork 和聊天合并成一个 Claude，还新增文档和幻灯片功能",
  "bullets": [
-  "Claude for Small Business 新增 43 个工作流和 27 个集成，接入了 Shopify、Salesforce、Stripe、Zapier 等小企业常用工具，累计安装已超 90 万次。",
-  "Sam Altman 说 dot 是他最喜欢的 OpenAI 产品，每天用起来都感觉更好，因为它越来越懂他的工作流和风格。",
-  "Garry Tan 在推 Capy，说它像给 agent 开的 24/7 站会，还能跨会话协调、不挑模型。",
-  "swyx 提醒别忘了 OpenAI 那个「one more thing」，说他们做 dot 已经有一阵子了。",
-  "有人吐槽现在大家都在做一样的东西，也有人感慨读到纯人类写的文字真难得。"
+  "Claude 官方宣布 Cowork 与聊天合并为同一个 Claude，Pro 和 Max 用户未来几周陆续用上。",
+  "Claude 新增 Docs 和 Slides，Design 也能直接在对话里用，付费版 beta 中。",
+  "OpenAI 的 thsottiaux 说接下来只做简化、提效率、新功能和新模型，因为用户都想要更简单。",
+  "多位 builder 吐槽 AI 产品太复杂、采用率低，认为这是产品问题，未来 12 个月会变。",
+  "Levie 说 agent 采用还是两极分化，只有编程和周边任务跑起来了，其他知识工作还很早。"
  ],
- "sentiment": "整体偏兴奋和好奇，builder 们对 dot、Capy 这类能主动帮人干活的 agent 产品讨论最多，同时夹杂一点「同质化严重」的吐槽。",
- "count": 37,
- "summarised": 37,
+ "sentiment": "整体偏兴奋但带点吐槽：兴奋于 Claude 合并和 agent 能力，吐槽 AI 产品太复杂、采用太浅。",
+ "count": 27,
+ "summarised": 27,
  "posts": [
   {
-   "id": "https://claude.com/blog/claude-for-small-business-launches-new-workflows-integrations-and-training-programs",
+   "id": "https://claude.com/blog/cowork-is-now-claude",
    "type": "blog",
    "kind": "官方博客",
    "name": "Claude Blog",
    "handle": "",
-   "title": "Claude for Small Business launches new workflows, integrations, and training programs",
-   "text": "Claude for Small Business now includes 43 workflows and 27 new integrations with tools small businesses already use, including Shopify, Salesforce, TikTok, Atlassian, Zoom, Xero, Gusto, Square, Stripe, and Zapier. The new workflows extend Claude from running the back office to growing the business, and they arrive with a fall schedule of free in-person workshops and partner webinars for owners who want help getting started. We launched Claude for Small Business in May as a set of connectors and ready-to-run workflows that put Claude inside the tools owners depend on. It has since been installed more than 900,000 times. Thank you to our original, and continued, partners Intuit Quickbooks, PayPal, HubSpot, Canva, Docusign, Google Workspace, and Microsoft 365.On our spring Claude SMB Tour, more than 1,000 owners in 10 cities told us what they wanted Claude to take on next. About a third asked for help growing the business: generating leads, answering inbound inquiries, and writing proposals. Many also wanted day-to-day reporting handled for them. We built this new release around those requests. The tour returns this fall with free workshops in 10 US cities. More than 150 organizations we&#x27;ve trained as Approved Claude SMB Trainers will run over 750 workshops in their own communities, and 14 integration partners are hosting free webinars about their connectors. Here&#x27;s what small business leaders shared with us during the first leg of our Claude SMB tour: “What used to take me 120 hours now takes me five minutes. I have so much time on my hands that I can now spend more time with my family, do things I like, and pursue parts of my business that I’ve always neglected.” — Pedro Rubio, Founder and CEO, Blackfyre GovCon, Washington, D.C. \"I really see Claude as an equalizer for small businesses, where we can do stuff as big as a 100 person, 200 person firm now. At 40 people and scaling, that&#x27;s how we get time back for our clients and culture.\" — Cara Roellgen, Director of Strategy and Innovation, KBSO Consulting, Carmel, Indiana \"At 6:00 am every morning, it goes and looks through our CRM, gets all of the to-do list items, prioritizes them, and sends out an email saying, here&#x27;s what needs to be done today, here&#x27;s the biggest priorities. We call it the daily briefing.\" — Garrett French, Owner, Driller Design Co., Tulsa, Oklahoma \"I made $20,000 in the last month and a half using Claude to do these professional proposals. I know that&#x27;s getting the business, and it put money in my bank account. How about that?\" — Dan Ninerell, Founder, Modern Classical Chefs, South Jersey, New Jersey \"We tell it [Claude] what the end goal is. It goes and tests, and 90% of the time it gets it right. We&#x27;re a five-person company. I think we&#x27;ve done quite a bit with it.\" — Bill Hood, Co-Founder, TruckingMBA, Chattanooga, Tennessee \"The thing that makes it most beneficial to us are the integrations. We use Slack, and that&#x27;s how we talk to it. It integrates with Intuit QuickBooks. It&#x27;s pulling everything from everywhere instead of us having to find different pieces of information all over. It&#x27;s all in one place.\" — Kati Jo Hodges, Director of Operations, Premier Geotech and Testing, Baton Rouge, Louisiana A week with Claude for Small Business Here’s a week-in-the-life of a small business owner using Claude to run and grow their business, inspired by how small business owners are using Claude today. Your week with Claude Sunday, 8:00pm Install and onboard Connect the tools you already use and pick your first task. Monday, 7:00am The weekly brief Cash, sales, pipeline, and overdue invoices on one page. Monday, 9:40pm Responding to inbound leads After-hours inquiries qualified, answered, and logged. Wednesday Writing proposals A voice memo becomes a priced, branded proposal. Thursday Unblocking marketing campaigns Next week's posts and review replies, ready for your OK. Month end Closing the books Reconciled accounts and a close packet for your accountant.",
-   "date": "Sep 15, 2026",
-   "summaryZh": "Claude for Small Business 新增 43 个工作流和 27 个集成，接入 Shopify、Salesforce、Stripe 等工具，并配套免费线下工作坊。"
+   "title": "Claude Cowork and chat are now one Claude",
+   "text": "Starting today, Claude Cowork and chat are merging into one Claude. Bring a quick question, or hand over a report due at noon, and Claude takes it from there, even after you’ve closed your laptop. It’s rolling out on Pro and Max plans over the next few weeks, with more plans to follow. What Claude makes doesn’t need its own place either. Claude Docs and Claude Slides are new today, and Claude Design now works inside your conversations too. Ask for a document, and you and Claude write it together. Ask for a presentation, and Claude drafts the slides. You can edit directly, present straight from Claude, or download as PowerPoint or PDF. All three are in beta on paid plans, and Enterprise admins choose when to turn them on. If you use Claude Design on its own, it keeps working as before. We built Cowork as a separate place for bigger work, and Design for visual work. People used both, and told us the frustrating part was deciding where a task belonged. What they’d started in one also didn’t carry into the other. So we stopped making you choose. Claude can now figure out what a task needs, so what Cowork and Design can do is available from any conversation, with the context, skills, and connectors you already have. “I could have Claude pull up [my legal research database], and it would pull all the cases, read them, figure out which other cases I might need, download them, and store them in a folder for my personal review.” - Andrew Keller, Senior Economist What it looks like A weekly report is due at noon. Before you head out, you ask Claude what moved in the pipeline last week, then add: “Write it the way we always do, flag anything that slipped, and put the highlights in five slides for the leadership meeting.” If something’s unclear, Claude asks. You can check progress from your phone on the way to the office. By the time you’re at your desk, the report is waiting as a doc with notes from your teammate, and the slides are ready to open, adjust, and download as PowerPoint. Both came out of the same conversation, so the slides already match the report. You fix a line yourself, leave a comment for Claude on a slide, and share it. Schedule it for every Monday, and Claude starts on the report without being asked. Anything you make with Claude Design, Slides, or Docs lives at one shareable link you can open on your phone. You can select an element and move it, or tell Claude what you want changed. You can choose how Claude checks in with you. By default, Claude asks before taking an action. If you’d rather let it keep working and check in only when something needs a closer look, you can turn that on. You keep the final say. Getting started If you mostly use chat, you don’t have to do anything different. When you want to hand over something bigger, try the next report or deck you’d normally build yourself. If you’ve been working in Cowork, everything is where you left it: your chats, projects, artifacts, connectors, and skills. When you open the app, pick up where you left off. This is rolling out to Pro and Max plans first, in the Claude app on web, desktop, and mobile over the coming weeks to existing and new users on these plans. There’s nothing to turn on. Team and Free plans will follow soon, and Enterprise admins will hear from us at least 30 days before anything changes for their organizations. The full list of capabilities is in the Help Center . If you’ve been saving up a big messy project, now’s the time.",
+   "date": "Sep 16, 2026",
+   "summaryZh": "Claude 把 Cowork 和聊天合并成一个 Claude，新增 Docs 和 Slides，Design 也能在对话里用，付费版 beta。"
   },
   {
-   "id": "https://x.com/thsottiaux/status/2106252868307271752",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thibault Sottiaux",
-   "handle": "thsottiaux",
-   "text": "Fortunately our future models will be much better at code deletion and simplification. Just in time",
-   "date": "2026-10-03T05:19:50.000Z",
-   "summaryZh": "他说未来的模型会在删代码和简化代码上强很多，而且来得正是时候。"
-  },
-  {
-   "id": "https://x.com/thsottiaux/status/2106239435461579088",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thibault Sottiaux",
-   "handle": "thsottiaux",
-   "text": "All fixed. Surprising number of Pro 500 users on here. https://t.co/fNbajjszn6",
-   "date": "2026-10-03T04:26:28.000Z",
-   "summaryZh": "问题已修好，他惊讶这里有这么多 Pro 500 用户。"
-  },
-  {
-   "id": "https://x.com/amasad/status/2106237645282324709",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Amjad Masad",
-   "handle": "amasad",
-   "text": "Reaching concerning levels of psychosis. https://t.co/xDymEzJ8uS",
-   "date": "2026-10-03T04:19:21.000Z",
-   "summaryZh": "他吐槽某种现象已经到了令人担忧的「精神病」程度。"
-  },
-  {
-   "id": "https://x.com/thsottiaux/status/2106233145163141249",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thibault Sottiaux",
-   "handle": "thsottiaux",
-   "text": "Seeing some reports that the Pro 500 didn’t get the reset as expected earlier. Investigating and will make up for it",
-   "date": "2026-10-03T04:01:28.000Z",
-   "summaryZh": "有人反馈 Pro 500 没按预期重置，他正在排查并会补偿。"
-  },
-  {
-   "id": "https://x.com/amasad/status/2106191901900915194",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Amjad Masad",
-   "handle": "amasad",
-   "text": "Fun meeting Woz at @supabase select! https://t.co/yd2ayF0hf8",
-   "date": "2026-10-03T01:17:35.000Z",
-   "summaryZh": "他在 supabase select 活动上见到 Woz，觉得很开心。"
-  },
-  {
-   "id": "https://x.com/sama/status/2106189841813934140",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Sam Altman",
-   "handle": "sama",
-   "text": "The contrast between hanging up the last phone call of the day of high-stakes decisions and then a minute later walking in the door to the pure love of small children who want to laugh and play and show you every discovery they made that day is the strangest and best thing I have ever experienced in life.",
-   "date": "2026-10-03T01:09:24.000Z",
-   "summaryZh": "他感慨白天打完最后一个高风险电话，一分钟后进门被孩子纯真的爱包围，是人生最奇妙最好的体验。"
-  },
-  {
-   "id": "https://x.com/thenanyu/status/2106189530743398867",
+   "id": "https://x.com/thenanyu/status/2106620595534491948",
    "type": "x",
    "kind": "X 动态",
    "name": "Nan Yu",
    "handle": "thenanyu",
-   "text": "Everyone is making the same thing https://t.co/qqOCCRPhtY",
-   "date": "2026-10-03T01:08:09.000Z",
-   "summaryZh": "他吐槽现在所有人都在做同一个东西。"
+   "text": "The man has spoken https://t.co/KINPyEKtEp",
+   "date": "2026-10-04T05:41:03.000Z",
+   "summaryZh": "作者只发了一句「大佬发话了」加链接，没展开说具体内容。"
   },
   {
-   "id": "https://x.com/nikunj/status/2106183850544239038",
+   "id": "https://x.com/thsottiaux/status/2106610099720720811",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "All right, we’re locking in. Only things being worked on are simplifications, more efficiency for more usage, groundbreaking features or new models. \n\nSometimes you have to invest ahead of the curve, but feedback is clear that you all want things to get simpler. On it.",
+   "date": "2026-10-04T04:59:21.000Z",
+   "summaryZh": "OpenAI 的 thsottiaux 说接下来只做简化、提效率、新功能和新模型，因为用户都想要更简单。"
+  },
+  {
+   "id": "https://x.com/thsottiaux/status/2106603980386394123",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "What it did\n\n- delete all categories of email that were not needed for me to keep, validating them in batch\n- identify labels for types of work that I do and label all the emails appropriately\n- walked me through emails that needed a reply, searching for relevant context in the background to help get things right\n\nand in the process I was able to go through a lot of feedback and requests people send me directly through email. It was a good Saturday.",
+   "date": "2026-10-04T04:35:02.000Z",
+   "summaryZh": "他让 agent 批量清理无用邮件、自动打标签、找出要回复的邮件并搜背景资料，过了一个高效周六。"
+  },
+  {
+   "id": "https://x.com/thsottiaux/status/2106602729875685780",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "I have never in my life achieved inbox zero until I just made it an active goal for my dot to help get it done. Let’s see how long it lasts, but it’s a great feeling. https://t.co/qHlFmfSIX5 https://t.co/TaBKBFn4hz",
+   "date": "2026-10-04T04:30:04.000Z",
+   "summaryZh": "他靠 agent 帮忙第一次做到收件箱清零，感觉很好，但不知道能维持多久。"
+  },
+  {
+   "id": "https://x.com/petergyang/status/2106593772863955419",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "I'm watching Foundation now season 1 episode 3 and can't decide if I really love it or not. \n\nDoes it get much better? The emperor plot is good the rest seems meh so far. https://t.co/mpOYshnd0G",
+   "date": "2026-10-04T03:54:28.000Z",
+   "summaryZh": "他在看《基地》第一季第三集，觉得皇帝线好看，其他部分一般，问后面会不会变好。"
+  },
+  {
+   "id": "https://x.com/levie/status/2106583814709633413",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Aaron Levie",
+   "handle": "levie",
+   "text": "AI agent adoption is still very bimodal right now. You have coding and coding adjacent tasks which have taken off, and then everything else. \n\nAnd even within coding, you have a very wide continuum of adoption patterns, with some likely a small percentage of developers deploying background agents working on projects in parallel, and the rest of everyone else still working with agents 1:1. \n\nThen, there’s the entire rest of knowledge work where real agentic adoption is still very early. The reason for this is that most of the workflows still need to reengineered to work with agents. \n\nThis isn’t the same as deploying a chat system for better research efficiency, but instead requires workflows to be rebuilt, data to be wired up in new ways, new practices for accountability and liability of decisions when agents are in the mix, governance and compliance paradigm changes, security upgrades, and more. \n\nWe’re still so unbelievably early in what this is going to look like outside of a few categories of work right now. This is why you can basically expect 100X more agent adoption from what we’ve seen so far.",
+   "date": "2026-10-04T03:14:54.000Z",
+   "summaryZh": "Levie 说 agent 采用两极分化，只有编程跑起来了，其他知识工作还很早，因为工作流要重建。"
+  },
+  {
+   "id": "https://x.com/nikunj/status/2106576328648741278",
    "type": "x",
    "kind": "X 动态",
    "name": "Nikunj Kothari",
    "handle": "nikunj",
-   "text": "When in doubt, always make more bubble solution 🫧 https://t.co/OXJ9btVIO0",
-   "date": "2026-10-03T00:45:35.000Z",
-   "summaryZh": "他开玩笑说拿不准的时候就多弄点泡泡水。"
+   "text": "Me: Enjoying the warm weekend..\n\nMe: Also refreshing that El Nino forecast 🤯 https://t.co/RBSTBC1nw4",
+   "date": "2026-10-04T02:45:09.000Z",
+   "summaryZh": "他一边享受温暖周末，一边忍不住刷厄尔尼诺预报，自嘲很矛盾。"
   },
   {
-   "id": "https://x.com/thenanyu/status/2106174759021215922",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nan Yu",
-   "handle": "thenanyu",
-   "text": "This guy knows SaaS https://t.co/MgTFgJE3vQ",
-   "date": "2026-10-03T00:09:28.000Z",
-   "summaryZh": "他夸某个人很懂 SaaS。"
-  },
-  {
-   "id": "https://x.com/sama/status/2106147184693620924",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Sam Altman",
-   "handle": "sama",
-   "text": "There is some speculation about our partnership with Cerebras.\n\nCerebras is a close partner, and we have a deep engagement pushing on the frontiers of speed.",
-   "date": "2026-10-02T22:19:53.000Z",
-   "summaryZh": "他回应外界猜测，说 Cerebras 是紧密合作伙伴，双方在速度前沿上有深度合作。"
-  },
-  {
-   "id": "https://x.com/danshipper/status/2106144801653506531",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Dan Shipper",
-   "handle": "danshipper",
-   "text": "here is my official @OpenAI DevDay FOOD vibe check \n\n(I know you’ve been waiting) https://t.co/JnLpqALBg7",
-   "date": "2026-10-02T22:10:25.000Z",
-   "summaryZh": "他发布了 OpenAI DevDay 的「食物体验」测评。"
-  },
-  {
-   "id": "https://x.com/rauchg/status/2106139305131569178",
+   "id": "https://x.com/rauchg/status/2106524265034162421",
    "type": "x",
    "kind": "X 动态",
    "name": "Guillermo Rauch",
    "handle": "rauchg",
-   "text": "Wonderful writeup on Jev + Python https://t.co/imdwexC2nn",
-   "date": "2026-10-02T21:48:35.000Z",
-   "summaryZh": "他推荐一篇关于 Jev 和 Python 的好文章。"
+   "text": "Summer is finally here! 🌞⛱️ https://t.co/ZBeqhh3ZwF",
+   "date": "2026-10-03T23:18:16.000Z",
+   "summaryZh": "他发了一句「夏天终于来了」加个链接，没多说。"
   },
   {
-   "id": "https://x.com/thenanyu/status/2106138257801216168",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nan Yu",
-   "handle": "thenanyu",
-   "text": "concerning https://t.co/uyN7kV060h",
-   "date": "2026-10-02T21:44:25.000Z",
-   "summaryZh": "他转了个内容并评论说「令人担忧」。"
-  },
-  {
-   "id": "https://x.com/rauchg/status/2106133123973214497",
+   "id": "https://x.com/rauchg/status/2106516538836856945",
    "type": "x",
    "kind": "X 动态",
    "name": "Guillermo Rauch",
    "handle": "rauchg",
-   "text": "Amazing. Love to see the https://t.co/ZRAOxqyRNt team ship so fast ▲ https://t.co/xvy2urxGnv",
-   "date": "2026-10-02T21:24:01.000Z",
-   "summaryZh": "他夸某个团队交付速度极快。"
+   "text": "Security will become a larger and larger function in software companies. Security is verification engineering (eg: “my code is probably memory-safe”), as well as capital allocation (“what surface should I throw most tokens at?”)\n\nFor startups, it’s a challenge and opportunity. As the world’s paranoia grows given ever-more-sophisticated AI adversaries, how can you trust a 2-person-and-a-dog company?\n\nBut conversely, given the dire state of global cybersecurity and increasing reliance on centralization, as always, there’re vast areas that small teams can now disrupt that I’m excited to invest in.",
+   "date": "2026-10-03T22:47:34.000Z",
+   "summaryZh": "他认为安全会成为软件公司越来越大的职能，既是验证工程也是资源分配，对小团队是挑战也是机会。"
   },
   {
-   "id": "https://x.com/danshipper/status/2106126787424002158",
+   "id": "https://x.com/amasad/status/2106506305875947966",
    "type": "x",
    "kind": "X 动态",
-   "name": "Dan Shipper",
-   "handle": "danshipper",
-   "text": "oldie but goodie https://t.co/FMTJOtSRGk",
-   "date": "2026-10-02T20:58:50.000Z",
-   "summaryZh": "他分享了一个老但经典的内容。"
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "Who’s building this? https://t.co/klHOfIlDDp",
+   "date": "2026-10-03T22:06:54.000Z",
+   "summaryZh": "他发了个链接问「谁在做这个」，没具体说是什么。"
   },
   {
-   "id": "https://x.com/claudeai/status/2106125480193913276",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Claude",
-   "handle": "claudeai",
-   "text": "What are you exploring with Claude this weekend?",
-   "date": "2026-10-02T20:53:39.000Z",
-   "summaryZh": "Claude 官方问大家这个周末打算用 Claude 探索什么。"
-  },
-  {
-   "id": "https://x.com/claudeai/status/2106125478956507480",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Claude",
-   "handle": "claudeai",
-   "text": "A jet engine in interactive 3D you can cut away and pull apart, made with Opus 5.5.\nhttps://t.co/0q8bZJAi4T",
-   "date": "2026-10-02T20:53:38.000Z",
-   "summaryZh": "Claude 官方展示用 Opus 5.5 做的可剖切、可拆解的交互式 3D 喷气发动机。"
-  },
-  {
-   "id": "https://x.com/claudeai/status/2106125477710901276",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Claude",
-   "handle": "claudeai",
-   "text": "A pop-up city where each building is a paper fold drawn on a flat canvas, Sonnet 5.5.\nhttps://t.co/04cupOr4Tg",
-   "date": "2026-10-02T20:53:38.000Z",
-   "summaryZh": "Claude 官方展示用 Sonnet 5.5 做的折纸风弹出式城市。"
-  },
-  {
-   "id": "https://x.com/trq212/status/2106119299484221762",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thariq",
-   "handle": "trq212",
-   "text": "\"You should know\" is a great way of staying on top of what's possible with Claude and also a great example of the kind of things mods enable.\n\nYou can really make Claude Code yours. https://t.co/En0OhotxQL",
-   "date": "2026-10-02T20:29:05.000Z",
-   "summaryZh": "他说「You should know」是跟进 Claude 能力的好方式，也是 mods 能实现的好例子，能把 Claude Code 变成自己的。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2106113169571946560",
+   "id": "https://x.com/petergyang/status/2106505635017986394",
    "type": "x",
    "kind": "X 动态",
    "name": "Peter Yang",
    "handle": "petergyang",
-   "text": ".@alexandr_wang this thing being on the screen at all times if I minimize the @Muse desktop app makes me not want to open it https://t.co/1HWRc9VTmK",
-   "date": "2026-10-02T20:04:43.000Z",
-   "summaryZh": "他吐槽 Muse 桌面应用最小化后还一直挂在屏幕上，让他不想打开它。"
+   "text": "Google CEO actually uses this app and replies to feedback while YouTube CEO only uses this as a comms channel to post announcements https://t.co/i6tT2vJVBY",
+   "date": "2026-10-03T22:04:15.000Z",
+   "summaryZh": "他说 Google CEO 真的用这个 app 并回复反馈，而 YouTube CEO 只把它当发公告的渠道。"
   },
   {
-   "id": "https://x.com/swyx/status/2106103958657958298",
+   "id": "https://x.com/rauchg/status/2106503460384538793",
    "type": "x",
    "kind": "X 动态",
-   "name": "Swyx",
-   "handle": "swyx",
-   "text": "btw dont forget the \"one more thing...\"\n\ntheyve been working on dots for a while now https://t.co/B83svUV9AC https://t.co/NXGKoFeRoa",
-   "date": "2026-10-02T19:28:07.000Z",
-   "summaryZh": "他提醒别忘了那个「one more thing」，说他们做 dot 已经有一阵子了。"
+   "name": "Guillermo Rauch",
+   "handle": "rauchg",
+   "text": "AI will make everything free, including itself. The last domino to fall will be free energy, which is humanity’s final frontier.",
+   "date": "2026-10-03T21:55:36.000Z",
+   "summaryZh": "他预言 AI 会让一切免费，包括 AI 自己，最后一块多米诺是免费能源。"
   },
   {
-   "id": "https://x.com/realmadhuguru/status/2106102222501376050",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Madhu Guru",
-   "handle": "realmadhuguru",
-   "text": "Underrated - the feeling of reading great writing that is 100% human written.\n\nJust love that human-written smell in a doc.",
-   "date": "2026-10-02T19:21:13.000Z",
-   "summaryZh": "他说读到 100% 人类写的优秀文字那种感觉被低估了，就爱文档里那股人味。"
-  },
-  {
-   "id": "https://x.com/garrytan/status/2106102038706970794",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Garry Tan",
-   "handle": "garrytan",
-   "text": "Capy is like a 24/7 standup for your agents https://t.co/cNQwkWMxSz",
-   "date": "2026-10-02T19:20:30.000Z",
-   "summaryZh": "他说 Capy 就像给 agent 开的 24/7 站会。"
-  },
-  {
-   "id": "https://x.com/garrytan/status/2106092289173213444",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Garry Tan",
-   "handle": "garrytan",
-   "text": "Surprising cool @capydotai cross-session coordination I wasn't expecting: My GBrain collaborator Sina started a fix wave that is even steering around all of the things I'm already working on across multiple Capy threads. All model agnostic. https://t.co/P5TUYlEfRs",
-   "date": "2026-10-02T18:41:45.000Z",
-   "summaryZh": "他分享 Capy 意外的跨会话协调能力：协作者发起的修复会自动绕开他正在做的事，且不挑模型。"
-  },
-  {
-   "id": "https://x.com/sama/status/2106085986606403684",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Sam Altman",
-   "handle": "sama",
-   "text": "dot is my favorite openai product so far!\n\nit is amazing to me that each day it feels noticably better as it learns more of my workflow and style.\n\nhaving it do the stuff i don't like doing--and usually just builds up as a gravity well of dread--has me very happy.",
-   "date": "2026-10-02T18:16:43.000Z",
-   "summaryZh": "他说 dot 是他最喜欢的 OpenAI 产品，每天感觉都在变好，因为它越来越懂他的工作流和风格，帮他做那些讨厌的事。"
-  },
-  {
-   "id": "https://x.com/steipete/status/2106076508020506722",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Steinberger",
-   "handle": "steipete",
-   "text": "This was by far my favorite slide at DevDay.\nKudos to the team! https://t.co/AQtPzNTZhx",
-   "date": "2026-10-02T17:39:03.000Z",
-   "summaryZh": "他说这是 DevDay 上他最喜欢的一页幻灯片，向团队致敬。"
-  },
-  {
-   "id": "https://x.com/mattturck/status/2106076198027890750",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Matt Turck",
-   "handle": "mattturck",
-   "text": "People call the Bay Area a monoculture, but that's totally unfair: it has both neo-clouds AND neo-labs",
-   "date": "2026-10-02T17:37:49.000Z",
-   "summaryZh": "他说人们说湾区是单一文化不公平，因为这里既有 neo-cloud 也有 neo-lab。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2106072698564874410",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "I was paying almost $300/year for a YouTube research tool that shall go unnamed. \n\nThe product was getting too complicated so I decided to check if Claude can build the core feature set that I actually needed. \n\nClaude built it in 5 min. 🥹",
-   "date": "2026-10-02T17:23:54.000Z",
-   "summaryZh": "他原本每年花近 300 美元买某 YouTube 研究工具，嫌太复杂，结果 Claude 5 分钟就搭出了他真正需要的核心功能。"
-  },
-  {
-   "id": "https://x.com/nikunj/status/2106072546206773574",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nikunj Kothari",
-   "handle": "nikunj",
-   "text": "If you are a home automation nerd, this is a fun prompt to try on Claude Code / Codex (edit based on your own setup):\n\n\"Can you sniff network packets in our house and see what else can we automate? For context: We have a Hermes agent that runs a lot of things like the personal Gmail, thermostat, Doordash, Amazon etc. \n\nTrying to see what else we can connect to. We have an Apple TV that we can talk to if we need for HomeKit related stuff but no other bridge that runs home assistant.\n\nGive me a full list of devices that you find and research how they can be connected to an agent.\"",
-   "date": "2026-10-02T17:23:18.000Z",
-   "summaryZh": "他给智能家居爱好者分享了一个在 Claude Code / Codex 上跑的提示词，让 AI 嗅探家里网络包并研究还能自动化什么。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2106071235696447660",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "I'm teaching a FREE lightning lesson on building an AI system to take work off your plate today at 11:30 AM pst.\n\nIt works with ChatGPT, Claude, or your favorite AI harness.\n\nJoin 500+ folks who have signed up to attend (you'll get the recording even if you can't make it): https://t.co/HMcU9EsLiE",
-   "date": "2026-10-02T17:18:06.000Z",
-   "summaryZh": "他今天免费开一节闪电课，教怎么搭 AI 系统帮你分担工作，ChatGPT、Claude 都能用，已有 500 多人报名。"
-  },
-  {
-   "id": "https://x.com/garrytan/status/2106063850453991758",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Garry Tan",
-   "handle": "garrytan",
-   "text": "My goal with GBrain:\n\nI want our agents to feel as native, expressive, and inevitable as the web eventually did—not as a chatbot feature, but as a personal Jiminy Cricket that knows you and helps you 24/7 always on, always thinking ahead, always improving.",
-   "date": "2026-10-02T16:48:45.000Z",
-   "summaryZh": "他说 GBrain 的目标是让 agent 像当年的 web 一样原生、有表现力、理所当然，成为 24/7 懂你的私人「良心蟋蟀」。"
-  },
-  {
-   "id": "https://x.com/nikunj/status/2106053219487228081",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nikunj Kothari",
-   "handle": "nikunj",
-   "text": "\"Everyone you meet is fighting a battle you know nothing about. Be kind. Always.\" \n\nRobin Williams. \n\nPrescient as always.",
-   "date": "2026-10-02T16:06:30.000Z",
-   "summaryZh": "他引用 Robin Williams 的话：你遇到的每个人都在打一场你不知道的仗，永远要善良。"
-  },
-  {
-   "id": "https://x.com/danshipper/status/2106043635947225392",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Dan Shipper",
-   "handle": "danshipper",
-   "text": "dev day vlog is LIVE!!! https://t.co/yy6tx11pZz",
-   "date": "2026-10-02T15:28:25.000Z",
-   "summaryZh": "他的 DevDay vlog 上线了。"
-  },
-  {
-   "id": "https://x.com/swyx/status/2106042773510177256",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Swyx",
-   "handle": "swyx",
-   "text": "It's time to get serious about Security x AI.\n\nOne of the joys of doing AIE is helping others start their own high quality conferences in their countries and domains. Every single 2025 partner has come back — and the 2nd AI Security Summit is now way more important than before. Proud to be back as a founding partner with @snyksec!\n\nJoin the event: https://t.co/2IeM4a3MGO\n\nThe landscape has completely transformed since we started this a year ago. An exploding number of rogue agents, more breaches, more AI-driven attacks. now more than ever, security must be at the center of the AI conversation. With so much more hacks and vulnerabilities, this stuff is no longer theoretical...",
-   "date": "2026-10-02T15:25:00.000Z",
-   "summaryZh": "他说该认真对待安全 x AI 了，第二届 AI Security Summit 比以往更重要，因为 rogue agent、泄露和 AI 攻击都在暴增。"
-  },
-  {
-   "id": "https://x.com/adityaag/status/2106019411635376471",
+   "id": "https://x.com/adityaag/status/2106503075209044336",
    "type": "x",
    "kind": "X 动态",
    "name": "Aditya Agarwal",
    "handle": "adityaag",
-   "text": "We had our second portfolio company IPO this week.\n\nWe are very proud to have partnered with Puneet and Sanjay at Moneyview. They are incredible entrepreneurs who have poured everything they have to building their company. \n\nMoments like these make you feel proud but also deeply appreciative of the founders journey. It is long, hard and tough as nails.\n\nBut yet we do it because to create something new is the highest form of purpose.\n\nOnwards.",
-   "date": "2026-10-02T13:52:10.000Z",
-   "summaryZh": "他庆祝本周第二家被投公司 IPO，为 Moneyview 的两位创始人感到骄傲，感慨创业之路漫长艰难但值得。"
+   "text": "A common misconception is that if you are super rich, you can get unlimited access to the world's best doctor/lawyer/creative-professional etc.\n\nThe reality is that the world's leading cancer doctor will still see you for 20-30min if you have cancer no matter how much money you have.\n\nThis is why AI is so crazy. \n\nIt both democratizes access AND it makes the amount of time available unlimited for every individual.\n\nThis is the practical effect of intelligence too cheap to meter.",
+   "date": "2026-10-03T21:54:04.000Z",
+   "summaryZh": "他说再有钱也买不到顶级医生无限时间，而 AI 既让访问民主化又让时间无限，这就是智能便宜到不用计量的效果。"
   },
   {
-   "id": "https://www.youtube.com/@NoPriorsPodcast",
+   "id": "https://x.com/steipete/status/2106489264443981978",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Steinberger",
+   "handle": "steipete",
+   "text": "laughing about how we all are building the same thing. https://t.co/SidDrycoLi",
+   "date": "2026-10-03T20:59:11.000Z",
+   "summaryZh": "他笑说大家都在做同一个东西。"
+  },
+  {
+   "id": "https://x.com/nikunj/status/2106488814940414455",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Nikunj Kothari",
+   "handle": "nikunj",
+   "text": "It'll be interesting to see how this innovator's dilemma plays out in the next few years as personal agents become inevitable..\n\nAmazon is protecting it's \"ads\" cash cow and *cough* the brand. \n\nDoordash, albeit smaller, is opening the gates (slowly) with their CLIs and allowing to order via text.",
+   "date": "2026-10-03T20:57:24.000Z",
+   "summaryZh": "他说个人 agent 不可避免，Amazon 在保护广告现金牛，Doordash 则慢慢开放 CLI 允许短信下单。"
+  },
+  {
+   "id": "https://x.com/petergyang/status/2106454236456513670",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "Was talking to my agents at the park then got scratched by a squirrel\n\nnature is telling me something",
+   "date": "2026-10-03T18:40:00.000Z",
+   "summaryZh": "他在公园跟 agent 说话时被松鼠抓了，开玩笑说大自然在给他暗示。"
+  },
+  {
+   "id": "https://x.com/nikunj/status/2106452873513201930",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Nikunj Kothari",
+   "handle": "nikunj",
+   "text": "Again do it for a bit to explore the edges and maybe find the right purpose. \n\nBut tokenmaxxing for the sake of doing it is not honestly useful in this era.",
+   "date": "2026-10-03T18:34:35.000Z",
+   "summaryZh": "他说可以试一阵子探索边界找对用途，但为了刷 token 而刷 token 在这个时代没意义。"
+  },
+  {
+   "id": "https://x.com/amasad/status/2106450234369085609",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "We go really deep and somewhat technical here with the brilliant @alexatallah of OpenRouter. Enjoy! https://t.co/P15xUYOxwQ",
+   "date": "2026-10-03T18:24:06.000Z",
+   "summaryZh": "他发了一期和 OpenRouter 的 alexatallah 的深度技术播客，让大家去听。"
+  },
+  {
+   "id": "https://x.com/realmadhuguru/status/2106450089938157720",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Madhu Guru",
+   "handle": "realmadhuguru",
+   "text": "AI adoption is largely a product problem today. \n\nEven among the 2% that are paying for AI today, the depth of usage is shallow. \n\nThe main reason : most AI products look like airplane cockpits with 100 levers - connectors, permissions, model selection, token usage etc.\n\nThis has started to change. Things will look materially different in the next 12 months as product teams come into their own and make AI products easier to use.",
+   "date": "2026-10-03T18:23:32.000Z",
+   "summaryZh": "他说 AI 采用主要是产品问题，付费用户用得也浅，因为产品像有 100 个拉杆的飞机驾驶舱，未来 12 个月会变。"
+  },
+  {
+   "id": "https://x.com/steipete/status/2106446147791597774",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Steinberger",
+   "handle": "steipete",
+   "text": "Do I know anyone at Google who could help? We're now over a week in review limbo for OpenClaw's Android app.",
+   "date": "2026-10-03T18:07:52.000Z",
+   "summaryZh": "他说 OpenClaw 的 Android app 卡在审核里超过一周，问有没有 Google 的人能帮忙。"
+  },
+  {
+   "id": "https://x.com/amasad/status/2106406812316827874",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "Replit Drift https://t.co/9BHSc9DC5O",
+   "date": "2026-10-03T15:31:33.000Z",
+   "summaryZh": "他只发了「Replit Drift」加个链接，没展开说。"
+  },
+  {
+   "id": "https://x.com/zarazhangrui/status/2106405482852434359",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Zara Zhang",
+   "handle": "zarazhangrui",
+   "text": "How will the world change if coding agents get 10x better?",
+   "date": "2026-10-03T15:26:16.000Z",
+   "summaryZh": "她抛出一个问题：如果编程 agent 变强 10 倍，世界会怎么变？"
+  },
+  {
+   "id": "https://x.com/sama/status/2106388373221118198",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Sam Altman",
+   "handle": "sama",
+   "text": "I am very uncomfortable about people trying to ascribe religious force or a surrender of human judgment to AI models, and think it is a real safety issue.",
+   "date": "2026-10-03T14:18:17.000Z",
+   "summaryZh": "Sam Altman 说把 AI 模型当成宗教或让人放弃判断力让他很不舒服，认为这是真实的安全问题。"
+  },
+  {
+   "id": "https://x.com/ryolu_/status/2106343073127256507",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Ryo Lu",
+   "handle": "ryolu_",
+   "text": "https://t.co/TNhsT7hCvW",
+   "date": "2026-10-03T11:18:17.000Z",
+   "summaryZh": "他只发了个链接，没配文字说明。"
+  },
+  {
+   "id": "https://x.com/ryolu_/status/2106337039201505453",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Ryo Lu",
+   "handle": "ryolu_",
+   "text": "convergence to the mean\n\nwhen everyone looks at everyone else to decide what to make, we eventually stop making anything of our own.\n\nwe copy what works. borrow the language, the aesthetic, the features. we call it learning from the market, following best practices, staying competitive. together, everything starts to feel familiar. polished, interchangeable. nothing wrong. nothing alive.\n\nthe mean isn’t necessarily bad. it’s where everything lands when we remove the reasons for it to be different.\n\nnumbers are easier to compare than feelings, so we make things that produce numbers. we study what gets attention, then shape ourselves around it. eventually the feedback stops informing the work and starts authoring it. we’re no longer asking what we want to say. we’re asking what will be rewarded for saying.\n\nai makes this loop frictionless. it can draw from more references than we could see in a lifetime. but access to every perspective isn’t the same as having one. it hasn’t lived a particular life that makes one detail unbearable and another beautiful. when we ask it to choose for us without bringing any intention of our own, we get something plausible, easy to approve.\n\nthen we ship it, measure it, copy it, and feed it back into the next round. a tidal wave of mid.\n\nthis changes not just the work, but the people making it.\n\nwe describe ourselves in categories platforms can distribute and markets understand. designer. founder. creator. pick a niche. build a brand. be consistent. the parts that don’t fit become inconvenient, even when those contradictions might produce our most interesting work. we become easier to classify and harder to tell apart.\n\ni think we need to approach making things more like artists.\n\nan artist develops a perspective through the work. making, noticing, choosing, failing, returning. learning what matters even when nobody else cares. craft gives that perspective a form precise enough for someone else to experience.\n\nthe life outside the work matters too. the places you’ve lived, the people you’ve loved, the things you’re embarrassed to care about. these aren’t distractions from having something to say. they’re how you come to have something to say.\n\nwe understand this with music, paintings, photographs, movies. we expect a person to be present in the choices. we want to experience something we wouldn’t have encountered without them.\n\nsoftware can do this too.\n\na piece of software expresses beliefs about how life should feel. what deserves your attention. what you should be free to change. whether a task should feel like paperwork or play. even a small interaction can carry someone’s care, humor, or curiosity.\n\nbut we rarely talk about software as a medium. we talk about it as an industry. markets to capture, workflows to optimize, competitors to catch up with. we add a feature because someone else has it, without asking whether it belongs. products accumulate the same parts and lose what made them worth choosing.\n\nunderneath the branding, it’s all the same thing.\n\nartists learn from others too. the question is whether you’re absorbing those influences into a point of view, or using them to avoid developing one.\n\nwhat are you trying to let someone feel, understand, or do? why this particular shape? what have you noticed that the existing tools don’t seem to notice?\n\nthose questions don’t have answers you can borrow from a competitor’s roadmap.\n\nif we can make almost anything, deciding what deserves to exist becomes more important, not less. speed gives us more chances to exercise judgment. it doesn’t remove the responsibility.\n\ni don’t want a world where every person becomes a more efficient distributor of the same ideas. i want people to use these tools to go further into what they actually care about. to make things specific enough that we can feel someone behind them.\n\nwhat is the point of everyone being able to make something, if we all end up making the same thing?",
+   "date": "2026-10-03T10:54:18.000Z",
+   "summaryZh": "他说大家都看别人做什么就做什么，最后只复制成功案例，东西变得千篇一律，AI 让这个循环更顺滑。"
+  },
+  {
+   "id": "https://www.youtube.com/watch?v=awoR908Yu5Y",
    "type": "podcast",
    "kind": "播客",
-   "name": "No Priors",
+   "name": "The MAD Podcast with Matt Turck",
    "handle": "",
-   "title": "Frontier Chips for Frontier AI Labs, with Walter Goodwin, Founder/CEO of Fractile",
+   "title": "Who Feeds the GPUs? Inside AI's Hidden $30B Layer | Renen Hallak, VAST Data",
    "text": "",
-   "date": "2026-10-02T10:00:00.000Z",
-   "summaryZh": "No Priors 播客请来 Fractile 创始人兼 CEO Walter Goodwin，聊前沿 AI 实验室用的前沿芯片。"
+   "date": "2026-09-24T11:30:00.000Z",
+   "summaryZh": "播客请来 VAST Data 的 Renen Hallak，聊 AI 背后那个隐藏的 300 亿美元数据层。"
   }
  ]
 }
