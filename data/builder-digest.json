@@ -1,290 +1,209 @@
 {
  "date": "2026-10-05",
- "generatedAt": "2026-10-05T00:19:29Z",
+ "generatedAt": "2026-10-05T08:33:58Z",
  "model": "deepseek-flash",
- "headline": "Claude 把 Cowork 和聊天合并成一个 Claude，还加了文档和幻灯片",
+ "headline": "OpenAI 要简化 ChatGPT，Codex 团队承诺 28 天每天发一版",
  "bullets": [
-  "Claude 官方宣布 Cowork 和 chat 合并成一个 Claude，Pro 和 Max 用户未来几周陆续用上。",
-  "新增 Claude Docs 和 Claude Slides，Claude Design 也能直接在对话里用，付费版 beta。",
-  "有 builder 说 AI agent 落地还很两极：编程类起飞了，其他知识工作还在早期，因为工作流得重做。",
-  "不少人吐槽现在的 AI 产品像飞机驾驶舱，100 个拉杆，用起来太复杂，接下来 12 个月会变简单。",
-  "Sam Altman 说把 AI 当神、放弃人类判断是个真实的安全问题。"
+  "Peter Yang 吐槽 ChatGPT 太乱，点名 Work、Codex、Spaces、Pages、Sites 和模型选择器都该合并，还说 Work 这个品牌本身就是个错误。",
+  "OpenAI 的 thsottiaux 宣布接下来 28 天，每天要么发一个对多数 Codex/Work 用户有明确提升的更新，要么做一次彻底重置。",
+  "Granola 联创 Sam 说，用户绕过 Granola 界面、直接用 MCP 干活让他有点难过，但企业客户必然有自己的内部工具，所以现在接受了。",
+  "rauchg 说模型越快，harness 的开销就越关键，下一个版本会在会话存储和检索上继续提速。",
+  "Levie 认为 AI 正在创造 AI 工程师、FDE、部署服务等新岗位，而且很多老岗位也在被重新定位到 AI 工作上。"
  ],
- "sentiment": "整体偏兴奋但也带点吐槽：兴奋的是 agent 真能干活了，吐槽的是产品太复杂、落地太慢。",
- "count": 27,
- "summarised": 27,
+ "sentiment": "整体是兴奋中带点吐槽：一边期待 ChatGPT 和 Codex 被收拾干净、速度继续提升，一边对产品线越堆越乱、界面被 MCP 绕过这些事直言不讳。",
+ "count": 19,
+ "summarised": 19,
  "posts": [
   {
-   "id": "https://claude.com/blog/cowork-is-now-claude",
-   "type": "blog",
-   "kind": "官方博客",
-   "name": "Claude Blog",
-   "handle": "",
-   "title": "Claude Cowork and chat are now one Claude",
-   "text": "Starting today, Claude Cowork and chat are merging into one Claude. Bring a quick question, or hand over a report due at noon, and Claude takes it from there, even after you’ve closed your laptop. It’s rolling out on Pro and Max plans over the next few weeks, with more plans to follow. What Claude makes doesn’t need its own place either. Claude Docs and Claude Slides are new today, and Claude Design now works inside your conversations too. Ask for a document, and you and Claude write it together. Ask for a presentation, and Claude drafts the slides. You can edit directly, present straight from Claude, or download as PowerPoint or PDF. All three are in beta on paid plans, and Enterprise admins choose when to turn them on. If you use Claude Design on its own, it keeps working as before. We built Cowork as a separate place for bigger work, and Design for visual work. People used both, and told us the frustrating part was deciding where a task belonged. What they’d started in one also didn’t carry into the other. So we stopped making you choose. Claude can now figure out what a task needs, so what Cowork and Design can do is available from any conversation, with the context, skills, and connectors you already have. “I could have Claude pull up [my legal research database], and it would pull all the cases, read them, figure out which other cases I might need, download them, and store them in a folder for my personal review.” - Andrew Keller, Senior Economist What it looks like A weekly report is due at noon. Before you head out, you ask Claude what moved in the pipeline last week, then add: “Write it the way we always do, flag anything that slipped, and put the highlights in five slides for the leadership meeting.” If something’s unclear, Claude asks. You can check progress from your phone on the way to the office. By the time you’re at your desk, the report is waiting as a doc with notes from your teammate, and the slides are ready to open, adjust, and download as PowerPoint. Both came out of the same conversation, so the slides already match the report. You fix a line yourself, leave a comment for Claude on a slide, and share it. Schedule it for every Monday, and Claude starts on the report without being asked. Anything you make with Claude Design, Slides, or Docs lives at one shareable link you can open on your phone. You can select an element and move it, or tell Claude what you want changed. You can choose how Claude checks in with you. By default, Claude asks before taking an action. If you’d rather let it keep working and check in only when something needs a closer look, you can turn that on. You keep the final say. Getting started If you mostly use chat, you don’t have to do anything different. When you want to hand over something bigger, try the next report or deck you’d normally build yourself. If you’ve been working in Cowork, everything is where you left it: your chats, projects, artifacts, connectors, and skills. When you open the app, pick up where you left off. This is rolling out to Pro and Max plans first, in the Claude app on web, desktop, and mobile over the coming weeks to existing and new users on these plans. There’s nothing to turn on. Team and Free plans will follow soon, and Enterprise admins will hear from us at least 30 days before anything changes for their organizations. The full list of capabilities is in the Help Center . If you’ve been saving up a big messy project, now’s the time.",
-   "date": "Sep 16, 2026",
-   "summaryZh": "Claude 把 Cowork 和聊天合并成一个 Claude，新增 Docs 和 Slides，付费版 beta，Pro 和 Max 先上。"
-  },
-  {
-   "id": "https://x.com/thenanyu/status/2106620595534491948",
+   "id": "https://x.com/nikunj/status/2106957269212742135",
    "type": "x",
    "kind": "X 动态",
-   "name": "Nan Yu",
-   "handle": "thenanyu",
-   "text": "The man has spoken https://t.co/KINPyEKtEp",
-   "date": "2026-10-04T05:41:03.000Z",
-   "summaryZh": "作者转发了一条内容并说「大佬发话了」，没展开具体观点。"
+   "name": "Nikunj Kothari",
+   "handle": "nikunj",
+   "text": "Maybe I’m just old school, but I just can’t believe how people make investments over a Zoom call.. and sometimes by just meeting the CEO. \n\nThere’s so much alpha in meeting founders at their own office. \n\nBesides “vibes”, you get to see what the energy of the office is like, how the coworkers react and work with each other, how the cofounders answer and complement each other, what the beta product releases look like, how they collaborate etc etc. \n\nYes, I get it there’s time pressure, and you often have to move fast. But even then I always ask to meet at offices for final meetings and founders often tell me I’m the only one that has ever asked. \n\nWhat’s the point of calling them into your own conference room and parrot the same deck??",
+   "date": "2026-10-05T03:58:53.000Z",
+   "summaryZh": "Nikunj 说他只靠 Zoom 或见 CEO 就投钱无法理解，去创始人办公室能看出团队能量、协作方式和 beta 产品，他坚持终面去办公室，而创始人常说他是一个人这么问的。"
   },
   {
-   "id": "https://x.com/thsottiaux/status/2106610099720720811",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thibault Sottiaux",
-   "handle": "thsottiaux",
-   "text": "All right, we’re locking in. Only things being worked on are simplifications, more efficiency for more usage, groundbreaking features or new models. \n\nSometimes you have to invest ahead of the curve, but feedback is clear that you all want things to get simpler. On it.",
-   "date": "2026-10-04T04:59:21.000Z",
-   "summaryZh": "作者说接下来只做简化、提效率、重磅功能或新模型，因为用户明确想要更简单。"
-  },
-  {
-   "id": "https://x.com/thsottiaux/status/2106603980386394123",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thibault Sottiaux",
-   "handle": "thsottiaux",
-   "text": "What it did\n\n- delete all categories of email that were not needed for me to keep, validating them in batch\n- identify labels for types of work that I do and label all the emails appropriately\n- walked me through emails that needed a reply, searching for relevant context in the background to help get things right\n\nand in the process I was able to go through a lot of feedback and requests people send me directly through email. It was a good Saturday.",
-   "date": "2026-10-04T04:35:02.000Z",
-   "summaryZh": "作者让 agent 批量清理邮箱、自动打标签、找出要回复的邮件并搜背景资料，过了一个高效周六。"
-  },
-  {
-   "id": "https://x.com/thsottiaux/status/2106602729875685780",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thibault Sottiaux",
-   "handle": "thsottiaux",
-   "text": "I have never in my life achieved inbox zero until I just made it an active goal for my dot to help get it done. Let’s see how long it lasts, but it’s a great feeling. https://t.co/qHlFmfSIX5 https://t.co/TaBKBFn4hz",
-   "date": "2026-10-04T04:30:04.000Z",
-   "summaryZh": "作者靠 agent 第一次做到收件箱清零，感觉很好，但不知道能维持多久。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2106593772863955419",
+   "id": "https://x.com/petergyang/status/2106926956554195018",
    "type": "x",
    "kind": "X 动态",
    "name": "Peter Yang",
    "handle": "petergyang",
-   "text": "I'm watching Foundation now season 1 episode 3 and can't decide if I really love it or not. \n\nDoes it get much better? The emperor plot is good the rest seems meh so far. https://t.co/mpOYshnd0G",
-   "date": "2026-10-04T03:54:28.000Z",
-   "summaryZh": "作者在看《基地》第一季第三集，纠结自己到底喜不喜欢，觉得皇帝线好看其他一般。"
+   "text": "I'm glad OpenAI is focusing on simplifying ChatGPT because it has become a mess (sorry).\n\nHere's a clip from my dots review about this. What I'd simplify:\n\n1. Work vs. Codex\n2. Spaces vs. Pages vs. Sites\n3. The model and effort picker\nProbably alot more\n\nMy hot take is that the whole Work launch was a mistake. Just like Claude folded Cowork back into Chat, I don't think Work needs its own brand.\n\nAnyway, excited to see my primary harness get much better.\n\n📌 See my full dots review here: https://t.co/kUtg3RPk7l",
+   "date": "2026-10-05T01:58:25.000Z",
+   "summaryZh": "Peter Yang 欢迎 OpenAI 简化 ChatGPT，认为 Work 与 Codex、Spaces/Pages/Sites、模型选择器都该合并，并说 Work 这个品牌发布本身就是个错误。"
   },
   {
-   "id": "https://x.com/levie/status/2106583814709633413",
+   "id": "https://x.com/garrytan/status/2106901111106097210",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "When everyone is building the same primitives it does speak to needs that will only intensify from here\n\nAnd we will eventually converge on the correct OS https://t.co/tTdL1LMmzx",
+   "date": "2026-10-05T00:15:43.000Z",
+   "summaryZh": "Garry Tan 说大家都在造同样的原语，说明这些需求只会越来越强，最终会收敛到正确的 OS 上。"
+  },
+  {
+   "id": "https://x.com/petergyang/status/2106897211766530299",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "I asked Sam, co-founder of @meetgranola, how he feels about people skipping his UI and instead just using the MCP to get the job done.\n\nHere's what he said:\n\n\"There's definitely a pang of sadness to that as a UI designer.\n\nWe fought it for a while. We were like, no, we really need to keep everybody in the Granola UI for everything.\n\nBut as soon as you become a big enough enterprise, it's inevitable you have all of this internal tooling. If Granola doesn't play nice with that internal tooling, then it's a non-starter.\n\nAt this point we're at peace with the fact that for a bunch of workflows, the best way to use Granola is to capture the context, then use it through your internal agent.\"\n\n📌 Watch the full episode here: https://t.co/4f5zTNl4Kc",
+   "date": "2026-10-05T00:00:14.000Z",
+   "summaryZh": "Granola 联创 Sam 说用户跳过 UI 直接用 MCP 让他作为设计师有点难过，但企业客户必然有内部工具，不兼容就是死路，现在接受用 Granola 抓上下文再走内部 agent。"
+  },
+  {
+   "id": "https://x.com/levie/status/2106893015063421357",
    "type": "x",
    "kind": "X 动态",
    "name": "Aaron Levie",
    "handle": "levie",
-   "text": "AI agent adoption is still very bimodal right now. You have coding and coding adjacent tasks which have taken off, and then everything else. \n\nAnd even within coding, you have a very wide continuum of adoption patterns, with some likely a small percentage of developers deploying background agents working on projects in parallel, and the rest of everyone else still working with agents 1:1. \n\nThen, there’s the entire rest of knowledge work where real agentic adoption is still very early. The reason for this is that most of the workflows still need to reengineered to work with agents. \n\nThis isn’t the same as deploying a chat system for better research efficiency, but instead requires workflows to be rebuilt, data to be wired up in new ways, new practices for accountability and liability of decisions when agents are in the mix, governance and compliance paradigm changes, security upgrades, and more. \n\nWe’re still so unbelievably early in what this is going to look like outside of a few categories of work right now. This is why you can basically expect 100X more agent adoption from what we’ve seen so far.",
-   "date": "2026-10-04T03:14:54.000Z",
-   "summaryZh": "Levie 说 agent 落地很两极：编程类起飞，其他知识工作还早，因为工作流、数据、合规都得重做。"
+   "text": "We’re already starting to see what kind of new jobs AI is creating. \n\nAI requires significant technical work and surrounding services to deploy into the economy. This means jobs for AI engineers that build applied AI products sold to (or within) enterprises, FDEs to deploy agents into companies, new services firms for deploying AI, and more. \n\nAnd even the published stats of new jobs undercount all the existing jobs that are transitioning to new areas of AI work in an enterprise. Many prior data, research, and software jobs large enterprises are also being repositioned for working with AI. \n\nEvery bank, life sciences company, manufacturer, and even law firm is bringing on more technical talent -or repositioning existing roles- to help with agent deployment in their companies. It’s a lot easier to picture what AI can replace vs. what it creates until it starts happening. Now we’re seeing what this looks like.",
+   "date": "2026-10-04T23:43:33.000Z",
+   "summaryZh": "Levie 说 AI 正在创造 AI 工程师、FDE、部署服务等新岗位，很多数据、研究、软件老岗位也在被重新定位到 AI 工作上，每个行业都在加技术人手。"
   },
   {
-   "id": "https://x.com/nikunj/status/2106576328648741278",
+   "id": "https://x.com/danshipper/status/2106892868564431255",
    "type": "x",
    "kind": "X 动态",
-   "name": "Nikunj Kothari",
-   "handle": "nikunj",
-   "text": "Me: Enjoying the warm weekend..\n\nMe: Also refreshing that El Nino forecast 🤯 https://t.co/RBSTBC1nw4",
-   "date": "2026-10-04T02:45:09.000Z",
-   "summaryZh": "作者一边享受温暖周末一边刷厄尔尼诺预报，调侃自己停不下来。"
+   "name": "Dan Shipper",
+   "handle": "danshipper",
+   "text": "dot has become my primary interface to AI over the last few weeks.\n\nmy dot's name is boo. he's cute! \n\nin a year, i bet i'll still be interacting in this way with @ChatGPT—e.g. as an always-on persistent agent—but boo will have disappeared. it reminds me a lot of early OpenClaw days—we loved the little personality quirks of our Claws, but we dropped them as soon as there was something functionally more powerful available",
+   "date": "2026-10-04T23:42:58.000Z",
+   "summaryZh": "Dan Shipper 说 dot 成了他几周来的主要 AI 界面，他的 dot 叫 boo，但他赌一年后自己还在用 ChatGPT 这种常驻 agent，boo 会像早期 OpenClaw 一样消失。"
   },
   {
-   "id": "https://x.com/rauchg/status/2106524265034162421",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Guillermo Rauch",
-   "handle": "rauchg",
-   "text": "Summer is finally here! 🌞⛱️ https://t.co/ZBeqhh3ZwF",
-   "date": "2026-10-03T23:18:16.000Z",
-   "summaryZh": "作者感叹夏天终于来了。"
-  },
-  {
-   "id": "https://x.com/rauchg/status/2106516538836856945",
+   "id": "https://x.com/rauchg/status/2106885457212825983",
    "type": "x",
    "kind": "X 动态",
    "name": "Guillermo Rauch",
    "handle": "rauchg",
-   "text": "Security will become a larger and larger function in software companies. Security is verification engineering (eg: “my code is probably memory-safe”), as well as capital allocation (“what surface should I throw most tokens at?”)\n\nFor startups, it’s a challenge and opportunity. As the world’s paranoia grows given ever-more-sophisticated AI adversaries, how can you trust a 2-person-and-a-dog company?\n\nBut conversely, given the dire state of global cybersecurity and increasing reliance on centralization, as always, there’re vast areas that small teams can now disrupt that I’m excited to invest in.",
-   "date": "2026-10-03T22:47:34.000Z",
-   "summaryZh": "作者认为安全会成为软件公司越来越大的职能，既是验证工程也是资源分配，对小团队是挑战也是机会。"
+   "text": "It’s hard to fathom https://t.co/OL0LzGtvAw getting even faster, but it’s now… much faster 😂\n\nAs models speed up (as with Astra 𝚞𝚕𝚝𝚛𝚊𝚏𝚊𝚜𝚝), harness overhead matters more and more.\n\nNext release will feature even better performance for session storage and retrieval, and a big unlock for cloud durability in libfx.",
+   "date": "2026-10-04T23:13:31.000Z",
+   "summaryZh": "rauchg 说某个东西已经快得难以想象，现在又更快了；模型越快，harness 开销越重要，下个版本会改进会话存储检索和 libfx 的云持久性。"
   },
   {
-   "id": "https://x.com/amasad/status/2106506305875947966",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Amjad Masad",
-   "handle": "amasad",
-   "text": "Who’s building this? https://t.co/klHOfIlDDp",
-   "date": "2026-10-03T22:06:54.000Z",
-   "summaryZh": "作者贴了个东西并问「谁在做这个」，没展开具体内容。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2106505635017986394",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "Google CEO actually uses this app and replies to feedback while YouTube CEO only uses this as a comms channel to post announcements https://t.co/i6tT2vJVBY",
-   "date": "2026-10-03T22:04:15.000Z",
-   "summaryZh": "作者对比说 Google CEO 真的用这个 app 并回反馈，YouTube CEO 只拿它当发公告的渠道。"
-  },
-  {
-   "id": "https://x.com/rauchg/status/2106503460384538793",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Guillermo Rauch",
-   "handle": "rauchg",
-   "text": "AI will make everything free, including itself. The last domino to fall will be free energy, which is humanity’s final frontier.",
-   "date": "2026-10-03T21:55:36.000Z",
-   "summaryZh": "作者预言 AI 会让一切免费，包括 AI 自己，最后一块多米诺是免费能源。"
-  },
-  {
-   "id": "https://x.com/adityaag/status/2106503075209044336",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Aditya Agarwal",
-   "handle": "adityaag",
-   "text": "A common misconception is that if you are super rich, you can get unlimited access to the world's best doctor/lawyer/creative-professional etc.\n\nThe reality is that the world's leading cancer doctor will still see you for 20-30min if you have cancer no matter how much money you have.\n\nThis is why AI is so crazy. \n\nIt both democratizes access AND it makes the amount of time available unlimited for every individual.\n\nThis is the practical effect of intelligence too cheap to meter.",
-   "date": "2026-10-03T21:54:04.000Z",
-   "summaryZh": "作者说再有钱也买不到顶级医生无限时间，而 AI 既让访问民主化又让时间无限，这就是智能便宜到不用计量的实际效果。"
-  },
-  {
-   "id": "https://x.com/steipete/status/2106489264443981978",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Steinberger",
-   "handle": "steipete",
-   "text": "laughing about how we all are building the same thing. https://t.co/SidDrycoLi",
-   "date": "2026-10-03T20:59:11.000Z",
-   "summaryZh": "作者笑称大家都在造同一个东西。"
-  },
-  {
-   "id": "https://x.com/nikunj/status/2106488814940414455",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nikunj Kothari",
-   "handle": "nikunj",
-   "text": "It'll be interesting to see how this innovator's dilemma plays out in the next few years as personal agents become inevitable..\n\nAmazon is protecting it's \"ads\" cash cow and *cough* the brand. \n\nDoordash, albeit smaller, is opening the gates (slowly) with their CLIs and allowing to order via text.",
-   "date": "2026-10-03T20:57:24.000Z",
-   "summaryZh": "作者说个人 agent 不可避免，Amazon 在护广告现金牛，Doordash 则慢慢开放 CLI 支持短信下单。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2106454236456513670",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "Was talking to my agents at the park then got scratched by a squirrel\n\nnature is telling me something",
-   "date": "2026-10-03T18:40:00.000Z",
-   "summaryZh": "作者在公园跟 agent 说话被松鼠抓了，调侃大自然在给他暗示。"
-  },
-  {
-   "id": "https://x.com/nikunj/status/2106452873513201930",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nikunj Kothari",
-   "handle": "nikunj",
-   "text": "Again do it for a bit to explore the edges and maybe find the right purpose. \n\nBut tokenmaxxing for the sake of doing it is not honestly useful in this era.",
-   "date": "2026-10-03T18:34:35.000Z",
-   "summaryZh": "作者说可以试一阵子探索边界找对用途，但为了刷 token 而刷 token 在这个时代没意义。"
-  },
-  {
-   "id": "https://x.com/amasad/status/2106450234369085609",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Amjad Masad",
-   "handle": "amasad",
-   "text": "We go really deep and somewhat technical here with the brilliant @alexatallah of OpenRouter. Enjoy! https://t.co/P15xUYOxwQ",
-   "date": "2026-10-03T18:24:06.000Z",
-   "summaryZh": "作者和 OpenRouter 的 alexatallah 做了一期很深入偏技术的播客。"
-  },
-  {
-   "id": "https://x.com/realmadhuguru/status/2106450089938157720",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Madhu Guru",
-   "handle": "realmadhuguru",
-   "text": "AI adoption is largely a product problem today. \n\nEven among the 2% that are paying for AI today, the depth of usage is shallow. \n\nThe main reason : most AI products look like airplane cockpits with 100 levers - connectors, permissions, model selection, token usage etc.\n\nThis has started to change. Things will look materially different in the next 12 months as product teams come into their own and make AI products easier to use.",
-   "date": "2026-10-03T18:23:32.000Z",
-   "summaryZh": "作者说 AI 落地现在主要是产品问题，产品像有 100 个拉杆的驾驶舱，未来 12 个月会变得好用的多。"
-  },
-  {
-   "id": "https://x.com/steipete/status/2106446147791597774",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Steinberger",
-   "handle": "steipete",
-   "text": "Do I know anyone at Google who could help? We're now over a week in review limbo for OpenClaw's Android app.",
-   "date": "2026-10-03T18:07:52.000Z",
-   "summaryZh": "作者求助认识 Google 的人，因为 OpenClaw 的 Android app 卡在审核里超过一周了。"
-  },
-  {
-   "id": "https://x.com/amasad/status/2106406812316827874",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Amjad Masad",
-   "handle": "amasad",
-   "text": "Replit Drift https://t.co/9BHSc9DC5O",
-   "date": "2026-10-03T15:31:33.000Z",
-   "summaryZh": "作者只发了「Replit Drift」加一个链接，没展开说明。"
-  },
-  {
-   "id": "https://x.com/zarazhangrui/status/2106405482852434359",
+   "id": "https://x.com/zarazhangrui/status/2106876921082712250",
    "type": "x",
    "kind": "X 动态",
    "name": "Zara Zhang",
    "handle": "zarazhangrui",
-   "text": "How will the world change if coding agents get 10x better?",
-   "date": "2026-10-03T15:26:16.000Z",
-   "summaryZh": "作者抛出一个问题：如果编程 agent 变强 10 倍，世界会怎么变？"
+   "text": "The way Opus 5.5 just silently goes off to make something for 20+ minutes and comes back with a complete masterpiece https://t.co/KhPLgeSl7q",
+   "date": "2026-10-04T22:39:36.000Z",
+   "summaryZh": "Zara Zhang 感叹 Opus 5.5 会安静地跑 20 多分钟，然后交出一个完整的杰作。"
   },
   {
-   "id": "https://x.com/sama/status/2106388373221118198",
+   "id": "https://x.com/rauchg/status/2106863842450133114",
    "type": "x",
    "kind": "X 动态",
-   "name": "Sam Altman",
-   "handle": "sama",
-   "text": "I am very uncomfortable about people trying to ascribe religious force or a surrender of human judgment to AI models, and think it is a real safety issue.",
-   "date": "2026-10-03T14:18:17.000Z",
-   "summaryZh": "Sam Altman 说自己很不舒服看到人们把 AI 模型当宗教、放弃人类判断，认为这是真实的安全问题。"
+   "name": "Guillermo Rauch",
+   "handle": "rauchg",
+   "text": "DHH is fundamentally right about Rust. For context, Vercel has been undergoing a Rust-ification (carcinization, technically 🦀) for a while.\n\nOne of the first projects we migrated was Turborepo, from Go to Rust¹. The migration completed, but the RoI was actually quite controversial internally.\n\nWhile Rust was in our eyes better for low-level OS access, something crucial for a build system like Turbo, the human migration costs were very sustantive.\n\nGo is very fast. It's beautifully designed. It's easy to iterate on. We were very conflicted about the migration, because it was *humans* writing the code, *even if we knew Rust was a better choice*.\n\nThe calculus has now changed. What's \"best for humans\" is no longer necessarily \"best for business\". \n\nFWIW, it's also quite unlikely that Rust is the end-all-be-all toolchain. I'm quite certain there's greener pasture ahead, because Rust itself was designed before the 'supersonic tsunami' of agents hit.\n\n¹ https​://vercel.com/blog/how-turborepo-is-porting-from-go-to-rust",
+   "date": "2026-10-04T21:47:38.000Z",
+   "summaryZh": "rauchg 说 DHH 关于 Rust 的看法基本对：Vercel 把 Turborepo 从 Go 迁到 Rust，但内部对 ROI 有争议，人的迁移成本很高；现在 AI 写代码，算账方式变了。"
   },
   {
-   "id": "https://x.com/ryolu_/status/2106343073127256507",
+   "id": "https://x.com/rauchg/status/2106848085267902815",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Guillermo Rauch",
+   "handle": "rauchg",
+   "text": "Working on a new little project. The 𝚁𝙴𝙰𝙳𝙼𝙴 is fully written by hand, because it's for human consumption. The documentation internals are AI English, because they're for agents.\n\nThis little rule of thumb can make the world better. Blogs, tweets, READMEs: human communication. It's not even about \"em dashes\" or lack thereof. It's that it's the story-telling moment where you want to connect with other humans through their words.",
+   "date": "2026-10-04T20:45:01.000Z",
+   "summaryZh": "rauchg 说他新项目的 README 全手写，因为给人看；文档内部用 AI 英语，因为给 agent 看。博客、推文、README 属于人类交流，是讲故事的时刻。"
+  },
+  {
+   "id": "https://x.com/thsottiaux/status/2106845241357824205",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "Over the next 28 days, each day we’ll either ship one thing that is a clear improvement and relevant for most codex/work users or ship a full reset. Let the improvements begin. https://t.co/0oFXZ7LY5T",
+   "date": "2026-10-04T20:33:43.000Z",
+   "summaryZh": "thsottiaux 宣布接下来 28 天，每天要么发一个对多数 Codex/Work 用户有明确提升的更新，要么做一次彻底重置。"
+  },
+  {
+   "id": "https://x.com/petergyang/status/2106825485624004691",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "\"The easier it gets to build stuff, the more it matters to really sweat the details and go the extra mile.\"\n\nFrom Sam, co-founder of @meetgranola:\n\n\"One, you've got to build something interesting. Two, [most people] get to version one and push it out the door.\n\nInstead, hold yourself accountable, not just to shipping something, but to answering: Does the person actually get daily value out of it?\"\n\n📌 Watch the full episode here: https://t.co/4f5zTNl4Kc",
+   "date": "2026-10-04T19:15:13.000Z",
+   "summaryZh": "Granola 联创 Sam 说，东西越好做，越要在细节上多走一步；别只满足于发 v1，要问用户是否真的每天从中获得价值。"
+  },
+  {
+   "id": "https://x.com/mattturck/status/2106821381765956044",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Matt Turck",
+   "handle": "mattturck",
+   "text": "Still one aspect of AI that's most poorly understood outside AI circles... \"models are grown, not built\" and we don't *really* know how they work.  Hence the urgent need for better interpretability -- @eric_ho @GoodfireAI https://t.co/VCDuEk2r72 https://t.co/iIV93Rjz28",
+   "date": "2026-10-04T18:58:54.000Z",
+   "summaryZh": "Matt Turck 说 AI 圈外最被误解的一点是「模型是长出来的，不是造出来的」，我们并不真正知道它们怎么工作，所以可解释性很紧迫。"
+  },
+  {
+   "id": "https://x.com/levie/status/2106802940879192260",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Aaron Levie",
+   "handle": "levie",
+   "text": "This metric may tell us more about the business model of consumer AI than the state of AI. AI for consumers almost inevitably will be subsidized and monetized via commerce, ads, or purchases of devices and other services. This metric may level off lower than we think. https://t.co/HGKoWJGHci",
+   "date": "2026-10-04T17:45:38.000Z",
+   "summaryZh": "Levie 说某个指标更多反映的是消费级 AI 的商业模式，而不是 AI 本身的状态；消费 AI 最终会靠电商、广告或设备补贴变现，这个指标可能比想象中更早走平。"
+  },
+  {
+   "id": "https://x.com/steipete/status/2106796559400882209",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Steinberger",
+   "handle": "steipete",
+   "text": "bug fixes &amp; performance improvements https://t.co/E4BHpRVRjf",
+   "date": "2026-10-04T17:20:16.000Z",
+   "summaryZh": "steipete 发了一条：bug 修复和性能改进。"
+  },
+  {
+   "id": "https://x.com/zarazhangrui/status/2106782239493427588",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Zara Zhang",
+   "handle": "zarazhangrui",
+   "text": "X profiles are replacing resumes https://t.co/1WDh5pGxZ2",
+   "date": "2026-10-04T16:23:22.000Z",
+   "summaryZh": "Zara Zhang 说 X 主页正在取代简历。"
+  },
+  {
+   "id": "https://x.com/zarazhangrui/status/2106779057220378725",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Zara Zhang",
+   "handle": "zarazhangrui",
+   "text": "Currently reading https://t.co/4rjrnvReWU",
+   "date": "2026-10-04T16:10:43.000Z",
+   "summaryZh": "Zara Zhang 发了一条：目前在读。"
+  },
+  {
+   "id": "https://x.com/ryolu_/status/2106777615801713054",
    "type": "x",
    "kind": "X 动态",
    "name": "Ryo Lu",
    "handle": "ryolu_",
-   "text": "https://t.co/TNhsT7hCvW",
-   "date": "2026-10-03T11:18:17.000Z",
-   "summaryZh": "作者只发了一个链接，没有配文字说明。"
+   "text": "a bit more work later…\nfull bleed desktop + side dock\nlil computer in your pocket https://t.co/KJ5TwRsPSz https://t.co/UYkEWHyDnY",
+   "date": "2026-10-04T16:05:00.000Z",
+   "summaryZh": "ryolu_ 展示了一点新进展：全出血桌面加侧边 dock，像口袋里的小电脑。"
   },
   {
-   "id": "https://x.com/ryolu_/status/2106337039201505453",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Ryo Lu",
-   "handle": "ryolu_",
-   "text": "convergence to the mean\n\nwhen everyone looks at everyone else to decide what to make, we eventually stop making anything of our own.\n\nwe copy what works. borrow the language, the aesthetic, the features. we call it learning from the market, following best practices, staying competitive. together, everything starts to feel familiar. polished, interchangeable. nothing wrong. nothing alive.\n\nthe mean isn’t necessarily bad. it’s where everything lands when we remove the reasons for it to be different.\n\nnumbers are easier to compare than feelings, so we make things that produce numbers. we study what gets attention, then shape ourselves around it. eventually the feedback stops informing the work and starts authoring it. we’re no longer asking what we want to say. we’re asking what will be rewarded for saying.\n\nai makes this loop frictionless. it can draw from more references than we could see in a lifetime. but access to every perspective isn’t the same as having one. it hasn’t lived a particular life that makes one detail unbearable and another beautiful. when we ask it to choose for us without bringing any intention of our own, we get something plausible, easy to approve.\n\nthen we ship it, measure it, copy it, and feed it back into the next round. a tidal wave of mid.\n\nthis changes not just the work, but the people making it.\n\nwe describe ourselves in categories platforms can distribute and markets understand. designer. founder. creator. pick a niche. build a brand. be consistent. the parts that don’t fit become inconvenient, even when those contradictions might produce our most interesting work. we become easier to classify and harder to tell apart.\n\ni think we need to approach making things more like artists.\n\nan artist develops a perspective through the work. making, noticing, choosing, failing, returning. learning what matters even when nobody else cares. craft gives that perspective a form precise enough for someone else to experience.\n\nthe life outside the work matters too. the places you’ve lived, the people you’ve loved, the things you’re embarrassed to care about. these aren’t distractions from having something to say. they’re how you come to have something to say.\n\nwe understand this with music, paintings, photographs, movies. we expect a person to be present in the choices. we want to experience something we wouldn’t have encountered without them.\n\nsoftware can do this too.\n\na piece of software expresses beliefs about how life should feel. what deserves your attention. what you should be free to change. whether a task should feel like paperwork or play. even a small interaction can carry someone’s care, humor, or curiosity.\n\nbut we rarely talk about software as a medium. we talk about it as an industry. markets to capture, workflows to optimize, competitors to catch up with. we add a feature because someone else has it, without asking whether it belongs. products accumulate the same parts and lose what made them worth choosing.\n\nunderneath the branding, it’s all the same thing.\n\nartists learn from others too. the question is whether you’re absorbing those influences into a point of view, or using them to avoid developing one.\n\nwhat are you trying to let someone feel, understand, or do? why this particular shape? what have you noticed that the existing tools don’t seem to notice?\n\nthose questions don’t have answers you can borrow from a competitor’s roadmap.\n\nif we can make almost anything, deciding what deserves to exist becomes more important, not less. speed gives us more chances to exercise judgment. it doesn’t remove the responsibility.\n\ni don’t want a world where every person becomes a more efficient distributor of the same ideas. i want people to use these tools to go further into what they actually care about. to make things specific enough that we can feel someone behind them.\n\nwhat is the point of everyone being able to make something, if we all end up making the same thing?",
-   "date": "2026-10-03T10:54:18.000Z",
-   "summaryZh": "作者说大家都看别人做什么就做什么，最后只会复制均值，AI 让这个循环变得毫无摩擦。"
-  },
-  {
-   "id": "https://www.youtube.com/watch?v=awoR908Yu5Y",
+   "id": "https://www.youtube.com/watch?v=TCpRwJBQvW0",
    "type": "podcast",
    "kind": "播客",
-   "name": "The MAD Podcast with Matt Turck",
+   "name": "No Priors",
    "handle": "",
-   "title": "Who Feeds the GPUs? Inside AI's Hidden $30B Layer | Renen Hallak, VAST Data",
+   "title": "Re-Founding Incumbents for the AI Era with Sequence Holdings Co-Founder and CEO Michael Lee",
    "text": "",
-   "date": "2026-09-24T11:30:00.000Z",
-   "summaryZh": "播客请来 VAST Data 的 Renen Hallak，聊 AI 背后那个隐藏的 300 亿美元数据层。"
+   "date": "2026-09-24T10:00:00.000Z",
+   "summaryZh": "No Priors 播客请来 Sequence Holdings 联创兼 CEO Michael Lee，聊在 AI 时代如何把老牌公司重新创办一遍。"
   }
  ]
 }
