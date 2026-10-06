@@ -1,209 +1,318 @@
 {
  "date": "2026-10-06",
- "generatedAt": "2026-10-06T01:59:15Z",
+ "generatedAt": "2026-10-06T07:52:04Z",
  "model": "deepseek-flash",
- "headline": "OpenAI 要简化 ChatGPT，Codex 团队承诺 28 天每天发一个改进",
+ "headline": "今天 builder 们最热的话题是：agent 的评测和真实环境测试成了新瓶颈",
  "bullets": [
-  "OpenAI 开始动手简化 ChatGPT，Peter Yang 吐槽 Work、Codex、Spaces、Pages、Sites 和模型选择器太乱，还说 Work 这个品牌本身就是个错误。",
-  "Codex 团队的 thsottiaux 宣布未来 28 天每天要么发一个对大多数 codex/work 用户有用的改进，要么做一次完整重置。",
-  "Granola 联合创始人 Sam 说，用户绕过 Granola 界面、直接用 MCP 干活让他有点难过，但企业客户内部工具太多，不兼容就是死路，现在已经接受这个现实。",
-  "Rauchg 说模型越来越快之后，harness 的开销越来越关键，下一个版本会在 session 存储检索和 libfx 云持久性上有大提升。",
-  "Levie 认为 AI 正在创造 AI 工程师、FDE、部署服务公司等新岗位，而且现有数据、研究、软件岗位也在被重新定位到 AI 工作上。"
+  "Levie 指出 agent 落地卡在真实工作环境的测试和调优上，每个企业都得自己一个个做，是个大机会。",
+  "Madhuguru 强调 evals 不是 agent 做完后的 QA 步骤，而是产品规格本身。",
+  "trq212 分享 Claude 云端运行但能访问本地文件的「local hands」模式，还说这个能力会进 cowork。",
+  "rauchg 发布 gdp-ts，用 TypeScript 类型系统在编译期验证授权检查，防止 agent 写出安全漏洞。",
+  "Garry Tan 认为实验室的 harness 有烧 token 的动机，创业公司的 harness 反而有真实价值。"
  ],
- "sentiment": "整体偏兴奋和务实，builder 们一边吐槽 ChatGPT 界面太乱、一边对 Codex 每天发版和模型提速带来的新能力充满期待。",
- "count": 19,
- "summarised": 19,
+ "sentiment": "整体偏务实和建设性，builder 们集中讨论 agent 落地的基础设施问题——评测、环境、安全约束，而不是单纯兴奋于新模型。",
+ "count": 30,
+ "summarised": 30,
  "posts": [
   {
-   "id": "https://x.com/nikunj/status/2106957269212742135",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nikunj Kothari",
-   "handle": "nikunj",
-   "text": "Maybe I’m just old school, but I just can’t believe how people make investments over a Zoom call.. and sometimes by just meeting the CEO. \n\nThere’s so much alpha in meeting founders at their own office. \n\nBesides “vibes”, you get to see what the energy of the office is like, how the coworkers react and work with each other, how the cofounders answer and complement each other, what the beta product releases look like, how they collaborate etc etc. \n\nYes, I get it there’s time pressure, and you often have to move fast. But even then I always ask to meet at offices for final meetings and founders often tell me I’m the only one that has ever asked. \n\nWhat’s the point of calling them into your own conference room and parrot the same deck??",
-   "date": "2026-10-05T03:58:53.000Z",
-   "summaryZh": "Nikunj 说他无法理解只靠 Zoom 或见 CEO 就投钱，去创始人办公室能看出团队能量、协作方式和 beta 产品状态，他最后几轮一定要求去办公室。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2106926956554195018",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "I'm glad OpenAI is focusing on simplifying ChatGPT because it has become a mess (sorry).\n\nHere's a clip from my dots review about this. What I'd simplify:\n\n1. Work vs. Codex\n2. Spaces vs. Pages vs. Sites\n3. The model and effort picker\nProbably alot more\n\nMy hot take is that the whole Work launch was a mistake. Just like Claude folded Cowork back into Chat, I don't think Work needs its own brand.\n\nAnyway, excited to see my primary harness get much better.\n\n📌 See my full dots review here: https://t.co/kUtg3RPk7l",
-   "date": "2026-10-05T01:58:25.000Z",
-   "summaryZh": "Peter Yang 欢迎 OpenAI 简化 ChatGPT，点名 Work vs Codex、Spaces vs Pages vs Sites、模型和 effort 选择器太乱，还说 Work 这个品牌发布本身就是个错误。"
-  },
-  {
-   "id": "https://x.com/garrytan/status/2106901111106097210",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Garry Tan",
-   "handle": "garrytan",
-   "text": "When everyone is building the same primitives it does speak to needs that will only intensify from here\n\nAnd we will eventually converge on the correct OS https://t.co/tTdL1LMmzx",
-   "date": "2026-10-05T00:15:43.000Z",
-   "summaryZh": "Garry Tan 说大家都在造同样的 primitives，说明这些需求只会越来越强，最终会收敛到正确的 OS。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2106897211766530299",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "I asked Sam, co-founder of @meetgranola, how he feels about people skipping his UI and instead just using the MCP to get the job done.\n\nHere's what he said:\n\n\"There's definitely a pang of sadness to that as a UI designer.\n\nWe fought it for a while. We were like, no, we really need to keep everybody in the Granola UI for everything.\n\nBut as soon as you become a big enough enterprise, it's inevitable you have all of this internal tooling. If Granola doesn't play nice with that internal tooling, then it's a non-starter.\n\nAt this point we're at peace with the fact that for a bunch of workflows, the best way to use Granola is to capture the context, then use it through your internal agent.\"\n\n📌 Watch the full episode here: https://t.co/4f5zTNl4Kc",
-   "date": "2026-10-05T00:00:14.000Z",
-   "summaryZh": "Granola 联合创始人 Sam 说，用户跳过 UI 直接用 MCP 让他作为设计师有点难过，但企业客户内部工具太多，不兼容就是死路，现在接受用内部 agent 调用 Granola 上下文。"
-  },
-  {
-   "id": "https://x.com/levie/status/2106893015063421357",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Aaron Levie",
-   "handle": "levie",
-   "text": "We’re already starting to see what kind of new jobs AI is creating. \n\nAI requires significant technical work and surrounding services to deploy into the economy. This means jobs for AI engineers that build applied AI products sold to (or within) enterprises, FDEs to deploy agents into companies, new services firms for deploying AI, and more. \n\nAnd even the published stats of new jobs undercount all the existing jobs that are transitioning to new areas of AI work in an enterprise. Many prior data, research, and software jobs large enterprises are also being repositioned for working with AI. \n\nEvery bank, life sciences company, manufacturer, and even law firm is bringing on more technical talent -or repositioning existing roles- to help with agent deployment in their companies. It’s a lot easier to picture what AI can replace vs. what it creates until it starts happening. Now we’re seeing what this looks like.",
-   "date": "2026-10-04T23:43:33.000Z",
-   "summaryZh": "Levie 说 AI 正在创造 AI 工程师、FDE、AI 部署服务公司等新岗位，而且银行、药企、制造商、律所都在把现有数据、研究、软件岗位重新定位到 agent 部署上。"
-  },
-  {
-   "id": "https://x.com/danshipper/status/2106892868564431255",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Dan Shipper",
-   "handle": "danshipper",
-   "text": "dot has become my primary interface to AI over the last few weeks.\n\nmy dot's name is boo. he's cute! \n\nin a year, i bet i'll still be interacting in this way with @ChatGPT—e.g. as an always-on persistent agent—but boo will have disappeared. it reminds me a lot of early OpenClaw days—we loved the little personality quirks of our Claws, but we dropped them as soon as there was something functionally more powerful available",
-   "date": "2026-10-04T23:42:58.000Z",
-   "summaryZh": "Dan Shipper 说他最近主要用 dot 跟 AI 交互，给 dot 起名叫 boo，但预测一年后还会用 ChatGPT 这种常驻 agent，boo 会像早期 OpenClaw 一样消失。"
-  },
-  {
-   "id": "https://x.com/rauchg/status/2106885457212825983",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Guillermo Rauch",
-   "handle": "rauchg",
-   "text": "It’s hard to fathom https://t.co/OL0LzGtvAw getting even faster, but it’s now… much faster 😂\n\nAs models speed up (as with Astra 𝚞𝚕𝚝𝚛𝚊𝚏𝚊𝚜𝚝), harness overhead matters more and more.\n\nNext release will feature even better performance for session storage and retrieval, and a big unlock for cloud durability in libfx.",
-   "date": "2026-10-04T23:13:31.000Z",
-   "summaryZh": "Rauchg 说某个东西现在快了很多，模型提速后 harness 开销越来越重要，下个版本会改进 session 存储检索，并在 libfx 上解锁云持久性。"
-  },
-  {
-   "id": "https://x.com/zarazhangrui/status/2106876921082712250",
+   "id": "https://x.com/zarazhangrui/status/2107357316844802298",
    "type": "x",
    "kind": "X 动态",
    "name": "Zara Zhang",
    "handle": "zarazhangrui",
-   "text": "The way Opus 5.5 just silently goes off to make something for 20+ minutes and comes back with a complete masterpiece https://t.co/KhPLgeSl7q",
-   "date": "2026-10-04T22:39:36.000Z",
-   "summaryZh": "Zara Zhang 感叹 Opus 5.5 会安静地跑 20 多分钟，然后交出一个完整的杰作。"
+   "text": "Cool! https://t.co/kKbN8ESOQV",
+   "date": "2026-10-06T06:28:31.000Z",
+   "summaryZh": "作者转发了一个链接，只说了句「酷」，没有更多评论。"
   },
   {
-   "id": "https://x.com/rauchg/status/2106863842450133114",
+   "id": "https://x.com/trq212/status/2107340728380870868",
    "type": "x",
    "kind": "X 动态",
-   "name": "Guillermo Rauch",
-   "handle": "rauchg",
-   "text": "DHH is fundamentally right about Rust. For context, Vercel has been undergoing a Rust-ification (carcinization, technically 🦀) for a while.\n\nOne of the first projects we migrated was Turborepo, from Go to Rust¹. The migration completed, but the RoI was actually quite controversial internally.\n\nWhile Rust was in our eyes better for low-level OS access, something crucial for a build system like Turbo, the human migration costs were very sustantive.\n\nGo is very fast. It's beautifully designed. It's easy to iterate on. We were very conflicted about the migration, because it was *humans* writing the code, *even if we knew Rust was a better choice*.\n\nThe calculus has now changed. What's \"best for humans\" is no longer necessarily \"best for business\". \n\nFWIW, it's also quite unlikely that Rust is the end-all-be-all toolchain. I'm quite certain there's greener pasture ahead, because Rust itself was designed before the 'supersonic tsunami' of agents hit.\n\n¹ https​://vercel.com/blog/how-turborepo-is-porting-from-go-to-rust",
-   "date": "2026-10-04T21:47:38.000Z",
-   "summaryZh": "Rauchg 说 DHH 关于 Rust 的看法基本对，Vercel 把 Turborepo 从 Go 迁到 Rust 后内部对 ROI 有争议，因为迁移的人力成本很高，但现在「对人最好」不再等于「对业务最好」。"
+   "name": "Thariq",
+   "handle": "trq212",
+   "text": "if you're getting into game design, there are so many good resources out there to learn from! https://t.co/j3vAtf7nd1",
+   "date": "2026-10-06T05:22:36.000Z",
+   "summaryZh": "作者说想入门游戏设计的话，网上有很多好资源可以学。"
   },
   {
-   "id": "https://x.com/rauchg/status/2106848085267902815",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Guillermo Rauch",
-   "handle": "rauchg",
-   "text": "Working on a new little project. The 𝚁𝙴𝙰𝙳𝙼𝙴 is fully written by hand, because it's for human consumption. The documentation internals are AI English, because they're for agents.\n\nThis little rule of thumb can make the world better. Blogs, tweets, READMEs: human communication. It's not even about \"em dashes\" or lack thereof. It's that it's the story-telling moment where you want to connect with other humans through their words.",
-   "date": "2026-10-04T20:45:01.000Z",
-   "summaryZh": "Rauchg 说他新项目的 README 完全手写，因为给人看；文档内部用 AI 英语，因为给 agent 看，博客、推文、README 应该保持人类沟通。"
-  },
-  {
-   "id": "https://x.com/thsottiaux/status/2106845241357824205",
+   "id": "https://x.com/thsottiaux/status/2107311729768353844",
    "type": "x",
    "kind": "X 动态",
    "name": "Thibault Sottiaux",
    "handle": "thsottiaux",
-   "text": "Over the next 28 days, each day we’ll either ship one thing that is a clear improvement and relevant for most codex/work users or ship a full reset. Let the improvements begin. https://t.co/0oFXZ7LY5T",
-   "date": "2026-10-04T20:33:43.000Z",
-   "summaryZh": "thsottiaux 宣布未来 28 天每天要么发一个对大多数 codex/work 用户有用的明确改进，要么做一次完整重置。"
+   "text": "This might have been my best day so far at oai. Ridiculous amounts of fun and intensity. Future is bright",
+   "date": "2026-10-06T03:27:22.000Z",
+   "summaryZh": "作者说这可能是他在 OpenAI 最好的一天，又好玩又紧张，未来很光明。"
   },
   {
-   "id": "https://x.com/petergyang/status/2106825485624004691",
+   "id": "https://x.com/thsottiaux/status/2107295839655952486",
    "type": "x",
    "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "\"The easier it gets to build stuff, the more it matters to really sweat the details and go the extra mile.\"\n\nFrom Sam, co-founder of @meetgranola:\n\n\"One, you've got to build something interesting. Two, [most people] get to version one and push it out the door.\n\nInstead, hold yourself accountable, not just to shipping something, but to answering: Does the person actually get daily value out of it?\"\n\n📌 Watch the full episode here: https://t.co/4f5zTNl4Kc",
-   "date": "2026-10-04T19:15:13.000Z",
-   "summaryZh": "Granola 联合创始人 Sam 说，构建越容易，越要在细节上多下功夫，不要只满足于发布 v1，而要问用户是否真的每天从中获得价值。"
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "The real story is this one https://t.co/2ylTT1wMjY",
+   "date": "2026-10-06T02:24:14.000Z",
+   "summaryZh": "作者说真正重要的故事是另一个链接里的内容。"
   },
   {
-   "id": "https://x.com/mattturck/status/2106821381765956044",
+   "id": "https://x.com/trq212/status/2107294499282293017",
    "type": "x",
    "kind": "X 动态",
-   "name": "Matt Turck",
-   "handle": "mattturck",
-   "text": "Still one aspect of AI that's most poorly understood outside AI circles... \"models are grown, not built\" and we don't *really* know how they work.  Hence the urgent need for better interpretability -- @eric_ho @GoodfireAI https://t.co/VCDuEk2r72 https://t.co/iIV93Rjz28",
-   "date": "2026-10-04T18:58:54.000Z",
-   "summaryZh": "Matt Turck 引用 Eric Ho 说，AI 圈外最被误解的一点是「模型是长出来的，不是造出来的」，我们并不真正理解它们怎么工作，所以可解释性很紧迫。"
+   "name": "Thariq",
+   "handle": "trq212",
+   "text": "a big advantage of doing planning like this is that it’s a lot more token efficient compared to raw HTML-\n\nthe model doesn’t need to remake the components or logic to do common things like state machines, diagrams, code snippets, etc. https://t.co/z2LsVJ9D3W",
+   "date": "2026-10-06T02:18:54.000Z",
+   "summaryZh": "作者说这种规划方式比直接写 HTML 省 token，模型不用为状态机、图表、代码片段重新造组件和逻辑。"
   },
   {
-   "id": "https://x.com/levie/status/2106802940879192260",
+   "id": "https://x.com/realmadhuguru/status/2107292113214091355",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Madhu Guru",
+   "handle": "realmadhuguru",
+   "text": "The most common mistake teams make is to treat evals as an additional QA step once the agent is built.\n\nAI products are fundamentally different.\n\nYour evals are your product spec.",
+   "date": "2026-10-06T02:09:26.000Z",
+   "summaryZh": "作者认为团队最常见的错误是把 evals 当成 agent 做完后的额外 QA 步骤，其实 evals 就是产品规格。"
+  },
+  {
+   "id": "https://x.com/levie/status/2107283615247999257",
    "type": "x",
    "kind": "X 动态",
    "name": "Aaron Levie",
    "handle": "levie",
-   "text": "This metric may tell us more about the business model of consumer AI than the state of AI. AI for consumers almost inevitably will be subsidized and monetized via commerce, ads, or purchases of devices and other services. This metric may level off lower than we think. https://t.co/HGKoWJGHci",
-   "date": "2026-10-04T17:45:38.000Z",
-   "summaryZh": "Levie 说某个指标可能更多反映消费级 AI 的商业模式，而不是 AI 本身的状态，消费级 AI 大概率会靠电商、广告或设备服务补贴变现，这个指标可能比想象中更早走平。"
+   "text": "A decent amount of agent adoption and deployment is bottlenecked by being able to test, tune, and optimize agents on “real” work environments. The files agents need to access, the CRM environments, email, and more.\n\nIt’s impossible to know how agents are performing if you don’t understand how well they’re executing on your evals and how they’ll perform in the future with a model change or workflow upgrade. Every enterprise has to do this 1 by 1 right now, which is obviously slow and tedious.\n\nEvery enterprise is going to have someone managing evals, infrastructure for building and running evals and simulated environments, and more. Huge space.",
+   "date": "2026-10-06T01:35:39.000Z",
+   "summaryZh": "作者说 agent 落地卡在真实环境测试上，每个企业都得自己一个个做，未来每家企业都会有人专门管 evals 和模拟环境，是个大市场。"
   },
   {
-   "id": "https://x.com/steipete/status/2106796559400882209",
+   "id": "https://x.com/thenanyu/status/2107262460675891640",
    "type": "x",
    "kind": "X 动态",
-   "name": "Peter Steinberger",
-   "handle": "steipete",
-   "text": "bug fixes &amp; performance improvements https://t.co/E4BHpRVRjf",
-   "date": "2026-10-04T17:20:16.000Z",
-   "summaryZh": "steipete 发了一条：bug 修复和性能改进。"
+   "name": "Nan Yu",
+   "handle": "thenanyu",
+   "text": "You can just fix things",
+   "date": "2026-10-06T00:11:36.000Z",
+   "summaryZh": "作者说东西坏了直接修就行，不用想太多。"
   },
   {
-   "id": "https://x.com/zarazhangrui/status/2106782239493427588",
+   "id": "https://x.com/amasad/status/2107252697162543255",
    "type": "x",
    "kind": "X 动态",
-   "name": "Zara Zhang",
-   "handle": "zarazhangrui",
-   "text": "X profiles are replacing resumes https://t.co/1WDh5pGxZ2",
-   "date": "2026-10-04T16:23:22.000Z",
-   "summaryZh": "Zara Zhang 说 X 个人主页正在取代简历。"
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "“Promote my app on tiktok” https://t.co/AeBkoCK9Ey",
+   "date": "2026-10-05T23:32:48.000Z",
+   "summaryZh": "作者引用了一句「在 TikTok 上推广我的 app」，像是在调侃某种常见需求。"
   },
   {
-   "id": "https://x.com/zarazhangrui/status/2106779057220378725",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Zara Zhang",
-   "handle": "zarazhangrui",
-   "text": "Currently reading https://t.co/4rjrnvReWU",
-   "date": "2026-10-04T16:10:43.000Z",
-   "summaryZh": "Zara Zhang 发了一条：目前在读。"
-  },
-  {
-   "id": "https://x.com/ryolu_/status/2106777615801713054",
+   "id": "https://x.com/ryolu_/status/2107246891977335049",
    "type": "x",
    "kind": "X 动态",
    "name": "Ryo Lu",
    "handle": "ryolu_",
-   "text": "a bit more work later…\nfull bleed desktop + side dock\nlil computer in your pocket https://t.co/KJ5TwRsPSz https://t.co/UYkEWHyDnY",
-   "date": "2026-10-04T16:05:00.000Z",
-   "summaryZh": "ryolu_ 展示了一个新进展：全出血桌面布局加侧边 dock，像口袋里的小电脑。"
+   "text": "remembering Steve\n\ni grew up with beige boxes. then i moved to Canada and saw the iMac G4.\n\nhow can computers be so beautiful?\n\ni couldn’t afford a Mac, so i made my PC look like one. changed the icons, the fonts, the windows. learned to make those shiny, lickable buttons. that’s how i got into interface design. i saw something i loved and wanted to make things like it.\n\ni burned DVDs of Steve’s keynotes and studied them. watched them again and again. there was so much care in the products, and so much joy in showing people what they could do.\n\nmy first iPod was a black nano. i carried it everywhere. then the iPhone happened and changed the world.\n\nit felt like anything was possible.\n\nsince he died, i’ve felt us getting stuck in a loop. constant refinement. better supply chains. more ways to keep people scrolling. so much talent spent on tiny improvements, so little room for something truly great and heartfelt.\n\nthe keynotes get more cinematic every year. i still miss the live demos. someone onstage playing with something they helped make. the excitement, the jokes, the things that went wrong. it felt human. it was fun.\n\nwe made computers faster. phones thinner. added more cameras. made machines smarter than us at more and more things. somehow, we’ve also become more disconnected and lonely.\n\nwe spend so much energy trying to beat humans. i wish we spent more time learning from people’s lives and making them better.\n\nwhen i work, i still sometimes think: what would Steve do?\n\ni’ll never know. i’m sad i never got to work with him. but his work reached a kid with a beige PC and changed the course of his life. i wonder how many others have a story like mine.\n\ni’ve kept these words with me:\n\n“the people who are crazy enough to think they can change the world, are the ones who do.”\n\nthere’s still so much worth making. things we can put our hearts into. things that make someone feel what i felt when i first saw that iMac.\n\nthank you, Steve. 💛",
+   "date": "2026-10-05T23:09:44.000Z",
+   "summaryZh": "作者回忆自己因为喜欢 iMac G4 而进入界面设计，感慨乔布斯走后行业陷入不断微调、缺少真正突破的循环。"
   },
   {
-   "id": "https://www.youtube.com/watch?v=TCpRwJBQvW0",
-   "type": "podcast",
-   "kind": "播客",
-   "name": "No Priors",
-   "handle": "",
-   "title": "Re-Founding Incumbents for the AI Era with Sequence Holdings Co-Founder and CEO Michael Lee",
-   "text": "",
-   "date": "2026-09-24T10:00:00.000Z",
-   "summaryZh": "No Priors 播客请来 Sequence Holdings 联合创始人兼 CEO Michael Lee，聊如何在 AI 时代重新创立 incumbent 公司。"
+   "id": "https://x.com/nikunj/status/2107238370669941082",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Nikunj Kothari",
+   "handle": "nikunj",
+   "text": "https://t.co/AWMOdN3Wl2",
+   "date": "2026-10-05T22:35:52.000Z",
+   "summaryZh": "作者只发了一个链接，没有附加评论。"
+  },
+  {
+   "id": "https://x.com/trq212/status/2107229483015258493",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thariq",
+   "handle": "trq212",
+   "text": "my favorite name for this pattern is \"local hands\", Claude runs in the cloud but can access your files locally- also coming to cowork https://t.co/fLX963TUxY",
+   "date": "2026-10-05T22:00:33.000Z",
+   "summaryZh": "作者说这个模式最好的名字是「local hands」——Claude 跑在云端但能访问你本地文件，这个能力也会进 cowork。"
+  },
+  {
+   "id": "https://x.com/amasad/status/2107222889946898893",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "Really proud of how many family-run businesses are powered by Replit. https://t.co/UUUbDYXGHA",
+   "date": "2026-10-05T21:34:21.000Z",
+   "summaryZh": "作者说很多家族企业都在用 Replit，他为此感到骄傲。"
+  },
+  {
+   "id": "https://x.com/amasad/status/2107222388429766970",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "The US is catching up on open-weights models. https://t.co/Qb9PjOrqfo",
+   "date": "2026-10-05T21:32:22.000Z",
+   "summaryZh": "作者认为美国在开源权重模型上正在追赶上来。"
+  },
+  {
+   "id": "https://x.com/thsottiaux/status/2107200530477101461",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "Sergio is cooking up magic with collaborative space right in ChatGPT. Improving leaps and bounds every day. https://t.co/9fgjS3jjGC",
+   "date": "2026-10-05T20:05:31.000Z",
+   "summaryZh": "作者说 Sergio 正在 ChatGPT 里做协作空间的魔法，每天都在大幅进步。"
+  },
+  {
+   "id": "https://x.com/mattturck/status/2107182105201696858",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Matt Turck",
+   "handle": "mattturck",
+   "text": "The guy who thought he was too late to crypto investing  https://t.co/U7lCDqMnOQ",
+   "date": "2026-10-05T18:52:18.000Z",
+   "summaryZh": "作者分享了一个「觉得自己错过加密货币投资时机的人」的故事链接。"
+  },
+  {
+   "id": "https://x.com/garrytan/status/2107173670699622830",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "AGI Science Loops are coming, and there will be Muse/Instinct for those AGI Science Loops. Halmos is building that. https://t.co/By7Gr2jOj9",
+   "date": "2026-10-05T18:18:47.000Z",
+   "summaryZh": "作者说 AGI 科研循环要来了，会有对应的 Muse/Instinct，Halmos 正在做这件事。"
+  },
+  {
+   "id": "https://x.com/danshipper/status/2107173061313388636",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Dan Shipper",
+   "handle": "danshipper",
+   "text": "what we promise @every:\n\nas the frontier advances, so do you.",
+   "date": "2026-10-05T18:16:21.000Z",
+   "summaryZh": "作者代表 Every 承诺：前沿往前走，你也会跟着往前走。"
+  },
+  {
+   "id": "https://x.com/adityaag/status/2107171589783748608",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Aditya Agarwal",
+   "handle": "adityaag",
+   "text": "Final few spots left https://t.co/urL5bLr5Zf",
+   "date": "2026-10-05T18:10:31.000Z",
+   "summaryZh": "作者说名额只剩最后几个了。"
+  },
+  {
+   "id": "https://x.com/adityaag/status/2107171588194152936",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Aditya Agarwal",
+   "handle": "adityaag",
+   "text": "Three Stanford degrees.\n\nBerkeley EECS faculty since 2016.\n\nCofounder of @physical_int.\n\n@svlevine builds the algorithms that let robots learn from experience, linking what they see to how they move. \n\nHe's coming to @spc tomorrow. https://t.co/G59GcmuR0I",
+   "date": "2026-10-05T18:10:30.000Z",
+   "summaryZh": "作者介绍 Sergey Levine：三个斯坦福学位、2016 年起在 Berkeley EECS 任教、physical_int 联合创始人，研究让机器人从经验中学习，明天来 SPC 分享。"
+  },
+  {
+   "id": "https://x.com/ryolu_/status/2107146721591726323",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Ryo Lu",
+   "handle": "ryolu_",
+   "text": "add ryOS Subtitles to Chrome\nhttps://t.co/hz9fgUsrXM",
+   "date": "2026-10-05T16:31:41.000Z",
+   "summaryZh": "作者说可以把 ryOS 字幕功能加到 Chrome 里。"
+  },
+  {
+   "id": "https://x.com/ryolu_/status/2107146629338042853",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Ryo Lu",
+   "handle": "ryolu_",
+   "text": "made a lil thing for language learners:\nwatch Netflix with subtitles in any two languages, plus pronunciation guides for Japanese, Chinese, and Korean. customizable styles, hand-picked defaults.\nenjoy 🍿 https://t.co/JFw0cfcBOW",
+   "date": "2026-10-05T16:31:19.000Z",
+   "summaryZh": "作者做了个给语言学习者的工具：用任意两种语言的字幕看 Netflix，还带日文、中文、韩文的发音指南，样式可自定义。"
+  },
+  {
+   "id": "https://x.com/adityaag/status/2107133989941387282",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Aditya Agarwal",
+   "handle": "adityaag",
+   "text": "It would be interesting to be able to run the Muse/Dot \"computer\" locally. \n\nFeels like that is a better agent environment than increasingly locked down MacOS.",
+   "date": "2026-10-05T15:41:06.000Z",
+   "summaryZh": "作者觉得能在本地跑 Muse/Dot 那台「电脑」会很有意思，比越来越封闭的 MacOS 更适合做 agent 环境。"
+  },
+  {
+   "id": "https://x.com/garrytan/status/2107129959550685660",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "Harnesses from labs have an incentive to burn tokens, which means harnesses from startups have a real utility, like how Grep can automatically swap token burn into deterministic tested code that is repeatable just by observing agent use https://t.co/a17UIpSAAW",
+   "date": "2026-10-05T15:25:05.000Z",
+   "summaryZh": "作者说实验室的 harness 有烧 token 的动机，所以创业公司的 harness 有真实价值，比如 Grep 能通过观察 agent 使用自动把 token 消耗换成可重复的确定性测试代码。"
+  },
+  {
+   "id": "https://x.com/garrytan/status/2107127940635070905",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "We should have competence and good outcomes but we can’t do that without leadership and accountability \n\nHigh speed rail has been waylaid into a bulk transfer of taxpayer dollars into special interests with no good working outcome in sight https://t.co/oQrYJdsL6R",
+   "date": "2026-10-05T15:17:04.000Z",
+   "summaryZh": "作者说要有能力和好结果就得有领导和问责，高铁项目已经变成把纳税人的钱转移给特殊利益集团、看不到好结果。"
+  },
+  {
+   "id": "https://x.com/rauchg/status/2107119811444748555",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Guillermo Rauch",
+   "handle": "rauchg",
+   "text": "Introducing gdp-ts: Ghosts of Departed Proofs for TypeScript.\n\ngdp-ts is a library, linter and AI skill for safer API design. Under this contract, sensitive functions require 'proofs' that the caller performed an authorization check.\n\nThe typechecker verifies these proofs at compile time, preventing your team and agents from shipping catastrophic security (and other kinds of) bugs.\n\nWhile these patterns have existed for quite some time, especially in ecosystems like Haskell, ① human code review and ② cognitive and syntactic overhead made these solutions niche.\n\nThe situation is now inverted. Agents are writing more code than we can review, and they *thrive* in tight loops with hard constraints that would frustrate us. We see this with the rise of Rust, borrow checker, code aesthetics debate and all.\n\nThe README and examples model a real-world Vercel API product constraint: changing the password on a Project requires a proof of a certain role + a certain entitlement. Thanks to Matt Noonan and Ollie Charles for their research in this space.\n\nhttps://t.co/eRWdiMvQ2V",
+   "date": "2026-10-05T14:44:46.000Z",
+   "summaryZh": "作者发布 gdp-ts：一个给 TypeScript 用的库、linter 和 AI skill，让敏感函数需要「证明」调用方做过授权检查，编译期就能拦住安全 bug，因为现在 agent 写的代码比人能审的多。"
+  },
+  {
+   "id": "https://x.com/petergyang/status/2107108768240796093",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "Learn more about Gemini 3.8 Live here: https://t.co/snlN2hRnEM",
+   "date": "2026-10-05T14:00:53.000Z",
+   "summaryZh": "作者给了个链接，让人了解更多关于 Gemini 3.8 Live 的信息。"
+  },
+  {
+   "id": "https://x.com/petergyang/status/2107108755699900459",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "I built an AI language learning app that teaches me Japanese via live voice calls.\n\nHere's my new tutorial that shows you exactly how I built this, including:\n\n→ Using my spec skill to create key designs\n→ Setting up Gemini Live APIs for voice\n→ Creating diorama art with Nano Banana\n\nYou can follow along to build your own app to learn 100 phrases for any language before a trip.\n\n📌 Watch now: https://t.co/A0awOYADST",
+   "date": "2026-10-05T14:00:50.000Z",
+   "summaryZh": "作者做了个用实时语音通话学日语的 AI app，并出了教程，讲怎么用 spec skill 做设计、接 Gemini Live API 做语音、用 Nano Banana 做立体画。"
+  },
+  {
+   "id": "https://x.com/danshipper/status/2107099152161095955",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Dan Shipper",
+   "handle": "danshipper",
+   "text": "waiting for your dot to pick up https://t.co/zgFfC31LLE https://t.co/dActcqDX8D",
+   "date": "2026-10-05T13:22:40.000Z",
+   "summaryZh": "作者说在等你的 dot 接起来，配了张图。"
+  },
+  {
+   "id": "https://x.com/danshipper/status/2107098678141804829",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Dan Shipper",
+   "handle": "danshipper",
+   "text": "great article by @ArielleShipper \n\nhttps://t.co/lKTS6XBwX0",
+   "date": "2026-10-05T13:20:47.000Z",
+   "summaryZh": "作者夸 ArielleShipper 写了篇好文章。"
   }
  ]
 }
