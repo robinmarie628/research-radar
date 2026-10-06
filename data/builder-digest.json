@@ -1,16 +1,16 @@
 {
  "date": "2026-10-06",
- "generatedAt": "2026-10-06T01:40:13Z",
+ "generatedAt": "2026-10-06T01:59:15Z",
  "model": "deepseek-flash",
- "headline": "OpenAI 要简化 ChatGPT，Codex 团队承诺 28 天每天一更新",
+ "headline": "OpenAI 要简化 ChatGPT，Codex 团队承诺 28 天每天发一个改进",
  "bullets": [
-  "Peter Yang 吐槽 ChatGPT 界面太乱，点名 Work、Codex、Spaces、Pages、Sites 和模型选择器都该合并，还说 Work 这个品牌本身就是个错误。",
-  "OpenAI 的 thsottiaux 宣布接下来 28 天，每天要么发一个对 codex/work 用户有明显提升的更新，要么做一次彻底重置。",
-  "Granola 联创 Sam 说，用户绕过自家 UI 直接用 MCP 虽然让 UI 设计师有点难过，但企业客户必然有自己的内部工具，Granola 已经接受这种用法。",
-  "rauchg 说模型越来越快之后，harness 的开销越来越关键，下一个版本会改进 session 存储和检索，并在 libfx 上解锁云持久性。",
-  "zarazhangrui 感叹 Opus 5.5 会自己默默干 20 多分钟，然后交出一个完整成品。"
+  "OpenAI 开始动手简化 ChatGPT，Peter Yang 吐槽 Work、Codex、Spaces、Pages、Sites 和模型选择器太乱，还说 Work 这个品牌本身就是个错误。",
+  "Codex 团队的 thsottiaux 宣布未来 28 天每天要么发一个对大多数 codex/work 用户有用的改进，要么做一次完整重置。",
+  "Granola 联合创始人 Sam 说，用户绕过 Granola 界面、直接用 MCP 干活让他有点难过，但企业客户内部工具太多，不兼容就是死路，现在已经接受这个现实。",
+  "Rauchg 说模型越来越快之后，harness 的开销越来越关键，下一个版本会在 session 存储检索和 libfx 云持久性上有大提升。",
+  "Levie 认为 AI 正在创造 AI 工程师、FDE、部署服务公司等新岗位，而且现有数据、研究、软件岗位也在被重新定位到 AI 工作上。"
  ],
- "sentiment": "整体偏兴奋和期待，builder 们对 ChatGPT 简化、Codex 每日更新、Opus 5.5 的长任务能力都很买账，同时对产品线混乱和 UI 被绕过有些吐槽。",
+ "sentiment": "整体偏兴奋和务实，builder 们一边吐槽 ChatGPT 界面太乱、一边对 Codex 每天发版和模型提速带来的新能力充满期待。",
  "count": 19,
  "summarised": 19,
  "posts": [
@@ -22,7 +22,7 @@
    "handle": "nikunj",
    "text": "Maybe I’m just old school, but I just can’t believe how people make investments over a Zoom call.. and sometimes by just meeting the CEO. \n\nThere’s so much alpha in meeting founders at their own office. \n\nBesides “vibes”, you get to see what the energy of the office is like, how the coworkers react and work with each other, how the cofounders answer and complement each other, what the beta product releases look like, how they collaborate etc etc. \n\nYes, I get it there’s time pressure, and you often have to move fast. But even then I always ask to meet at offices for final meetings and founders often tell me I’m the only one that has ever asked. \n\nWhat’s the point of calling them into your own conference room and parrot the same deck??",
    "date": "2026-10-05T03:58:53.000Z",
-   "summaryZh": "Nikunj 说他坚持去创始人办公室做最终尽调，因为能看办公室氛围、同事互动、联创配合和 beta 产品，只靠 Zoom 或见 CEO 会漏掉很多信息。"
+   "summaryZh": "Nikunj 说他无法理解只靠 Zoom 或见 CEO 就投钱，去创始人办公室能看出团队能量、协作方式和 beta 产品状态，他最后几轮一定要求去办公室。"
   },
   {
    "id": "https://x.com/petergyang/status/2106926956554195018",
@@ -32,7 +32,7 @@
    "handle": "petergyang",
    "text": "I'm glad OpenAI is focusing on simplifying ChatGPT because it has become a mess (sorry).\n\nHere's a clip from my dots review about this. What I'd simplify:\n\n1. Work vs. Codex\n2. Spaces vs. Pages vs. Sites\n3. The model and effort picker\nProbably alot more\n\nMy hot take is that the whole Work launch was a mistake. Just like Claude folded Cowork back into Chat, I don't think Work needs its own brand.\n\nAnyway, excited to see my primary harness get much better.\n\n📌 See my full dots review here: https://t.co/kUtg3RPk7l",
    "date": "2026-10-05T01:58:25.000Z",
-   "summaryZh": "Peter Yang 欢迎 OpenAI 简化 ChatGPT，认为 Work 与 Codex、Spaces/Pages/Sites、模型选择器都该合并，还说 Work 这个品牌发布本身就是个错误。"
+   "summaryZh": "Peter Yang 欢迎 OpenAI 简化 ChatGPT，点名 Work vs Codex、Spaces vs Pages vs Sites、模型和 effort 选择器太乱，还说 Work 这个品牌发布本身就是个错误。"
   },
   {
    "id": "https://x.com/garrytan/status/2106901111106097210",
@@ -42,7 +42,7 @@
    "handle": "garrytan",
    "text": "When everyone is building the same primitives it does speak to needs that will only intensify from here\n\nAnd we will eventually converge on the correct OS https://t.co/tTdL1LMmzx",
    "date": "2026-10-05T00:15:43.000Z",
-   "summaryZh": "Garry Tan 说大家都在造同样的基础组件，说明这类需求只会越来越强，最终会收敛到正确的 OS。"
+   "summaryZh": "Garry Tan 说大家都在造同样的 primitives，说明这些需求只会越来越强，最终会收敛到正确的 OS。"
   },
   {
    "id": "https://x.com/petergyang/status/2106897211766530299",
@@ -52,7 +52,7 @@
    "handle": "petergyang",
    "text": "I asked Sam, co-founder of @meetgranola, how he feels about people skipping his UI and instead just using the MCP to get the job done.\n\nHere's what he said:\n\n\"There's definitely a pang of sadness to that as a UI designer.\n\nWe fought it for a while. We were like, no, we really need to keep everybody in the Granola UI for everything.\n\nBut as soon as you become a big enough enterprise, it's inevitable you have all of this internal tooling. If Granola doesn't play nice with that internal tooling, then it's a non-starter.\n\nAt this point we're at peace with the fact that for a bunch of workflows, the best way to use Granola is to capture the context, then use it through your internal agent.\"\n\n📌 Watch the full episode here: https://t.co/4f5zTNl4Kc",
    "date": "2026-10-05T00:00:14.000Z",
-   "summaryZh": "Granola 联创 Sam 说，用户绕过 UI 直接用 MCP 让设计师有点难过，但企业客户必然有内部工具，Granola 已接受先捕获上下文、再通过内部 agent 使用的模式。"
+   "summaryZh": "Granola 联合创始人 Sam 说，用户跳过 UI 直接用 MCP 让他作为设计师有点难过，但企业客户内部工具太多，不兼容就是死路，现在接受用内部 agent 调用 Granola 上下文。"
   },
   {
    "id": "https://x.com/levie/status/2106893015063421357",
@@ -62,7 +62,7 @@
    "handle": "levie",
    "text": "We’re already starting to see what kind of new jobs AI is creating. \n\nAI requires significant technical work and surrounding services to deploy into the economy. This means jobs for AI engineers that build applied AI products sold to (or within) enterprises, FDEs to deploy agents into companies, new services firms for deploying AI, and more. \n\nAnd even the published stats of new jobs undercount all the existing jobs that are transitioning to new areas of AI work in an enterprise. Many prior data, research, and software jobs large enterprises are also being repositioned for working with AI. \n\nEvery bank, life sciences company, manufacturer, and even law firm is bringing on more technical talent -or repositioning existing roles- to help with agent deployment in their companies. It’s a lot easier to picture what AI can replace vs. what it creates until it starts happening. Now we’re seeing what this looks like.",
    "date": "2026-10-04T23:43:33.000Z",
-   "summaryZh": "Levie 说 AI 正在创造 AI 工程师、FDE、部署服务等新岗位，很多银行、药企、制造商和律所也在把原有数据、研究和软件岗位转向 AI 相关工作。"
+   "summaryZh": "Levie 说 AI 正在创造 AI 工程师、FDE、AI 部署服务公司等新岗位，而且银行、药企、制造商、律所都在把现有数据、研究、软件岗位重新定位到 agent 部署上。"
   },
   {
    "id": "https://x.com/danshipper/status/2106892868564431255",
@@ -72,7 +72,7 @@
    "handle": "danshipper",
    "text": "dot has become my primary interface to AI over the last few weeks.\n\nmy dot's name is boo. he's cute! \n\nin a year, i bet i'll still be interacting in this way with @ChatGPT—e.g. as an always-on persistent agent—but boo will have disappeared. it reminds me a lot of early OpenClaw days—we loved the little personality quirks of our Claws, but we dropped them as soon as there was something functionally more powerful available",
    "date": "2026-10-04T23:42:58.000Z",
-   "summaryZh": "Dan Shipper 说他最近主要用 dot 里的常驻 agent boo 跟 AI 交互，但预测一年后交互方式还在、boo 会消失，就像当年 OpenClaw 的个性被更强功能取代一样。"
+   "summaryZh": "Dan Shipper 说他最近主要用 dot 跟 AI 交互，给 dot 起名叫 boo，但预测一年后还会用 ChatGPT 这种常驻 agent，boo 会像早期 OpenClaw 一样消失。"
   },
   {
    "id": "https://x.com/rauchg/status/2106885457212825983",
@@ -82,7 +82,7 @@
    "handle": "rauchg",
    "text": "It’s hard to fathom https://t.co/OL0LzGtvAw getting even faster, but it’s now… much faster 😂\n\nAs models speed up (as with Astra 𝚞𝚕𝚝𝚛𝚊𝚏𝚊𝚜𝚝), harness overhead matters more and more.\n\nNext release will feature even better performance for session storage and retrieval, and a big unlock for cloud durability in libfx.",
    "date": "2026-10-04T23:13:31.000Z",
-   "summaryZh": "rauchg 说模型变快后 harness 开销越来越重要，下个版本会改进 session 存储和检索，并在 libfx 上带来云持久性的大解锁。"
+   "summaryZh": "Rauchg 说某个东西现在快了很多，模型提速后 harness 开销越来越重要，下个版本会改进 session 存储检索，并在 libfx 上解锁云持久性。"
   },
   {
    "id": "https://x.com/zarazhangrui/status/2106876921082712250",
@@ -92,7 +92,7 @@
    "handle": "zarazhangrui",
    "text": "The way Opus 5.5 just silently goes off to make something for 20+ minutes and comes back with a complete masterpiece https://t.co/KhPLgeSl7q",
    "date": "2026-10-04T22:39:36.000Z",
-   "summaryZh": "zarazhangrui 感叹 Opus 5.5 会自己默默工作 20 多分钟，然后交出一个完整成品。"
+   "summaryZh": "Zara Zhang 感叹 Opus 5.5 会安静地跑 20 多分钟，然后交出一个完整的杰作。"
   },
   {
    "id": "https://x.com/rauchg/status/2106863842450133114",
@@ -102,7 +102,7 @@
    "handle": "rauchg",
    "text": "DHH is fundamentally right about Rust. For context, Vercel has been undergoing a Rust-ification (carcinization, technically 🦀) for a while.\n\nOne of the first projects we migrated was Turborepo, from Go to Rust¹. The migration completed, but the RoI was actually quite controversial internally.\n\nWhile Rust was in our eyes better for low-level OS access, something crucial for a build system like Turbo, the human migration costs were very sustantive.\n\nGo is very fast. It's beautifully designed. It's easy to iterate on. We were very conflicted about the migration, because it was *humans* writing the code, *even if we knew Rust was a better choice*.\n\nThe calculus has now changed. What's \"best for humans\" is no longer necessarily \"best for business\". \n\nFWIW, it's also quite unlikely that Rust is the end-all-be-all toolchain. I'm quite certain there's greener pasture ahead, because Rust itself was designed before the 'supersonic tsunami' of agents hit.\n\n¹ https​://vercel.com/blog/how-turborepo-is-porting-from-go-to-rust",
    "date": "2026-10-04T21:47:38.000Z",
-   "summaryZh": "rauchg 说 DHH 对 Rust 的判断基本正确，Vercel 把 Turborepo 从 Go 迁到 Rust 后内部对 ROI 有争议，但 AI 写代码后「对人最好」不再等于「对业务最好」。"
+   "summaryZh": "Rauchg 说 DHH 关于 Rust 的看法基本对，Vercel 把 Turborepo 从 Go 迁到 Rust 后内部对 ROI 有争议，因为迁移的人力成本很高，但现在「对人最好」不再等于「对业务最好」。"
   },
   {
    "id": "https://x.com/rauchg/status/2106848085267902815",
@@ -112,7 +112,7 @@
    "handle": "rauchg",
    "text": "Working on a new little project. The 𝚁𝙴𝙰𝙳𝙼𝙴 is fully written by hand, because it's for human consumption. The documentation internals are AI English, because they're for agents.\n\nThis little rule of thumb can make the world better. Blogs, tweets, READMEs: human communication. It's not even about \"em dashes\" or lack thereof. It's that it's the story-telling moment where you want to connect with other humans through their words.",
    "date": "2026-10-04T20:45:01.000Z",
-   "summaryZh": "rauchg 说新项目的 README 手写给人看，内部文档用 AI 英语给 agent 看，博客、推文、README 这类人类沟通场景还是要靠人写。"
+   "summaryZh": "Rauchg 说他新项目的 README 完全手写，因为给人看；文档内部用 AI 英语，因为给 agent 看，博客、推文、README 应该保持人类沟通。"
   },
   {
    "id": "https://x.com/thsottiaux/status/2106845241357824205",
@@ -122,7 +122,7 @@
    "handle": "thsottiaux",
    "text": "Over the next 28 days, each day we’ll either ship one thing that is a clear improvement and relevant for most codex/work users or ship a full reset. Let the improvements begin. https://t.co/0oFXZ7LY5T",
    "date": "2026-10-04T20:33:43.000Z",
-   "summaryZh": "OpenAI 的 thsottiaux 宣布接下来 28 天，每天要么发一个对 codex/work 用户有明显提升的更新，要么做一次彻底重置。"
+   "summaryZh": "thsottiaux 宣布未来 28 天每天要么发一个对大多数 codex/work 用户有用的明确改进，要么做一次完整重置。"
   },
   {
    "id": "https://x.com/petergyang/status/2106825485624004691",
@@ -132,7 +132,7 @@
    "handle": "petergyang",
    "text": "\"The easier it gets to build stuff, the more it matters to really sweat the details and go the extra mile.\"\n\nFrom Sam, co-founder of @meetgranola:\n\n\"One, you've got to build something interesting. Two, [most people] get to version one and push it out the door.\n\nInstead, hold yourself accountable, not just to shipping something, but to answering: Does the person actually get daily value out of it?\"\n\n📌 Watch the full episode here: https://t.co/4f5zTNl4Kc",
    "date": "2026-10-04T19:15:13.000Z",
-   "summaryZh": "Granola 联创 Sam 说，做东西越容易，越要在细节上多下功夫，不能只满足于发布 v1，而要问用户是否真的每天都能从中获得价值。"
+   "summaryZh": "Granola 联合创始人 Sam 说，构建越容易，越要在细节上多下功夫，不要只满足于发布 v1，而要问用户是否真的每天从中获得价值。"
   },
   {
    "id": "https://x.com/mattturck/status/2106821381765956044",
@@ -142,7 +142,7 @@
    "handle": "mattturck",
    "text": "Still one aspect of AI that's most poorly understood outside AI circles... \"models are grown, not built\" and we don't *really* know how they work.  Hence the urgent need for better interpretability -- @eric_ho @GoodfireAI https://t.co/VCDuEk2r72 https://t.co/iIV93Rjz28",
    "date": "2026-10-04T18:58:54.000Z",
-   "summaryZh": "Matt Turck 引用 Goodfire 的 Eric Ho 说，模型是「长出来的」而不是「造出来的」，我们并不真正理解它们怎么工作，所以可解释性非常紧迫。"
+   "summaryZh": "Matt Turck 引用 Eric Ho 说，AI 圈外最被误解的一点是「模型是长出来的，不是造出来的」，我们并不真正理解它们怎么工作，所以可解释性很紧迫。"
   },
   {
    "id": "https://x.com/levie/status/2106802940879192260",
@@ -152,7 +152,7 @@
    "handle": "levie",
    "text": "This metric may tell us more about the business model of consumer AI than the state of AI. AI for consumers almost inevitably will be subsidized and monetized via commerce, ads, or purchases of devices and other services. This metric may level off lower than we think. https://t.co/HGKoWJGHci",
    "date": "2026-10-04T17:45:38.000Z",
-   "summaryZh": "Levie 说某个指标可能更多反映消费级 AI 的商业模式，而不是 AI 本身的状态，因为消费级 AI 大概率要靠商业、广告或硬件补贴变现，指标可能比想象中更早走平。"
+   "summaryZh": "Levie 说某个指标可能更多反映消费级 AI 的商业模式，而不是 AI 本身的状态，消费级 AI 大概率会靠电商、广告或设备服务补贴变现，这个指标可能比想象中更早走平。"
   },
   {
    "id": "https://x.com/steipete/status/2106796559400882209",
@@ -162,7 +162,7 @@
    "handle": "steipete",
    "text": "bug fixes &amp; performance improvements https://t.co/E4BHpRVRjf",
    "date": "2026-10-04T17:20:16.000Z",
-   "summaryZh": "steipete 发了一条更新，内容是 bug 修复和性能改进。"
+   "summaryZh": "steipete 发了一条：bug 修复和性能改进。"
   },
   {
    "id": "https://x.com/zarazhangrui/status/2106782239493427588",
@@ -172,7 +172,7 @@
    "handle": "zarazhangrui",
    "text": "X profiles are replacing resumes https://t.co/1WDh5pGxZ2",
    "date": "2026-10-04T16:23:22.000Z",
-   "summaryZh": "zarazhangrui 认为 X 个人主页正在取代简历。"
+   "summaryZh": "Zara Zhang 说 X 个人主页正在取代简历。"
   },
   {
    "id": "https://x.com/zarazhangrui/status/2106779057220378725",
@@ -182,7 +182,7 @@
    "handle": "zarazhangrui",
    "text": "Currently reading https://t.co/4rjrnvReWU",
    "date": "2026-10-04T16:10:43.000Z",
-   "summaryZh": "zarazhangrui 分享自己正在读某样东西。"
+   "summaryZh": "Zara Zhang 发了一条：目前在读。"
   },
   {
    "id": "https://x.com/ryolu_/status/2106777615801713054",
@@ -203,7 +203,7 @@
    "title": "Re-Founding Incumbents for the AI Era with Sequence Holdings Co-Founder and CEO Michael Lee",
    "text": "",
    "date": "2026-09-24T10:00:00.000Z",
-   "summaryZh": "No Priors 播客请来 Sequence Holdings 联创兼 CEO Michael Lee，聊如何在 AI 时代重新创办传统行业公司。"
+   "summaryZh": "No Priors 播客请来 Sequence Holdings 联合创始人兼 CEO Michael Lee，聊如何在 AI 时代重新创立 incumbent 公司。"
   }
  ]
 }
