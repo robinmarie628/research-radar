@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-08T01:15:06Z",
+ "generatedAt": "2026-10-09T01:23:03Z",
  "windowDays": 30,
  "journals": 64,
  "rawFetched": 300,
@@ -5018,6 +5018,62 @@
    "oa": true
   },
   {
+   "id": "10.1016/s2352-3018(26)00201-8",
+   "title": "Integrating long-acting injectable cabotegravir for HIV prevention into the Brazilian public health system (ImPrEP CAB Brasil): a hybrid type-2 implementation-effectiveness cohort study.",
+   "abstract": "",
+   "sections": {
+    "objective": "Daily oral pre-exposure prophylaxis (PrEP) requires sustained adherence, which remains challenging in real-world settings. Although long-acting injectable cabotegravir (CAB-LA) could improve prevention coverage, implementation evidence in Latin America is scant. We evaluated the feasibility of integrating same-day CAB-LA delivery within Sistema Único de Saúde (SUS), the Brazilian public health system.",
+    "methods": "ImPrEP CAB Brasil was a multicentre, hybrid type-2 implementation-effectiveness, open-label cohort study done at 14 PrEP public health services in six Brazilian cities. Eligible participants were cisgender men, non-binary people assigned male at birth, and transgender men and women who have sex with men, aged 18-30 years, who tested HIV negative, and were PrEP-naive. Participants could choose either CAB-LA (CAB-LA choice cohort) or oral PrEP with tenofovir disoproxil fumarate and emtricitabine (oral PrEP choice cohort), We included a comparison cohort of people initiating PrEP in SUS (oral PrEP SUS cohort). The main outcomes were HIV incidence and follow-up days covered by PrEP. For CAB-LA, we evaluated on-time injection adherence, switching, loss to follow-up, and safety. Participants were given the option to switch PrEP modalities or remain off PrEP during follow-up. Adverse events of special interest in participants using CAB-LA were assessed at every study visit. The study was registered at ClinicalTrials.gov (NCT05515770) and is ongoing.",
+    "results": "Participants were enrolled from Oct 17, 2023, to Sept 16, 2024, and followed up until Oct 16, 2025. 3096 participants were included in this analysis: 1201 (38·8%) in the CAB-LA choice cohort, 246 (7·9%) in the oral PrEP choice cohort, and 1649 (53·3%) in the oral PrEP SUS cohort. Most participants were cisgender men (2893 [90·9%]), Pardo or Black (1663 [53·7%]), and completed secondary education or higher (2517 [81·3%]). Median age was 26 years (IQR 23-28). HIV incidence was 0·20 per 100 person-years (95% CI 0·04-0·57) for the CAB-LA cohort (three new HIV infections), 0·87 (0·11-3·16) for the oral PrEP choice cohort (two new HIV infections), and 1·48 (0·88-2·33) for the oral PrEP SUS cohort (18 new HIV infections). 590 091 (90·8%) follow-up days were covered by PrEP in the CAB-LA cohort versus 69 491 (47·3%) in the oral PrEP choice cohort and 328 025 (35·5%) in the oral PrEP SUS cohort (p<0·0001). 107 (8·8%) of 1220 participants were lost to follow-up in the CAB-LA cohort, and were mainly people who were non-White, had lower levels of education, and had moderate or severe depressive symptoms. On-time injection adherence was high (92%). Injection-site reactions were the most frequent adverse event (4212 events in 1067 [87·5%] participants) and were generally mild to moderate. 80 serious adverse events were reported: 43 adverse events of interest (one related to CAB-LA) and 37 other events (none related to CAB-LA).",
+    "conclusion": "Same-day CAB-LA delivery effectively reduced HIV incidence and increased PrEP coverage, supporting the implementation of long-acting options within SUS in Brazil. For the Portuguese and Spanish translations of the abstract see Supplementary Materials section.",
+    "other": ""
+   },
+   "structured": true,
+   "journal": "Lancet HIV",
+   "domain": "综合医学",
+   "imp": 0,
+   "basic": false,
+   "studyKey": "multicenter",
+   "studyZh": "多中心研究",
+   "studyRank": 5,
+   "stars": 1,
+   "date": "2026-09-24",
+   "ts": 0,
+   "year": "2026",
+   "authors": "Grinsztejn B",
+   "pmid": "42785335",
+   "doi": "10.1016/s2352-3018(26)00201-8",
+   "oa": true
+  },
+  {
+   "id": "10.1016/s1474-4422(26)00284-x",
+   "title": "Dynamic changes in plasma biomarkers of Alzheimer's disease in patients treated with lecanemab: a longitudinal cohort study.",
+   "abstract": "",
+   "sections": {
+    "objective": "Anti-amyloid antibodies slow cognitive and functional decline in individuals with early symptomatic Alzheimer's disease, but few studies have examined changes associated with these treatments in plasma biomarkers linked to neurodegeneration. We analysed changes in a panel of 130 plasma proteins and their associations with conversion to amyloid PET negative status and cognitive changes in patients receiving lecanemab infusions as part of their clinical care.",
+    "methods": "This longitudinal cohort study included patients with early symptomatic Alzheimer's disease and positive amyloid biomarkers who were identified as candidates for biweekly lecanemab infusions based on the US Food and Drug Administration label and consented to blood collection at the Washington University Memory Diagnostic Center (St Louis, MO, USA) between July 17, 2023, and Oct 10, 2025. Lecanemab was administered as a 10 mg/kg intravenous infusion every 2 weeks. Patients underwent clinical assessments and blood draws approximately every 6 months over up to 2 years. Research participants enrolled at the Knight Alzheimer Disease Research Center (Knight ADRC; St Louis, MO, USA) between May 3, 1996, and Feb 27, 2025, and who did not receive anti-amyloid antibodies, were included as control groups (an amyloid β-negative [Aβ-] group without cognitive impairment and an untreated group with cognitive impairment). The primary outcome was change in plasma concentrations of protein biomarkers associated with Alzheimer's disease pathology with lecanemab treatment. Associations between plasma biomarker changes and number of lecanemab infusions were examined using regression and mixed-effects models, with adjustment for demographics.",
+    "results": "The study included 197 patients in whom lecanemab infusions had been started (lecanemab group), as well as 173 patients in whom lecanemab had been ordered but not yet started, who were combined with 1139 research participants with cognitive impairment from the Knight ADRC cohort to form the untreated control group with cognitive impairment (n=1312). An additional 458 research participants formed the Aβ- control group without cognitive impairment. In the lecanemab group, the median patient age was 73 years (IQR 69-77); 104 (53%) were female and 93 (47%) were male; and most participants were White (187 [98%] of 190 with available data) and non-Hispanic (183 [97%] of 188 with available data). 130 biomarkers were classified into four distinct trajectories, with 34 showing significant changes (false discovery rate <0·05) in the lecanemab group. The trajectories were: normalising, with biomarkers shifting towards concentrations found in Aβ-individuals without cognitive impairment (eg, phosphorylated tau [p-tau]217, MAPT, and GFAP); overcorrecting, with biomarkers shifting towards and then beyond concentrations found in Aβ- individuals without cognitive impairment (eg, amyloid β peptides); opposite, with biomarkers shifting further from concentrations found in Aβ- individuals without cognitive impairment (eg, NPTXR, NRGN, and TREM2); and unchanged (eg, NEFL and APOE).",
+    "conclusion": "Lecanemab treatment was associated with dynamic, multidirectional changes across plasma biomarkers of Alzheimer's disease pathology, with partial normalisation of amyloid and tau biomarkers alongside abnormal concentrations of inflammatory and neurodegeneration-related biomarkers (eg, TREM2 and NPTXR), which might reflect an immune response to amyloid plaques and effects of treatment on neuronal and synaptic processes distinct from amyloid clearance. These divergent trajectories suggest that different biomarkers could eventually serve different clinical purposes, such as monitoring treatment response or informing patient prognosis, although further validation is needed.",
+    "other": ""
+   },
+   "structured": true,
+   "journal": "Lancet Neurol",
+   "domain": "神经",
+   "imp": 46.5,
+   "basic": false,
+   "studyKey": "cohort",
+   "studyZh": "前瞻队列",
+   "studyRank": 5,
+   "stars": 5,
+   "date": "2026-09-24",
+   "ts": 0,
+   "year": "2026",
+   "authors": "Mu R",
+   "pmid": "42785333",
+   "doi": "10.1016/s1474-4422(26)00284-x",
+   "oa": true
+  },
+  {
    "id": "10.1016/j.jacep.2026.08.021",
    "title": "Impact of Interelectrode Spacing on Ventricular Tachycardia Substrate Mapping: Insights Into 3-Dimensional Characteristics of the Arrhythmogenic Substrate.",
    "abstract": "",
@@ -5543,28 +5599,6 @@
    "authors": "White JS",
    "pmid": "42716066",
    "doi": "10.1016/s2468-2667(26)00169-6",
-   "oa": true
-  },
-  {
-   "id": "10.1016/s2352-3018(26)00172-4",
-   "title": "Metabolic dysfunction-associated steatotic liver disease in people living with HIV: a framework for integrated screening and care.",
-   "abstract": "Metabolic dysfunction-associated steatotic liver disease (MASLD) has emerged as a major cause of liver-related and cardiometabolic morbidity and mortality among people living with HIV, driven by ageing, obesity, type 2 diabetes, and long-term antiretroviral therapy. Approximately 20-41% of people living with HIV have MASLD, and significant liver fibrosis affects 12-20% of all people living with HIV, suggesting a fibrosis burden that exceeds that of the general population. HIV-specific mechanisms, including chronic immune activation, altered adipose distribution, and historical exposure to older antiretroviral agents, contribute to a more severe metabolic liver phenotype. Sex, gender, and social determinants of health-including menopause, food insecurity, and material deprivation-further influence fibrosis risk and access to care. International guidelines now recommend routine fibrosis screening in at-risk people living with HIV with the use of non-invasive tools such as transient elastography and serum biomarkers. Lifestyle interventions, optimisation of metabolic comorbidities, and emerging therapies including glucagon-like peptide-1 receptor agonists are reshaping management. Inclusion of people living with HIV in MASLD therapeutic trials remains a major, unmet research priority.",
-   "sections": null,
-   "structured": false,
-   "journal": "Lancet HIV",
-   "domain": "综合医学",
-   "imp": 0,
-   "basic": false,
-   "studyKey": "review",
-   "studyZh": "综述",
-   "studyRank": 2,
-   "stars": 1,
-   "date": "2026-09-08",
-   "ts": 0,
-   "year": "2026",
-   "authors": "Sebastiani G",
-   "pmid": "42710522",
-   "doi": "10.1016/s2352-3018(26)00172-4",
    "oa": true
   }
  ]
