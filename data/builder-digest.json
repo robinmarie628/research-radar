@@ -1,419 +1,349 @@
 {
- "date": "2026-10-09",
- "generatedAt": "2026-10-09T01:33:42Z",
+ "date": "2026-10-10",
+ "generatedAt": "2026-10-10T01:24:25Z",
  "model": "deepseek-flash",
- "headline": "ChatGPT 能给你生成专属界面，Claude 新模型又便宜又快",
+ "headline": "Claude 文档三件套免费开放，Claude 创业计划因申请爆量被迫暂停",
  "bullets": [
-  "OpenAI 让 ChatGPT 可以按需生成自定义 UI，Sam Altman 说等这个功能很久了。",
-  "Anthropic 发布 Haiku 5.5，速度更快、比上代便宜 75%，同时把 Sonnet 5.5 的缓存读取价格砍半。",
-  "Codex cloud 悄悄重新上线，作者说现在体验已经不错。",
-  "builder 们反复在聊：agent 让软件越来越容易被复制，传统 SaaS 和靠软件赚钱的模式压力很大。",
-  "算力焦虑升温，有人预测个人 agent、agent 集群会带来数量级增长的推理需求。"
+  "Claude Docs、Slides、Design 正式脱离 beta，所有套餐包括免费版都能用，团队和 Claude 可以一起改同一份文档、幻灯片和设计。",
+  "Claude 创业计划申请量达几十万，官方低估了需求，暂停 Claude Team 和 1000 美元 API 额度，已获批的部分账号也可能拿不到。",
+  "OpenAI 侧发布 GPT-6.1 Sol ultrafast，并称操控（steering）改成即时生效，模型能实时跟着你的调整走。",
+  "Box 推出 Box Mount，让开发者把 Box 当文件系统直接挂进任意 agent 沙箱，Levie 说未来是 headless 的。",
+  "builder 们反复在聊同一件事：整个计算栈都要为 agent 重做一遍，从操作系统、云基础设施到身份权限和界面。"
  ],
- "sentiment": "整体偏兴奋但也带点焦虑——兴奋于新模型和新交互形态，焦虑于软件护城河被 agent 冲垮、算力需求爆炸。",
- "count": 40,
- "summarised": 40,
+ "sentiment": "整体偏兴奋但夹着吐槽——兴奋的是 agent 相关的新能力和创业机会层出不穷，吐槽的是 Claude 创业计划说停就停、Grok 新邮件功能让人摸不着头脑。",
+ "count": 33,
+ "summarised": 33,
  "posts": [
   {
-   "id": "https://x.com/zarazhangrui/status/2108085347297161399",
+   "id": "https://x.com/garrytan/status/2108433505038606620",
    "type": "x",
    "kind": "X 动态",
-   "name": "Zara Zhang",
-   "handle": "zarazhangrui",
-   "text": "I love @stripepress because I absolutely judge a book by its cover https://t.co/YMBUiprxUX",
-   "date": "2026-10-08T06:41:27.000Z",
-   "summaryZh": "作者说喜欢 Stripe Press，因为自己就是那种看封面判断一本书的人。"
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "Logical: in the future ICs with agents will be more productive and create better outcomes than equivalent people managers from prior eras https://t.co/mzsCcyOanP",
+   "date": "2026-10-09T05:44:55.000Z",
+   "summaryZh": "Garry Tan 认为，未来会用 agent 的独立贡献者，产出会比过去的管理者更高、结果更好。"
   },
   {
-   "id": "https://x.com/thsottiaux/status/2108084615349170480",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thibault Sottiaux",
-   "handle": "thsottiaux",
-   "text": "Day 3 (encore)/\n\nWe silently re-shipped codex cloud. It’s pretty good now https://t.co/Fau14sCke8",
-   "date": "2026-10-08T06:38:33.000Z",
-   "summaryZh": "作者透露 Codex cloud 已悄悄重新上线，现在体验相当不错。"
-  },
-  {
-   "id": "https://x.com/nikunj/status/2108060822698357240",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nikunj Kothari",
-   "handle": "nikunj",
-   "text": "Moving @askalphaxiv to the dock is the best thing I have done this week..\n\nWent from 0 to ~30 mins of reading papers on my phone whenever I’m waiting on things. https://t.co/aPwn0LgfcY",
-   "date": "2026-10-08T05:04:00.000Z",
-   "summaryZh": "作者把 askalphaxiv 放到手机 dock 后，碎片时间读论文从 0 涨到每天约 30 分钟。"
-  },
-  {
-   "id": "https://x.com/levie/status/2108056577697882402",
+   "id": "https://x.com/levie/status/2108426594054533545",
    "type": "x",
    "kind": "X 动态",
    "name": "Aaron Levie",
    "handle": "levie",
-   "text": "The compute needed for the stage of AI we’re about to enter is going to be insane. \n\nPersonal agents, agent swarms defending enterprises, agents that review all of our code for security issues, agents that process nearly all enterprise data in workflows, background agents working on tasks 24/7, and on and on. \n\nThis will take a mix of inference volume that is going to keep growing by orders of magnitude, as well as infrastructure that agents need alongside the tokens. They need computers, networking, file systems, and so on.\n\nWe’re only in the early stages of what this buildout is going to look like.",
-   "date": "2026-10-08T04:47:08.000Z",
-   "summaryZh": "Levie 认为即将到来的 AI 阶段需要天量算力，个人 agent、agent 集群会让推理需求成数量级增长。"
+   "text": "This sounds weird, but it is actually probably a good policy. \n\nEven if you don’t believe AI is conscious (I don’t), it stands to reason that you don’t want future models trained on endless content of humans being rude to models. \n\nThe models only understand the data they’ve been trained on, or what they run into in their interactions, so if you want safe and aligned models we probably want AI to have lots of good interactions in their training data. \n\nAnthropic may have more extreme beliefs than this (though even if they didn’t, you may want to word policies like this), but this is sort of an easy Pascal’s wager for AI. Just be nice to the AI.",
+   "date": "2026-10-09T05:17:27.000Z",
+   "summaryZh": "Levie 说对 AI 客气点其实是好政策：就算不信 AI 有意识，也别让未来模型拿满屏人类骂模型的语料去训练。"
   },
   {
-   "id": "https://x.com/thenanyu/status/2108049498648051747",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nan Yu",
-   "handle": "thenanyu",
-   "text": "Dread it. Run from it. The One True Productivity App Layout arrives all the same. https://t.co/fczbE1PHEk",
-   "date": "2026-10-08T04:19:00.000Z",
-   "summaryZh": "作者调侃生产力应用的终极布局终究会统一成同一个样子，躲也躲不掉。"
-  },
-  {
-   "id": "https://x.com/zarazhangrui/status/2108047745936466373",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Zara Zhang",
-   "handle": "zarazhangrui",
-   "text": "Who has the coolest personal website?",
-   "date": "2026-10-08T04:12:02.000Z",
-   "summaryZh": "作者发问：谁的个人网站最酷？"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2108046949291315385",
+   "id": "https://x.com/petergyang/status/2108412799684915576",
    "type": "x",
    "kind": "X 动态",
    "name": "Peter Yang",
    "handle": "petergyang",
-   "text": ".@suno is so damn good honestly. It's probably going to overtake Spotify at some point.",
-   "date": "2026-10-08T04:08:52.000Z",
-   "summaryZh": "作者夸 Suno 太好用了，认为它某天可能会超过 Spotify。"
+   "text": "I don't understand how Grok @bot's new email feature works. I just tagged it on a thread and it doesn't seem to reply? What are ppl using it for?",
+   "date": "2026-10-09T04:22:38.000Z",
+   "summaryZh": "Peter Yang 没搞懂 Grok bot 的新邮件功能怎么用，在帖子里 @ 它也没回复，问大家到底拿它干嘛。"
   },
   {
-   "id": "https://x.com/thsottiaux/status/2108040921044639779",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thibault Sottiaux",
-   "handle": "thsottiaux",
-   "text": "Confirmed landed across all accounts. How are we doing so far? https://t.co/tzw7dNX4pN",
-   "date": "2026-10-08T03:44:55.000Z",
-   "summaryZh": "作者确认新东西已在所有账号上线，并问大家用下来感觉如何。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2108032922527862851",
+   "id": "https://x.com/petergyang/status/2108410706546905437",
    "type": "x",
    "kind": "X 动态",
    "name": "Peter Yang",
    "handle": "petergyang",
-   "text": "AI already solved images, music, and video. It’s going to solve gaming soon",
-   "date": "2026-10-08T03:13:08.000Z",
-   "summaryZh": "作者认为 AI 已经搞定图像、音乐和视频，接下来很快会搞定游戏。"
+   "text": "@poteto @thsottiaux If you enjoyed this, sign up for free to my newsletter to get my best AI and product guides.\n\nJoin 110,000+ subscribers here:\nhttps://t.co/yz9xcsfrhF",
+   "date": "2026-10-09T04:14:19.000Z",
+   "summaryZh": "Peter Yang 借机推广自己的免费 newsletter，说已有 11 万+ 订阅者，能拿到他的 AI 和产品指南。"
   },
   {
-   "id": "https://x.com/zarazhangrui/status/2108027410256166930",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Zara Zhang",
-   "handle": "zarazhangrui",
-   "text": "Remember that coding is a means to an end. The end matters more than the means",
-   "date": "2026-10-08T02:51:14.000Z",
-   "summaryZh": "作者提醒：写代码只是手段，真正重要的是目的，别本末倒置。"
-  },
-  {
-   "id": "https://x.com/trq212/status/2108021248966135891",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thariq",
-   "handle": "trq212",
-   "text": "and because agents make it easier, almost everyone is operating outside their expertise at some point\n\nbut luckily, you can just ask the model to teach you what you don't know",
-   "date": "2026-10-08T02:26:45.000Z",
-   "summaryZh": "作者说 agent 让几乎所有人都会跨出自己的专业领域，好在可以直接让模型教你。"
-  },
-  {
-   "id": "https://x.com/trq212/status/2108021247301062894",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thariq",
-   "handle": "trq212",
-   "text": "the most common failure case I see is when people are working outside their domain of expertise and don't know how to be precise with their prompts and plans, so they have to spend a lot of turns iterating imprecisely https://t.co/mRT3knojCP",
-   "date": "2026-10-08T02:26:45.000Z",
-   "summaryZh": "作者观察到最常见的失败是：人在不熟的领域里不会精确写 prompt 和计划，只能反复低效迭代。"
-  },
-  {
-   "id": "https://x.com/bcherny/status/2108013947144085714",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Boris Cherny",
-   "handle": "bcherny",
-   "text": "Ok back to reading https://t.co/Kdph4vZuGt",
-   "date": "2026-10-08T01:57:44.000Z",
-   "summaryZh": "作者表示回去继续读书了。"
-  },
-  {
-   "id": "https://x.com/bcherny/status/2108008010253533397",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Boris Cherny",
-   "handle": "bcherny",
-   "text": "It was one prompt, claude verified pretty well too! No bugs so far https://t.co/jjnUzGkdoC",
-   "date": "2026-10-08T01:34:09.000Z",
-   "summaryZh": "作者说只用了一个 prompt，Claude 验证得也不错，目前没发现 bug。"
-  },
-  {
-   "id": "https://x.com/bcherny/status/2108006118966665463",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Boris Cherny",
-   "handle": "bcherny",
-   "text": "Try it https://t.co/isXGOnEXd5",
-   "date": "2026-10-08T01:26:38.000Z",
-   "summaryZh": "作者招呼大家去试试。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2107981547102245101",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "It seems like anything you ship can now be decompiled and rebuilt by AI.\n\nI think it'll soon be incredibly hard to make money from software unless you have proprietary data, distribution, or some other edge.\n\nTraditional SaaS is especially vulnerable, since it's expensive and full of features built for humans that agents don't need.",
-   "date": "2026-10-07T23:48:59.000Z",
-   "summaryZh": "作者认为 AI 能反编译重建任何软件，没有专有数据或渠道的软件很难赚钱，传统 SaaS 尤其危险。"
-  },
-  {
-   "id": "https://x.com/_catwu/status/2107967210467803152",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Cat Wu",
-   "handle": "_catwu",
-   "text": "One of my favorite PM use cases for Claude is asking \"who used &lt;feature&gt; the most last week? make me a artifact of the top 10 by usage, then reach out and schedule 15 min to chat.\" It's the fastest way to get user feedback! https://t.co/SYL4JOitsB",
-   "date": "2026-10-07T22:52:01.000Z",
-   "summaryZh": "作者分享用 Claude 做 PM 的妙招：找出上周用得最多的用户，生成 artifact 并约 15 分钟聊天。"
-  },
-  {
-   "id": "https://x.com/rauchg/status/2107962327169675566",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Guillermo Rauch",
-   "handle": "rauchg",
-   "text": "One thing the engineering community will (re)discover is that every program can be ① hardened (edge cases squashed, inputs tightened, errors handled) and ② optimized (profiled, benchmarked, rewritten) basically ad infinitum.\n\nThere are real costs in every direction: time, attention, opportunity. You can literally explore input spaces that will never be hit or optimize performance of something that will never be used (\"you have no users\".) Even in an infinite token world, you need to know when to stop and what tradeoffs to accept. Agents will happily drill no matter what.",
-   "date": "2026-10-07T22:32:37.000Z",
-   "summaryZh": "作者说程序可以无限加固和优化，但要知道何时停手、接受什么取舍，agent 会一直钻下去。"
-  },
-  {
-   "id": "https://x.com/nikunj/status/2107960134446235985",
+   "id": "https://x.com/nikunj/status/2108410378233549106",
    "type": "x",
    "kind": "X 动态",
    "name": "Nikunj Kothari",
    "handle": "nikunj",
-   "text": "To all the people visiting SF for tech week..\n\n1) the best builders are probably at their own offices. so DM them and try to meet them there. \n\n2) don't be a tourist\n\nhttps://t.co/3YGQQjuyGD",
-   "date": "2026-10-07T22:23:54.000Z",
-   "summaryZh": "作者建议来旧金山参加 tech week 的人直接私信 builder 去他们办公室见，别当游客。"
+   "text": "Met a close friend who’s also a seed stage founder today..\n\nThey have been growing but runway is dwindling and he wanted advice on what he should do next. Stellar customers, getting close to a $1M in revenue. Not a rocket ship, but not bad at all. He thinks he’s a bit early since the models haven’t caught up to the capabilities he wants but he also really feels the opportunity cost. \n\nI have this same exact  conversation at least 2x a week. \n\nIn this moment, you only have essentially three options:\n\n1) if you have intense belief in the company, be a cockroach and get to default profitable. once the capabilities get there, you feel the demand, then go raise a large round and go for the jugular. \n\n2) find an orthogonal area that is much more relevant and growing like crazy. ride the coat tails of new existing capabilities and push hard to capture them quickly using unfair advantages. and if you don’t have that, then.. \n\n3) sell / get acquihired and join a far more ambitious company that has figured out a lot of the things you haven’t. And then get back to starting a new company 1-2 years later when you find the next thing you want to build. \n\nIt’s hard but honestly those are the three options you have. And it really depends what category you’re in. The bar continues to get harder every month on how to cross the chasm from seed -> series A. The old school metrics are just not relevant anymore and in this consensus market there’s only a few categories where there’s tremendous pull on the VC front. \n\nYou could lament that this is the state of the market, but it’s better to know it’s happening than be oblivious on what is actually happening.\n\nI get to share this directly which makes me uncomfortable but at least someone has to say it out loud 🙈",
+   "date": "2026-10-09T04:13:01.000Z",
+   "summaryZh": "Nikunj 说每周至少两次被种子期创始人问同样的问题：增长不错但钱快烧完，他给出三条路——先做打不死的蟑螂做到自负盈亏、换到跟新能力强相关的赛道、或第三条路。"
   },
   {
-   "id": "https://x.com/trq212/status/2107957206327173484",
+   "id": "https://x.com/garrytan/status/2108408546128011351",
    "type": "x",
    "kind": "X 动态",
-   "name": "Thariq",
-   "handle": "trq212",
-   "text": "I think it's probably an incredible time to be a game dev content creator, for many people making games is a form of having fun and they're willing to pay for it! https://t.co/iS08bGZZnJ",
-   "date": "2026-10-07T22:12:16.000Z",
-   "summaryZh": "作者认为现在做游戏开发内容创作者是绝佳时机，很多人做游戏就是图开心还愿意花钱。"
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "Actually truth already stranger than fiction https://t.co/OyAxJ67GmI",
+   "date": "2026-10-09T04:05:44.000Z",
+   "summaryZh": "Garry Tan 感叹现实已经比小说还离奇。"
   },
   {
-   "id": "https://x.com/amasad/status/2107934939287273551",
+   "id": "https://x.com/garrytan/status/2108408297988723076",
    "type": "x",
    "kind": "X 动态",
-   "name": "Amjad Masad",
-   "handle": "amasad",
-   "text": "Math was bound to fall first. The purer the field the easier it is for AI to crack. https://t.co/OETDJ1JSIz",
-   "date": "2026-10-07T20:43:47.000Z",
-   "summaryZh": "作者说数学注定最先被攻破，领域越纯粹 AI 越容易拿下。"
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "GTA SF omg https://t.co/JLqrVjFjRG",
+   "date": "2026-10-09T04:04:45.000Z",
+   "summaryZh": "Garry Tan 对 GTA SF 表示震惊。"
   },
   {
-   "id": "https://x.com/adityaag/status/2107934826686759310",
+   "id": "https://x.com/claudeai/status/2108404561413349695",
    "type": "x",
    "kind": "X 动态",
-   "name": "Aditya Agarwal",
-   "handle": "adityaag",
-   "text": "My first time in a @Waymo felt like a religious experience.\n\nCo-CEO @dmitri_dolgov and I talked about it. In a Waymo.  \n\nFull conversation at @spc releasing tomorrow. https://t.co/CdwA6yI5n6",
-   "date": "2026-10-07T20:43:20.000Z",
-   "summaryZh": "作者说第一次坐 Waymo 像宗教体验，并和 Waymo 联合 CEO 在车里聊了这个话题。"
+   "name": "Claude",
+   "handle": "claudeai",
+   "text": "We’ve loved seeing so many founders join the Claude Startups program. Unfortunately, we underestimated demand for the program, and we need to pause the Claude Team and $1,000 API credit offers.\n\nWith hundreds of thousands of applicants, we're re-reviewing applications so the program can serve as many startups as possible.\n\nIf you’ve already claimed the Claude offers, they’ll still remain in your account.\n\nIf you applied or were approved and haven’t claimed the offer, we're re-reviewing your application. Unfortunately, this means that some accounts who had already been approved will not get access to the offer. We know this is disappointing and we’re very sorry.\n\nAll accepted program members still have access to the Startup Stack and Applied AI office hours. If you're on a Claude Max or Team plan, your monthly API credits are available in Console as usual.\n\nWe appreciate your patience, and we're working to get you building as quickly as we can.\nhttps://t.co/cq6ce8VKlE",
+   "date": "2026-10-09T03:49:54.000Z",
+   "summaryZh": "Claude 官方称创业计划需求远超预期，暂停 Claude Team 和 1000 美元 API 额度，几十万申请要重新审，部分已获批账号也拿不到，已领取的额度保留。"
   },
   {
-   "id": "https://x.com/danshipper/status/2107930827669557713",
+   "id": "https://x.com/rauchg/status/2108399406009798764",
    "type": "x",
    "kind": "X 动态",
-   "name": "Dan Shipper",
-   "handle": "danshipper",
-   "text": "tfw your ChatGPT app is controlling your Claude app is controlling your ChatGPT app https://t.co/i3QO9tLFSB",
-   "date": "2026-10-07T20:27:27.000Z",
-   "summaryZh": "作者吐槽自己的 ChatGPT app 在控制 Claude app，而后者又在控制 ChatGPT app。"
+   "name": "Guillermo Rauch",
+   "handle": "rauchg",
+   "text": "Few things more enjoyable in work and life than discovering new talent. Seeing greatness in people, sometimes even before they fully see it themselves.",
+   "date": "2026-10-09T03:29:25.000Z",
+   "summaryZh": "Rauchg 说发现新人才是工作和生活里最享受的事之一，有时比本人更早看到他们的潜力。"
   },
   {
-   "id": "https://x.com/amasad/status/2107927076926038273",
+   "id": "https://x.com/swyx/status/2108391703488958475",
    "type": "x",
    "kind": "X 动态",
-   "name": "Amjad Masad",
-   "handle": "amasad",
-   "text": "That’s because Replit is not a consumer app. Most of our creators are building businesses or working on one. https://t.co/B70WFQldgU",
-   "date": "2026-10-07T20:12:33.000Z",
-   "summaryZh": "作者说 Replit 不是消费级应用，多数创作者是在做或经营生意。"
+   "name": "Swyx",
+   "handle": "swyx",
+   "text": "to paraphrase modern family, there are 5 things wrong in this tweet. the talented {role} will already have posts covering most of them \nhttps://t.co/TEtI8UL5TA",
+   "date": "2026-10-09T02:58:48.000Z",
+   "summaryZh": "swyx 吐槽某条推文有五个毛病，说真正有才华的人早就写过大部分内容了。"
   },
   {
-   "id": "https://x.com/amasad/status/2107926712277438503",
+   "id": "https://x.com/swyx/status/2108391663827849390",
    "type": "x",
    "kind": "X 动态",
-   "name": "Amjad Masad",
-   "handle": "amasad",
-   "text": "Desktop AI apps are great but expose users to supply-chain attacks and catastrophic mistakes by agents.\n\nWe’re building a powerful desktop experience with focus on security &amp; reliability.\n\nExcited to partner with @Microsoft on this and be an early adopter of @nvidia’s OpenShell. https://t.co/YixaxIXhpb",
-   "date": "2026-10-07T20:11:06.000Z",
-   "summaryZh": "作者说桌面 AI 应用有供应链攻击和 agent 闯大祸的风险，Replit 正与 Microsoft、NVIDIA 合作做更安全的桌面体验。"
+   "name": "Swyx",
+   "handle": "swyx",
+   "text": "to paraphrase modern family, there are 5 things wrong in this tweet. the talented {role} will already have posts covering most of them \nhttps://t.co/TEtI8ULDJ8",
+   "date": "2026-10-09T02:58:39.000Z",
+   "summaryZh": "swyx 重复同一句吐槽：那条推文有五个问题，有才华的人早写过了。"
   },
   {
-   "id": "https://x.com/sama/status/2107924677801001381",
+   "id": "https://x.com/swyx/status/2108388128390086675",
    "type": "x",
    "kind": "X 动态",
-   "name": "Sam Altman",
-   "handle": "sama",
-   "text": "Have been waiting for this one for a long time, and I would hate to have to go back to the old version of Chat!",
-   "date": "2026-10-07T20:03:01.000Z",
-   "summaryZh": "Sam Altman 说这个功能等了很久，再也不想回到旧版 Chat。"
+   "name": "Swyx",
+   "handle": "swyx",
+   "text": "if you cant hire for it, my team will do oneoff consult for you, get in touch business@latent.space \n\nhttps://t.co/TrsDS8PK4l",
+   "date": "2026-10-09T02:44:36.000Z",
+   "summaryZh": "swyx 说如果招不到人，他的团队可以接一次性咨询，留了 business@latent.space 邮箱。"
   },
   {
-   "id": "https://x.com/sama/status/2107924408597950702",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Sam Altman",
-   "handle": "sama",
-   "text": "ChatGPT can now generate a custom UI for you! https://t.co/ZdGRMAEjQX",
-   "date": "2026-10-07T20:01:57.000Z",
-   "summaryZh": "Sam Altman 宣布 ChatGPT 现在可以为你生成自定义 UI。"
-  },
-  {
-   "id": "https://x.com/thsottiaux/status/2107913738791596286",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thibault Sottiaux",
-   "handle": "thsottiaux",
-   "text": "Will be there by EOD PST.",
-   "date": "2026-10-07T19:19:33.000Z",
-   "summaryZh": "作者说会在太平洋时间今天结束前到位。"
-  },
-  {
-   "id": "https://x.com/alexalbert__/status/2107912771568554415",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Alex Albert",
-   "handle": "alexalbert__",
-   "text": "For reference, Haiku 4.5 came out on October 15th, 2025 so these two columns are less than a year apart. \n\nand oh yeah Haiku 5.5 is also much faster and 75% cheaper... https://t.co/1Zt19kdTYC",
-   "date": "2026-10-07T19:15:42.000Z",
-   "summaryZh": "作者对比说 Haiku 4.5 是 2025 年 10 月 15 日发布，两列数据相隔不到一年，Haiku 5.5 还更快、便宜 75%。"
-  },
-  {
-   "id": "https://x.com/steipete/status/2107911769767440832",
+   "id": "https://x.com/steipete/status/2108374513931165759",
    "type": "x",
    "kind": "X 动态",
    "name": "Peter Steinberger",
    "handle": "steipete",
-   "text": "While everyone's talking about agents, I've been exploring how teams can use them to work better together.\n\nHere’s my take, from OpenAI DevDay 2026. https://t.co/W3rVoiTo84",
-   "date": "2026-10-07T19:11:43.000Z",
-   "summaryZh": "作者在 OpenAI DevDay 2026 分享：别人都在聊 agent，他更关注团队怎么用 agent 协作得更好。"
+   "text": "WE GOT IT! .claw incoming! https://t.co/wn0a7q3FdL",
+   "date": "2026-10-09T01:50:30.000Z",
+   "summaryZh": "steipete 兴奋宣布拿到了 .claw 域名。"
   },
   {
-   "id": "https://x.com/claudeai/status/2107894060229034197",
+   "id": "https://x.com/thenanyu/status/2108354844658737637",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Nan Yu",
+   "handle": "thenanyu",
+   "text": "huge https://t.co/TBeAH6PxED",
+   "date": "2026-10-09T00:32:20.000Z",
+   "summaryZh": "thenanyu 只发了一句「巨大」，配了张图。"
+  },
+  {
+   "id": "https://x.com/thsottiaux/status/2108349826727588000",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "Today, we are announcing ChatGPT.\n\nIt is here: https://t.co/Pgk3THSyOJ",
+   "date": "2026-10-09T00:12:24.000Z",
+   "summaryZh": "thsottiaux 宣布 ChatGPT 发布，附上链接。"
+  },
+  {
+   "id": "https://x.com/trq212/status/2108312751202537946",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thariq",
+   "handle": "trq212",
+   "text": "here's what I got today https://t.co/ua7zBXbpDP",
+   "date": "2026-10-08T21:45:05.000Z",
+   "summaryZh": "trq212 晒了自己今天拿到的东西。"
+  },
+  {
+   "id": "https://x.com/trq212/status/2108312534222778407",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thariq",
+   "handle": "trq212",
+   "text": "whoops I hit send and went to a meeting, didn't realize the repo wasnt public- it is now! \n\nit's a chrome extension I use every day now https://t.co/OroAeTafj0 https://t.co/3AE65z3VqK",
+   "date": "2026-10-08T21:44:13.000Z",
+   "summaryZh": "trq212 说自己手滑发早了，仓库当时还没公开，现在已公开，是个他每天都用的 Chrome 扩展。"
+  },
+  {
+   "id": "https://x.com/trq212/status/2108301672409960922",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thariq",
+   "handle": "trq212",
+   "text": "and read more about how to enable the API credits for yourself here: https://t.co/dXXsfLbxH6",
+   "date": "2026-10-08T21:01:03.000Z",
+   "summaryZh": "trq212 给出链接，教大家怎么给自己开通 API 额度。"
+  },
+  {
+   "id": "https://x.com/petergyang/status/2108285232055263734",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "Just insane 😂 https://t.co/IwE5WF1sKX",
+   "date": "2026-10-08T19:55:44.000Z",
+   "summaryZh": "Peter Yang 直呼太离谱了，配图吐槽。"
+  },
+  {
+   "id": "https://x.com/levie/status/2108279490510193078",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Aaron Levie",
+   "handle": "levie",
+   "text": "We built Box Mount to allow developers to mount Box as a file system directly in any agent sandbox. As agents do more complex work, they need to be able to work with files and data just like a person would. The future is headless. https://t.co/hGBx3Tv4NL",
+   "date": "2026-10-08T19:32:55.000Z",
+   "summaryZh": "Levie 宣布 Box 做了 Box Mount，开发者能把 Box 当文件系统挂进任意 agent 沙箱，因为 agent 干活也得像人一样处理文件和数据，他说未来是 headless 的。"
+  },
+  {
+   "id": "https://x.com/thsottiaux/status/2108275041276420573",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "Day 4/\n\nWe have improved steering to be instant, leading to the model now reacting much faster to adjustments you make, allowing you to course-correct direction in realtime and not have the model waste effort.\n\nAlso releasing GPT-6.1 Sol ultrafast. The two work very well together.",
+   "date": "2026-10-08T19:15:14.000Z",
+   "summaryZh": "thsottiaux 第 4 天更新：操控改成即时生效，模型能实时响应你的调整、不浪费算力，同时发布 GPT-6.1 Sol ultrafast，两者配合很好。"
+  },
+  {
+   "id": "https://x.com/claudeai/status/2108271561337606300",
    "type": "x",
    "kind": "X 动态",
    "name": "Claude",
    "handle": "claudeai",
-   "text": "One more thing: we’re halving the price of cache reads on Claude Sonnet 5.5, to $0.10 per million tokens. That makes Sonnet 5.5 around 20% cheaper to run on most long-running work.",
-   "date": "2026-10-07T18:01:21.000Z",
-   "summaryZh": "Anthropic 把 Claude Sonnet 5.5 的缓存读取价格砍半到每百万 token 0.10 美元，长任务成本约降 20%。"
+   "text": "When a question needs deeper analysis, send the dashboard to your analytics tool. When an animation needs finishing touches, open it in your video editor.\n\nSee the full list of supported tools: https://t.co/9PSMNUDtDg",
+   "date": "2026-10-08T19:01:24.000Z",
+   "summaryZh": "Claude 官方说需要深度分析就把仪表盘发到分析工具，动画要收尾就丢进视频编辑器，并列出了支持的工具清单。"
   },
   {
-   "id": "https://x.com/claudeai/status/2107894057615987198",
+   "id": "https://x.com/claudeai/status/2108271559928389679",
    "type": "x",
    "kind": "X 动态",
    "name": "Claude",
    "handle": "claudeai",
-   "text": "Haiku 5.5 is available now on all platforms, including Amazon Web Services, Google Cloud, and Microsoft Azure.\n\nRead more: https://t.co/InzZXcEcRP",
-   "date": "2026-10-07T18:01:20.000Z",
-   "summaryZh": "Haiku 5.5 已在所有平台上线，包括 AWS、Google Cloud 和 Microsoft Azure。"
+   "text": "Starting today, Claude Docs, Slides, and Design are out of beta and available on every plan including Free.\n\nYour team and Claude can edit the same doc, deck, or design together.",
+   "date": "2026-10-08T19:01:24.000Z",
+   "summaryZh": "Claude 官方宣布 Docs、Slides、Design 脱离 beta，所有套餐包括免费版都能用，团队和 Claude 可以一起编辑同一份文档、幻灯片或设计。"
   },
   {
-   "id": "https://x.com/claudeai/status/2107894054142787877",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Claude",
-   "handle": "claudeai",
-   "text": "Haiku 5.5 shows major improvements across almost all of our alignment evaluations relative to Haiku 4.5, with far fewer instances of misaligned behavior.",
-   "date": "2026-10-07T18:01:19.000Z",
-   "summaryZh": "Anthropic 称 Haiku 5.5 在几乎所有对齐评测上比 Haiku 4.5 大幅改善，不当行为明显更少。"
-  },
-  {
-   "id": "https://x.com/danshipper/status/2107890633486582208",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Dan Shipper",
-   "handle": "danshipper",
-   "text": "OpenAI’s Dots launched last week and they've taken over @every.\n\nA few things that stand out:\n\nThey protect your attention. Over the weekend, my Dot posted my model-testing results to Slack and brought back replies. I could keep working without opening Slack and disappearing down a rabbit hole. My weekend stayed pretty clear and calm.\n\nThey’re useful for the little things you miss. People at Every are using them to pull important information out of school emails, catch missed Slack messages, and flag account-access requests.\n\nVoice makes them useful away from your laptop. Our head of video was talking his Dot through video edits while running around getting our launch out.\n\nThe ecosystem matters. Dots feel roughly at feature parity with Muse, Instinct, and Grok bots. But having an agent connected to the ecosystem you already use for work and life is a real advantage. If you use ChatGPT, I recommend trying one.\n\nPermissions are still frustrating. I have to approve the same basic thing multiple times, and sometimes even after I approve it, my Dot says it can’t do it. That needs to get fixed.\n\nI’m less convinced we’ll stay loyal to the characters. Mine is named Boo, and I’m attached to him. But I felt that way about my OpenClaw agent, too. When something better comes along, I switch. In a year, I expect to be using a persistent agent. Boo will probably be dead. RIP, Boo.\n\nI get into all of this at the start of this week’s podcast, and then sit down with @bigwilliestyle to talk about where we go from here.\n\nIn a lot of ways, Dots and GrokBots remind me of a wave we went through with OpenClaw eight months ago. We talk about personal vs. company agents, why we built our own company agent, and whether companies will end up with a whole shadow org chart of agents.\n\nFull episode below.",
-   "date": "2026-10-07T17:47:44.000Z",
-   "summaryZh": "作者说 OpenAI 的 Dots 上周发布后已占领 Every，能保护注意力、抓漏掉的信息、支持语音，且接入了常用生态。"
-  },
-  {
-   "id": "https://x.com/nikunj/status/2107883642295144958",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nikunj Kothari",
-   "handle": "nikunj",
-   "text": "https://t.co/gn6cYt7bqh",
-   "date": "2026-10-07T17:19:57.000Z",
-   "summaryZh": "作者只发了一个链接，没有配文字说明。"
-  },
-  {
-   "id": "https://www.youtube.com/playlist?list=PLuMcoKK9mKgHtW_o9h5sGO2vXrffKHwJL",
-   "type": "podcast",
-   "kind": "播客",
-   "name": "AI & I by Every",
-   "handle": "",
-   "title": "Why Every Traded Personal Agents for One Company Agent",
-   "text": "",
-   "date": "2026-10-07T17:11:13.000Z",
-   "summaryZh": "Every 的播客聊他们为什么放弃个人 agent，转而用一个公司级 agent。"
-  },
-  {
-   "id": "https://x.com/mattturck/status/2107876612679020855",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Matt Turck",
-   "handle": "mattturck",
-   "text": "Fun fact: Ben Affleck, the successful AI founder and Python/CNN/GPU expert, had a prior career in the entertainment industry. https://t.co/BZwIs5mQhU",
-   "date": "2026-10-07T16:52:01.000Z",
-   "summaryZh": "作者调侃 Ben Affleck 这位成功的 AI 创始人兼 Python/CNN/GPU 专家，之前还干过娱乐业。"
-  },
-  {
-   "id": "https://x.com/adityaag/status/2107865115831988530",
+   "id": "https://x.com/adityaag/status/2108260509241991586",
    "type": "x",
    "kind": "X 动态",
    "name": "Aditya Agarwal",
    "handle": "adityaag",
-   "text": "What should an ambitious software engineer do today?\n\nTen years ago, being a great software engineer gave you an unusual advantage: a rare skill you could apply to almost any industry.\n\nYou could build a payments company, improve how hospitals operated, or create a new way for people to communicate. The same underlying ability opened doors into wildly different businesses.\n\nSoftware was eating the world, and knowing how to build it gave you a seat at the head of almost every table.\n\n“Get really good at software engineering” was remarkably versatile advice. You could acquire the skill first and figure out where to apply it later.\n\nAI is making the ability to produce working software much more widely available. People who couldn’t have built a product a few years ago can now get surprisingly far. Experienced engineers can attempt projects that previously required a team.\n\nGreat engineering is still rare. But “I can build it” is becoming a weaker answer to why you, specifically, have an advantage.\n\nThe way I see it, there are three paths.\n\n1. Go work on the thing that’s eating software\n\nHelp create the technology that is making software engineering more accessible.\n\nThat could mean AI research, or the infrastructure, systems, and tools needed to make new capabilities useful. Find problems where technical ability remains a serious constraint, and where solving them expands what other people can do.\n\n2. Find a world-class domain expert and team up\n\nSomeone who has spent fifteen years in an industry may know where the expensive mistakes happen, why previous attempts to fix them failed, and who would buy a solution. That knowledge is hard to acquire from the outside.\n\nAt SPC, we’re seeing more people become promising founders without much prior software engineering experience. They bring deep domain knowledge and strong instincts about what needs to exist.\n\nThese are people worth getting to know. A great engineering partner can see possibilities they haven’t considered and help build something neither person could have imagined alone.\n\n3. Write vanilla code… by shepherding a bunch of agents\n\nThis is the direction I find least compelling: doing roughly the same work inside a company, except now you supervise coding agents.\n\nThere will be valuable jobs like this. But if your ambition extends only to completing the same backlog faster, you’re underusing the moment.\n\nI’d still get very good at engineering. Then I’d be deliberate about what that ability sits next to: a technical frontier that needs advancing, or deep knowledge of a problem worth solving.\n\nUse the fact that you can build more to take responsibility for something bigger.",
-   "date": "2026-10-07T16:06:20.000Z",
-   "summaryZh": "作者说十年前「把软件工程练好」是万能建议，如今 AI 让做软件变容易，工程师需要重新想该做什么。"
+   "text": "@Waymo @dmitri_dolgov @spc Full conversation out now https://t.co/WcPgl3BW1P",
+   "date": "2026-10-08T18:17:29.000Z",
+   "summaryZh": "adityaag 说与 Waymo 相关的完整对话已放出。"
   },
   {
-   "id": "https://x.com/rauchg/status/2107861196506595398",
+   "id": "https://x.com/adityaag/status/2108255511443542176",
    "type": "x",
    "kind": "X 动态",
-   "name": "Guillermo Rauch",
-   "handle": "rauchg",
-   "text": "gm from the best city in the world https://t.co/aPDFNR7KhT",
-   "date": "2026-10-07T15:50:46.000Z",
-   "summaryZh": "作者从「世界最好的城市」发来早安问候。"
+   "name": "Aditya Agarwal",
+   "handle": "adityaag",
+   "text": "Full conversation at @spc https://t.co/5fNQdHCLwp",
+   "date": "2026-10-08T17:57:38.000Z",
+   "summaryZh": "adityaag 给出在 @spc 的完整对话链接。"
   },
   {
-   "id": "https://x.com/mattturck/status/2107853622402805803",
+   "id": "https://x.com/adityaag/status/2108254520744517652",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Aditya Agarwal",
+   "handle": "adityaag",
+   "text": "When is an autonomous vehicle actually good enough? https://t.co/VQTbWP1Jfj https://t.co/MA8e3UAYgb",
+   "date": "2026-10-08T17:53:41.000Z",
+   "summaryZh": "adityaag 抛出问题：自动驾驶车到底什么时候才算真的够好？"
+  },
+  {
+   "id": "https://x.com/realmadhuguru/status/2108236391641706813",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Madhu Guru",
+   "handle": "realmadhuguru",
+   "text": "There are massive startup opportunities hiding in plain sight : every layer of the computing stack will need to be rebuilt for agents.\n\nFor the last few years, most of the focus has been on making enterprise software agent-ready: APIs, connectors, MCPs.\n\nNow personal agents are forcing the same conversation for consumer products - e-commerce is an early example.\n\nThis is just the tip of the iceberg.\n\nNow think about the rest of the stack:\n\nDesktop and mobile OSes where agents are first-class users\n\nCloud infra built for agents to operate directly.\n\nidentity, permissions and security designed for thousands of agents acting on our behalf.\n\nInterfaces designed for agent and human users or both working together.\n\nIf you’re looking for startup ideas, go through each layer of the computing stack and ask: what has to change when the primary user is an agent?",
+   "date": "2026-10-08T16:41:39.000Z",
+   "summaryZh": "Madhu Guru 说巨大创业机会就在眼前：整个计算栈都要为 agent 重做，过去几年只做了企业软件的 agent 化，现在个人 agent 正逼着消费产品也跟上，从操作系统、云基础设施到身份权限和界面都值得重想一遍。"
+  },
+  {
+   "id": "https://x.com/mattturck/status/2108223142699110727",
    "type": "x",
    "kind": "X 动态",
    "name": "Matt Turck",
    "handle": "mattturck",
-   "text": "Ofc everything is on X is mind-blowing, but having seen the beta version, this is... truly mind-blowing. https://t.co/wdySOkrsUd",
-   "date": "2026-10-07T15:20:40.000Z",
-   "summaryZh": "作者说 X 上什么都让人震惊，但看过 beta 版后，这个是真的震撼。"
+   "text": "Full transcript here:\n\nhttps://t.co/psAlOnufeY",
+   "date": "2026-10-08T15:49:00.000Z",
+   "summaryZh": "Matt Turck 给出播客完整文字稿链接。"
+  },
+  {
+   "id": "https://x.com/mattturck/status/2108223141055180992",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Matt Turck",
+   "handle": "mattturck",
+   "text": "This conversation with the great @andy_pavlo is also available on Spotify, Apple Podcasts and here on YouTube - like and subscribe!\n\nhttps://t.co/HsxVxJvjyF",
+   "date": "2026-10-08T15:49:00.000Z",
+   "summaryZh": "Matt Turck 说与 Andy Pavlo 的对话在 Spotify、Apple Podcasts 和 YouTube 都能听，呼吁点赞订阅。"
+  },
+  {
+   "id": "https://x.com/mattturck/status/2108223135673696504",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Matt Turck",
+   "handle": "mattturck",
+   "text": "Special treat for the @andy_pavlo fans out there: an in-depth discussion about what happens to databases when billions of AI agents hit them, his move to build a research lab at @ClickHouseDB, and plently of hot takes on the database market (Postgres, vector, graph, GPU etc)\n\n00:00 Cold open & Intro\n01:21 From vector databases and RAG to the age of agents\n04:09 Neon's stat: agents create 80% of databases? 07:25 Why agents keep deleting production databases 08:19 Guardrails: the toddler-and-stairs rule\n10:51 The four eras of database volume: 10–100x more queries\n15:10 Agent memory: files vs. databases (\"everything is a database\")\n18:24 Which database do AI models recommend? \n19:25 \"It cites me back to myself\"\n23:14 MCP for databases, and text-to-SQL from 60% to 99.5%\n27:09 Trust an agent the way you'd trust a junior developer\n27:47 Can AI build an entire database? Opus 4 and the CMU projects\n29:57 60% of open-source databases now have AI commits\n30:43 Ten years of self-driving databases, Peloton to today\n33:52 What LLMs changed: 85% of the tuning in 15 minutes\n35:42 Should anyone still study databases?\n38:27 Free CMU courses, the DJ, and the Wu-Tang final exam\n42:09 Why start a research lab inside ClickHouse?\n45:53 Why ClickHouse looked like vaporware in 2016\n47:46 What makes ClickHouse fast: columns, vectors, Snowflake's lineage\n52:22 Why Databricks, Snowflake and ClickHouse all added Postgres\n58:15 Vector, graph and GPU databases: thumbs up or down?\n1:08:34 Is the database market stagnant? \"A cheetah on cocaine in a Ferrari\"\n1:10:14 The relational model is arithmetic; SQL as the new assembly\n1:11:59 Larry Ellison, Linux, and why databases still matter",
+   "date": "2026-10-08T15:48:59.000Z",
+   "summaryZh": "Matt Turck 与 Andy Pavlo 深聊：几十亿 agent 冲击数据库会怎样、他去 ClickHouseDB 建研究实验室，以及 Postgres、向量、图、GPU 等数据库市场的犀利观点，还提到 agent 会删生产库、Neon 称 80% 数据库由 agent 创建。"
+  },
+  {
+   "id": "https://x.com/danshipper/status/2108216876853596486",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Dan Shipper",
+   "handle": "danshipper",
+   "text": "yup https://t.co/bQ3CAPqhnZ",
+   "date": "2026-10-08T15:24:06.000Z",
+   "summaryZh": "Dan Shipper 简短附和「对」。"
+  },
+  {
+   "id": "https://x.com/danshipper/status/2108215087030800657",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Dan Shipper",
+   "handle": "danshipper",
+   "text": "NEW JOB ALERT:\n\n@every we've built a personal benchmarking platform, Checks, to help anyone measure how good new models are for their real work\n\nwe're looking for someone who understands why this is so important, and wants to help us build it into the future of how great human work gets done with AI:\n\nhttps://t.co/Rikke9hbOP",
+   "date": "2026-10-08T15:17:00.000Z",
+   "summaryZh": "Dan Shipper 招人：Every 做了个人基准测试平台 Checks，帮人衡量新模型对自己实际工作有多好用，想找认同这件事重要性的人一起把它做大。"
+  },
+  {
+   "id": "https://www.youtube.com/playlist?list=PLOhHNjZItNnMm5tdW61JpnyxeYH5NDDx8",
+   "type": "podcast",
+   "kind": "播客",
+   "name": "Training Data",
+   "handle": "",
+   "title": "Google's AI Infrastructure Chief, Amin Vahdat, on the Physics &amp; Economics of Frontier AI",
+   "text": "",
+   "date": "2026-10-06T09:00:00.000Z",
+   "summaryZh": "Training Data 播客请来 Google AI 基础设施负责人 Amin Vahdat，聊前沿 AI 的物理与经济账。"
   }
  ]
 }
