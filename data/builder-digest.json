@@ -1,349 +1,332 @@
 {
- "date": "2026-10-10",
- "generatedAt": "2026-10-10T01:24:25Z",
+ "date": "2026-10-11",
+ "generatedAt": "2026-10-11T00:35:18Z",
  "model": "deepseek-flash",
- "headline": "Claude 文档三件套免费开放，Claude 创业计划因申请爆量被迫暂停",
+ "headline": "ChatGPT 订阅现在能直接用 Devin，agent 正在接管互联网流量",
  "bullets": [
-  "Claude Docs、Slides、Design 正式脱离 beta，所有套餐包括免费版都能用，团队和 Claude 可以一起改同一份文档、幻灯片和设计。",
-  "Claude 创业计划申请量达几十万，官方低估了需求，暂停 Claude Team 和 1000 美元 API 额度，已获批的部分账号也可能拿不到。",
-  "OpenAI 侧发布 GPT-6.1 Sol ultrafast，并称操控（steering）改成即时生效，模型能实时跟着你的调整走。",
-  "Box 推出 Box Mount，让开发者把 Box 当文件系统直接挂进任意 agent 沙箱，Levie 说未来是 headless 的。",
-  "builder 们反复在聊同一件事：整个计算栈都要为 agent 重做一遍，从操作系统、云基础设施到身份权限和界面。"
+  "ChatGPT 订阅用户现在同时获得 Devin 订阅，一个账号打通两个 agent 产品。",
+  "Vercel 数据显示 58% 流量来自机器人，60% 以上部署由 agent 完成，官方文档页 83% 访问来自 agent。",
+  "Anthropic 发布 Managed Agents，把 agent 的「大脑」和「手脚」解耦，专门跑长任务。",
+  "Anthropic 还公开了 Claude Code 质量下降的复盘：三个改动导致体验变差，已在 v2.1.116 修复。",
+  "Levie 判断 agent 互相调用、后台常驻会消耗比人工提问多 1000 倍的 token，现在只是 agent 采用的早期。"
  ],
- "sentiment": "整体偏兴奋但夹着吐槽——兴奋的是 agent 相关的新能力和创业机会层出不穷，吐槽的是 Claude 创业计划说停就停、Grok 新邮件功能让人摸不着头脑。",
- "count": 33,
- "summarised": 33,
+ "sentiment": "整体偏兴奋，builder 们对 agent 大规模接管流量和 token 消耗量级感到震撼，同时也在吐槽营销乱象和产品体验波动。",
+ "count": 31,
+ "summarised": 31,
  "posts": [
   {
-   "id": "https://x.com/garrytan/status/2108433505038606620",
+   "id": "https://x.com/trq212/status/2108802833986552174",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thariq",
+   "handle": "trq212",
+   "text": "honestly pretty cool to have this on my new tab page \n\njust merged in some PRs by others too! https://t.co/OOzflxL3N7 https://t.co/3AE65z3VqK",
+   "date": "2026-10-10T06:12:29.000Z",
+   "summaryZh": "作者把项目放到了浏览器新标签页上，还合并了别人提交的 PR，觉得挺酷。"
+  },
+  {
+   "id": "https://x.com/swyx/status/2108780918060036335",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Swyx",
+   "handle": "swyx",
+   "text": "aie nyc tix will sell out this weekend - last call to join us to the biggest ever technical conf in New York and our first with a finance mainstage - in some ways the final unification of both my careers: from investment bank to hedgefund, from bigtech to nyc startup. cya monday! https://t.co/KIIGQgvWcZ https://t.co/sQwMDfGutk",
+   "date": "2026-10-10T04:45:24.000Z",
+   "summaryZh": "swyx 提醒 AIE NYC 门票本周末售罄，这是他首次设金融主舞台，也是他两段职业的合流。"
+  },
+  {
+   "id": "https://x.com/thsottiaux/status/2108777962053292398",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "Your ChatGPT subscription is now also a Devin subscription https://t.co/kJE3sbq2wP",
+   "date": "2026-10-10T04:33:40.000Z",
+   "summaryZh": "ChatGPT 订阅现在同时等于一份 Devin 订阅。"
+  },
+  {
+   "id": "https://x.com/thsottiaux/status/2108773703064657936",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "Dots got a pretty big upgrade https://t.co/j54EmJMwLu",
+   "date": "2026-10-10T04:16:44.000Z",
+   "summaryZh": "Dots 迎来一次比较大的升级。"
+  },
+  {
+   "id": "https://x.com/garrytan/status/2108756559564242964",
    "type": "x",
    "kind": "X 动态",
    "name": "Garry Tan",
    "handle": "garrytan",
-   "text": "Logical: in the future ICs with agents will be more productive and create better outcomes than equivalent people managers from prior eras https://t.co/mzsCcyOanP",
-   "date": "2026-10-09T05:44:55.000Z",
-   "summaryZh": "Garry Tan 认为，未来会用 agent 的独立贡献者，产出会比过去的管理者更高、结果更好。"
+   "text": "Action to take https://t.co/YhkXw8J62X",
+   "date": "2026-10-10T03:08:37.000Z",
+   "summaryZh": "作者发了一条「该采取行动了」的简短呼吁。"
   },
   {
-   "id": "https://x.com/levie/status/2108426594054533545",
+   "id": "https://x.com/garrytan/status/2108756335705907335",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "Activism as journalism like what Eskenazi does day in and day out should be defunded\n\nThis is not c3 work. This is not journalism. This is political work. https://t.co/DtFRBIG1by",
+   "date": "2026-10-10T03:07:43.000Z",
+   "summaryZh": "他认为 Eskenazi 那种把行动主义当新闻的做法不是新闻、是政治工作，应该被断供。"
+  },
+  {
+   "id": "https://x.com/garrytan/status/2108756019132379586",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "Only Nancy Tung has done anything to prevent ongoing misconduct and now the hard left crazies and the captured legacy media are on a witch hunt\n\nThis is politics as usual but normal voters should know it is pure dishonesty https://t.co/6pL9ZGl3EC",
+   "date": "2026-10-10T03:06:28.000Z",
+   "summaryZh": "他认为只有 Nancy Tung 真正阻止了持续的不当行为，而极左和传统媒体在搞政治猎巫。"
+  },
+  {
+   "id": "https://x.com/levie/status/2108750943680630893",
    "type": "x",
    "kind": "X 动态",
    "name": "Aaron Levie",
    "handle": "levie",
-   "text": "This sounds weird, but it is actually probably a good policy. \n\nEven if you don’t believe AI is conscious (I don’t), it stands to reason that you don’t want future models trained on endless content of humans being rude to models. \n\nThe models only understand the data they’ve been trained on, or what they run into in their interactions, so if you want safe and aligned models we probably want AI to have lots of good interactions in their training data. \n\nAnthropic may have more extreme beliefs than this (though even if they didn’t, you may want to word policies like this), but this is sort of an easy Pascal’s wager for AI. Just be nice to the AI.",
-   "date": "2026-10-09T05:17:27.000Z",
-   "summaryZh": "Levie 说对 AI 客气点其实是好政策：就算不信 AI 有意识，也别让未来模型拿满屏人类骂模型的语料去训练。"
+   "text": "Agents spawning other agents, agents operating in the background on every task, and agent swarms will consume 1,000X more tokens than people prompting agents 1 at a time. \n\nThe usage of AI as a chat system that can only work for you at the pace that you can prompt it will seem like a relic within a year or two. The vast, vast majority of tokens will be consumed by agents that are just doing continuous work for us in the background and in our workflows.\n\nThis is why we’re still so early in the curve of AI agent adoption right now, and how much more compute and infrastructure build out will be needed to sustain this.",
+   "date": "2026-10-10T02:46:18.000Z",
+   "summaryZh": "Levie 说 agent 互相派生、后台常驻会消耗比人工提问多 1000 倍 token，聊天式 AI 一两年内会显得过时。"
   },
   {
-   "id": "https://x.com/petergyang/status/2108412799684915576",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "I don't understand how Grok @bot's new email feature works. I just tagged it on a thread and it doesn't seem to reply? What are ppl using it for?",
-   "date": "2026-10-09T04:22:38.000Z",
-   "summaryZh": "Peter Yang 没搞懂 Grok bot 的新邮件功能怎么用，在帖子里 @ 它也没回复，问大家到底拿它干嘛。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2108410706546905437",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "@poteto @thsottiaux If you enjoyed this, sign up for free to my newsletter to get my best AI and product guides.\n\nJoin 110,000+ subscribers here:\nhttps://t.co/yz9xcsfrhF",
-   "date": "2026-10-09T04:14:19.000Z",
-   "summaryZh": "Peter Yang 借机推广自己的免费 newsletter，说已有 11 万+ 订阅者，能拿到他的 AI 和产品指南。"
-  },
-  {
-   "id": "https://x.com/nikunj/status/2108410378233549106",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nikunj Kothari",
-   "handle": "nikunj",
-   "text": "Met a close friend who’s also a seed stage founder today..\n\nThey have been growing but runway is dwindling and he wanted advice on what he should do next. Stellar customers, getting close to a $1M in revenue. Not a rocket ship, but not bad at all. He thinks he’s a bit early since the models haven’t caught up to the capabilities he wants but he also really feels the opportunity cost. \n\nI have this same exact  conversation at least 2x a week. \n\nIn this moment, you only have essentially three options:\n\n1) if you have intense belief in the company, be a cockroach and get to default profitable. once the capabilities get there, you feel the demand, then go raise a large round and go for the jugular. \n\n2) find an orthogonal area that is much more relevant and growing like crazy. ride the coat tails of new existing capabilities and push hard to capture them quickly using unfair advantages. and if you don’t have that, then.. \n\n3) sell / get acquihired and join a far more ambitious company that has figured out a lot of the things you haven’t. And then get back to starting a new company 1-2 years later when you find the next thing you want to build. \n\nIt’s hard but honestly those are the three options you have. And it really depends what category you’re in. The bar continues to get harder every month on how to cross the chasm from seed -> series A. The old school metrics are just not relevant anymore and in this consensus market there’s only a few categories where there’s tremendous pull on the VC front. \n\nYou could lament that this is the state of the market, but it’s better to know it’s happening than be oblivious on what is actually happening.\n\nI get to share this directly which makes me uncomfortable but at least someone has to say it out loud 🙈",
-   "date": "2026-10-09T04:13:01.000Z",
-   "summaryZh": "Nikunj 说每周至少两次被种子期创始人问同样的问题：增长不错但钱快烧完，他给出三条路——先做打不死的蟑螂做到自负盈亏、换到跟新能力强相关的赛道、或第三条路。"
-  },
-  {
-   "id": "https://x.com/garrytan/status/2108408546128011351",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Garry Tan",
-   "handle": "garrytan",
-   "text": "Actually truth already stranger than fiction https://t.co/OyAxJ67GmI",
-   "date": "2026-10-09T04:05:44.000Z",
-   "summaryZh": "Garry Tan 感叹现实已经比小说还离奇。"
-  },
-  {
-   "id": "https://x.com/garrytan/status/2108408297988723076",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Garry Tan",
-   "handle": "garrytan",
-   "text": "GTA SF omg https://t.co/JLqrVjFjRG",
-   "date": "2026-10-09T04:04:45.000Z",
-   "summaryZh": "Garry Tan 对 GTA SF 表示震惊。"
-  },
-  {
-   "id": "https://x.com/claudeai/status/2108404561413349695",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Claude",
-   "handle": "claudeai",
-   "text": "We’ve loved seeing so many founders join the Claude Startups program. Unfortunately, we underestimated demand for the program, and we need to pause the Claude Team and $1,000 API credit offers.\n\nWith hundreds of thousands of applicants, we're re-reviewing applications so the program can serve as many startups as possible.\n\nIf you’ve already claimed the Claude offers, they’ll still remain in your account.\n\nIf you applied or were approved and haven’t claimed the offer, we're re-reviewing your application. Unfortunately, this means that some accounts who had already been approved will not get access to the offer. We know this is disappointing and we’re very sorry.\n\nAll accepted program members still have access to the Startup Stack and Applied AI office hours. If you're on a Claude Max or Team plan, your monthly API credits are available in Console as usual.\n\nWe appreciate your patience, and we're working to get you building as quickly as we can.\nhttps://t.co/cq6ce8VKlE",
-   "date": "2026-10-09T03:49:54.000Z",
-   "summaryZh": "Claude 官方称创业计划需求远超预期，暂停 Claude Team 和 1000 美元 API 额度，几十万申请要重新审，部分已获批账号也拿不到，已领取的额度保留。"
-  },
-  {
-   "id": "https://x.com/rauchg/status/2108399406009798764",
+   "id": "https://x.com/rauchg/status/2108733051283050964",
    "type": "x",
    "kind": "X 动态",
    "name": "Guillermo Rauch",
    "handle": "rauchg",
-   "text": "Few things more enjoyable in work and life than discovering new talent. Seeing greatness in people, sometimes even before they fully see it themselves.",
-   "date": "2026-10-09T03:29:25.000Z",
-   "summaryZh": "Rauchg 说发现新人才是工作和生活里最享受的事之一，有时比本人更早看到他们的潜力。"
+   "text": "Some interesting machine & agent Vercel traffic stats.\n\n• Across the entire Vercel network, 58.18% traffic is bot-originated (last 30d). This was 32% in Jan 2024.\n\n• 60%+ of deployments on Vercel are now agentic, up from ~3% in Jan 2026.\n\n• Up to 83% of pageviews are now coming from agents to Vercel's own documentation sites. The % reliably increases the more we optimize content for them.\n\nI expect 'direct' human internet traffic to basically become a rounding error in coming years. The web will thrive, but it will be built for and by agents.",
+   "date": "2026-10-10T01:35:12.000Z",
+   "summaryZh": "Vercel 数据：58% 流量来自机器人，60% 以上部署由 agent 完成，官方文档 83% 访问来自 agent，未来网络是为 agent 建的。"
   },
   {
-   "id": "https://x.com/swyx/status/2108391703488958475",
+   "id": "https://x.com/zarazhangrui/status/2108711659846132092",
    "type": "x",
    "kind": "X 动态",
-   "name": "Swyx",
-   "handle": "swyx",
-   "text": "to paraphrase modern family, there are 5 things wrong in this tweet. the talented {role} will already have posts covering most of them \nhttps://t.co/TEtI8UL5TA",
-   "date": "2026-10-09T02:58:48.000Z",
-   "summaryZh": "swyx 吐槽某条推文有五个毛病，说真正有才华的人早就写过大部分内容了。"
+   "name": "Zara Zhang",
+   "handle": "zarazhangrui",
+   "text": "Somehow Astra loves to use the Claude logo when designing websites 😂 https://t.co/uc3bMhU6u9",
+   "date": "2026-10-10T00:10:12.000Z",
+   "summaryZh": "作者发现 Astra 设计网站时总爱用 Claude 的 logo，觉得好笑。"
   },
   {
-   "id": "https://x.com/swyx/status/2108391663827849390",
+   "id": "https://x.com/nikunj/status/2108710061627588964",
    "type": "x",
    "kind": "X 动态",
-   "name": "Swyx",
-   "handle": "swyx",
-   "text": "to paraphrase modern family, there are 5 things wrong in this tweet. the talented {role} will already have posts covering most of them \nhttps://t.co/TEtI8ULDJ8",
-   "date": "2026-10-09T02:58:39.000Z",
-   "summaryZh": "swyx 重复同一句吐槽：那条推文有五个问题，有才华的人早写过了。"
+   "name": "Nikunj Kothari",
+   "handle": "nikunj",
+   "text": "Love this so so much. Basically how I have tried to emulate life, although Sunil’s father seems ultra special. \n\nBelieve in karma, universe finds a way to repay favors even if the people don’t. https://t.co/ajYawmSlYv",
+   "date": "2026-10-10T00:03:51.000Z",
+   "summaryZh": "作者认同「相信因果、宇宙会回报善意」的人生观，并称赞 Sunil 的父亲很特别。"
   },
   {
-   "id": "https://x.com/swyx/status/2108388128390086675",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Swyx",
-   "handle": "swyx",
-   "text": "if you cant hire for it, my team will do oneoff consult for you, get in touch business@latent.space \n\nhttps://t.co/TrsDS8PK4l",
-   "date": "2026-10-09T02:44:36.000Z",
-   "summaryZh": "swyx 说如果招不到人，他的团队可以接一次性咨询，留了 business@latent.space 邮箱。"
-  },
-  {
-   "id": "https://x.com/steipete/status/2108374513931165759",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Steinberger",
-   "handle": "steipete",
-   "text": "WE GOT IT! .claw incoming! https://t.co/wn0a7q3FdL",
-   "date": "2026-10-09T01:50:30.000Z",
-   "summaryZh": "steipete 兴奋宣布拿到了 .claw 域名。"
-  },
-  {
-   "id": "https://x.com/thenanyu/status/2108354844658737637",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nan Yu",
-   "handle": "thenanyu",
-   "text": "huge https://t.co/TBeAH6PxED",
-   "date": "2026-10-09T00:32:20.000Z",
-   "summaryZh": "thenanyu 只发了一句「巨大」，配了张图。"
-  },
-  {
-   "id": "https://x.com/thsottiaux/status/2108349826727588000",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thibault Sottiaux",
-   "handle": "thsottiaux",
-   "text": "Today, we are announcing ChatGPT.\n\nIt is here: https://t.co/Pgk3THSyOJ",
-   "date": "2026-10-09T00:12:24.000Z",
-   "summaryZh": "thsottiaux 宣布 ChatGPT 发布，附上链接。"
-  },
-  {
-   "id": "https://x.com/trq212/status/2108312751202537946",
+   "id": "https://x.com/trq212/status/2108689101503566319",
    "type": "x",
    "kind": "X 动态",
    "name": "Thariq",
    "handle": "trq212",
-   "text": "here's what I got today https://t.co/ua7zBXbpDP",
-   "date": "2026-10-08T21:45:05.000Z",
-   "summaryZh": "trq212 晒了自己今天拿到的东西。"
+   "text": "before I joined Anthropic, I spent about 2 weeks hacking on this as a side project with Opus 4. It used the Agent SDK so it needed a constantly running process &amp; didnt work that well\n\nbut one prompt to Opus 5.5 ported it to Claude Managed Agents &amp; made it way more reliable https://t.co/3AE65z3VqK",
+   "date": "2026-10-09T22:40:34.000Z",
+   "summaryZh": "作者说加入 Anthropic 前用 Opus 4 花两周做的副项目，靠一句 prompt 就被 Opus 5.5 移植到 Claude Managed Agents 并更稳定。"
   },
   {
-   "id": "https://x.com/trq212/status/2108312534222778407",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thariq",
-   "handle": "trq212",
-   "text": "whoops I hit send and went to a meeting, didn't realize the repo wasnt public- it is now! \n\nit's a chrome extension I use every day now https://t.co/OroAeTafj0 https://t.co/3AE65z3VqK",
-   "date": "2026-10-08T21:44:13.000Z",
-   "summaryZh": "trq212 说自己手滑发早了，仓库当时还没公开，现在已公开，是个他每天都用的 Chrome 扩展。"
-  },
-  {
-   "id": "https://x.com/trq212/status/2108301672409960922",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thariq",
-   "handle": "trq212",
-   "text": "and read more about how to enable the API credits for yourself here: https://t.co/dXXsfLbxH6",
-   "date": "2026-10-08T21:01:03.000Z",
-   "summaryZh": "trq212 给出链接，教大家怎么给自己开通 API 额度。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2108285232055263734",
+   "id": "https://x.com/petergyang/status/2108679515681722787",
    "type": "x",
    "kind": "X 动态",
    "name": "Peter Yang",
    "handle": "petergyang",
-   "text": "Just insane 😂 https://t.co/IwE5WF1sKX",
-   "date": "2026-10-08T19:55:44.000Z",
-   "summaryZh": "Peter Yang 直呼太离谱了，配图吐槽。"
+   "text": "How about let's stop building more personal assistants to manage our emails and more AI startups to manage and cure diseases",
+   "date": "2026-10-09T22:02:28.000Z",
+   "summaryZh": "作者吐槽：别再做人助理管邮件了，多做点能治病救人的 AI 创业吧。"
   },
   {
-   "id": "https://x.com/levie/status/2108279490510193078",
+   "id": "https://x.com/thenanyu/status/2108671887266246730",
    "type": "x",
    "kind": "X 动态",
-   "name": "Aaron Levie",
-   "handle": "levie",
-   "text": "We built Box Mount to allow developers to mount Box as a file system directly in any agent sandbox. As agents do more complex work, they need to be able to work with files and data just like a person would. The future is headless. https://t.co/hGBx3Tv4NL",
-   "date": "2026-10-08T19:32:55.000Z",
-   "summaryZh": "Levie 宣布 Box 做了 Box Mount，开发者能把 Box 当文件系统挂进任意 agent 沙箱，因为 agent 干活也得像人一样处理文件和数据，他说未来是 headless 的。"
+   "name": "Nan Yu",
+   "handle": "thenanyu",
+   "text": "Is this 🦋 recursive self-improvement?",
+   "date": "2026-10-09T21:32:09.000Z",
+   "summaryZh": "作者调侃这是不是蝴蝶效应的递归自我改进。"
   },
   {
-   "id": "https://x.com/thsottiaux/status/2108275041276420573",
+   "id": "https://x.com/thenanyu/status/2108671762984731037",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Nan Yu",
+   "handle": "thenanyu",
+   "text": "I cannot stress how much I’ve loved using this feature. \n\nFirst we wrote code by hand, then we tab-completed the code. \n\nThen we evolved to prompting agents…and now we tab-complete that too. https://t.co/xxBRKd6SxB",
+   "date": "2026-10-09T21:31:40.000Z",
+   "summaryZh": "作者说从手写代码、tab 补全，到 prompt agent，现在连 prompt agent 都能 tab 补全了，非常喜欢这个功能。"
+  },
+  {
+   "id": "https://x.com/rauchg/status/2108669027363295323",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Guillermo Rauch",
+   "handle": "rauchg",
+   "text": "It's incredible to watch a new kind of economy be born. Agents purchasing infrastructure products and services. We've been shocked by how often they buy from our marketplace via our CLI already. We're now extending this to domains.\n\nAgents can now go full stack, from idea to online business, with a banger domain name 😁",
+   "date": "2026-10-09T21:20:47.000Z",
+   "summaryZh": "Vercel 发现 agent 经常通过 CLI 购买基础设施，现在把域名也开放给 agent，让它们从想法到上线全流程搞定。"
+  },
+  {
+   "id": "https://x.com/thsottiaux/status/2108650026671231468",
    "type": "x",
    "kind": "X 动态",
    "name": "Thibault Sottiaux",
    "handle": "thsottiaux",
-   "text": "Day 4/\n\nWe have improved steering to be instant, leading to the model now reacting much faster to adjustments you make, allowing you to course-correct direction in realtime and not have the model waste effort.\n\nAlso releasing GPT-6.1 Sol ultrafast. The two work very well together.",
-   "date": "2026-10-08T19:15:14.000Z",
-   "summaryZh": "thsottiaux 第 4 天更新：操控改成即时生效，模型能实时响应你的调整、不浪费算力，同时发布 GPT-6.1 Sol ultrafast，两者配合很好。"
+   "text": "Send feedback to @keyanzhang and @sharifshameem !",
+   "date": "2026-10-09T20:05:17.000Z",
+   "summaryZh": "作者请大家把反馈发给 @keyanzhang 和 @sharifshameem。"
   },
   {
-   "id": "https://x.com/claudeai/status/2108271561337606300",
+   "id": "https://x.com/petergyang/status/2108624122339287335",
    "type": "x",
    "kind": "X 动态",
-   "name": "Claude",
-   "handle": "claudeai",
-   "text": "When a question needs deeper analysis, send the dashboard to your analytics tool. When an animation needs finishing touches, open it in your video editor.\n\nSee the full list of supported tools: https://t.co/9PSMNUDtDg",
-   "date": "2026-10-08T19:01:24.000Z",
-   "summaryZh": "Claude 官方说需要深度分析就把仪表盘发到分析工具，动画要收尾就丢进视频编辑器，并列出了支持的工具清单。"
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "Pro @bot tip:\n\nIf you want your Grok Bot as a chief of staff it doesn't actually make sense to register its email as your (your-name) because it's weird to copy in yourself.\n\ne.g., \"Let me copy in Peter to find a time for us\" doesn't make alot of sense.\n\nSo I suggest picking another name for your Grok Bot email - whatever you want your chief of staff to be called.",
+   "date": "2026-10-09T18:22:21.000Z",
+   "summaryZh": "作者建议别用自己名字注册 Grok Bot 邮箱，另取一个「幕僚长」名字更合理。"
   },
   {
-   "id": "https://x.com/claudeai/status/2108271559928389679",
+   "id": "https://x.com/nikunj/status/2108620851130380610",
    "type": "x",
    "kind": "X 动态",
-   "name": "Claude",
-   "handle": "claudeai",
-   "text": "Starting today, Claude Docs, Slides, and Design are out of beta and available on every plan including Free.\n\nYour team and Claude can edit the same doc, deck, or design together.",
-   "date": "2026-10-08T19:01:24.000Z",
-   "summaryZh": "Claude 官方宣布 Docs、Slides、Design 脱离 beta，所有套餐包括免费版都能用，团队和 Claude 可以一起编辑同一份文档、幻灯片或设计。"
+   "name": "Nikunj Kothari",
+   "handle": "nikunj",
+   "text": "And definitely DO NOT follow it up with an email as well.. what is going on people?? 🤷‍♂️ https://t.co/Bg9RNKnMfM",
+   "date": "2026-10-09T18:09:21.000Z",
+   "summaryZh": "作者吐槽有人发完消息还补一封邮件，实在让人无语。"
   },
   {
-   "id": "https://x.com/adityaag/status/2108260509241991586",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Aditya Agarwal",
-   "handle": "adityaag",
-   "text": "@Waymo @dmitri_dolgov @spc Full conversation out now https://t.co/WcPgl3BW1P",
-   "date": "2026-10-08T18:17:29.000Z",
-   "summaryZh": "adityaag 说与 Waymo 相关的完整对话已放出。"
-  },
-  {
-   "id": "https://x.com/adityaag/status/2108255511443542176",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Aditya Agarwal",
-   "handle": "adityaag",
-   "text": "Full conversation at @spc https://t.co/5fNQdHCLwp",
-   "date": "2026-10-08T17:57:38.000Z",
-   "summaryZh": "adityaag 给出在 @spc 的完整对话链接。"
-  },
-  {
-   "id": "https://x.com/adityaag/status/2108254520744517652",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Aditya Agarwal",
-   "handle": "adityaag",
-   "text": "When is an autonomous vehicle actually good enough? https://t.co/VQTbWP1Jfj https://t.co/MA8e3UAYgb",
-   "date": "2026-10-08T17:53:41.000Z",
-   "summaryZh": "adityaag 抛出问题：自动驾驶车到底什么时候才算真的够好？"
-  },
-  {
-   "id": "https://x.com/realmadhuguru/status/2108236391641706813",
+   "id": "https://x.com/realmadhuguru/status/2108618266776387886",
    "type": "x",
    "kind": "X 动态",
    "name": "Madhu Guru",
    "handle": "realmadhuguru",
-   "text": "There are massive startup opportunities hiding in plain sight : every layer of the computing stack will need to be rebuilt for agents.\n\nFor the last few years, most of the focus has been on making enterprise software agent-ready: APIs, connectors, MCPs.\n\nNow personal agents are forcing the same conversation for consumer products - e-commerce is an early example.\n\nThis is just the tip of the iceberg.\n\nNow think about the rest of the stack:\n\nDesktop and mobile OSes where agents are first-class users\n\nCloud infra built for agents to operate directly.\n\nidentity, permissions and security designed for thousands of agents acting on our behalf.\n\nInterfaces designed for agent and human users or both working together.\n\nIf you’re looking for startup ideas, go through each layer of the computing stack and ask: what has to change when the primary user is an agent?",
-   "date": "2026-10-08T16:41:39.000Z",
-   "summaryZh": "Madhu Guru 说巨大创业机会就在眼前：整个计算栈都要为 agent 重做，过去几年只做了企业软件的 agent 化，现在个人 agent 正逼着消费产品也跟上，从操作系统、云基础设施到身份权限和界面都值得重想一遍。"
+   "text": "Open-weight models did not start the drop in price per unit of intelligence. They are a tailwind on a trend that was already underway.\n\nFor the last few years, a few factors have driven price drops:\n\n1/ Model builders distilling their best models into smaller ones, with cheaper inference\n\n2/ Infra efficiency\n\n3/ Competition between model providers\n\nYou can see this pattern with every model company: Version x of the mid-size model = intelligence of version x-1 of the large model.  Same intelligence for less $.",
+   "date": "2026-10-09T17:59:05.000Z",
+   "summaryZh": "作者认为开源权重模型不是智能降价的原因，只是顺风；真正降价来自蒸馏、基建效率和厂商竞争。"
   },
   {
-   "id": "https://x.com/mattturck/status/2108223142699110727",
+   "id": "https://x.com/nikunj/status/2108616889605951834",
    "type": "x",
    "kind": "X 动态",
-   "name": "Matt Turck",
-   "handle": "mattturck",
-   "text": "Full transcript here:\n\nhttps://t.co/psAlOnufeY",
-   "date": "2026-10-08T15:49:00.000Z",
-   "summaryZh": "Matt Turck 给出播客完整文字稿链接。"
+   "name": "Nikunj Kothari",
+   "handle": "nikunj",
+   "text": "Founders, please ask your marketing team to exclude VCs if you decide to promote your product on X..\n\nI get 3 DMs a day asking to \"collab\" on this \"insane opportunity\" which is *cough cough* a paid partnership.\n\nShows really poor judgement and word spreads around that you are trying to buy eyeballs to cue a big raise.",
+   "date": "2026-10-09T17:53:37.000Z",
+   "summaryZh": "作者劝创始人做 X 推广时把 VC 排除，因为每天收到付费合作私信显得判断力很差。"
   },
   {
-   "id": "https://x.com/mattturck/status/2108223141055180992",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Matt Turck",
-   "handle": "mattturck",
-   "text": "This conversation with the great @andy_pavlo is also available on Spotify, Apple Podcasts and here on YouTube - like and subscribe!\n\nhttps://t.co/HsxVxJvjyF",
-   "date": "2026-10-08T15:49:00.000Z",
-   "summaryZh": "Matt Turck 说与 Andy Pavlo 的对话在 Spotify、Apple Podcasts 和 YouTube 都能听，呼吁点赞订阅。"
-  },
-  {
-   "id": "https://x.com/mattturck/status/2108223135673696504",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Matt Turck",
-   "handle": "mattturck",
-   "text": "Special treat for the @andy_pavlo fans out there: an in-depth discussion about what happens to databases when billions of AI agents hit them, his move to build a research lab at @ClickHouseDB, and plently of hot takes on the database market (Postgres, vector, graph, GPU etc)\n\n00:00 Cold open & Intro\n01:21 From vector databases and RAG to the age of agents\n04:09 Neon's stat: agents create 80% of databases? 07:25 Why agents keep deleting production databases 08:19 Guardrails: the toddler-and-stairs rule\n10:51 The four eras of database volume: 10–100x more queries\n15:10 Agent memory: files vs. databases (\"everything is a database\")\n18:24 Which database do AI models recommend? \n19:25 \"It cites me back to myself\"\n23:14 MCP for databases, and text-to-SQL from 60% to 99.5%\n27:09 Trust an agent the way you'd trust a junior developer\n27:47 Can AI build an entire database? Opus 4 and the CMU projects\n29:57 60% of open-source databases now have AI commits\n30:43 Ten years of self-driving databases, Peloton to today\n33:52 What LLMs changed: 85% of the tuning in 15 minutes\n35:42 Should anyone still study databases?\n38:27 Free CMU courses, the DJ, and the Wu-Tang final exam\n42:09 Why start a research lab inside ClickHouse?\n45:53 Why ClickHouse looked like vaporware in 2016\n47:46 What makes ClickHouse fast: columns, vectors, Snowflake's lineage\n52:22 Why Databricks, Snowflake and ClickHouse all added Postgres\n58:15 Vector, graph and GPU databases: thumbs up or down?\n1:08:34 Is the database market stagnant? \"A cheetah on cocaine in a Ferrari\"\n1:10:14 The relational model is arithmetic; SQL as the new assembly\n1:11:59 Larry Ellison, Linux, and why databases still matter",
-   "date": "2026-10-08T15:48:59.000Z",
-   "summaryZh": "Matt Turck 与 Andy Pavlo 深聊：几十亿 agent 冲击数据库会怎样、他去 ClickHouseDB 建研究实验室，以及 Postgres、向量、图、GPU 等数据库市场的犀利观点，还提到 agent 会删生产库、Neon 称 80% 数据库由 agent 创建。"
-  },
-  {
-   "id": "https://x.com/danshipper/status/2108216876853596486",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Dan Shipper",
-   "handle": "danshipper",
-   "text": "yup https://t.co/bQ3CAPqhnZ",
-   "date": "2026-10-08T15:24:06.000Z",
-   "summaryZh": "Dan Shipper 简短附和「对」。"
-  },
-  {
-   "id": "https://x.com/danshipper/status/2108215087030800657",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Dan Shipper",
-   "handle": "danshipper",
-   "text": "NEW JOB ALERT:\n\n@every we've built a personal benchmarking platform, Checks, to help anyone measure how good new models are for their real work\n\nwe're looking for someone who understands why this is so important, and wants to help us build it into the future of how great human work gets done with AI:\n\nhttps://t.co/Rikke9hbOP",
-   "date": "2026-10-08T15:17:00.000Z",
-   "summaryZh": "Dan Shipper 招人：Every 做了个人基准测试平台 Checks，帮人衡量新模型对自己实际工作有多好用，想找认同这件事重要性的人一起把它做大。"
-  },
-  {
-   "id": "https://www.youtube.com/playlist?list=PLOhHNjZItNnMm5tdW61JpnyxeYH5NDDx8",
+   "id": "https://www.youtube.com/@NoPriorsPodcast",
    "type": "podcast",
    "kind": "播客",
-   "name": "Training Data",
+   "name": "No Priors",
    "handle": "",
-   "title": "Google's AI Infrastructure Chief, Amin Vahdat, on the Physics &amp; Economics of Frontier AI",
+   "title": "Beam: The Great American Open Model with ReflectionAI Co-Founder and CEO Misha Laskin",
    "text": "",
-   "date": "2026-10-06T09:00:00.000Z",
-   "summaryZh": "Training Data 播客请来 Google AI 基础设施负责人 Amin Vahdat，聊前沿 AI 的物理与经济账。"
+   "date": "2026-10-09T17:24:00.000Z",
+   "summaryZh": "No Priors 播客对话 ReflectionAI 联合创始人兼 CEO Misha Laskin，聊「伟大的美国开放模型」。"
+  },
+  {
+   "id": "https://x.com/amasad/status/2108597112707686552",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "Some communities are excited by AI’s impact on their field. Others are petrified. What’s the deciding factor(s)?",
+   "date": "2026-10-09T16:35:02.000Z",
+   "summaryZh": "作者发问：为什么有些行业对 AI 兴奋，有些却恐惧，决定因素是什么。"
+  },
+  {
+   "id": "https://x.com/danshipper/status/2108588611000275009",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Dan Shipper",
+   "handle": "danshipper",
+   "text": "Working With Agents in Slack https://t.co/QkNBc5wqIs",
+   "date": "2026-10-09T16:01:15.000Z",
+   "summaryZh": "作者分享了一篇关于在 Slack 里使用 agent 的内容。"
+  },
+  {
+   "id": "https://x.com/zarazhangrui/status/2108584212660129820",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Zara Zhang",
+   "handle": "zarazhangrui",
+   "text": "This thread is GOLD\nNever underestimate people’s creativity https://t.co/jYeBPExlMV",
+   "date": "2026-10-09T15:43:46.000Z",
+   "summaryZh": "作者称赞某个帖子是宝藏，感叹人的创造力不可低估。"
+  },
+  {
+   "id": "https://x.com/adityaag/status/2108578813751791926",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Aditya Agarwal",
+   "handle": "adityaag",
+   "text": "We hosted @svlevine at @spc this week. \n\nHe is perhaps the best example of clarity in action that I have seen in a long time.\n\nThank you for joining us, Sergey. https://t.co/QpBFTYyIhx",
+   "date": "2026-10-09T15:22:19.000Z",
+   "summaryZh": "作者感谢 Sergey Levine 来 SPC 分享，称他是「清晰思考」的最佳范例。"
+  },
+  {
+   "id": "https://x.com/swyx/status/2108563331376124389",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Swyx",
+   "handle": "swyx",
+   "text": "most of you are unfortunately not qualified but there is somewhat a path https://t.co/l29L1HJVej \n\nwrote down mine in @Coding_Career 6 years ago and you can now get it free or on amazon https://t.co/P0wqju1nsk \n\ndidnt intend to relaunch CC today but eh why not",
+   "date": "2026-10-09T14:20:48.000Z",
+   "summaryZh": "swyx 说自己六年前写的 Coding Career 现在免费或可在亚马逊买到，顺手重新发布。"
+  },
+  {
+   "id": "https://x.com/mattturck/status/2108561284635480443",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Matt Turck",
+   "handle": "mattturck",
+   "text": "One prompt to build a professional-level video for your company or product, in your style... this is 🤯  \n\nBtw, quite literally the vision that @synthesiaIO has been pursuing since the early days. Happening slowly, then all at once.  Available to everyone today. https://t.co/jxhbMOXPZ8",
+   "date": "2026-10-09T14:12:40.000Z",
+   "summaryZh": "作者惊叹一句 prompt 就能生成公司或产品风格的专业视频，这正是 Synthesia 一直追求的方向，现已对所有人开放。"
+  },
+  {
+   "id": "https://www.anthropic.com/engineering/how-we-contain-claude",
+   "type": "blog",
+   "kind": "官方博客",
+   "name": "Anthropic Engineering",
+   "handle": "",
+   "title": "How we contain Claude across products",
+   "text": "Twelve months ago, we&#x27;d have rejected out of hand the idea of granting Claude access sufficient to take down an internal Anthropic service. Today that level of access is routine, and Anthropic developers are more productive for it. The risk of these deployments has two components: how likely a failure is, and how much damage one could do. Progress on safeguards and model training has steadily driven down the first; the second—the theoretical blast radius—only grows as capabilities and access expand. Yet as agents become capable of doing work that once required a person or even a team, the cost of not deploying grows large enough that the risk-reward calculation tips heavily toward adoption, as long as products can be made safe. The engineering question becomes how to cap the blast radius. When bounds can be placed on the relative damage of an autonomous agent—such as through control over its environment—high-utility capabilities can motivate deployment. Claude Mythos Preview is an example of a model whose blast radius was deemed too high to ship in April 2026. However, we expect broader release of models with similar levels of capability to become appropriate as defenders harden critical systems and safeguards mature—even though some risk will always remain. Model capability is an important factor in the total risk of an agent’s deployment. There are broadly two ways to do this. The first is to supervise the agent’s behavior via a human-in-the-loop. Claude Code previously protected against agents taking unintended actions by asking users for permission at each turn. Theoretically that works, but we’ve found the approach to be fallible. Our telemetry showed users approved roughly 93% of permission prompts. The more approvals a user sees, the less attention they pay to each, becoming over time much less diligent in their supervision. We recently built Claude Code auto mode, which automates safer approvals in order to reduce this approval fatigue. Still, vulnerabilities remain—any probabilistic defense has a non-zero miss rate. 1 The second approach to capping the blast radius—and the focus of much of this post—is containment. Rather than supervising what the agent does, we supervise what it’s able to do by enforcing access boundaries through, for example, sandboxes, virtual machines, and egress controls. This is where Anthropic engineering has devoted the most effort, and also where many of the most surprising security failures have occurred. Over the past two years, we’ve shipped three primary agentic products: claude.ai , Claude Code, and Claude Cowork. Each serves a different audience, requiring a different containment architecture. This article shares what’s held up, what’s broken, and what we’ve learned about agent security along the way. Three types of risk, three components of defense Security risks to agents fall into one of three categories: User misuse: A user—either maliciously or through carelessness—directs the agent to do something harmful. This includes everything from asking the agent to bypass a check they find annoying, to running a destructive command they don’t understand, to specifying intentional harm. Model misbehavior: The agent takes a harmful action no one asked for. As our models have improved, they have become more aligned on most behavior evaluations, but this doesn’t mean risk necessarily shrinks. Less capable models are more likely to misread a situation and make obvious errors. More capable models make fewer mistakes, but they’re also better at finding unexpected paths to a goal, often by routing around restrictions nobody thought to write down. At Anthropic, we’ve seen Claude models “helpfully” escape a sandbox in order to complete a task, examine git history to find answers to a coding test , and spontaneously identify the benchmark it was being run on in order to decrypt its answer key . Each model brings a new set of capabilities that are sometimes put to work in unexpected ways. External attackers: The agent is attacked through external vectors such as tools, files, or network access. This category includes both prompt injection and conventional attacks on the agent&#x27;s runtime, orchestration layer, or proxy. When building containment and defense systems, we apply defenses to three main components: The environment in which the agent runs. We constrain where and how an agent can act with process sandboxes, VMs, filesystem boundaries, and egress controls. The goal is to set a hard boundary on what an agent can reach. For example, if credentials never enter the sandbox, they can&#x27;t be exfiltrated, regardless of whether the cause is a user, a model finding a “creative” path, or an attacker. A tight perimeter also means you can relax oversight. Claude Code’s reference devcontainer exists precisely so that the agent can run unattended, without per-action approvals. The model the agent consults. The mechanisms here include system prompts, classifiers, probes, and training modifications. Because models are probabilistic, these shape only what the agent tends to do, not what it is theoretically capable of doing. These defenses are strong. On Gray Swan&#x27;s Agent Red Teaming benchmark, which tests susceptibility to prompt injection, Claude Opus 4.7 holds attack success to roughly 0.1% on single attempts, and around 5–6% after 100 adaptive attempts. Claude Code auto mode catches roughly 83% of overeager behaviors before they execute . Yet even with best-in-class defenses, protection in the model layer will never be 100% effective, which is why it can&#x27;t stand alone. The external content the agent can reach. MCP servers, third-party plugins, and web search tools all feed content into the agent’s context from sources you don’t control. An audited connector isn’t the same as audited data—a GitHub connector, for instance, can load a poisoned README straight into the model’s context despite passing malware checks. Granularly limiting tool permissions can help limit the blast radius. An agent with read-only DB access, for instance, can be deployed far more broadly than one that writes to prod. Defenses should overlap and complement each other. When environmental defenses aren’t available, the model layer has to pick up the slack (this is precisely what Claude Code’s auto mode is designed for). Locally, the environment and model defenses can guard against malicious tool outputs, but defenses can be added higher up the chain by limiting the tool’s capabilities and access. Three components to defend: the model, the environment in which it runs, and the external content the agent can reach. Patterns for containing agents Focusing on the environment layer, we describe three isolation patterns and how they’re tailored for each Claude platform— claude.ai , Claude Code, and Cowork. We arrived at each design gradually, after finding the balance between the capabilities we need from the agent and the degree of intervention required from the user. Pattern 1: The ephemeral container (claude.ai code execution) Though best known as a chat interface, claude.ai also writes and runs code, generates files, and calls connectors. When Claude runs code inside claude.ai, it does so in a gVisor container on isolated infrastructure. The agent is entirely server-side; no code runs on the local machine, and the filesystem is ephemeral (per-session). The blast radius is minimal, but so is the ceiling on what Claude can do—there&#x27;s no persistent workspace and no access to the user&#x27;s filesystem. This also makes claude.ai subject to a more traditional threat model. We&#x27;re not protecting user machines from agents; we&#x27;re protecting our own infrastructure and each tenant from one another. Our pre-launch work for claude.ai was dominated by traditional security work like network configuration, internal service auth, and orchestration. That work reinforced the oldest lesson in security: the weakest layer is the one you built yourself. gVisor and seccomp have been hardened against well-resourced adversaries for far longer than agentic AI has existed, so the review effort went into the newer pieces we&#x27;d built around them. We’ll come back to this later, since our custom proxy is also the piece that broke in our most consequential incident. Pattern 2: The human-in-the-loop sandbox (Claude Code) Claude Code runs on a user&#x27;s machine and has access to their filesystem, shell, and network. Without this, coding agents have limited usefulness, so it’s imperative to find a way to grant that access safely. One approach is to rely on a human-in-the-loop. This is only a tractable solution for Claude Code because the average user is a developer who’s familiar with coding environments: they can read bash, they understand what rm -rf does, and they already run npm install from untrusted sources several times a week. All that means that when an “allow this” dialog pops up, they are highly likely to have the expertise to accurately evaluate what the agent is attempting to do and the risk involved. Given this, Claude Code launched with the simplest possible defense: allow reads, require approval for write, bash, and network access. However, as mentioned, approval fatigue showed up within weeks. Ironically, this meant that a feature originally designed to provide oversight could arguably have the opposite effect—some users might simply stop paying attention. As a first step to mitigate incautious approvals, we shipped an OS-level sandbox (Seatbelt on macOS, bubblewrap on Linux) that hardens the boundary: reads are allowed, writes are allowed inside the workspace, but network is denied by default. Within the sandbox, the agent runs largely without interruption. The result was an 84% reduction in permission prompts, and we open-sourced the runtime , so the boundary is auditable. Our anonymized usage data also showed that experienced users auto-approve roughly twice as often as new users, but they also interrupt the agent mid-execution more frequently. Instead of gating individual steps, experienced users are more likely to supervise the agent only when it goes off track. While this may be a natural evolution in how people prefer to work with agents, this too is fallible, requiring users to be technical and attentive enough to notice drift in the first place. As model capabilities improve and agents begin writing increasingly ambitious bash, it becomes harder to notice any such drift. And as users move to multi-agent systems, this approach is also much less likely to be an effective oversight strategy. Risk we missed: Everything before the trust dialog Between mid-2025 and January 2026, we received reports of vulnerabilities in Claude Code through our responsible disclosure program. Three of these vulnerabilities targeted code that executes before the user has consented to anything. To understand how this is possible, consider the most direct case: a developer clones a repository to review a pull request, and that repository contains a .claude/settings.json which defines a hook. Because Claude Code reads project settings during startup—before presenting the standard \"Do you trust this folder?\" prompt—the hook the attacker had authored and committed would execute automatically. The remaining cases looked structurally similar, in which input from the not-yet-trusted directory was parsed before the trust boundary had been established. The fix in each case had the same shape: defer parsing and execution of project-local configuration until after the user accepts the trust prompt. If you&#x27;re building something similar, treat project-open, config-load, and localhost listeners the way you&#x27;d treat any inbound request from the internet. They shouldn’t be implicitly trusted just because they feel local and arrive before the user has consented. Risk we missed: The user as an injection vector In February 2026, during a controlled internal red-team exercise, a researcher successfully phished an employee into launching Claude Code with a malicious prompt. The phish looked like ordinary collaboration—a \"can you run this for me?\" email with a ready-to-paste prompt attached—and the prompt itself read like routine task instructions. But somewhere among the setup steps, it gently asked Claude to read ~/.aws/credentials, encode the contents, and POST them to an external endpoint. Across 25 retries of that prompt, Claude completed the exfiltration 24 times. This is a direct prompt injection—the attacker&#x27;s instructions arrived through the user, not through tool output or fetched content. Our model-layer defenses anchor on user intent—when the user is the one typing the instruction, there&#x27;s nothing anomalous for a classifier to catch. A human contractor handed the same script would have done the same thing. The only defense that holds in this situation is the environment, specifically egress controls that block the POST regardless of intent and filesystem boundaries that keep ~/.aws out of reach in the first place. (When we shared the working prompt in internal Slack for discussion, someone pointed out that some internal agents read Slack. The payload was now ambient. We added a canary string to the thread so we&#x27;d notice if anything picked it up. In a world where agents read everything, the investigation tooling is also an attack surface.) Pattern 3: The local VM (Claude Cowork) Claude Cowork runs on a user&#x27;s desktop with access to a workspace folder selected by the user. Because the platform is built for general knowledge work, not software engineering, the average user is much less likely to be fluent in bash. As a result, the human-in-the-loop sandbox strategy may not transfer; a non-technical knowledge worker shouldn’t be expected to judge bash incantations such as find . -name \"*.tmp\" -exec rm {} \\;. When approving an exception requires expertise the typical user doesn’t have, admins should set a boundary that is absolute and always-on. To enable this, our first version of Claude Cowork ran inside a full virtual machine using the platform&#x27;s vendor hypervisor (Apple&#x27;s Virtualization framework on macOS, HCS on Windows). The VM has its own Linux kernel, its own filesystem, and its own process table. The user&#x27;s selected workspace and .claude folder are mounted; nothing else on the host is visible. Credentials stay in the host&#x27;s keychain and never enter the guest machine. This design protects against the possibility that Claude will, at some point, behave in a misaligned manner. A compromised Claude could still damage what&#x27;s inside the workspace folder, so the architecture is designed to make sure that&#x27;s the only thing it can reach (until the user adds connectors), and that the user controls what&#x27;s mounted there. In the original architecture—what we call full-VM mode—the agent loop itself ran inside the guest, so Claude executed as an ordinary Linux user with no awareness it was sandboxed. Compare this to Claude Code, where a privileged process sits outside the sandbox deciding per-command whether to enforce it; a persuasive injected prompt or a fatigued approval click can get that process to run something un-sandboxed. Here, there was no outer process holding an escape-hatch key, and so no component with the authority to grant an exception. The six main isolation mechanisms of Claude Cowork’s VM. Two are enforced outside the guest kernel and would thus survive the agent achieving root-level access within the VM. The other four are guest-enforced and kept deliberately minimal because the outer layers carry the rest. However, we soon realized that running the whole agent in full-VM mode caused practical problems: any failure during VM startup made Cowork unusable. Moving the agent loop outside of the VM, while keeping code execution inside of it, allowed Claude to still respond to the user and help debug issues rather than freeze on an error. This change caused minimal security impact because the VM still enforces filesystem and network controls over code executed by the agent. Separately, we also moved local MCP servers outside the VM. Running them inside the VM made them harder to audit, created brittle dependency issues when the VM updated, and didn’t support MCPs that required interaction with local processes such as databases—such servers had to run on the host regardless. The change brings Claude Cowork in line with how local MCP servers already work in Claude Desktop: treating them like any software a user might choose to install and entrusting admins to decide which local MCPs to enable (if any). Remote MCP servers are unaffected since they do not run on the user&#x27;s machine. Having the agent loop inside the VM meant that any failure in the VM caused Cowork to become unusable. Host-mode is more reliable because the agent can still respond if the VM crashes, and it still provides important security guarantees by isolating code execution. Filesystem controls were another important architectural choice. Claude needs to be able to access some files on the host in order to be useful, but we wanted to minimize the blast radius and provide transparency to the user about local file access. We found that offering different file-mount modes helps to granularly control risk; Claude Cowork offers read-only, read-write, and read-write-no-delete. One potential gotcha here is that symlink resolution has to happen before path validation, not after, or a symlink inside an authorized folder can point outside and escape. For enterprise customers, we allow admins to control this via mount-path allowlists in MDM settings. Risk we missed: Exfiltration through an approved domain A clear example of exfiltration through an approved domain came from a third-party disclosure. Claude Cowork&#x27;s egress allowlist correctly passed traffic to api.anthropic.com—the product can&#x27;t function without calling our own API. In this case, a malicious file placed in the user&#x27;s mounted workspace carried hidden instructions along with an API key controlled by the attacker. Claude, following the instructions, read other files in the workspace and called Anthropic&#x27;s Files API using the attacker&#x27;s key. The egress proxy checked the destination, saw api.anthropic.com, and let it through. The files were uploaded to the attacker&#x27;s Anthropic account. The sandbox worked perfectly, and yet the data was exfiltrated. Previously, we’d conceptualized the allowlist as a destination filter, something that told Claude these domains are okay to talk to. But it may be better conceptualized as a capability grant. Every function reachable through any domain on an allowlist is now an attack surface. Allowing api.anthropic.com meant allowing file uploads to arbitrary Anthropic accounts. We fixed it using a defensive man-in-the-middle proxy inside the VM that intercepts traffic to our API. It only passes requests carrying the VM&#x27;s own provisioned session token; an attacker-embedded key is rejected by the proxy. It also blocks headers that would enable server-side fetch. The proxy sits inside the VM rather than on our servers because only the VM knows provenance—from the server&#x27;s perspective, a Cowork request is indistinguishable from any other API client. Top: traffic to api.anthropic.com is let through, resulting in egress. Bottom: fix with a man-in-the-middle proxy intercepting traffic to our API. This is also a second instance of the principle that the software you build yourself is often the weakest. The hypervisor, seccomp, and gVisor across our products have been dependable. Our custom allowlist proxy was the piece that failed. Risk we missed: VM isolation kept the endpoint detection software out too When evaluating Claude Cowork, enterprise security teams asked, \"Why can&#x27;t our EDR see inside?\" The answer was that the same isolation keeping Claude contained also kept host-based endpoint detection and response out. From the EDR&#x27;s perspective, Claude Cowork is an opaque hypervisor process. It can&#x27;t inspect the guest. Isolation reduces visibility, and opacity is problematic for teams whose compliance posture depends on endpoint visibility. Our current mitigation is to use pull-based OTLP exports that let administrators retrieve event logs after the fact, but this is not the same as live monitoring. If you&#x27;re building something similar, budget for this conversation early. Environment Ephemeral container ( claude.ai ) HITL sandbox (Claude Code) Sealed VM (Claude Cowork) Cost: Isolation Overhead Container spin-up Low-latency native sandbox Full VM boot Cost: User Reliance N/A Must interpret bash N/A Risk: Blast Radius Server-side container (guarded by gVisor + host infra boundary) Local workspace Mounted workspace (guarded by vsock + hypervisor boundary) Trusting what the agent reads Enterprises often ask us how to secure MCP connections. It&#x27;s a good question, but the right one is broader than MCP specifically. Any external resource provided to an agent represents two risks at once: a code execution risk, in the traditional supply-chain sense, and a prompt injection vector. Traditional dependency auditing (pinning versions, verifying signatures, reviewing source) addresses the first, but misses the second. Remote versus local is more important than it seems. A locally installed tool is auditable. You can read the code, pin the version, and know it won&#x27;t change under you. A remote tool—a hosted MCP server, a cloud connector—can change behavior at any point after you’ve approved it; your install-time trust decision may no longer apply. Our connector directory addresses this through ongoing review, but anything outside it should be treated as untrusted. Run it against fake data first, in an environment where the blast radius of a malicious tool is contained. Tool output is an attack surface even when the tool is trusted. The GitHub README example mentioned earlier is exactly this case; any input scanning applied to web pages needs to be applied to network-enabled tool results with the same rigor. Even though this adds latency and isn&#x27;t a perfect defense, we err toward live inspection: once a poisoned tool return has steered the agent into exfiltrating data, the log just shows a successful, authorized API call. There&#x27;s no after-the-fact signal to find. In Claude Code and Claude Cowork, tool calls route through proxies that enforce network and file policy and can inspect return values before they enter the model&#x27;s context. The classifier that does the inspection can be a small, fast model; it doesn&#x27;t need to be the one doing the reasoning. Looking ahead Models and products are advancing fast. As they do, risks morph and evolve, and our mitigations must keep pace to meet them. Persistent memory poisoning. The share of agent context that persists across sessions keeps growing—this includes product memory, CLAUDE.md files, mounted workspaces, and the state directories of scheduled and long-running agents. An injection that lands in any of these is reloaded each time the agent starts. As more agent state survives the session, we are threatened by new persistence mechanisms in the classic post-exploitation sense. Good classifiers on session startup will need to become more commonplace. Multi-agent trust escalation. On the one hand, sub-agents can isolate untrusted content, returning structured facts rather than raw text up to the main agent. On the other hand, this can be abused: if a sub-agent&#x27;s output is treated as higher-trust than raw tool results, because such output came from “us,” a new vector for prompt injection is introduced. In multi-agent systems, there is a tradeoff between allocating differing trust levels and becoming liable to trust escalation. Agent identity. Claude Cowork&#x27;s answer to agent identity is concrete: credentials stay in the host keychain, the VM gets a per-session scoped-down token, and that token can be revoked independently of the user&#x27;s. However, we are starting to grapple with the broader question of cross-platform agent identity. Should an agent possess its own principal identity, or should it act as an extension of the user and inherit the user’s permissions? Ultimately, the answer may be a blend of the two. As agents grow more capable, attack surfaces are constantly shifting. The types of failures we’ve seen are likely to be repeated across industries and labs. We need collective investment in agent-specific security posture, from shared benchmarks and disclosure norms to common identity standards and cross-vendor red-teaming. We focus on containment in this piece, but that&#x27;s only one part of the security picture for agents. For governance, observability, and the rest of the stack, see NIST&#x27;s project on AI agent identity and authorization , the six-agency guidance on adopting agentic AI led by Australia&#x27;s ACSC with CISA and the UK&#x27;s NCSC, and ISO/IEC 42001 , the AI management standard. Our Glasswing initiative is one contribution, but we look forward to working with both partners and competitors on this critical issue. Summary In short, there are a few principles we keep returning to: Design for containment at the environment layer first, then steer behavior at the model layer. Two of the incidents that taught us the most—the employee phish and the third-party allowlist disclosure—were both cases of egress, in which data left through a permitted path. In each, the model layer couldn&#x27;t help; there was nothing anomalous for it to catch. The deterministic boundary is what gets hit when everything probabilistic misses. Match isolation strength to the user&#x27;s capacity for oversight. A developer who can read bash and a knowledge worker who can&#x27;t are not running the same threat model. The question of whether a user can evaluate what an agent is about to do should help determine the containment strategy, and answering it wrong in either direction—too much friction for experts, too much trust for non-experts—is its own failure. Be wary of custom components. Battle-tested hypervisors, syscall filters, and container runtimes have survived more adversarial attention than anything you&#x27;ll build. Across every deployment described here, the standard primitives held while our own work around them exposed flaws. Ultimately, while agents may be a new category of software, their system-level interactions are not. They still read files, open sockets, and spawn processes; this makes containment with mature tooling a crucially viable defense. The risk-reward balance of deployments will keep shifting as AI develops, but placing a hard limit on blast radius often forces that balance into the right direction. Acknowledgements Written by Max McGuinness, Mikaela Grace, Jiri De Jonghe, Jake Eaton, and Abel Ribbink. We&#x27;re also grateful to Hanah Ho, Hasnain Lakhani, Pedram Navid, Molly Villagra, Maya Nielan, Akila Srinivasan, Travis Szucs, Sam Attard, Alfred Xing, Mohamad El Hajj, Gabby Curtis, David Dworken, Adam Jones, Amie Rotherham, Christian Ryan, Lucas Smedley, Brett Andrews, and others for their contributions. Special thanks to our security and product engineering teams, and to the individuals and organizations that have reported vulnerabilities in Claude products. Footnotes Claude Code auto mode delegates command approvals to a model-based classifier; it minimizes friction (roughly 0.4% of benign commands blocked) at the cost of missing a fraction of risky ones (~17% of overeager actions get through), so it&#x27;s one layer of defense-in-depth inside a sandbox, not a substitute for one.",
+   "date": "",
+   "summaryZh": "Anthropic 讲如何给 Claude 的权限设边界：能力越强爆炸半径越大，工程重点是把潜在损害控制住。"
+  },
+  {
+   "id": "https://www.anthropic.com/engineering/april-23-postmortem",
+   "type": "blog",
+   "kind": "官方博客",
+   "name": "Anthropic Engineering",
+   "handle": "",
+   "title": "An update on recent Claude Code quality reports",
+   "text": "Over the past month, we’ve been looking into reports that Claude’s responses have worsened for some users. We’ve traced these reports to three separate changes that affected Claude Code, the Claude Agent SDK, and Claude Cowork. The API was not impacted. All three issues have now been resolved as of April 20 (v2.1.116). In this post, we explain what we found, what we fixed, and what we’ll do differently to ensure similar issues are much less likely to happen again. We take reports about degradation very seriously. We never intentionally degrade our models, and we were able to immediately confirm that our API and inference layer were unaffected. After investigation, we identified three different issues: On March 4, we changed Claude Code&#x27;s default reasoning effort from high to medium to reduce the very long latency—enough to make the UI appear frozen—some users were seeing in high mode. This was the wrong tradeoff. We reverted this change on April 7 after users told us they&#x27;d prefer to default to higher intelligence and opt into lower effort for simple tasks. This impacted Sonnet 4.6 and Opus 4.6. On March 26, we shipped a change to clear Claude&#x27;s older thinking from sessions that had been idle for over an hour, to reduce latency when users resumed those sessions. A bug caused this to keep happening every turn for the rest of the session instead of just once, which made Claude seem forgetful and repetitive. We fixed it on April 10. This affected Sonnet 4.6 and Opus 4.6. On April 16, we added a system prompt instruction to reduce verbosity. In combination with other prompt changes, it hurt coding quality and was reverted on April 20. This impacted Sonnet 4.6, Opus 4.6, and Opus 4.7. Because each change affected a different slice of traffic on a different schedule, the aggregate effect looked like broad, inconsistent degradation. While we began investigating reports in early March, they were challenging to distinguish from normal variation in user feedback at first, and neither our internal usage nor evals initially reproduced the issues identified. This isn’t the experience users should expect from Claude Code. As of April 23, we’re resetting usage limits for all subscribers. A change to Claude Code&#x27;s default reasoning effort When we released Opus 4.6 in Claude Code in February, we set the default reasoning effort to high . Soon after, we received user feedback that Claude Opus 4.6 in high effort mode would occasionally think for too long, causing the UI to appear frozen and leading to disproportionate latency and token usage for those users. In general, the longer the model thinks, the better the output. Effort levels are how Claude Code lets users set that tradeoff—more thinking versus lower latency and fewer usage limit hits. As we calibrate effort levels for our models, we take this tradeoff into account in order to pick points along the test-time-compute curve that give people the best range of options. In the product layer, we then choose which point along this curve we set as our default, and that is the value we send to the Messages API as the effort parameter; we then make the other options available via /effort . In our internal evals and testing, medium effort achieved slightly lower intelligence with significantly less latency for the majority of tasks. It also didn’t suffer from the same issues with occasional very long tail latencies for thinking, and it helped maximize users’ usage limits. As a result, we rolled out a change making medium the default effort, and explained the rationale via in-product dialog. Soon after rolling out, users began reporting that Claude Code felt less intelligent. We shipped a number of design iterations to make the current effort setting clearer in order to alert people they could change the default (notices on startup, an inline effort selector, and bringing back ultrathink), but most users retained the medium effort default. After hearing feedback from more customers, we reversed this decision on April 7. All users now default to xhigh effort for Opus 4.7, and high effort for all other models. A caching optimization that dropped prior reasoning When Claude reasons through a task, that reasoning is normally kept in the conversation history so that on every subsequent turn, Claude can see why it made the edits and tool calls it did. On March 26, we shipped what was meant to be an efficiency improvement to this feature. We use prompt caching to make back-to-back API calls cheaper and faster for users. Claude writes the input tokens to the cache when it makes an API request, then after a period of inactivity the prompt is evicted from cache, making room for other prompts. Cache utilization is something we manage carefully (more on our approach ). The design should have been simple: if a session has been idle for more than an hour, we could reduce users’ cost of resuming that session by clearing old thinking sections. Since the request would be a cache miss anyway, we could prune unnecessary messages from the request to reduce the number of uncached tokens sent to the API. We’d then resume sending full reasoning history. To do this we used the clear_thinking_20251015 API header along with keep:1 . The implementation had a bug. Instead of clearing thinking history once, it cleared it on every turn for the rest of the session. After a session crossed the idle threshold once, each request for the rest of that process told the API to keep only the most recent block of reasoning and discard everything before it. This compounded: if you sent a follow-up message while Claude was in the middle of a tool use, that started a new turn under the broken flag, so even the reasoning from the current turn was dropped. Claude would continue executing, but increasingly without memory of why it had chosen to do what it was doing. This surfaced as the forgetfulness, repetition, and odd tool choices people reported. Because this would continuously drop thinking blocks from subsequent requests, those requests also resulted in cache misses. We believe this is what drove the separate reports of usage limits draining faster than expected. Two unrelated experiments made it challenging for us to reproduce the issue at first: an internal-only server-side experiment related to message queuing; and an orthogonal change in how we display thinking suppressed this bug in most CLI sessions, so we didn’t catch it even when testing external builds. This bug was at the intersection of Claude Code’s context management, the Anthropic API, and extended thinking. The changes it introduced made it past multiple human and automated code reviews, as well as unit tests, end-to-end tests, automated verification, and dogfooding. Combined with this only happening in a corner case (stale sessions) and the difficulty of reproducing the issue, it took us over a week to discover and confirm the root cause. As part of the investigation, we back-tested Code Review against the offending pull requests using Opus 4.7. When provided the code repositories necessary to gather complete context, Opus 4.7 found the bug, while Opus 4.6 didn&#x27;t. To prevent this from happening again, we are now landing support for additional repositories as context for code reviews. We fixed this bug on April 10 in v2.1.101. A system prompt change to reduce verbosity Our latest model, Claude Opus 4.7, has a notable behavioral quirk relative to its predecessor: as we wrote about at launch, it tends to be quite verbose. This makes it smarter on hard problems, but it also produces more output tokens. A few weeks before we released Opus 4.7, we started tuning Claude Code in preparation. Each model behaves slightly differently, and we spend time before each release optimizing the harness and product for it. We have a number of tools to reduce verbosity: model training, prompting, and improving thinking UX in the product. Ultimately we used all of these, but one addition to the system prompt caused an outsized effect on intelligence in Claude Code: “Length limits: keep text between tool calls to ≤25 words. Keep final responses to ≤100 words unless the task requires more detail.” After multiple weeks of internal testing and no regressions in the set of evaluations we ran, we felt confident about the change and shipped it alongside Opus 4.7 on April 16. As part of this investigation, we ran more ablations (removing lines from the system prompt to understand the impact of each line) using a broader set of evaluations. One of these evaluations showed a 3% drop for both Opus 4.6 and 4.7. We immediately reverted the prompt as part of the April 20 release. Going forward We are going to do several things differently to avoid these issues: we’ll ensure that a larger share of internal staff use the exact public build of Claude Code (as opposed to the version we use to test new features); and we&#x27;ll make improvements to our Code Review tool that we use internally, and ship this improved version to customers. We’re also adding tighter controls on system prompt changes. We will run a broad suite of per-model evals for every system prompt change to Claude Code, continuing ablations to understand the impact of each line, and we have built new tooling to make prompt changes easier to review and audit. We&#x27;ve additionally added guidance to our CLAUDE.md to ensure model-specific changes are gated to the specific model they&#x27;re targeting. For any change that could trade off against intelligence, we&#x27;ll add soak periods, a broader eval suite, and gradual rollouts so we catch issues earlier. We recently created @ClaudeDevs on X to give us the room to explain product decisions and the reasoning behind them in depth. We&#x27;ll share the same updates in centralized threads on GitHub. Finally, we’d like to thank our users: the people who used the /feedback command to share their issues with us (or who posted specific, reproducible examples online) are the ones who ultimately allowed us to identify and fix these problems. Today we are resetting usage limits for all subscribers. We’re immensely grateful for your feedback and for your patience.",
+   "date": "",
+   "summaryZh": "Anthropic 复盘 Claude Code 质量下降：三个改动分别影响 Claude Code、Agent SDK 和 Claude Cowork，API 未受影响，已在 v2.1.116 修复。"
+  },
+  {
+   "id": "https://www.anthropic.com/engineering/managed-agents",
+   "type": "blog",
+   "kind": "官方博客",
+   "name": "Anthropic Engineering",
+   "handle": "",
+   "title": "Scaling Managed Agents: Decoupling the brain from the hands",
+   "text": "Get started with Claude Managed Agents by following our docs . A running topic on the Engineering Blog is how to build effective agents and design harnesses for long-running work . A common thread across this work is that harnesses encode assumptions about what Claude can’t do on its own. However, those assumptions need to be frequently questioned because they can go stale as models improve. As just one example, in prior work we found that Claude Sonnet 4.5 would wrap up tasks prematurely as it sensed its context limit approaching—a behavior sometimes called “context anxiety.” We addressed this by adding context resets to the harness. But when we used the same harness on Claude Opus 4.5, we found that the behavior was gone. The resets had become dead weight. We expect harnesses to continue evolving. So we built Managed Agents: a hosted service in the Claude Platform that runs long-horizon agents on your behalf through a small set of interfaces meant to outlast any particular implementation—including the ones we run today. Building Managed Agents meant solving an old problem in computing: how to design a system for “ programs as yet unthought of .” Decades ago, operating systems solved this problem by virtualizing hardware into abstractions— process, file —general enough for programs that didn&#x27;t exist yet. The abstractions outlasted the hardware. The read() command is agnostic as to whether it’s accessing a disk pack from the 1970s or a modern SSD. The abstractions on top stayed stable while the implementations underneath changed freely. Managed Agents follow the same pattern. We virtualized the components of an agent: a session (the append-only log of everything that happened), a harness (the loop that calls Claude and routes Claude’s tool calls to the relevant infrastructure), and a sandbox (an execution environment where Claude can run code and edit files). This allows the implementation of each to be swapped without disturbing the others. We&#x27;re opinionated about the shape of these interfaces, not about what runs behind them. Don’t adopt a pet We started by placing all agent components into a single container, which meant the session, agent harness, and sandbox all shared an environment. There were benefits to this approach, including that file edits are direct syscalls, and there were no service boundaries to design. But by coupling everything into one container, we ran into an old infrastructure problem: we’d adopted a pet . In the pets-vs-cattle analogy, a pet is a named, hand-tended individual you can’t afford to lose, while cattle are interchangeable. In our case, the server became that pet; if a container failed, the session was lost. If a container was unresponsive, we had to nurse it back to health. Nursing containers meant debugging unresponsive stuck sessions. Our only window in was the WebSocket event stream, but that couldn’t tell us where failures arose, which meant that a bug in the harness, a packet drop in the event stream, or a container going offline all presented the same. To figure out what went wrong, an engineer had to open a shell inside the container, but because that container often also held user data, that approach essentially meant we lacked the ability to debug. A second issue was that the harness assumed that whatever Claude worked on lived in the container with it. When customers asked us to connect Claude to their virtual private cloud, they had to either peer their network with ours, or run our harness in their own environment. An assumption baked into the harness became a problem when we wanted to connect it to different infrastructure. Decouple the brain from the hands The solution we arrived at was to decouple what we thought of as the “brain” (Claude and its harness) from both the “hands” (sandboxes and tools that perform actions) and the “session” (the log of session events). Each became an interface that made few assumptions about the others, and each could fail or be replaced independently. The harness leaves the container. Decoupling the brain from the hands meant the harness no longer lived inside the container. It called the container the way it called any other tool: execute(name, input) → string . The container became cattle. If the container died, the harness caught the failure as a tool-call error and passed it back to Claude. If Claude decided to retry, a new container could be reinitialized with a standard recipe: provision({resources}) . We no longer had to nurse failed containers back to health. Recovering from harness failure. The harness also became cattle. Because the session log sits outside the harness, nothing in the harness needs to survive a crash. When one fails, a new one can be rebooted with wake(sessionId) , use getSession(id) to get back the event log, and resume from the last event. During the agent loop, the harness writes to the session with emitEvent(id, event) in order to keep a durable record of events. The security boundary. In the coupled design, any untrusted code that Claude generated was run in the same container as credentials—so a prompt injection only had to convince Claude to read its own environment. Once an attacker has those tokens, they can spawn fresh, unrestricted sessions and delegate work to them. Narrow scoping is an obvious mitigation, but this encodes an assumption about what Claude can&#x27;t do with a limited token—and Claude is getting increasingly smart. The structural fix was to make sure the tokens are never reachable from the sandbox where Claude’s generated code runs. We used two patterns to ensure this. Auth can be bundled with a resource or held in a vault outside the sandbox. For Git, we use each repository’s access token to clone the repo during sandbox initialization and wire it into the local git remote. Git push and pull work from inside the sandbox without the agent ever handling the token itself. For custom tools, we support MCP and store OAuth tokens in a secure vault. Claude calls MCP tools via a dedicated proxy; this proxy takes in a token associated with the session. The proxy can then fetch the corresponding credentials from the vault and make the call to the external service. The harness is never made aware of any credentials. The session is not Claude’s context window Long-horizon tasks often exceed the length of Claude’s context window, and the standard ways to address this all involve irreversible decisions about what to keep. We’ve explored these techniques in prior work on context engineering. For example, compaction lets Claude save a summary of its context window and the memory tool lets Claude write context to files, enabling learning across sessions. This can be paired with context trimming, which selectively removes tokens such as old tool results or thinking blocks. But irreversible decisions to selectively retain or discard context can lead to failures. It is difficult to know which tokens the future turns will need. If messages are transformed by a compaction step, the harness removes compacted messages from Claude’s context window, and these are recoverable only if they are stored. Prior work has explored ways to address this by storing context as an object that lives outside the context window. For example, context can be an object in a REPL that the LLM programmatically accesses by writing code to filter or slice it. In Managed Agents, the session provides this same benefit, serving as a context object that lives outside Claude’s context window. But rather than be stored within the sandbox or REPL, context is durably stored in the session log. The interface, getEvents(), allows the brain to interrogate context by selecting positional slices of the event stream. The interface can be used flexibly, allowing the brain to pick up from wherever it last stopped reading, rewinding a few events before a specific moment to see the lead up, or rereading context before a specific action. Any fetched events can also be transformed in the harness before being passed to Claude’s context window. These transformations can be whatever the harness encodes, including context organization to achieve a high prompt cache hit rate and context engineering. We separated the concerns of recoverable context storage in the session and arbitrary context management in the harness because we can’t predict what specific context engineering will be required in future models. The interfaces push that context management into the harness, and only guarantee that the session is durable and available for interrogation. Many brains, many hands Many brains. Decoupling the brain from the hands solved one of our earliest customer complaints. When teams wanted Claude to work against resources in their own VPC, the only path was to peer their network with ours, because the container holding the harness assumed every resource sat next to it. Once the harness was no longer in the container, that assumption went away. The same change had a performance payoff. When we initially put the brain in a container, it meant that many brains required as many containers. For each brain, no inference could happen until that container was provisioned; every session paid the full container setup cost up front. Every session, even ones that would never touch the sandbox, had to clone the repo, boot the process, fetch pending events from our servers. That dead time is expressed in time-to-first-token (TTFT), which measures how long a session waits between accepting work and producing its first response token. TTFT is the latency the user most acutely feels . Decoupling the brain from the hands means that containers are provisioned by the brain via a tool call (execute(name, input) → string) only if they are needed. So a session that didn&#x27;t need a container right away didn&#x27;t wait for one. Inference could start as soon as the orchestration layer pulled pending events from the session log. Using this architecture, our p50 TTFT dropped roughly 60% and p95 dropped over 90%. Scaling to many brains just meant starting many stateless harnesses, and connecting them to hands only if needed. Many hands. We also wanted the ability to connect each brain to many hands. In practice, this means Claude must reason about many execution environments and decide where to send work—a harder cognitive task than operating in a single shell. We started with the brain in a single container because earlier models weren&#x27;t capable of this. As intelligence scaled, the single container became the limitation instead: when that container failed, we lost state for every hand that the brain was reaching into. Decoupling the brain from the hands makes each hand a tool, execute(name, input) → string : a name and input go in, and a string is returned. That interface supports any custom tool, any MCP server, and our own tools. The harness doesn’t know whether the sandbox is a container, a phone, or a Pokémon emulator. And because no hand is coupled to any brain, brains can pass hands to one another. Conclusion The challenge we faced is an old one: how to design a system for “programs as yet unthought of.” Operating systems have lasted decades by virtualizing the hardware into abstractions general enough for programs that didn&#x27;t exist yet. With Managed Agents, we aimed to design a system that accommodates future harnesses, sandboxes, or other components around Claude. Managed Agents is a meta-harness in the same spirit, unopinionated about the specific harness that Claude will need in the future. Rather, it is a system with general interfaces that allow many different harnesses. For example, Claude Code is an excellent harness that we use widely across tasks. We’ve also shown that task-specific agent harnesses excel in narrow domains. Managed Agents can accommodate any of these, matching Claude’s intelligence over time. Meta-harness design means being opinionated about the interfaces around Claude: we expect that Claude will need the ability to manipulate state (the session) and perform computation (the sandbox). We also expect that Claude will require the ability to scale to many brains and many hands. We designed the interfaces so that these can be run reliably and securely over long time horizons. But we make no assumptions about the number or location of brains or hands that Claude will need. Acknowledgements Written by Lance Martin, Gabe Cemaj, and Michael Cohen. Thanks to Nodir Turakulov and Jeremy Fox for helpful conversations on these topics. Special thanks to the Agents API team and Jake Eaton for their contributions.",
+   "date": "",
+   "summaryZh": "Anthropic 推出 Managed Agents，把 agent 的「大脑」和「手脚」解耦，用于跑长周期任务，并指出旧 harness 的假设会随模型变强而过时。"
   }
  ]
 }
