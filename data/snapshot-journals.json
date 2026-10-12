@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-10T01:11:21Z",
+ "generatedAt": "2026-10-12T00:42:42Z",
  "windowDays": 30,
  "journals": 64,
  "rawFetched": 300,
@@ -5018,6 +5018,34 @@
    "oa": true
   },
   {
+   "id": "10.1016/j.jacadv.2026.103284",
+   "title": "Using CK-MB and hs-cTnT to Predict 30-Day Mortality After CABG: A Combined Biomarker Risk-Stratification Approach.",
+   "abstract": "",
+   "sections": {
+    "objective": "Accurate diagnosis of perioperative myocardial infarction after coronary artery bypass grafting remains challenging due to uncertainty over postoperative cardiac biomarker interpretation. The authors aimed to evaluate the prognostic value and performance of postoperative creatine kinase-myocardial band (CK-MB) and high-sensitivity cardiac troponin T (hs-cTnT) and explore a combined approach to identify patients at risk of early death.",
+    "methods": "This multicenter cohort study involved 9,856 patients undergoing isolated coronary artery bypass grafting at hospitals in Innsbruck, Freiburg, Gothenburg, and Reykjavik. A combined biomarker matrix was created to assess synergistic effects. Associations of biomarkers with 30-day all-cause mortality were evaluated using multivariable Cox regression (adjusted HR) and area under the receiver-operating curve (AUC) analysis.",
+    "results": "Thirty-day all-cause mortality was 2.0%. Median peak values within 72 hours postsurgery were 2.24 (Q1-Q3: 1.66-3.36) × upper reference limit for CK-MB and 52.06 (Q1-Q3: 29.79-90.00) × upper reference limit for hs-cTnT. Both postoperative CK-MB (adjusted HR: 1.95; 95% CI: 1.79-2.12; P < 0.001) and hs-cTnT (adjusted HR: 1.71; 95% CI: 1.61-1.82; P < 0.001) were associated with higher mortality risk per doubling in concentration independent of EuroSCORE II. Predictive accuracy of CK-MB and hs-cTnT was similar (AUC: 0.787 vs 0.784; P = 0.99), yet stratification using Youden-derived thresholds identified distinct patient subgroups with limited overlap. In a combined analysis, mortality risk was increased only when CK-MB was in the top tertile and hs-cTnT in the mid (adjusted HR: 4.34; 95% CI: 1.78-10.62; P < 0.001) or top tertile (adjusted HR: 14.78; 95% CI: 6.85-31.88; P < 0.001).",
+    "conclusion": "The combined use of CK-MB and hs-cTnT enables a simple and robust risk-stratification strategy for early postoperative mortality, with direct implications for clinical surveillance and future cardiac surgery trials.",
+    "other": ""
+   },
+   "structured": true,
+   "journal": "JACC Adv",
+   "domain": "心血管",
+   "imp": 3.0,
+   "basic": false,
+   "studyKey": "multicenter",
+   "studyZh": "多中心研究",
+   "studyRank": 5,
+   "stars": 1,
+   "date": "2026-09-25",
+   "ts": 0,
+   "year": "2026",
+   "authors": "Leo WP",
+   "pmid": "42790282",
+   "doi": "10.1016/j.jacadv.2026.103284",
+   "oa": true
+  },
+  {
    "id": "10.1016/j.langlo.2026.104037",
    "title": "Burden of schistosomiasis in Ethiopia following 10 years of preventive chemotherapy: a national cross-sectional geostatistical survey.",
    "abstract": "",
@@ -5462,34 +5490,6 @@
    "oa": true
   },
   {
-   "id": "10.1016/j.jacadv.2026.103244",
-   "title": "A Hemodynamic Echocardiographic Approach to Disease Severity and Prognosis in Transthyretin Amyloid Cardiomyopathy.",
-   "abstract": "",
-   "sections": {
-    "objective": "Transthyretin amyloid cardiomyopathy (ATTR-CM) causes heart failure and poor outcomes. Prognostic stratification is fundamental, yet validated staging systems rely exclusively on biomarkers, neglecting structural and functional cardiac parameters. This study evaluates a noninvasive hemodynamic echocardiographic approach to stratify patients with ATTR-CM.",
-    "methods": "Patients were categorized into 3 groups based on stroke volume index (SVi) and systolic pulmonary artery pressure (sPAP), markers of forward flow and elevated filling pressures. We compared receiver operating characteristic curves for various potentially predictive hemodynamic parameters to identify these as the most robust candidates for risk stratification. Optimal cutoffs (30 mL/m 2 for SVi and 40 mm Hg for sPAP) were determined using the Liu index, supported by both univariable and multivariable survival analyses. The primary endpoint was the composite of all-cause mortality and heart failure hospitalization. Prognostic utility was evaluated using multivariable Cox regression, adjusted for age, sex, and disease-modifying therapy.",
-    "results": "The cohort included 293 patients with ATTR-CM: group 1 (normal SVi/sPAP, n = 115 [39%]), group 2 (low SVi or high sPAP, n = 129), and group 3 (low SVi/high sPAP, n = 49). The primary outcome occurred in 108 (37%) patients. The multivariable analysis confirmed the staging system as an independent predictor of the composite outcome (group 2 HR: 1.70, 95% CI: 1.05-2.71; group 3 HR: 2.50, 95% CI: 1.44-4.30; P < 0.001).",
-    "conclusion": "The noninvasive hemodynamic approach provides an alternative and promising method to stratify the risk of clinical outcome in patients with ATTR-CM, potentially improving management strategies.",
-    "other": ""
-   },
-   "structured": true,
-   "journal": "JACC Adv",
-   "domain": "心血管",
-   "imp": 3.0,
-   "basic": false,
-   "studyKey": "other",
-   "studyZh": "研究论文",
-   "studyRank": 3,
-   "stars": 1,
-   "date": "2026-09-22",
-   "ts": 0,
-   "year": "2026",
-   "authors": "Serenelli M",
-   "pmid": "42820891",
-   "doi": "10.1016/j.jacadv.2026.103244",
-   "oa": true
-  },
-  {
    "id": "10.1016/j.jacep.2026.08.020",
    "title": "Pediatric Catecholaminergic Polymorphic Ventricular Tachycardia: Clinical Characteristics, Genetic Spectrum, and Outcomes in a Multicenter Cohort.",
    "abstract": "",
@@ -5599,34 +5599,6 @@
    "authors": "Markova A",
    "pmid": "42748944",
    "doi": "10.1016/s2352-3026(26)00201-2",
-   "oa": true
-  },
-  {
-   "id": "10.1016/j.jacep.2026.06.023",
-   "title": "Stereotactic Body Radiation Therapy for VT in Chagas Cardiomyopathy: A Prospective Phase I/II Pilot Study.",
-   "abstract": "",
-   "sections": {
-    "objective": "Stereotactic body radiation therapy (SBRT) is a novel noninvasive therapy for ventricular tachycardia (VT), but its role in Chagas cardiomyopathy remains unexplored. This study aimed to evaluate the safety and preliminary efficacy of SBRT for refractory VT in patients with chronic Chagas cardiomyopathy.",
-    "methods": "We prospectively enrolled patients with Chagas cardiomyopathy and refractory VT who had failed or were ineligible for catheter ablation. A single 25-Gy fraction of SBRT was delivered to an arrhythmogenic substrate identified by multimodality imaging. The primary outcomes were a reduction in VT burden and treatment-related adverse events.",
-    "results": "Eleven patients (age: 64.9 ± 6.7 years; LVEF: 31.6 ± 9.8%) with implantable cardioverter-defibrillators, 9 of whom had prior failed ablations, underwent SBRT. The median internal target volume was 27.3 cm 3 , and the planning target volume was 91.1 cm 3 . During a median follow-up of 160 days, VT recurred in 10 patients. The median time to recurrence after a 6-week blanking period was 79 days (IQR: 51.5-167). The patient without recurrence died of noncardiac causes 22 days after SBRT. Comparing the 12 months after SBRT with the 6 months before SBRT, there was a statistically significant reduction in the burden of VT episodes (P = 0.040), antitachycardia pacing therapies (P = 0.012), and combined antitachycardia pacing/shocks (P = 0.022), although isolated implantable cardioverter-defibrillator shocks were not statistically significantly reduced. The 12-month overall survival was 45.5%, and no severe treatment-related adverse events were reported.",
-    "conclusion": "SBRT is a feasible approach for refractory VT in Chagas cardiomyopathy. Despite a high rate of VT recurrence, SBRT statistically significantly reduced the burden of ventricular arrhythmia, warranting further investigation.",
-    "other": ""
-   },
-   "structured": true,
-   "journal": "JACC Clin Electrophysiol",
-   "domain": "综合医学",
-   "imp": 0,
-   "basic": false,
-   "studyKey": "other",
-   "studyZh": "研究论文",
-   "studyRank": 3,
-   "stars": 1,
-   "date": "2026-09-11",
-   "ts": 0,
-   "year": "2026",
-   "authors": "Salvajoli B",
-   "pmid": "42820878",
-   "doi": "10.1016/j.jacep.2026.06.023",
    "oa": true
   }
  ]
