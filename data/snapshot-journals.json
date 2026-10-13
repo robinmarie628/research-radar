@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-12T00:42:42Z",
+ "generatedAt": "2026-10-13T02:42:15Z",
  "windowDays": 30,
  "journals": 64,
  "rawFetched": 300,
@@ -5465,6 +5465,34 @@
    "authors": "Zheng J",
    "pmid": "42820889",
    "doi": "10.1016/j.jacadv.2026.103277",
+   "oa": true
+  },
+  {
+   "id": "10.1016/s2468-1253(26)00224-4",
+   "title": "Prevalence of liver fibrosis and steatotic liver disease in community-dwelling adults in China (the CHESS-LiverHealth project): cross-sectional baseline data from a prospective cohort study.",
+   "abstract": "",
+   "sections": {
+    "objective": "Chronic liver disease is rapidly increasing worldwide, largely driven by the growing epidemics of overweight and obesity, diabetes, and harmful alcohol consumption. China has the world's largest population with these conditions, but has scarce prospective, community-based data to estimate the true burden of chronic liver disease. We aimed to estimate the prevalence of liver fibrosis and steatotic liver disease and identify their associated factors in community-dwelling adults in China.",
+    "methods": "The CHESS-LiverHealth project was an investigator-initiated, prospective, community-based cohort study conducted at 18 sites corresponding to county-level units in 13 provincial-level administrative regions in China. Community-dwelling adults aged 18 years or older were enrolled and underwent vibration-controlled transient elastography (VCTE). We report cross-sectional baseline data from this study. The primary outcome was the prevalence of liver fibrosis, as estimated by a liver stiffness measurement (LSM) of 8 kPa or more. Secondary outcomes included the prevalence of liver fibrosis at higher LSM thresholds (≥10 kPa and ≥12 kPa), steatotic liver disease (controlled attenuation parameter ≥248 dB/m) and its severity categories, and steatotic liver disease subtypes-metabolic dysfunction-associated steatotic liver disease (MASLD), metabolic and alcohol-associated liver disease (MetALD), and alcohol-associated liver disease (ALD)-together with factors associated with these outcomes.",
+    "results": "Between Sept 23, 2024, and Jan 23, 2026, 38 859 individuals entered the recruitment pathways, of whom 29 023 were enrolled. After exclusion of individuals with previous cirrhosis, liver cancer or other malignancies, those with missing or unreliable VCTE measurements, and those with incomplete baseline information, 25 736 individuals were included in this analysis. These individuals had a median age of 51·0 years (IQR 38·0-60·0); 11 548 (44·9%) were male and 14 188 (55·1%) were female. The prevalence of LSM of 8 kPa or more was 4·4% (95% CI 4·2-4·7; n=1136), LSM 10 kPa or more was 1·6% (1·5-1·8; n=421), and LSM 12 kPa or more was 0·8% (0·7-0·9; n=205). Steatotic liver disease was present in 43·7% (43·1-44·3; n=11 242) of participants, with MASLD in 39·5% (38·9-40·1; n=10 162), MetALD in 2·0% (1·8-2·2; n=516), and ALD in 1·6% (1·5-1·8; n=411) of participants. The highest prevalences of LSM of 8 kPa or more were observed in individuals with obesity (10·7% [9·8-11·6]; n=487 of 4560) and type 2 diabetes (10·7% [9·7-11·8]; n=365 of 3400). In multivariable analyses, male sex, older age, heavy alcohol consumption, an Alcohol Use Disorders Identification Test score of 16 or more, overweight or obesity, central obesity, prediabetes or type 2 diabetes, hypertension, dyslipidaemia, and an increasing number of cardiometabolic risk factors were independently associated with both LSM of 8 kPa or more and steatotic liver disease. Chronic viral hepatitis was also independently associated with LSM of 8 kPa or more.",
+    "conclusion": "Liver fibrosis and steatotic liver disease are prevalent in community-dwelling Chinese adults, driven by metabolic factors and alcohol consumption. These findings identify chronic liver disease as a major public health challenge in China. Community-based, non-invasive screening integrated with metabolic and alcohol risk assessment might offer a crucial opportunity for early detection and targeted interventions to curb the progression to cirrhosis and hepatocellular carcinoma.",
+    "other": ""
+   },
+   "structured": true,
+   "journal": "Lancet Gastro Hepat",
+   "domain": "消化肝病",
+   "imp": 30.9,
+   "basic": false,
+   "studyKey": "cohort",
+   "studyZh": "前瞻队列",
+   "studyRank": 5,
+   "stars": 5,
+   "date": "2026-09-22",
+   "ts": 0,
+   "year": "2026",
+   "authors": "Liu S",
+   "pmid": "42772320",
+   "doi": "10.1016/s2468-1253(26)00224-4",
    "oa": true
   },
   {
