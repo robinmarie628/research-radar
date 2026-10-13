@@ -1,239 +1,229 @@
 {
- "date": "2026-10-12",
- "generatedAt": "2026-10-12T00:50:02Z",
+ "date": "2026-10-13",
+ "generatedAt": "2026-10-13T02:46:55Z",
  "model": "deepseek-flash",
- "headline": "今天 builder 们聊得最多的是 agent 的信任与安全，而不是新模型。",
+ "headline": "GPT-6.1 Sol 上下文提到 500k，订阅用长上下文不再加钱",
  "bullets": [
-  "Levie 认为 agent 集群会吃掉大量 token，在软件开发、安全、生命科学、金融等领域大规模并行干活。",
-  "Madhu Guru 提出 agent 的演化路径是能力→信任→自主，agentic 安全（身份、权限、可观测性）必须跑得更快。",
-  "Levie 补充说，当 agent 执行的任务远超人类时，企业得把前沿模型当内部风险来管，控制误操作和恶意 agent 的影响范围。",
-  "Garry Tan 分享自己用 GStack 的 /autoplan 让 agent 解释计划，只在少数情况下才人工介入，认为前沿模型现在非常好用。",
-  "Nikunj 吐槽 VC 圈：不能一边要基金展示信念、一边又按自己方便搞 contracted pro rata，提醒创始人选好伙伴和合同。"
+  "OpenAI 的 thsottiaux 宣布 GPT-6.1 Sol 在 Codex 和 Work 里默认上下文从 272k 提到 500k，最高可到 1M。",
+  "同一人还说，订阅额度内用 GPT-6.1 Sol 的长上下文不再收额外费用。",
+  "Karpathy 和 Levie 都在说同一件事：绝大多数人只把 AI 当聊天搜索用，agent 那套能力几乎没人碰。",
+  "Garry Tan 认为把 LLM 调用换成确定性代码是理所当然的，代码质量还更好。",
+  "Micky（Rasmic）说他不完全信任 agent，靠让 agent 拿证据、人工做最后审查来建立信任。"
  ],
- "sentiment": "整体偏冷静务实，兴奋点集中在 agent 能力上，但更多人把注意力转向信任、安全和治理这些还没解决的问题。",
- "count": 22,
- "summarised": 22,
+ "sentiment": "整体偏冷静观望：一边为上下文和价格松绑叫好，一边反复吐槽大多数人根本还没用上 AI 的真正能力。",
+ "count": 21,
+ "summarised": 21,
  "posts": [
   {
-   "id": "https://x.com/thsottiaux/status/2109152716954222849",
+   "id": "https://x.com/thenanyu/status/2109538550421262552",
    "type": "x",
    "kind": "X 动态",
-   "name": "Thibault Sottiaux",
-   "handle": "thsottiaux",
-   "text": "Pro users, would you rather have",
-   "date": "2026-10-11T05:22:48.000Z",
-   "summaryZh": "作者向 Pro 用户提问：你们更想要哪个？"
+   "name": "Nan Yu",
+   "handle": "thenanyu",
+   "text": "Who’s gonna tell him https://t.co/QcAecsogbx",
+   "date": "2026-10-12T06:55:58.000Z",
+   "summaryZh": "作者只发了句「谁去告诉他一下」加个链接，没展开说是什么事。"
   },
   {
-   "id": "https://x.com/thsottiaux/status/2109132167112782291",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thibault Sottiaux",
-   "handle": "thsottiaux",
-   "text": "Put the reset in the bag. All propagated. https://t.co/HGxaD3Zdcj",
-   "date": "2026-10-11T04:01:09.000Z",
-   "summaryZh": "作者说重置已经全部推送完成。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2109107670229930458",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "Something went wrong alright https://t.co/AMb3fqmEIL",
-   "date": "2026-10-11T02:23:48.000Z",
-   "summaryZh": "作者吐槽：确实出问题了。"
-  },
-  {
-   "id": "https://x.com/thsottiaux/status/2109090080497508356",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thibault Sottiaux",
-   "handle": "thsottiaux",
-   "text": "The day we reach perfection it will be resets from there onwards https://t.co/I6A9WHOjXT",
-   "date": "2026-10-11T01:13:54.000Z",
-   "summaryZh": "作者调侃：等哪天做到完美，之后就是一路重置了。"
-  },
-  {
-   "id": "https://x.com/zarazhangrui/status/2109087739287384387",
+   "id": "https://x.com/zarazhangrui/status/2109483079106740500",
    "type": "x",
    "kind": "X 动态",
    "name": "Zara Zhang",
    "handle": "zarazhangrui",
-   "text": "Code is the new medium for creative self-expression https://t.co/jYeBPExlMV",
-   "date": "2026-10-11T01:04:36.000Z",
-   "summaryZh": "作者认为代码正在成为创意自我表达的新媒介。"
+   "text": "The only place where I use Gemini these days is in Chrome",
+   "date": "2026-10-12T03:15:33.000Z",
+   "summaryZh": "他说现在自己唯一用 Gemini 的地方就是 Chrome 浏览器里。"
   },
   {
-   "id": "https://x.com/levie/status/2109079686286565378",
+   "id": "https://x.com/levie/status/2109467575025578330",
    "type": "x",
    "kind": "X 动态",
    "name": "Aaron Levie",
    "handle": "levie",
-   "text": "If you want to know where all the tokens will get consumed in the future, here it is. Agent swarms will have massive implications in a number of enterprise domains like software development, cyber, life sciences research, AI research, finance, and more.\n\nThe ability to parallelize agents against a unified goal where the volume of work is large, or where the search space not entirely known upfront, is going to be massive. \n\nAgents can fan out and coordinate work together on a specific mission in completely different ways from what humans are able to do. Today even in the most resource-abundant organizations, your ability to parallelize work on most projects is quite limited. Humans run into constraints on being able to communicate with one another, share status, deal with conflicts in work, keep shared context, and so on.\n\nAs AI models can handle larger context without getting confused, and as they’re able to communicate effectively across their work with shared infrastructure, they can avoid many of the pitfalls that people have.\n\nYou can see how this can lead to not just faster execution of tasks, but qualitatively different outcomes in medicine, research or defending against cyber attacks, scientific and math discoveries, and so on. This is why we’re going to need 1,000X more compute.",
-   "date": "2026-10-11T00:32:36.000Z",
-   "summaryZh": "Levie 认为未来 token 主要会被 agent 集群消耗，它们能并行协作完成大工作量或搜索空间未知的任务，这是人类做不到的。"
+   "text": "This is a good way to understand how early we actually are in AI diffusion right now. The vast majority of people are using AI as a chatbot for simple interactions that approximate next-generation search. This is super useful but dramatically underrepresents the full capability of AI.\n\nOn the complete other end of the spectrum, agent swarms represent possibly the ultimate form factor of what agents will do inside of our workflows. Math, cyber, bio, materials science, software engineering, finance, and any other field that has valuable tasks that can be executed in parallel where compute can be applied to accelerate work all have this characteristic.\n\nLess than a fraction of a fraction of the population uses AI in this way right now, due to a mix of the capabilities of models relative to the user's domain, the cost of doing these types of workflows today, the harnesses available to do this style of AI work, and the availability (or lack thereof) of frontier models to the general public.\n\nThere will also be a huge amount of change management necessary to get most areas of work -beyond software and AI research- to benefit from this style of agents. Companies need to upgrade their workflows, data needs to integrated and migrated into modern platforms, and companies will need to work through compliance, governance, and security frameworks to pull it off. \n\nBut this all represents opportunity right now. A lot of this is where the applied layer of AI will really shine in the enterprise because of the domain specificity of this type of work. You can get an early sense of where things are going and the opportunity ahead by seeing through the funnel that Andrej lays out.",
+   "date": "2026-10-12T02:13:56.000Z",
+   "summaryZh": "Levie 说现在 AI 扩散还非常早期：大多数人只把 AI 当聊天搜索用，而 agent 集群才是终极形态，但几乎没人这么用。"
   },
   {
-   "id": "https://x.com/nikunj/status/2109060688446677004",
+   "id": "https://x.com/thsottiaux/status/2109439315570999598",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "The results of this poll has gotten me confused. I definitely thought it would sway much more favorably in the 2X direction across Pro 100/200/500 at the cost of bringing back 5h limits in order to smoothen the demand curve. https://t.co/zwn7kboMhT",
+   "date": "2026-10-12T00:21:38.000Z",
+   "summaryZh": "他说这个投票结果让他困惑，本以为大家会更倾向 2 倍额度、换回 5 小时限制来平滑需求。"
+  },
+  {
+   "id": "https://x.com/petergyang/status/2109435203269878242",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "YouTube comments undefeated the disrespect to @Rasmic  😭 https://t.co/SiPRGxvUwc",
+   "date": "2026-10-12T00:05:18.000Z",
+   "summaryZh": "他调侃 YouTube 评论区太狠了，对 Rasmic 毫不留情。"
+  },
+  {
+   "id": "https://x.com/petergyang/status/2109434554729824397",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "Building a @modretro game with my daughter and Codex https://t.co/78Ev7iGuG1",
+   "date": "2026-10-12T00:02:43.000Z",
+   "summaryZh": "他和女儿一起用 Codex 给 modretro 做游戏。"
+  },
+  {
+   "id": "https://x.com/petergyang/status/2109433961223180517",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "\"I'm not at a point where I trust the agent, especially with stuff that people are using.\"\n\nFrom Micky (@Rasmic), who's taught 100K+ people to build with AI:\n\n\"The manual review is like the final step. All the work's done, and I have as much evidence from the agent as possible.\n\nWith evidence-driven testing, before and after, and even greploop, we're trying to build trust. The agent presents evidence: This is the work that's done, and this is why it's good.\n\nFor anyone who's been a developer for any time, manual review is probably the worst part of your job. This sort of helps minimize the friction.\"\n\n📌 Watch Micky's full 4-step workflow here: https://t.co/ju9aMQKaCE",
+   "date": "2026-10-12T00:00:22.000Z",
+   "summaryZh": "教过 10 万多人用 AI 的 Micky 说还不完全信任 agent，靠让 agent 出示前后证据、再做人工审查来减少摩擦。"
+  },
+  {
+   "id": "https://x.com/thsottiaux/status/2109430894604026039",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "With this change, we are not charging long context fees for GPT-6.1 Sol when drawing usage from the subscription.",
+   "date": "2026-10-11T23:48:11.000Z",
+   "summaryZh": "他说这次改动后，订阅额度内用 GPT-6.1 Sol 的长上下文不再收长上下文费用。"
+  },
+  {
+   "id": "https://x.com/thsottiaux/status/2109430343346581527",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "Day 7/\n\nWe have increased default context length for GPT-6.1 Sol to 500k when used through Codex & Work, up from 272k or an ~ 80% increase.\n\nWe will go higher in the future, but it helps reduce occurrence of compactions and with tasks that require keeping a lot of context and nuance over periods of time. It was carefully tested and is the new sweet spot for most of our users. You can still override it if you want to be higher our lower, with maximum context length of GPT-6.1 Sol of 1M.",
+   "date": "2026-10-11T23:45:59.000Z",
+   "summaryZh": "GPT-6.1 Sol 在 Codex 和 Work 里默认上下文从 272k 提到 500k，涨约 80%，最高可设到 1M。"
+  },
+  {
+   "id": "https://x.com/nikunj/status/2109428362171305984",
    "type": "x",
    "kind": "X 动态",
    "name": "Nikunj Kothari",
    "handle": "nikunj",
-   "text": "Let’s go - only took 23 months 😂 https://t.co/xIJfCRr0hY https://t.co/bLatE5FU7H",
-   "date": "2026-10-10T23:17:07.000Z",
-   "summaryZh": "作者感慨某件事终于成了，花了 23 个月。"
+   "text": "🔵👼 https://t.co/fCataNatin",
+   "date": "2026-10-11T23:38:07.000Z",
+   "summaryZh": "只发了两个表情符号，没有文字内容。"
   },
   {
-   "id": "https://x.com/rauchg/status/2109038632518782989",
+   "id": "https://x.com/garrytan/status/2109418482953814026",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "Be part of the 5000 today. It’s amazing\n\nThe lucky thing is the price will come down and more people will see this, and get a chance to bring it to the world\n\nGreatest alpha fountain in the history of man https://t.co/0CQTE04g9m",
+   "date": "2026-10-11T22:58:52.000Z",
+   "summaryZh": "他号召大家加入这 5000 人，说价格会降下来、更多人会用上，称这是史上最大的 alpha 源泉。"
+  },
+  {
+   "id": "https://x.com/garrytan/status/2109417956929327510",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "If you wonder what an SF Public Bank will do for the city…\n\nFor you? Absolutely nothing. \n\nFor Jackie Fielder’s nonprofit grifter cronies? Absolutely everything. https://t.co/rIjHhK7jFI",
+   "date": "2026-10-11T22:56:46.000Z",
+   "summaryZh": "他反对 SF 公共银行，说对普通市民毫无好处，只会肥了 Jackie Fielder 那帮非营利关系户。"
+  },
+  {
+   "id": "https://x.com/mattturck/status/2109410677526065460",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Matt Turck",
+   "handle": "mattturck",
+   "text": "Please respect my privacy during this difficult time in the family https://t.co/qliJU9WvVY",
+   "date": "2026-10-11T22:27:51.000Z",
+   "summaryZh": "他开玩笑说家里正经历困难时期，请大家尊重他的隐私。"
+  },
+  {
+   "id": "https://x.com/garrytan/status/2109410082769482174",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "Replacing LLM calls with deterministic code is a no brainer and also results in better code that better matches what users want https://t.co/jzOeeoHFMO",
+   "date": "2026-10-11T22:25:29.000Z",
+   "summaryZh": "他认为把 LLM 调用换成确定性代码是理所当然的，还能写出更符合用户需求的代码。"
+  },
+  {
+   "id": "https://x.com/swyx/status/2109365419937239158",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Swyx",
+   "handle": "swyx",
+   "text": "reupping my talk tips thread for all our lovely AIE NYC speakers. see you tmr at speaker dinner! https://t.co/1xf4Eblnil",
+   "date": "2026-10-11T19:28:00.000Z",
+   "summaryZh": "他重发自己的演讲技巧帖，给 AIE NYC 的讲者们看，并预告明天有讲者晚宴。"
+  },
+  {
+   "id": "https://x.com/karpathy/status/2109361546505966046",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Andrej Karpathy",
+   "handle": "karpathy",
+   "text": "Dusting off this tweet from April because this gap in shared understanding of LLM capability is *widening*. It's now less \"two groups of people speaking past each other\" and more a sharp funnel.\n\n- Napkin math somewhere around 6B people (~75% of the population) have barely come in contact with LLMs at all.\n- Around 1-2B (~20%) are casual and infrequent users of free-tier ChatGPT-like products. This group sees derpy chatbots and treats them a bit like a better Google search, a writing aid, or etc. Maybe an agent tries to book you a flight. I have non-tech friends who (reasonably, imo) say they have not much use for it at all. Even many professionals outside of math&code are in this tier. For example, execs and many other functions spend a lot of their time talking to other people, so while they understand what is happening intellectually, it is still second-hand and a bit abstract.\n- Now we get to professional use of frontier-grade LLMs in math&code. Somewhere around 20M people (0.2%) see first-hand that large, complex projects that used to take them weeks/months can now be completed by agents with a prompt. Building apps, copying apps, translating apps, decompiling apps from binaries... This has all happened very quickly and recently - less than 1 year ago, I was writing code manually by hand, typing memorized computer code commands into a code editor character by character, occasionally pressing Tab to autocomplete a little chunk of code.\n- And finally we get to the ~5,000 people (~0.00006%) with access to frontier-grade systems internally. The external world has seen the preview. It looks like swarms of thousands of agents collaborating over weeks on software mega projects: minting zero days, running cyber attacks and defenses at machine speeds, discovering new science, advancing the frontier of mathematics. Things that would have taken top professionals in the industry years of work. Meanwhile, human review and comprehension are starting to fall behind. For example, people are still involved in the \"archeology\" of the OpenAI-HF incident from many months ago. Mathematicians may be poring over the 722 manuscripts on frontier mathematics for a while.\n\nThe funnel is driven by a combination of factors:\n1. The impact scales with ambition, problem size, and horizon. A question with a paragraph answer barely stresses the system. You need a reservoir of big, difficult problems that you really care about. This aspect drives the consumer / professional dimension of the funnel.\n2. The jaggedness of the system (which I have written about a lot separately). Capability peaks in domains that are digital, verifiable and economically valuable. This is because LLM capability emerges from reinforcement learning on verifiable rewards on a curated environment mixture driven by revenue potential. This aspect primarily drives the area (e.g. math&code) dimension of the funnel.\n3. Access. Free-tier, paid-tier, internal.\n\nSo this is the weirdness of the moment. The general public has mostly not interacted with these systems. When they have, it looks like a derpy chatbot. The majority of professionals still see only a modest uplift. And a small sliver of professionals are experiencing the vertigo of the curve going vertical. And it is all happening at the same time.",
+   "date": "2026-10-11T19:12:37.000Z",
+   "summaryZh": "Karpathy 说人们对 LLM 能力的认知差距在拉大：约 60 亿人几乎没接触过 LLM，10–20 亿人只是偶尔用免费聊天产品。"
+  },
+  {
+   "id": "https://x.com/mattturck/status/2109345191010472332",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Matt Turck",
+   "handle": "mattturck",
+   "text": "People were punch card operators then they were Lotus Notes admins, then they were Flash developers and Dreamweaver webmasters, then they were DevOps and Tableau analysts, and now they’re becoming agent managers and harness engineers.  It will work out just fine.",
+   "date": "2026-10-11T18:07:37.000Z",
+   "summaryZh": "他说技术岗位一直在换名字，从打孔卡操作员到 agent 管理者和 harness 工程师，最后都会没事。"
+  },
+  {
+   "id": "https://x.com/danshipper/status/2109331798282915907",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Dan Shipper",
+   "handle": "danshipper",
+   "text": "made a feed that automatically tracks the books im reading (and have read going back to 2012!)\n\nmaybe we should have a feed for everybody @every could be fun to see https://t.co/rKpU0itSMX",
+   "date": "2026-10-11T17:14:24.000Z",
+   "summaryZh": "他做了个自动追踪自己读书（回溯到 2012 年）的 feed，并建议 @every 给每个人都做一个。"
+  },
+  {
+   "id": "https://x.com/trq212/status/2109329495341867391",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thariq",
+   "handle": "trq212",
+   "text": "I think Terrence Tao is directionally correct, we shouldn’t settle for a super intelligence that is opaque.\n\nA key signal of intelligence is communication. We should strive to make products and models that build understanding with humans instead of disintermediating them. https://t.co/p44dDROehA",
+   "date": "2026-10-11T17:05:15.000Z",
+   "summaryZh": "他认同陶哲轩的方向：不该接受不透明的超级智能，好产品应该帮人建立理解，而不是把人排除在外。"
+  },
+  {
+   "id": "https://x.com/rauchg/status/2109297685392175488",
    "type": "x",
    "kind": "X 动态",
    "name": "Guillermo Rauch",
    "handle": "rauchg",
-   "text": "All plausible science fiction will be realized within our lifetime. If you’re reading this, you’re one of the luckiest humans to have ever been born (if we play our cards right.)",
-   "date": "2026-10-10T21:49:28.000Z",
-   "summaryZh": "作者认为所有合理的科幻都会在我们有生之年实现，读者是史上最幸运的人类之一。"
+   "text": "So cool. The future of learning https://t.co/cT6crizjKp",
+   "date": "2026-10-11T14:58:51.000Z",
+   "summaryZh": "他转发并感叹这就是学习的未来。"
   },
   {
-   "id": "https://x.com/nikunj/status/2109038632975876395",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nikunj Kothari",
-   "handle": "nikunj",
-   "text": "Ignoring the actors in the latest debacle of VC, “philosophically” you can’t have both.. \n\n> ask a fund to show conviction, and ask to double down especially when the chips are down. \n\n> ask them not do contracted pro rata just because it’s convenient to you from a dilution perspective or the lead fund that’s trying to get their ownership targets. \n\nEvery VC should earn the right to the cap table at every stage. But, this industry runs on contracts and handshakes, and when you break those for short term gain that erodes the already brittle trust. \n\nFor founders, another reminder to choose your partners AND contracts well. It’s so so so important. Get a good independent lawyer who will spell this out for you. \n\n(This is so timely since just yesterday I was helping my cousin negotiate his preseed term sheet who literally wanted an arm and leg instead of a simple SAFE)",
-   "date": "2026-10-10T21:49:28.000Z",
-   "summaryZh": "Nikunj 批评 VC 不能既要基金展示信念、又按自己方便搞 contracted pro rata，提醒创始人选好伙伴和合同、找独立律师把关。"
-  },
-  {
-   "id": "https://x.com/thenanyu/status/2109035605061693774",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nan Yu",
-   "handle": "thenanyu",
-   "text": "Everything seems to be going as planned https://t.co/dU2vSvR7iu https://t.co/rYrqn0aUhv",
-   "date": "2026-10-10T21:37:26.000Z",
-   "summaryZh": "作者调侃：一切似乎都按计划进行。"
-  },
-  {
-   "id": "https://x.com/steipete/status/2109022454224150707",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Steinberger",
-   "handle": "steipete",
-   "text": "not as clear-cut, but also yes https://t.co/MYVj0Jb29v",
-   "date": "2026-10-10T20:45:11.000Z",
-   "summaryZh": "作者表示：没那么绝对，但也确实如此。"
-  },
-  {
-   "id": "https://x.com/steipete/status/2109008513855087082",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Steinberger",
-   "handle": "steipete",
-   "text": "JavaScript is not a serious language 🙃 https://t.co/7yeq9rr025",
-   "date": "2026-10-10T19:49:47.000Z",
-   "summaryZh": "作者吐槽 JavaScript 不是一门严肃的语言。"
-  },
-  {
-   "id": "https://x.com/realmadhuguru/status/2108982858513776899",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Madhu Guru",
-   "handle": "realmadhuguru",
-   "text": "Agent capabilities will soon evolve at RSI pace. Agentic security (identity, permissions, observability) will need to outpace this.\n\nThe evolutionary direction of the broader agents space is capability -> trust -> autonomy\n\nThe first phase has been about capability - can the combination of model + harness + tools + context reliably get work done?\n\nCapabilities have gotten pretty far, so the focus now shifts to trust…does the harness / system take the right action with right permissions? Can we observe it, audit it and establish accountability?\n\nA lot of serious work has already gone into these problems over the last couple of years.\n\nNow the challenge gets more important. and harder.",
-   "date": "2026-10-10T18:07:51.000Z",
-   "summaryZh": "Madhu Guru 认为 agent 能力会以 RSI 速度进化，agentic 安全必须跟上，演化路径是能力→信任→自主，现在焦点正转向信任。"
-  },
-  {
-   "id": "https://x.com/thenanyu/status/2108976262698115550",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nan Yu",
-   "handle": "thenanyu",
-   "text": "Yeah, I’ve been feeling this too. Agents make engineers extremely powerful, but PMs are generally still bottlenecked on their bandwidth they have to talk to customers.\n\nSo the ideal ratio is 1:1 https://t.co/fIWDJeHwtT",
-   "date": "2026-10-10T17:41:38.000Z",
-   "summaryZh": "作者认为 agent 让工程师变得极强，但 PM 仍受限于和客户沟通的带宽，所以理想配比是 1:1。"
-  },
-  {
-   "id": "https://x.com/garrytan/status/2108954741065879945",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Garry Tan",
-   "handle": "garrytan",
-   "text": "https://t.co/0wdR9PQsqC works best with experimental modes including Captain turned on. I end up using one thread that is able to coordinate and run the merge PR queue, make sure that CI works, and that only green runs with full CI make it into master.",
-   "date": "2026-10-10T16:16:07.000Z",
-   "summaryZh": "Garry Tan 说某工具在开启 Captain 等实验模式时最好用，他用一个线程协调合并 PR 队列、确保 CI 通过、只让全绿结果进 master。"
-  },
-  {
-   "id": "https://x.com/garrytan/status/2108954740013043789",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Garry Tan",
-   "handle": "garrytan",
-   "text": "I use GStack /autoplan and ask for the agent to ELI5 the plan it comes up with, and I still approve plans to make sure it's going down paths I think are likely to work. But only rarely do I have to intervene. The frontier models are fantastic these days.",
-   "date": "2026-10-10T16:16:07.000Z",
-   "summaryZh": "Garry Tan 用 GStack 的 /autoplan 让 agent 把计划讲清楚，仍会审批计划，但很少需要干预，认为前沿模型现在非常好。"
-  },
-  {
-   "id": "https://x.com/garrytan/status/2108954738540863498",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Garry Tan",
-   "handle": "garrytan",
-   "text": "For retrieval/latency data tasks like what GBrain does, setting up clear evals around retrieval, latency and cost per compute is useful. That's my repo https://t.co/2rdleyR8Rl which has 40+ categories that each can be auto-researched and auto-improved",
-   "date": "2026-10-10T16:16:06.000Z",
-   "summaryZh": "Garry Tan 说做检索/延迟类任务时，围绕检索、延迟和单位算力成本设清晰 eval 很有用，他的仓库有 40+ 类别可自动研究和改进。"
-  },
-  {
-   "id": "https://x.com/levie/status/2108952226714865966",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Aaron Levie",
-   "handle": "levie",
-   "text": "Good post to start thinking through the long term safety approaches to managing intelligence in an enterprise. As agents begin to do vastly more task execution in the organization than humans, our need to secure, govern, control, and audit that work will become paramount. \n\nYou’ll have agents operating against most of your most valuable data; they’ll be making decisions that will be harder and harder to reverse engineer; we’ll need to understand the liability and accountability regimes when models make decisions for us; and we need ways of containing the blast radius of accidentally or intentionally malicious agents. \n\n“Treating frontier closed and open weight models like insider risks is a way to build such a system. Not because they are necessarily malicious, but because any sufficiently capable actor with access to important systems can make mistakes or be compromised, and the architecture of containment and control must account for that”\n\nIn a sense, AI will need to have its “zero trust” era that security saw. And all of this leads to needing various layers of protection and auditability of what agents are doing, what data they can work with, and controls for when things go wrong. And a huge opportunity right now for those building such systems across the enterprise.",
-   "date": "2026-10-10T16:06:07.000Z",
-   "summaryZh": "Levie 认为当 agent 执行的任务远超人类时，企业必须把前沿闭源和开源模型当内部风险来管，以控制误操作或恶意 agent 的影响范围。"
-  },
-  {
-   "id": "https://x.com/thenanyu/status/2108948921007681902",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nan Yu",
-   "handle": "thenanyu",
-   "text": "Ran outta gas\nFill issue https://t.co/8i9CRpKMQg",
-   "date": "2026-10-10T15:52:59.000Z",
-   "summaryZh": "作者说没油了，是加油的问题。"
-  },
-  {
-   "id": "https://x.com/danshipper/status/2108941466785439796",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Dan Shipper",
-   "handle": "danshipper",
-   "text": "yup \n\nif your company slack is not a constant source of wonder and inspiration right now something is wrong https://t.co/5q8OoN1nJx",
-   "date": "2026-10-10T15:23:22.000Z",
-   "summaryZh": "作者认为如果公司 Slack 现在不是持续的惊喜和灵感来源，那就有问题。"
-  },
-  {
-   "id": "https://x.com/danshipper/status/2108893466998571442",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Dan Shipper",
-   "handle": "danshipper",
-   "text": "incredibly interesting research exploration 👇 https://t.co/IV1qOv6zPx",
-   "date": "2026-10-10T12:12:38.000Z",
-   "summaryZh": "作者称这是一个非常有趣的研究探索。"
-  },
-  {
-   "id": "https://www.youtube.com/@DataDrivenNYC/videos",
+   "id": "https://www.youtube.com/watch?v=OpeCP4wCxkA",
    "type": "podcast",
    "kind": "播客",
-   "name": "The MAD Podcast with Matt Turck",
+   "name": "No Priors",
    "handle": "",
-   "title": "AI Models Are Now Hiding Their Cheating | Eric Ho (Goodfire)",
+   "title": "Frontier Chips for Frontier AI Labs, with Walter Goodwin, Founder/CEO of Fractile",
    "text": "",
-   "date": "2026-10-01T11:30:00.000Z",
-   "summaryZh": "The MAD Podcast 这期请来 Goodfire 的 Eric Ho，聊 AI 模型正在隐藏自己的作弊行为。"
+   "date": "2026-10-02T10:00:00.000Z",
+   "summaryZh": "No Priors 播客请来 Fractile 创始人兼 CEO Walter Goodwin，聊前沿 AI 实验室用的前沿芯片。"
   }
  ]
 }
