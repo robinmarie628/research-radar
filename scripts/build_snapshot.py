@@ -390,10 +390,17 @@ def main():
     print(f"      今日精选 {len(jr['picks'])} 篇 (基础 {sum(1 for p in jr['picks'] if p['basic'])})")
 
     print("[2/2] builders ...")
-    bd = build_builders()
-    json.dump(bd, open(os.path.join(DATA, "snapshot-builders.json"), "w", encoding="utf-8"),
-              ensure_ascii=False, indent=1)
-    print(f"      {len(bd['items'])} posts, feed generatedAt {bd['generatedAt']}")
+    try:
+        bd = build_builders()
+        json.dump(bd, open(os.path.join(DATA, "snapshot-builders.json"), "w", encoding="utf-8"),
+                  ensure_ascii=False, indent=1)
+        print(f"      {len(bd['items'])} posts, feed generatedAt {bd['generatedAt']}")
+    except Exception as e:
+        # 优雅降级：上游 zarazhangrui/follow-builders 偶发 4xx/超时/限流时，
+        # 不要把整个 workflow 拖死 —— journals 已经在 [1/2] 写好，至少把它 commit 出去。
+        # 旧的 snapshot-builders.json 保留作离线 fallback；前端 loadBuilders() 本来就
+        # 是直接 live fetch 上游，这里挂掉最多让 fallback 快照旧一点。
+        print(f"      [WARN] builders feed 拉取失败，跳过本次 snapshot-builders.json: {e}", flush=True)
     return 0
 
 
