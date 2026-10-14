@@ -1,339 +1,320 @@
 {
  "date": "2026-10-14",
- "generatedAt": "2026-10-14T00:45:05Z",
+ "generatedAt": "2026-10-14T12:25:51Z",
  "model": "deepseek-flash",
- "headline": "Grok Bot 用「人格」代替聊天线程，Muse Wonder 视频模型上线 Vercel 网关",
+ "headline": "Gemini 4 Argon 发布，Google 强势回归，但评测成绩两极分化",
  "bullets": [
-  "Peter Yang 说 Grok Bot 是他现在最喜欢的 agent：不是聊天线程，而是按「人格」分工，像雇员工一样各管一摊。",
-  "Muse Wonder 模型上了 Vercel AI Gateway，但 Wonder Full 版本没上 API，Dan Shipper 吐槽它生成的视频全是澳洲口音。",
-  "Rauchg 吐槽 coding CLI 越做越复杂，顺手推了一个 6MB、毫秒级启动、模型无关的极简 CLI，内置 MCP、Skills、Subagents 和 ACP。",
-  "Levie 认为 Meta 全力冲前沿会让模型进步更快、token 更便宜；他还看好 agent 集群在网络安全里大规模跑攻击排列组合。",
-  "Aditya Agarwal 指出前沿实验室员工和顶级 AI 组织用 AI 的方式差距很大，这里面藏着一个做「横向加速器」的公司机会。"
+  "Google 发布 Gemini 4 Argon，多位 builder 称其在企业任务和创意生成上大幅升级，有人喊出「Google is back」。",
+  "但也有评测显示它在资深工程师基准任务上只有 21%，远低于 Sol 6 和 Muse，表现争议不小。",
+  "Anthropic 自曝代码合并量从每天 2500 涨到 3 万，人类规模的版本控制已成瓶颈，于是自建了 Scion 版本控制系统。",
+  "swyx 办了一场「杀死 SaaS」黑客松，用 AI 和真人评审去克隆一个年费 4.3 万美元的 SaaS，72 份提交、烧了约 100B token。",
+  "ChatGPT 和 Codex 桌面版优化了磁盘存储，占用减少 60%，回应重度用户磁盘不够用的反馈。"
  ],
- "sentiment": "整体偏兴奋和看好，builder 们对 agent 架构（人格化、集群、自选 harness）和模型价格下降很乐观，同时夹杂对 CLI 越做越复杂、视频模型不稳定的吐槽。",
- "count": 32,
- "summarised": 32,
+ "sentiment": "builder 们整体兴奋又分裂：一边为 Gemini 4 Argon 和 coding agent 的进展叫好，一边为评测成绩打架、吐槽模型能力参差不齐。",
+ "count": 30,
+ "summarised": 30,
  "posts": [
   {
-   "id": "https://x.com/thsottiaux/status/2109892247580000595",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thibault Sottiaux",
-   "handle": "thsottiaux",
-   "text": "Good plans are simple. I have one that should result in significantly more usage for everyone. Hope to get it done soon.",
-   "date": "2026-10-13T06:21:26.000Z",
-   "summaryZh": "他说好计划都很简单，自己有一个能让所有人用量明显变多的计划，希望尽快落地。"
-  },
-  {
-   "id": "https://x.com/thsottiaux/status/2109873307722121591",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thibault Sottiaux",
-   "handle": "thsottiaux",
-   "text": "Mashed @poteto on the house.",
-   "date": "2026-10-13T05:06:10.000Z",
-   "summaryZh": "一句调侃，说把 @poteto 请到家里招待了。"
-  },
-  {
-   "id": "https://x.com/thsottiaux/status/2109873287853707513",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thibault Sottiaux",
-   "handle": "thsottiaux",
-   "text": "What would you like with your side of reset? It's done. https://t.co/gpNaB6otgy",
-   "date": "2026-10-13T05:06:06.000Z",
-   "summaryZh": "宣布 reset 已经做完，还开玩笑问大家想配点什么。"
-  },
-  {
-   "id": "https://x.com/garrytan/status/2109852144350470293",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Garry Tan",
-   "handle": "garrytan",
-   "text": "We need repairmen https://t.co/yHuMos1Mm9",
-   "date": "2026-10-13T03:42:05.000Z",
-   "summaryZh": "他感叹现在缺的是「修理工」这类实干的人。"
-  },
-  {
-   "id": "https://x.com/garrytan/status/2109847735449047295",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Garry Tan",
-   "handle": "garrytan",
-   "text": "Yeah pro rata matters and is powerful for investors https://t.co/XeNUt0F8NB",
-   "date": "2026-10-13T03:24:33.000Z",
-   "summaryZh": "他认为 pro rata（按比例跟投权）对投资人很重要，而且很有威力。"
-  },
-  {
-   "id": "https://x.com/swyx/status/2109837651893485844",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Swyx",
-   "handle": "swyx",
-   "text": "@cjav_dev @aiDotEngineer @ricmac @latentspacepod our workshop writeup is live now!\n\nhttps://t.co/mSZfNrLDTS",
-   "date": "2026-10-13T02:44:29.000Z",
-   "summaryZh": "swyx 宣布他们那场 workshop 的总结文章已经上线。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2109822610637017218",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "@Blizzard_Ent I bet if Blizzard crowdfunds Starcraft 3 RTS they'll raise millions",
-   "date": "2026-10-13T01:44:43.000Z",
-   "summaryZh": "他打赌如果 Blizzard 众筹做 StarCraft 3 这种 RTS，能筹到几百万。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2109820627561676970",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "So many people’s childhoods were defined by StarCraft even Ben.\n\nStill can’t believe the new game won’t come out till 2030. \n\n@Blizzard_Ent should double down on this franchise. Make movies, TV shows, and yes a real time strategy game! https://t.co/vRnuahUusL",
-   "date": "2026-10-13T01:36:50.000Z",
-   "summaryZh": "他说很多人的童年由 StarCraft 定义，新作却要等到 2030 年，呼吁 Blizzard 加码这个 IP，做电影、剧集和真正的 RTS。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2109803399332213090",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "Here's a clip of me explaining why Grok @bot is my favorite agent right now.\n\ntl;dr It’s built on personas instead of chat threads, so it really feels like hiring employees to work for you. Each owns a specific job:\n\n→ Behind the Growth owns customer support\n→ YouTube Producer owns research and prep\n→ Loving Husband owns errands for my family\n→ Health Coach keeps my workouts on track\n\n📌 Watch my latest Grok Bot video covering how I'm using its new features here (free X access, its own email, and Opus): https://t.co/eu1nBVXqyd",
-   "date": "2026-10-13T00:28:23.000Z",
-   "summaryZh": "他解释为什么 Grok Bot 是他现在最喜欢的 agent：基于人格而非聊天线程，像雇员工，各自负责客服、研究、跑腿、健身等具体工作。"
-  },
-  {
-   "id": "https://x.com/danshipper/status/2109800647575146906",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Dan Shipper",
-   "handle": "danshipper",
-   "text": "NOTE: this is Muse Wonder Standard. Wonder Full is, inexplicably, not available on the API. Will have a run shortly however",
-   "date": "2026-10-13T00:17:27.000Z",
-   "summaryZh": "他提醒这是 Muse Wonder Standard，Wonder Full 莫名其妙没上 API，稍后会跑一次。"
-  },
-  {
-   "id": "https://x.com/swyx/status/2109797444204572880",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Swyx",
-   "handle": "swyx",
-   "text": "one of the best parts of my job is bringing out the best in ai in each city \n\ni love new york ♥️ https://t.co/qOCz2NvARw https://t.co/P9qRPhJoYc",
-   "date": "2026-10-13T00:04:43.000Z",
-   "summaryZh": "swyx 说工作中最棒的部分之一，是在每个城市把 AI 最好的一面带出来，他很爱纽约。"
-  },
-  {
-   "id": "https://x.com/thenanyu/status/2109795153250804076",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nan Yu",
-   "handle": "thenanyu",
-   "text": "One. Of. Us. https://t.co/lH1Ig61Atm",
-   "date": "2026-10-12T23:55:37.000Z",
-   "summaryZh": "一句「One. Of. Us.」，表达某人已经加入他们阵营。"
-  },
-  {
-   "id": "https://x.com/levie/status/2109788979952558255",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Aaron Levie",
-   "handle": "levie",
-   "text": "Ok this is quite cool research and ultimately must be the eventual architecture of agents. In the limit, AI will obviously be better at determining its own harness once it sees the task at hand, than us being able to do this in advance: https://t.co/jl6ZdeUFY1 https://t.co/7UOyjCGtdD",
-   "date": "2026-10-12T23:31:05.000Z",
-   "summaryZh": "Levie 说这项研究很酷，认为 agent 最终会自己决定用什么 harness，而不是由人预先设定。"
-  },
-  {
-   "id": "https://x.com/danshipper/status/2109778026091209087",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Dan Shipper",
-   "handle": "danshipper",
-   "text": "I used muse wonder to make a video explaining personal benchmarks..\n\nthis is ummm pretty rough\n\ninterestingly all of its videos so far are narrated in an Australian accent. I'll leave interpretation to the reader https://t.co/OULxzZFCxt",
-   "date": "2026-10-12T22:47:33.000Z",
-   "summaryZh": "他用 Muse Wonder 做了个讲个人 benchmark 的视频，效果很粗糙，而且所有视频都配澳洲口音。"
-  },
-  {
-   "id": "https://x.com/danshipper/status/2109776532503732624",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Dan Shipper",
-   "handle": "danshipper",
-   "text": "and it's back up! still bad https://t.co/TiYMufHUT3",
-   "date": "2026-10-12T22:41:37.000Z",
-   "summaryZh": "他说服务恢复了，但质量还是很差。"
-  },
-  {
-   "id": "https://x.com/swyx/status/2109772705532715166",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Swyx",
-   "handle": "swyx",
-   "text": "@cjav_dev @aiDotEngineer @ricmac @latentspacepod also packed room for @arizeai @seldo workshop at #aiengineerny!!\n\n https://t.co/yDGwcBOwEC https://t.co/c1iqN6pOwz",
-   "date": "2026-10-12T22:26:25.000Z",
-   "summaryZh": "swyx 说 Arize 和 Seldo 在 AI Engineer NY 的 workshop 房间也挤满了人。"
-  },
-  {
-   "id": "https://x.com/rauchg/status/2109771347064922255",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Guillermo Rauch",
-   "handle": "rauchg",
-   "text": "This is amazing 😂 https://t.co/wuwbLHuLl5",
-   "date": "2026-10-12T22:21:01.000Z",
-   "summaryZh": "Rauchg 转发内容并评论「太精彩了」。"
-  },
-  {
-   "id": "https://x.com/nikunj/status/2109763529276559566",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nikunj Kothari",
-   "handle": "nikunj",
-   "text": "Random fact: for some reason, all the Suryas (@sdand @sur4js @kickingkeys) that I know are all goated eclectic individuals. \n\nwhich brings me to:\n\n1) If there are more Surya's I should meet, please holler 👋\n\n2) Also @kickingkeys & I are hosting a small builder happy hour this Thursday evening in NYC (link here to directly RSVP since I'm delinquent on DMs: https://t.co/Csk6GlA6Er)",
-   "date": "2026-10-12T21:49:57.000Z",
-   "summaryZh": "他调侃认识的叫 Surya 的人都很特别，并宣传周四晚在纽约办的小型 builder happy hour。"
-  },
-  {
-   "id": "https://x.com/garrytan/status/2109749184639488265",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Garry Tan",
-   "handle": "garrytan",
-   "text": "Nobody is coming to save you\n\nYou don’t need saving",
-   "date": "2026-10-12T20:52:57.000Z",
-   "summaryZh": "他喊话：没人会来救你，你也不需要被救。"
-  },
-  {
-   "id": "https://x.com/adityaag/status/2109748501982872003",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Aditya Agarwal",
-   "handle": "adityaag",
-   "text": "There is a big delta in how frontier lab employees use AI and how even the top 1% of AI orgs use AI.\n\nThis is on public capabilities...I suspect this delta will exist for a while..\n\nI also feel like there is a company opportunity in here that is a horizontal accelerant.",
-   "date": "2026-10-12T20:50:14.000Z",
-   "summaryZh": "他指出前沿实验室员工和顶级 AI 组织用 AI 的方式差距很大，这个差距会持续，里面藏着一个做横向加速器的公司机会。"
-  },
-  {
-   "id": "https://x.com/rauchg/status/2109734766107099312",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Guillermo Rauch",
-   "handle": "rauchg",
-   "text": "Coding CLIs keep getting more complicated. Daemons, 3 layers of TUIs, client-server architectures.\n\nThe whole point of a CLI is to deliver intelligence with zero friction, and be unix-like.\n\n💾 Try https://t.co/OL0LzGtvAw. It's 6mb, starts in milliseconds, model-agnostic. It's tastefully minimal: MCP, Skills, Subagents and ACP built-in.",
-   "date": "2026-10-12T19:55:39.000Z",
-   "summaryZh": "他吐槽 coding CLI 越做越复杂，推了一个 6MB、毫秒启动、模型无关的极简 CLI，内置 MCP、Skills、Subagents 和 ACP。"
-  },
-  {
-   "id": "https://x.com/steipete/status/2109730774593487009",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Steinberger",
-   "handle": "steipete",
-   "text": "6.1 Sol ultrafast &gt;&gt;&gt; 6 Astra\n\n~ same cost but whole different game with 250 tpm",
-   "date": "2026-10-12T19:39:48.000Z",
-   "summaryZh": "他说 6.1 Sol ultrafast 远胜 6 Astra，成本差不多但 250 tpm 完全是另一个级别。"
-  },
-  {
-   "id": "https://x.com/steipete/status/2109724776168300631",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Steinberger",
-   "handle": "steipete",
-   "text": "said that last year, saying it again.\nvibes coding is a slur. https://t.co/hWBfC1e2NA",
-   "date": "2026-10-12T19:15:58.000Z",
-   "summaryZh": "他重申自己的立场：vibes coding 这个词是个贬称。"
-  },
-  {
-   "id": "https://x.com/rauchg/status/2109719267344261375",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Guillermo Rauch",
-   "handle": "rauchg",
-   "text": "Muse Wonder on Vercel AI Gateway\nTry with 𝚏𝚡 --𝚖𝚘𝚍𝚎𝚕 𝚖𝚎𝚝𝚊/𝚖𝚞𝚜𝚎-𝚠𝚘𝚗𝚍𝚎𝚛-𝟷.𝟶 https://t.co/OI8lTDKnyZ https://t.co/Ckx651xYUJ",
-   "date": "2026-10-12T18:54:04.000Z",
-   "summaryZh": "他宣布 Muse Wonder 已上 Vercel AI Gateway，并给出调用命令。"
-  },
-  {
-   "id": "https://x.com/trq212/status/2109717295631372628",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thariq",
-   "handle": "trq212",
-   "text": "evergreen https://t.co/vypABFN6PU",
-   "date": "2026-10-12T18:46:14.000Z",
-   "summaryZh": "他转发了一条内容，评价是「常青（永远不过时）」。"
-  },
-  {
-   "id": "https://x.com/levie/status/2109711062757216738",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Aaron Levie",
-   "handle": "levie",
-   "text": "What a crazy time in AI with Meta now jumping fully into the frontier. Now that there are multiple players pushing the state of the art, this is going to lead to a further acceleration of advances, as well as the lowering cost of tokens for even the highest levels of capability. https://t.co/w2p4pEMInH https://t.co/UFAnJ5Cj8c",
-   "date": "2026-10-12T18:21:28.000Z",
-   "summaryZh": "他说 Meta 全力冲前沿，多家玩家一起推高 SOTA，会加速进步并让最高能力的 token 也更便宜。"
-  },
-  {
-   "id": "https://x.com/levie/status/2109682812811137061",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Aaron Levie",
-   "handle": "levie",
-   "text": "Agent swarms are going to be a core part of many enterprise workflows in the future. The ability to throw compute at problems that you can massively parallelize will be too useful to not take advantage of. \n\nCyber will be one of the biggest beneficiaries of this as it’s a space where testing vast number of permutations of attacks (without getting tired or bored) is an incredibly useful property. You have a wide search space of possible risk vectors and you generally need to be able to chain together different scenarios to achieve the exploit. \n\nThis will become one of the biggest token uses in large enterprises given the range of IT systems, software, physical infrastructure, and data that needs to be protected at all times. Super interesting times in cyber.",
-   "date": "2026-10-12T16:29:13.000Z",
-   "summaryZh": "他认为 agent 集群会成为企业工作流核心，网络安全最受益，因为可以不知疲倦地测试海量攻击排列组合，这会成为大企业最大的 token 消耗之一。"
-  },
-  {
-   "id": "https://x.com/zarazhangrui/status/2109673430245421415",
+   "id": "https://x.com/zarazhangrui/status/2110254654412218553",
    "type": "x",
    "kind": "X 动态",
    "name": "Zara Zhang",
    "handle": "zarazhangrui",
-   "text": "I just heard the most touching AI coding story.\n\nA friend @vicyaqingyang grew up in a modest home full of cockroaches. To turn lemons into lemonade, her mom made killing them a game.\n\nWhen she told this story to another friend, that friend vibe coded a game from it. You catch cockroaches in a room and compete against Mom.\n\nShe cried while playing it.\n\nThe game isn’t technically sophisticated. Any model can build it pretty quickly now. What gives it a soul is the human story, experience, and emotion behind it.\n\nCode is the new medium for storytelling.",
-   "date": "2026-10-12T15:51:56.000Z",
-   "summaryZh": "她讲了个动人的故事：朋友小时候家里蟑螂多，妈妈把打蟑螂变成游戏，另一个朋友据此 vibe code 出一个抓蟑螂游戏，她玩哭了——代码成了讲故事的新媒介。"
+   "text": "Asking for a friend: who is the most cracked brand designer you know?",
+   "date": "2026-10-14T06:21:30.000Z",
+   "summaryZh": "Zara 帮朋友打听：你认识的最厉害的品牌设计师是谁？纯求推荐。"
   },
   {
-   "id": "https://x.com/joshwoodward/status/2109646793713786970",
+   "id": "https://x.com/levie/status/2110227571090788526",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Aaron Levie",
+   "handle": "levie",
+   "text": "Cyber is going to be one of the biggest spaces for AI agents in the future. \n\nObviously the risks of software exploits and the attack surface area increases 100 fold due to the ability for agents to work through any crack to find what they’re looking for.\n\nBut this goes the other way as well. The ability to have agent swarms review every line of code, test any number of permutations of exploits, and research any incident faster than humans as they happen, will be a huge boost in how we secure systems in the future. \n\nCyber has always been a category where it’s hard to keep up with (and triage) all the incoming risks, alerts, and changes in the enterprise and across all system. You can never hire enough people or work through the backlog of all known risks. Agents actually give you a chance finally to have far better coverage of this.\n\nThis is going to be a huge opportunity as well because we’ll see plays at the labs, data providers, the layer of the network and firewall, identity, devices and endpoints, SDLC, and even how we protect our data in the enterprise. Lots of interesting dimensions to cyber at the moment.",
+   "date": "2026-10-14T04:33:53.000Z",
+   "summaryZh": "Levie 认为网络安全会是 AI agent 最大的应用场景之一：agent 能翻遍每行代码、穷举攻击路径，帮企业补上永远招不够人的安全缺口。"
+  },
+  {
+   "id": "https://x.com/petergyang/status/2110197699790430711",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "Is it just me or is an usb recording device plugged into a conference room tv “concealed” in toilet paper not a very good disguise at all https://t.co/JqyqCevnIX",
+   "date": "2026-10-14T02:35:11.000Z",
+   "summaryZh": "Peter Yang 吐槽：把 USB 录音设备塞进厕纸里伪装，这藏法也太敷衍了。"
+  },
+  {
+   "id": "https://x.com/petergyang/status/2110194356166795474",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "Poteto cracks me up with her trolling https://t.co/EYXg8RALst",
+   "date": "2026-10-14T02:21:54.000Z",
+   "summaryZh": "Peter Yang 被 Poteto 的整活逗乐了。"
+  },
+  {
+   "id": "https://x.com/swyx/status/2110194074573586607",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Swyx",
+   "handle": "swyx",
+   "text": "this is what talent density means at @aidotengineer - @SydneyScouts runs speakers at AIE!! https://t.co/QSZJ5fwgUD https://t.co/zeyQWkirTc",
+   "date": "2026-10-14T02:20:47.000Z",
+   "summaryZh": "swyx 夸 AI Engineer 的人才密度高，说 SydneyScouts 在负责 AIE 的讲者安排。"
+  },
+  {
+   "id": "https://x.com/joshwoodward/status/2110179883045560674",
    "type": "x",
    "kind": "X 动态",
    "name": "Josh Woodward",
    "handle": "joshwoodward",
-   "text": "I’ve learned from Lenny for years, but we had never met. What you see is what you get with him: he’s kind, prepared, and deeply curious. Great interviewers do their homework, and you can tell he’s in that league: he took our conversation to places that I’ve never talked about in public. Enjoy the first 60 minutes of us getting to chat together. \n\nThank you @lennysan !",
-   "date": "2026-10-12T14:06:05.000Z",
-   "summaryZh": "他夸 Lenny 善良、准备充分、好奇心强，是顶级访谈者，两人首次见面聊出了他从未公开谈过的内容。"
+   "text": "Gemini 4 Argon: How a 24-word prompt built a custom synthesizer that turns galloping horses, rippling water, and your own hands into music. https://t.co/vjsPDalcPx",
+   "date": "2026-10-14T01:24:24.000Z",
+   "summaryZh": "Josh Woodward 展示 Gemini 4 Argon：用 24 个词的提示词就做出了一个合成器，能把马蹄声、水声和自己的手变成音乐。"
   },
   {
-   "id": "https://x.com/ryolu_/status/2109569515910836433",
+   "id": "https://x.com/nikunj/status/2110151986360553599",
    "type": "x",
    "kind": "X 动态",
-   "name": "Ryo Lu",
-   "handle": "ryolu_",
-   "text": "syncs to your ryOS Account\n\nDictionary 👉 https://t.co/TmrRC54XrY\nFitness 👉 https://t.co/dF2f7cFIuC",
-   "date": "2026-10-12T08:59:01.000Z",
-   "summaryZh": "他宣传新功能会同步到 ryOS 账户词典，并给出 Fitness 的链接。"
+   "name": "Nikunj Kothari",
+   "handle": "nikunj",
+   "text": "ever since I was a little kid, I wanted to do prorata so I can say I’m quadrupling down",
+   "date": "2026-10-13T23:33:32.000Z",
+   "summaryZh": "Nikunj 开玩笑说，从小就想做 prorata，这样就能说自己「四倍加注」。"
   },
   {
-   "id": "https://x.com/ryolu_/status/2109568690358555064",
+   "id": "https://x.com/thsottiaux/status/2110151780478927344",
    "type": "x",
    "kind": "X 动态",
-   "name": "Ryo Lu",
-   "handle": "ryolu_",
-   "text": "new on ryOS: Dictionary + Fitness\n\nlearn new words, pronunciation, 漢字. plan workouts, track body and food with AI.\n\nmade with @bot @cursor_ai https://t.co/BXEp6UzL3H",
-   "date": "2026-10-12T08:55:44.000Z",
-   "summaryZh": "ryOS 上线 Dictionary 和 Fitness：学新词、发音、汉字，用 AI 规划训练并追踪身体和饮食，用 @bot 和 Cursor 做的。"
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "Day 9/\n\nWe've rolled out optimizations to how we store state on disk for the chatgpt &amp; codex desktop app that should reduce the amount stored on disk by 60%. Small ship but we've heard enough feedback about power users running out of disk space.",
+   "date": "2026-10-13T23:32:43.000Z",
+   "summaryZh": "ChatGPT 和 Codex 桌面版优化了磁盘状态存储，占用减少 60%，回应重度用户磁盘不够用的反馈。"
   },
   {
-   "id": "https://www.youtube.com/playlist?list=PLuMcoKK9mKgHtW_o9h5sGO2vXrffKHwJL",
+   "id": "https://x.com/nikunj/status/2110137649168281871",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Nikunj Kothari",
+   "handle": "nikunj",
+   "text": "All my priors get shattered when I chat with @JustJake every month..\n\n&gt; how to scale\n&gt; how to sell\n&gt; how to hire\n&gt; how to build\n\n@Railway is an n of 1 company that’s because Jake runs it HIS way. \n\nThis podcast is a good listen on what makes him and the company truly special! https://t.co/5KXHfDZPzN",
+   "date": "2026-10-13T22:36:34.000Z",
+   "summaryZh": "Nikunj 说每次和 JustJake 聊天都会刷新认知，推荐这期播客，讲 Railway 如何按自己的方式做规模化、销售和招聘。"
+  },
+  {
+   "id": "https://x.com/thenanyu/status/2110131244956828008",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Nan Yu",
+   "handle": "thenanyu",
+   "text": "https://t.co/tQGA3nhbta https://t.co/f6pPKkYeCL",
+   "date": "2026-10-13T22:11:07.000Z",
+   "summaryZh": "Nan Yu 分享了一个链接，没有额外评论。"
+  },
+  {
+   "id": "https://x.com/thenanyu/status/2110130931902353553",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Nan Yu",
+   "handle": "thenanyu",
+   "text": "Told y’all https://t.co/6hylfBp5ZF",
+   "date": "2026-10-13T22:09:53.000Z",
+   "summaryZh": "Nan Yu 说「早跟你们讲过了」，配了个链接。"
+  },
+  {
+   "id": "https://x.com/amasad/status/2110128937049452575",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "You can pause frontier research today, and it would take AI another 10 years to diffuse into the economy. We're working with solutions partners to accelerate that. https://t.co/bC9iC6ubCP",
+   "date": "2026-10-13T22:01:57.000Z",
+   "summaryZh": "Amasad 认为就算今天暂停前沿研究，AI 渗透进经济也还要十年，他们正和解决方案伙伴一起加速这个过程。"
+  },
+  {
+   "id": "https://x.com/petergyang/status/2110120062908862517",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "Owning a house in the Bay Area is fun because you can just randomly spend five-figures on yard work.",
+   "date": "2026-10-13T21:26:41.000Z",
+   "summaryZh": "Peter Yang 调侃湾区有房的乐趣：随便搞搞院子就能花掉五位数。"
+  },
+  {
+   "id": "https://x.com/garrytan/status/2110115691684925777",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "Connie Chan wants China to win the AI race\n\nShe also has done so much to make San Francisco unsafe for everyone \n\nI asked her to resign earlier this year. Instead the legacy Dem machine thinks she is the best choice 🤮 https://t.co/y8bgnf6Yl3 https://t.co/ymn780CuVT",
+   "date": "2026-10-13T21:09:19.000Z",
+   "summaryZh": "Garry Tan 抨击 Connie Chan，说她既想让中国赢 AI 竞赛，又让旧金山变得不安全，自己年初就要求她辞职。"
+  },
+  {
+   "id": "https://x.com/amasad/status/2110112408463376730",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "brb, adding puppies to all my sites https://t.co/y53CdywLGl",
+   "date": "2026-10-13T20:56:16.000Z",
+   "summaryZh": "Amasad 开玩笑说要去给自己所有网站都加上小狗。"
+  },
+  {
+   "id": "https://x.com/joshwoodward/status/2110089824573272547",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Josh Woodward",
+   "handle": "joshwoodward",
+   "text": "Gemini 4 Argon: At 96 millimeters wide, the hardest part of manufacturing this custom furniture leg was deciding how many stacked spheres to give it. https://t.co/SMgsGxePc5",
+   "date": "2026-10-13T19:26:32.000Z",
+   "summaryZh": "Josh Woodward 用 Gemini 4 Argon 设计定制家具腿，说最难的是决定堆几个球体。"
+  },
+  {
+   "id": "https://x.com/swyx/status/2110065576764686421",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Swyx",
+   "handle": "swyx",
+   "text": "🆕 How to Kill Your SaaS \n\nhttps://t.co/A0F60h1DcQ\n\nA lot of people talk about the death of SaaS but mostly in theoretical terms. We took a real $43,000/year SaaS we use and launched a global hackathon to clone it in a weekend, with both AI and REAL HUMAN evals, using any models any harness. \n\n72 submissions, a lot of manual evals and ~100B tokens later, here are the results\n\nIn this special @latentspacepod edition we share the data collected, what's still hard about killing nontrivial, midtier SaaS, and reveal the winners of the $10,000 Kill My SaaS contest with qualitative interviews!",
+   "date": "2026-10-13T17:50:11.000Z",
+   "summaryZh": "swyx 办黑客松实测「杀死 SaaS」：用 AI 和真人评审克隆一个年费 4.3 万美元的 SaaS，72 份提交、约 100B token，公布结果和 1 万美元奖金得主。"
+  },
+  {
+   "id": "https://x.com/danshipper/status/2110056016872427944",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Dan Shipper",
+   "handle": "danshipper",
+   "text": "gemini 4 argon really struggles on our senior engineer benchmark task\n\ncomes in at 21% far below Sol 6 and even Muse: https://t.co/KrkcNrQ1DG https://t.co/Aj9lskuHFT",
+   "date": "2026-10-13T17:12:12.000Z",
+   "summaryZh": "Dan Shipper 说 Gemini 4 Argon 在他们资深工程师基准任务上只有 21%，远低于 Sol 6 甚至 Muse。"
+  },
+  {
+   "id": "https://x.com/joshwoodward/status/2110055636109312264",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Josh Woodward",
+   "handle": "joshwoodward",
+   "text": "The latest Gemini model made this https://t.co/SuYGK7UTsb",
+   "date": "2026-10-13T17:10:41.000Z",
+   "summaryZh": "Josh Woodward 展示最新 Gemini 模型生成的作品。"
+  },
+  {
+   "id": "https://x.com/garrytan/status/2110053836945756234",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "Giving your harnesses access to a real browser with your real credentials is a real unlock - highly recommend @AsideAI https://t.co/ZFAFYE7OHy",
+   "date": "2026-10-13T17:03:32.000Z",
+   "summaryZh": "Garry Tan 强烈推荐 AsideAI：让 agent 用你的真实账号访问真实浏览器，是个真正的解锁。"
+  },
+  {
+   "id": "https://x.com/zarazhangrui/status/2110052024637415720",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Zara Zhang",
+   "handle": "zarazhangrui",
+   "text": "Haha great video &amp; product! https://t.co/cnJfQ2L5p0",
+   "date": "2026-10-13T16:56:20.000Z",
+   "summaryZh": "Zara 夸一个视频和产品做得好。"
+  },
+  {
+   "id": "https://x.com/amasad/status/2110049740285165779",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "MXC.exe https://t.co/6fqwNa2y2D",
+   "date": "2026-10-13T16:47:15.000Z",
+   "summaryZh": "Amasad 发了个「MXC.exe」，没多解释。"
+  },
+  {
+   "id": "https://x.com/levie/status/2110046686198550539",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Aaron Levie",
+   "handle": "levie",
+   "text": "At Box, we've been testing Gemini 4 Argon on our Box AI Complex Work eval for the past week. It's a huge upgrade over Gemini 3.1 Pro, jumping by 14 percentage points across all our tests, and firmly at the frontier. \n\nIn our evaluation, we give the Box Agent (using Gemini 4 Argon) a variety of complex enterprise tasks involving enterprise documents in a range of industries. These tasks approximate the kind of hard, time-consuming work that knowledge workers do every day with their enterprise content. Gemini 4 is a huge leap on effectively every dimension of this work.\n\nGemini 4 is far more capable on math, logic, analytics, and deep knowledge of a variety of business domains. It also works far harder to complete tasks fully without stopping short of the desired result. This is incredibly important for complex enterprise workflows that depend on robust task execution.\n\nHere are some example wins that we saw to put the improvements in perspective:\n\n* Financial services (+18 points): a funding-gap analysis for a family-owned company, where the brief spelled out every step of the projected statements, down to the interest on the bank loan and the overdraft for each year. Gemini 4 Argon built them exactly as specified, every line broken out and carried through to the funding gap. Gemini 3.1 Pro folded the interest into a single figure.\n\n* Healthcare (+25 points): an intensive care management plan where both models spotted a dangerous potassium level and a drug interaction. Only Gemini 4 Argon went back and pulled the offending drugs from the final regimen, so its plan actually matched its own diagnosis.\n\n* Technology (+37 points): a product performance review deciding which of two regional markets should have its cloud infrastructure optimized first. Gemini 4 Argon pulled the right month's user, retention and per-user figures for both regions and correctly flagged North America. Gemini 3.1 Pro often pulled the wrong rows, at one point reporting retention above 100%, and pointed the effort at the wrong region.\n\n* Energy (+16 points): an energy consumption report across two facilities that had to flag any gaps in the meter data. Gemini 4 Argon consistently caught that the data center's smart meter log stops in November. Gemini 3.1 Pro often missed it, at times declaring the logs complete.\n\n* Consumer products (+33 points): a product launch evaluation deciding which production expansion to fund. Gemini 4 Argon saw that existing inventory could bridge an early capacity gap, which made the smaller expansion viable with an earlier launch and a faster break-even. Gemini 3.1 Pro defaulted to the larger expansion and the later timeline.\n\nGemini 4 Argon will be available in the Box AI Studio shortly for anyone to build custom Box Agents with.",
+   "date": "2026-10-13T16:35:07.000Z",
+   "summaryZh": "Levie 说 Box 测了一周 Gemini 4 Argon，在企业复杂任务评测上比 Gemini 3.1 Pro 高 14 个百分点，数学、逻辑、分析都更强，且更愿意把任务做完。"
+  },
+  {
+   "id": "https://x.com/rauchg/status/2110044152482365747",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Guillermo Rauch",
+   "handle": "rauchg",
+   "text": "Congrats Gemini team. Never bet against Google, the company that brought us Transformers and has overwhelming data, engineering talent, and compute.\n\nEveryone has, rightfully, pivoted back to coding. Coding agents are the killer app of AI. We're firmly at an elysium for developers and builders.\n\nIncidentally, getting Muse Wonder and Gemini Argon back-to-back is a reminder why you as an individual, and your company, should stay model agnostic and gateway-maxxx / fx-maxxx.",
+   "date": "2026-10-13T16:25:03.000Z",
+   "summaryZh": "Rauchg 恭喜 Gemini 团队，说别赌 Google 输；大家已回归 coding，coding agent 才是杀手级应用，并提醒公司要保持模型无关、多用网关。"
+  },
+  {
+   "id": "https://x.com/danshipper/status/2110041871594516951",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Dan Shipper",
+   "handle": "danshipper",
+   "text": "case in point: \nhttps://t.co/qSSY4av6JA",
+   "date": "2026-10-13T16:15:59.000Z",
+   "summaryZh": "Dan Shipper 举了个例子佐证自己的观点。"
+  },
+  {
+   "id": "https://x.com/danshipper/status/2110039417650024592",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Dan Shipper",
+   "handle": "danshipper",
+   "text": "VIBE CHECK: GEMINI 4—GOOGLE IS BACK https://t.co/0kIFnFJoxi",
+   "date": "2026-10-13T16:06:14.000Z",
+   "summaryZh": "Dan Shipper 的 vibe check：Gemini 4 来了，Google 回来了。"
+  },
+  {
+   "id": "https://x.com/trq212/status/2110035114432532654",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thariq",
+   "handle": "trq212",
+   "text": "excited to be back home https://t.co/58k27G1wa3",
+   "date": "2026-10-13T15:49:08.000Z",
+   "summaryZh": "trq212 说很高兴回到家。"
+  },
+  {
+   "id": "https://x.com/swyx/status/2109994742998303191",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Swyx",
+   "handle": "swyx",
+   "text": "and livestream now\n\nhttps://t.co/pOP6CRjT0R",
+   "date": "2026-10-13T13:08:43.000Z",
+   "summaryZh": "swyx 说正在直播。"
+  },
+  {
+   "id": "https://www.youtube.com/playlist?list=PLOhHNjZItNnMm5tdW61JpnyxeYH5NDDx8",
    "type": "podcast",
    "kind": "播客",
-   "name": "AI & I by Every",
+   "name": "Training Data",
    "handle": "",
-   "title": "How Sam Altman Uses Dots to Take Back His Time",
+   "title": "David Silver and Lasse Espeholt of Ineffable Intelligence: A Superlearner for the Age of Experience",
    "text": "",
-   "date": "2026-09-30T20:05:56.000Z",
-   "summaryZh": "Every 的播客 AI & I 上线一期，讲 Sam Altman 如何用 Dots 把时间抢回来。"
+   "date": "2026-10-13T09:00:00.000Z",
+   "summaryZh": "Training Data 播客请来 Ineffable Intelligence 的 David Silver 和 Lasse Espeholt，聊「经验时代的超级学习者」。"
+  },
+  {
+   "id": "https://www.anthropic.com/engineering/redesigning-source-control",
+   "type": "blog",
+   "kind": "官方博客",
+   "name": "Anthropic Engineering",
+   "handle": "",
+   "title": "Redesigning source control at Anthropic",
+   "text": "At Anthropic, coding is no longer the bottleneck to building systems or doing research. Claude is able to autonomously iterate on research loops, micro-optimize complex programs, and build new services from the ground up at a speed and scale we haven’t seen before. The bottleneck, now, is all of the developer infrastructure built for human scale: source control, builds, and CI. In May 2026, Anthropic averaged around 2,500 code changes merged per day; as of September, we merged over 30,000 per day. We don’t expect this rate of growth to slow down anytime soon; the latent demand for merging code is practically infinite, and every bottleneck we remove immediately leads to a further increase in the amount of code we produce. Changes merged to our monorepo per day, from January to September 2026. In order to support this growth, we built Scion, an in-house version control system, and fully migrated our monorepo from git in five months. We also built and shipped a code review surface (called Antique), code search, a rich source control IAM system, novel ways of managing and landing large amounts of reviewed code, and more, all in that same time period. In this post, we’ll focus on how we built Scion specifically. It makes for an interesting case study: Claude’s ability to write code was both what put us in this situation in the first place and how we were able to quickly build a high-quality, scalable system to deal with it. Growing our monorepo Before we explore what we built, we should acknowledge how unusual our workload is. Unsurprisingly, Anthropic uses Claude to write software far more than almost any other company, so we’re often the first to see where tools built for human scale start to strain. Source control is just one example of this. While we don’t expect many organizations to have these problems in the very near term, we suspect it won’t be too long before others who use AI coding tools experience these same pressure points, which is why we wanted to share what we built and what we learned. Git is a decentralized system: every clone is a complete, self-contained repository that can compute diffs, read history and blame, and check out any revision while fully offline. For the vast majority of repositories, this is the right design, and it’s a large part of why git became the standard. As our monorepo grows, it increasingly doesn’t fit that design space. The history of our main branch alone is almost 100 GB, and a compressed working copy is over 25 GB. We perform on the order of 25 million code checkouts per day for CI, before counting developer environments, agent sandboxes, and research jobs. Fetched naively, that would be over 600 PB of git traffic per day. Git offers tools for working with a slice of a repository, such as shallow clones, sparse checkouts, and promisor remotes. Beyond these, there are standard workarounds for large monorepos, like internal git mirrors and repository snapshots (seeds) kept in blob storage. We’ve used all of them—at our peak, we operated several hundred internal git mirrors to deal with the load. This bought us time, but they became harder to operate as our merge rate increased. Seeds fell further from the tip of main between refreshes, and it took more and more care to keep operations that depend on history, like diff and blame, working on partial clones. The typical setup for scaling git checkouts. Taking a step back, we noticed that, like most companies, we were using git as a centralized system with one authoritative copy, but nearly all of our clients were agents and jobs that are online by definition. The properties that make git excellent for distributed, offline work were actively undermining our ability to scale as the repo grew. So we asked ourselves: if we designed source control with the fact that agents are always online in mind from the start, what would it look like? Principles for agent-scale source control With agentic coding, many common assumptions about how software is developed are evolving. We embraced these changes when building Scion, which allowed us to take a fundamentally different approach than git on several core principles. Source control for huge monorepos has prior art, notably Google’s Piper and Meta’s Sapling , so we were able to build Scion with their hard-won lessons in mind. Our principles are: Clients are always online. Git assumes that clients work offline and need a complete copy of the repository. Since nearly all of our clients are agents and jobs, we designed Scion’s client and protocols around a server that is always reachable, and have clients fetch data when they need it. Client-server asymmetry. In git, every client is capable of being a full-fledged server. In Scion, the server answers questions about file history and blame, creates commits, performs merges and rebases, and so on. The client maintains a bounded local object cache, lays out the working copy files on disk, monitors for filesystem changes, and gives users an ergonomic way to work with the server. It can compute very little on its own but, in exchange, it requires much less data locally. A comprehensive source control service can power many novel applications. With git, a CI job or tool that needs to ask a question about the repository, such as who last changed a line or how two commits are related, has to maintain a local copy of the repo or hope that vendor-specific APIs provide the answer. With Scion, all of the source control queries the client uses are also exposed via API, so in many cases jobs don’t need a local repository at all. Many internal tools, such as our automated bisect and revert pipelines, wouldn’t be practical at scale without this cheap, programmatic access to source control. Everything must be horizontally scalable. At our peak, we ran several hundred git mirrors, which significantly strained capacity and no longer scaled once the repo outgrew the mirrors’ disks or memory limits. In Scion, the repository’s data is distributed, and every component is independently scalable; there is no fully materialized copy of the repo anywhere, even on the server. There is no equivalent of packfiles (git’s compressed bundles of objects), so no repository maintenance is needed. Commits must be cheap, incremental, and lock-free. In git, you commit locally and then push to share your work. In Scion, every commit, rebase, or merge happens on the server, so there’s nothing to push, but each of those operations needs to be fast. The cost of creating a commit and updating its downstream data structures has to scale with the size of the change, not the overall size of the repo, or the server can’t keep up. The development lifecycle in Scion discourages refs (pointers to commits, such as branches and tags), except for the main ref or release branches, because global state that every server has to agree on is a looming scaling problem. The working copy is optional, and sparse by design. Because our monorepo is so large, and because we check out code tens of millions of times a day for CI, we wanted to avoid checkouts whenever we could. With Scion, a CI job that needs the diff between a commit and its merge base, for example, can ask the server for it. The same goes for writes: many write workloads can also skip the checkout and function entirely via API. Scion’s protocol is centered around sparse checkouts, which only contain the directories the client asks for, and virtualized checkouts, which materialize files on demand, so when a job does need files on disk, the client only pays for what it actually reads. How Scion works It’s helpful to understand how these principles came together in practice when building Scion. These insights can apply to other source control systems or, more broadly, to other stages of the software development lifecycle. Data structures In Scion, the unit of work is a “changeset,” an entry in a write-ahead log. A changeset stores most of what you’d expect from a commit in git. But where a git commit stores a pointer to the tree, a changeset stores a list of the files that changed relative to its first parent, 1 along with content-addressed pointers to the compressed file contents in blob storage. Changesets are created server-side and are available everywhere, instantly. The shape of a changeset in Scion. This structure lets us accept changesets with very high throughput because there are no packfiles to accept, no locking or cross-server coordination, and no refs to move around. Scion does technically support refs, but since neither creating nor fetching commits involves them, moving one is a compare-and-swap on a single Spanner row that happens separately from creating changesets. A changeset records only what’s changed, so on its own, it can’t quickly answer questions like who last edited a line or which commits affected a file. To answer those, Scion builds additional data structures from the changesets, including dedicated structures for file blame and path history and skip lists for the commit graph. We call everything that isn’t directly part of the changeset “derived data,” and we compute it all through one generic mechanism. Each type of derived data is defined recursively, so its value for a changeset is computed from its values for that changeset’s parents. This mechanism has three benefits. First, we can easily add a new type of derived data when a new data structure would make some operation faster. Second, for each type, we can choose whether to compute it eagerly or defer the work, so we avoid materializing data we don’t need. And third, because the client never sees the internals of these data structures, we can optimize them without changing the client. We’ve added new types of derived data many times as the system has grown, such as new indices for performing copy detection or path-based file search. Scaling Scion A small fleet of Scion servers provides source control APIs for any operation a client needs, such as getting changesets, computing diffs, finding merge bases, and fetching blobs. All source control data is content-addressed, so a piece of data never changes once it’s stored, and any server can cache it without checking with the others. As a result, the servers are horizontally scalable and require little coordination. They are essentially large caches that can also compute derived data on the fly and write the results back to Spanner. Scion’s many consumers no longer need to maintain local repositories of their own. Fetching and maintaining the repository used to be a significant maintenance burden for CI jobs or tools that needed to ask source control questions, particularly about commit ancestry and blame. Early in the migration, before we had our own client, repo format, or protocols, Scion only answered these “metadata” queries. Fetching file contents and materializing working copies are far more data-intensive operations, and they needed a design of their own. Scion’s scn client deviates from git’s fetch protocols in several important ways and, as a result, lends itself to a highly scalable architecture that requires significantly less CPU than git servers. Scion’s negotiation doesn’t tell the server what the client already has; instead, it operates exclusively on trees and blobs the client wants. Starting from a root tree, the client checks its local store for missing trees and requests them recursively, then repeats the process for blobs. Every request is for a specific object that never changes, so any cache can answer it, and the architecture closely resembles traditional tiered caches. The process is also efficient and resumable, because there is no single multi-gigabyte packfile response. Sparse and even virtualized checkouts don’t need special support, because the client simply doesn’t ask for trees it doesn’t want. In the fleet, the client talks over a socket to a daemon, scion-daemon, that stores objects for the whole node. Most of our nodes need access to the monorepo, and jobs on the same node reuse most of the same objects. Each daemon starts from a periodically refreshed snapshot, then talks only to the tree and blob cache servers in its region, called scion-cache. These cache servers stream objects directly from memory, in the disk format that the daemon will consume, so they don’t need to spend time computing the client’s missing objects or performing delta compression. When a cache is missing an object, it asks the authoritative scion-servers, which read from Spanner or cloud storage as needed. The scion-daemon, scion-cache, and scion-server all respond to identical RPCs for this protocol, so the client doesn’t need to know the cache topology. Any tier could theoretically talk to any other, but we strictly enforce the tiering to isolate failure domains. We want to avoid a situation where a failure in a regional scion-cache overwhelms the upstream scion-servers and brings down the entire system. Scion’s checkout architecture. Each tier of this system maintains a cache hit rate of over 99% and does not require long-lived state, so it’s easy to scale up if needed. Our Scion infrastructure footprint is now 200x smaller than our previous git mirroring infrastructure in terms of CPU and memory requirements. CI and research jobs check out code two orders of magnitude faster (in seconds rather than minutes), which frees up a sizable amount of capacity across the fleet; CI alone realized a 25% CPU capacity win. Neither clients nor caches need to perform repository maintenance, which simplifies the lifecycle management of our jobs. What we learned building Scion We started building Scion around the same time as Claude Mythos Preview and Claude Tag became available internally. Both of these releases simultaneously amplified the need for Scion and meaningfully accelerated how quickly we could build it. Here’s a particularly striking example. Earlier in the year, we had largely handwritten the first version of the git-to-Scion ingestion pipeline as a prototype. We thought it was good—until we got our hands on an early internal snapshot of Claude Mythos Preview. We asked it to rewrite the whole thing, and with no further instructions, it produced a version that consumed 20x less memory and was 4x faster, while preserving all of the implicit invariants around ingestion ordering and data structures. Merged changes to the Scion and Antique codebases per week, from January to September 2026. What we learned building and operating Scion offers some interesting lessons for what building agent-scale software could look like. Rapid development with a small team will become more common. A team of seven people built both Scion and Antique (our code review tool, which we could easily write a whole other blog post about), not to mention half a dozen related systems, and fully migrated to them in five months. We did all this while the volume of code merged per day increased by 10x. In the past, developing and deploying a source control system like this would have taken a company years of iterative migration, with many more engineers. We think this sort of fast, nimble migration will become more common in the future. Engineers are no less valuable, but their work is changing. All of the engineers who worked on this system would now rate Claude as better at writing code than them. But our engineers still supplied the invaluable understanding of the high-level inter-system components and the design-level tradeoffs, making informed choices around the problems we wanted to solve and the scale we knew we needed to achieve. Very often, we found that the role of the engineers was to tell Claude “no.” Agents will sometimes violate core system constraints to satisfy a pattern that should never have been allowed in the first place. This was particularly common in our migration. For example, there were multiple systems that tried to brute force looking up when a change merged to main by linearly reading the commit log instead of asking our code review tool. Anthropic also makes extensive use of adversarial review, and, while this is incredibly effective in many ways, it can also be myopic, so skilled engineers needed to steer Claude away from over-engineering parts of the system in response to hypothetical concerns. For example, one such review was overly defensive about trusting another internal service, which resulted in Claude adding excessive validation and complexity. Our team members still review every change request for the system, but they now examine the intent of the change as opposed to reading every line of code. We were able to substantially improve optimization and quality. By virtue of Claude’s ability to write immense amounts of code much faster than we could ourselves, Scion is among the most well-tested and well-defended codebases we have ever worked on. Even on our tight timeline, we were able to build hermetic simulations of every non-trivial infrastructure and source control interaction we’ve ever encountered, as well as fuzzing and sophisticated rate limiting. Claude also casually found significant optimizations—for example, an algorithmic optimization to ancestry queries that missed one of our indexes—that would have taken an expert days or weeks of analysis and tuning… and then did it all again the next day. Observed performance improvements on native Scion repos. We laid the groundwork for new forms of monorepo security. Managing safety, security, and compliance in a massive monorepo is as important as managing the size and scale. We built Scion with these in mind from the start. It supports rich access control on repositories, as well as the ability to apply permissions to individual directories in order to protect the most sensitive code without losing the benefits of a monorepo. Furthermore, the code review tooling we built can express complex semantic constraints on approvals, which lets us differentiate simple things like comment-only changes from sensitive logical changes, so that human reviewers can focus on the most consequential changes. A new level of operational excellence is possible. Our team uses Claude Tag heavily, which has helped us monitor each component of the system. For example, we created Slack channels where we tasked Claude with being obsessively focused on the health of a single component. We call these Claudes “superfans.” We have a scion-daemon superfan, a scion-cache superfan, an Antique merge queue superfan, and so on. They have access to our telemetry and logs, and act like an experienced engineer who has nothing better to do than to refresh charts and look for anything strange. We also have traditional alerts for all of our systems, but our superfans can detect subtle and novel issues that make these alerts seem one-dimensional by comparison. We’re completely rethinking our priors. This project prompted us to take a very hard look at other workflows designed for human scale. A proper merge queue, for example, doesn’t make much sense at agent scale. What does CI even mean when hundreds or even thousands of changes can merge while tests are running? We haven’t been able to effectively replicate the industry standard of a global repository lock on the merge queue, so instead, we’ve invested in post-merge and pre-deploy automated testing. This does mean that concurrent changes can conflict, but Claude can typically fix these conflicts faster than humans can even identify them. Contributing to the wider ecosystem We see Scion as just one part of the answer to the scaling concerns that increasingly capable AI agents have raised. We’re sharing these details as an example of how teams can tackle similar challenges, though we don’t expect our solution, or our considerations, to suit every case. Scion is by no means a suitable replacement for git for general use. The concepts we’ve outlined here really only make sense for truly enormous monorepos, with either tens of thousands of engineers or swarms of agents prolifically writing code. Plus, Anthropic is unique in that our ability to spend tokens for internal use far exceeds what any other business would realistically want to spend. We do this both to address our own software development needs, and to test Claude’s capabilities. Practically speaking, it’s difficult to offer Scion in a form that would be broadly useful to other organizations. It diverges significantly from git, meaning companies would need to migrate every piece of the development lifecycle, and it requires its own code review, code search, and CI. Our internal versions of these components are highly bespoke, so they would be difficult for other organizations to adopt, and we worry that attempting to build a public version that tries to please everyone wouldn’t actually be very useful. However, we anticipate that this class of problems will become more commonplace over the next six to 12 months, and it would be an inefficient use of engineering resources for every company using git to face similar challenges alone. Given that, we think the most impactful thing we can do is to share our thinking, so that other developers can apply some of the most successful parts of Scion to git without departing from the overall model. A git server doesn’t have to work the same way as a git client does; novel server architectures exist that provide significant scaling improvements. Git platforms can provide comprehensive server-side RPCs like Scion, perhaps even in a standardized way across forges that the git client can learn to talk to. The negotiation protocol doesn’t have to look exactly like it does today, either, and the various sparse and shallow features in git can be made to compose well. Lastly, we want to acknowledge that the git community has spent nearly two decades scaling the platform for millions of developers. Our contribution is far narrower: sharing our early view into how agentic software development interacts with these systems, so that we can partner with GitHub, GitLab, and the OSS community to support the changing needs of developers. We’re all in it together as the software development lifecycle intersects with the AI exponential. Acknowledgements Written by Nick G. and the source control team: S.G., R.K., Dan C., Garrett H., Ben L., Colin M., Joe P. We’re grateful to Vilas J. and Sergiu D. for supporting the source control team on this ambitious journey and Amir O. for early contributions to Antique. Footnotes Storing changed files relative to the first parent of a merge is a stylistic choice; in practice, we’ve found that people only care about history or blame for commits on the main line in trunk-based development in a monorepo.",
+   "date": "",
+   "summaryZh": "Anthropic 说 Claude 让写代码不再是瓶颈，真正的瓶颈是人类规模的版本控制和 CI；他们自建了 Scion 版本控制系统，因为代码合并量从每天 2500 涨到 3 万。"
   }
  ]
 }
