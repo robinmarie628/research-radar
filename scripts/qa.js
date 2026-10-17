@@ -172,10 +172,15 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     return { label: c?.textContent.trim() };
   });
 
-  /* ---- domain filter ---- */
+  /* ---- domain filter (specialties live inside the 学科 folder) ---- */
+  await page.evaluate(() => {
+    const folder = document.querySelector('#researchChips .chip.folder');
+    if (folder && folder.getAttribute('aria-expanded') !== 'true') folder.click();
+  });
+  await sleep(300);
   await page.evaluate(() => {
     const c = [...document.querySelectorAll('#researchChips .chip')]
-      .find(x => x.textContent.includes('心血管'));
+      .find(x => !x.classList.contains('folder') && x.textContent.includes('心血管'));
     if (c) c.click();
   });
   await sleep(700);

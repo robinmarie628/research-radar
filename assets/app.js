@@ -7,7 +7,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.17.12';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.17.13';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -137,6 +137,7 @@ const S = {
   jFilter: 'pick',
   jView: 'card',
   q: '',
+  domainsOpen: false,
   aFilter: 'all',
   seen: new Set(),
   tab: 'research',
@@ -831,6 +832,26 @@ function chip(label, count, pressed, onClick, cls = '', key = '') {
   b.addEventListener('click', onClick);
   return b;
 }
+
+/** Navy folder for specialty domains. Utility chips stay outside it. */
+function domainFolderChip(count, open, activeDomain) {
+  const b = el('button', 'chip folder' + (open ? ' is-open' : ''));
+  b.type = 'button';
+  b.dataset.k = 'domains';
+  b.setAttribute('aria-expanded', String(open));
+  const label = activeDomain && !open ? `学科 · ${activeDomain}` : '学科';
+  b.setAttribute('aria-label', open ? '收起学科' : '展开学科');
+  b.append(document.createTextNode(label));
+  b.append(el('span', 'cnt', `(${count})`));
+  b.append(el('span', 'chev', open ? '▴' : '▾'));
+  b.addEventListener('click', () => {
+    S.domainsOpen = !S.domainsOpen;
+    renderResearch();
+    const next = $('#researchChips .chip.folder');
+    if (next) next.focus();
+  });
+  return b;
+}
 function starsNode(n) {
   const w = el('span', 'stars');
   for (let i = 1; i <= 5; i++) w.append(el('span', i <= n ? '' : 'off', '★'));
@@ -867,10 +888,15 @@ function renderResearch() {
     chip({ ico:'🧬', text:'基础/分子' }, (S.jr.byKey.basic || []).length, S.jFilter === 'basic', () => setJFilter('basic'), '', 'basic'),
     chip({ ico:'📚', text:'专业词汇' }, S.gloss.length, false, openGlossary),
   );
-  for (const d of DOMAIN_ORDER) {
-    const n = (S.jr.byKey[d] || []).length;
-    if (!n) continue;
-    host.append(chip({ ico: dm(d).ico, text: d, hue: dm(d).hue }, n, S.jFilter === d, () => setJFilter(d)));
+  const domains = DOMAIN_ORDER.filter(d => (S.jr.byKey[d] || []).length);
+  if (domains.length) {
+    const activeDom = domains.includes(S.jFilter) ? S.jFilter : '';
+    host.append(domainFolderChip(domains.length, !!S.domainsOpen, activeDom));
+    if (S.domainsOpen) {
+      for (const d of domains) {
+        host.append(chip({ ico: dm(d).ico, text: d }, (S.jr.byKey[d] || []).length, S.jFilter === d, () => setJFilter(d)));
+      }
+    }
   }
 
   $('#litDate').textContent = S.jr.fetchedAt ? fmtDate(S.jr.fetchedAt) : '—';
@@ -1431,7 +1457,7 @@ function setTab(tab) {
   $('#panel-research').hidden = tab !== 'research';
   $('#panel-builders').hidden = tab !== 'builders';
   $('#scrollArea').scrollTop = 0;
-  $('#brandSub').textContent = tab === 'research' ? '临床顶刊 + 基础医学 · 每日速递' : 'AI Builder · 一手动态';
+  $('#brandSub').textContent = tab === 'research' ? '科研雷达 · 临床顶刊每日速递' : '科研雷达 · AI Builder 一手动态';
   if (tab === 'builders' && !S.ai.loaded) loadBuilders(false);
   if (tab === 'builders' && !S.bd.loaded) loadBuilderDigest();
 }
