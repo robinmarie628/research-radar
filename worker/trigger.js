@@ -14,7 +14,9 @@
  *   4) 记下输出的 *.workers.dev 地址，填进前端 assets/app.js 的 WORKER_URL。
  *
  * POST /            触发上面的两个 workflow。
- * POST /favorites  把收藏 Markdown 发给已验证的 Gmail（见 favorites-mail.js）。
+ * POST /favorites  收藏发信代码还在，但页面已不再调用。
+ *                  没有自定义域名时 Email Routing 发不出去，收藏改为本地下载 Markdown。
+ *                  见 favorites-mail.js。有域名之前不要加 [[send_email]]。
  *
  * 详见同目录 README-deploy.md
  */
@@ -48,7 +50,7 @@ export default {
       return new Response(null, { status: 204, headers: corsHeaders() });
     }
     const path = new URL(request.url).pathname.replace(/\/+$/, '') || '/';
-    // 收藏邮件。收件人在 favorites-mail.js 里写死，不走下面的 GitHub 触发。
+    // 页面不再调用这条路由（没有自定义域名，发不了信）。代码留着，等有域名再用。
     if (path === '/favorites') return handleFavoritesRequest(request, env);
     if (request.method !== 'POST') {
       return json({ ok: false, error: '只接受 POST 请求' }, 405);
