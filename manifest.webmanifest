@@ -1,7 +1,7 @@
 {
-  "name": "科研雷达 · 顶刊速递 & AI Builder",
-  "short_name": "科研雷达",
-  "description": "每日更新的心血管与重症医学顶刊速递，以及 AI Builder 一手动态。",
+  "name": "Radar for Meds",
+  "short_name": "Radar for Meds",
+  "description": "Radar for Meds（科研雷达）：每日顶刊速递，以及 AI Builder 一手动态。",
   "lang": "zh-CN",
   "start_url": "./",
   "scope": "./",

@@ -8,7 +8,11 @@ const fs = require('fs');
 const path = require('path');
 
 const BASE = process.env.QA_BASE || 'http://127.0.0.1:8777/index.html';
-const EDGE = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
+const EDGE = process.env.QA_BROWSER || [
+  'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
+  '/usr/bin/google-chrome',
+  '/usr/bin/chromium',
+].find(p => fs.existsSync(p));
 const SHOT = process.env.QA_SHOTS || path.join(process.env.TEMP || '/tmp', 'rr-shots');
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
@@ -17,7 +21,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   const browser = await puppeteer.launch({
     executablePath: EDGE,
     headless: 'new',
-    args: ['--no-first-run', '--no-default-browser-check', '--disable-gpu', '--hide-scrollbars'],
+    args: ['--no-first-run', '--no-default-browser-check', '--disable-gpu', '--hide-scrollbars', '--no-sandbox', '--disable-dev-shm-usage'],
     defaultViewport: { width: 390, height: 844, deviceScaleFactor: 2, isMobile: true, hasTouch: true },
   });
   const page = await browser.newPage();
@@ -29,15 +33,15 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     // "Failed to load resource" carries no URL and always duplicates a requestfailed
     // event, which the handler below classifies properly by host. Skip it here.
     if (/Failed to load resource/i.test(m.text())) return;
-    if (/crossref/i.test(m.text())) warnings.push('CONSOLE ' + m.text().slice(0, 160));
+    if (/crossref|pubmed|ncbi/i.test(m.text())) warnings.push('CONSOLE ' + m.text().slice(0, 160));
     else errors.push('CONSOLE ' + m.text());
   });
   page.on('pageerror', e => errors.push('PAGEERROR ' + e.message));
   page.on('requestfailed', r => {
     const u = r.url(), t = r.failure()?.errorText || '';
     if (/ERR_INTERNET_DISCONNECTED/.test(t) && /beacon|analytics|gtag/.test(u)) return; // host gateway beacon
-    if (/ERR_ABORTED/.test(t) && /europepmc|crossref|githubusercontent/.test(u)) return;
-    if (/crossref/i.test(u)) { warnings.push('REQFAIL ' + u.slice(0, 90) + ' :: ' + t); return; }
+    if (/ERR_ABORTED/.test(t) && /europepmc|crossref|githubusercontent|ncbi/.test(u)) return;
+    if (/crossref|ncbi\.nlm\.nih\.gov/i.test(u)) { warnings.push('REQFAIL ' + u.slice(0, 90) + ' :: ' + t); return; }
     errors.push('REQFAIL ' + u.slice(0, 110) + ' :: ' + t);
   });
 
@@ -172,10 +176,15 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     return { label: c?.textContent.trim() };
   });
 
-  /* ---- domain filter ---- */
+  /* ---- domain filter (specialties live inside the 学科 folder) ---- */
+  await page.evaluate(() => {
+    const folder = document.querySelector('#researchChips .chip.folder');
+    if (folder && folder.getAttribute('aria-expanded') !== 'true') folder.click();
+  });
+  await sleep(300);
   await page.evaluate(() => {
     const c = [...document.querySelectorAll('#researchChips .chip')]
-      .find(x => x.textContent.includes('心血管'));
+      .find(x => !x.classList.contains('folder') && x.textContent.includes('心血管'));
     if (c) c.click();
   });
   await sleep(700);

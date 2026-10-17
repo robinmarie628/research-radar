@@ -1,13 +1,14 @@
 /* ============================================================
    科研雷达 · Research Radar
    Live data: Europe PMC (journals) + Crossref (PII → ClinicalKey / ScienceDirect)
+              + Crossref online dates & PubMed abstracts (最近一周)
               + follow-builders (AI builders)
    Zero build, zero backend, zero API keys.
    ============================================================ */
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.17.12';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.17.15';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -28,6 +29,13 @@ const PICK_CLINICAL = 4;    // …其中临床研究
 const TTL      = 30 * 60e3; // cache freshness
 const LS_KEY   = 'rr.cache.v2';
 const SEEN_KEY = 'rr.seen.v1';
+/* Crossref polite pool + NCBI identification. Browsers forbid a custom
+ * User-Agent, so Crossref gets `mailto` and NCBI gets tool + email.
+ * Not a secret; no API key. */
+const API_MAIL = 'research-radar@users.noreply.github.com';
+const EUTILS   = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/';
+const WEEK_ABS_MIN = 40;
+const NCBI_GAP_MS  = 400;
 
 /* ---------------- 领域 (domain) ---------------- */
 const DOMAIN_META = {
@@ -131,12 +139,14 @@ const PT_STRONG = [
 const S = {
   cfg: [], gloss: [], domains: [],
   jr: { all: [], picks: [], byKey: {}, updated: null, loaded: false, error: null },
+  week: { items: [], loaded: false, loading: false, error: '' },
   ai: { all: [], updated: null, loaded: false, error: null },
   digest: { date: null, items: [], byDoi: new Map(), loaded: false },
   bd: { date: null, headline: '', bullets: [], sentiment: '', byId: new Map(), loaded: false },
   jFilter: 'pick',
   jView: 'card',
   q: '',
+  domainsOpen: false,
   aFilter: 'all',
   seen: new Set(),
   tab: 'research',
@@ -270,6 +280,33 @@ async function fetchJSONRetry(url, tries = 3, ms = 30000) {
   for (let i = 0; i < tries; i++) {
     try { return await fetchJSON(url, ms); }
     catch (e) { last = e; if (i < tries - 1) await new Promise(r => setTimeout(r, 900 * (i + 1))); }
+  }
+  throw last;
+}
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+/** One retry for 429/5xx. A 404 (unknown ISSN) is not worth three attempts. */
+async function fetchJSONSoft(url, ms = 20000) {
+  try { return await fetchJSON(url, ms); }
+  catch (e) {
+    if (/HTTP 4/.test(String(e && e.message)) && !/HTTP 429/.test(String(e && e.message))) throw e;
+    await sleep(800);
+    return await fetchJSON(url, ms);
+  }
+}
+async function fetchText(url, ms = 25000) {
+  const ac = new AbortController();
+  const t = setTimeout(() => ac.abort(), ms);
+  try {
+    const r = await fetch(url, { signal: ac.signal, cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return await r.text();
+  } finally { clearTimeout(t); }
+}
+async function fetchTextRetry(url, tries = 2, ms = 25000) {
+  let last;
+  for (let i = 0; i < tries; i++) {
+    try { return await fetchText(url, ms); }
+    catch (e) { last = e; if (i < tries - 1) await sleep(1000 * (i + 1)); }
   }
   throw last;
 }
@@ -472,6 +509,267 @@ async function loadResearch(force) {
   S.jr._sig = sig;
   if (sig === prev && S.jr.loaded) return;   // 数据没变，保持界面原样
   renderResearch();
+}
+
+/* ---------------- 最近一周: Crossref online date + PubMed abstract --------
+   Europe PMC FIRST_PDATE lags about a week, so the 7-day chip cannot read
+   the 30-day pool. Crossref `from-online-pub-date` is current; its abstracts
+   are often empty (NEJM). PubMed E-utilities already have those abstracts.
+   Results live in S.week and the `week` cache slot (same 30 min TTL). A
+   failure here never blocks the Europe PMC list. */
+let weekGen = 0;
+
+function normDoi(s) {
+  return String(s || '').trim().toLowerCase().replace(/^https?:\/\/(dx\.)?doi\.org\//, '');
+}
+function abstractChars(a) {
+  if (a?.structured && a.sections) {
+    return Object.values(a.sections).reduce((n, s) => n + String(s || '').trim().length, 0);
+  }
+  return String(a?.abstract || '').trim().length;
+}
+function crossrefDay(item) {
+  const parts = (item?.['published-online'] || item?.issued || {})['date-parts']?.[0];
+  if (!parts || parts.length < 3 || !parts[0]) return '';
+  const [y, m, d] = parts;
+  return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+}
+async function mapPool(items, limit, fn) {
+  const n = Math.max(1, Math.min(limit, items.length || 1));
+  let cursor = 0;
+  const worker = async () => {
+    while (cursor < items.length) {
+      const i = cursor++;
+      await fn(items[i], i);
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(n, items.length) }, worker));
+}
+async function crossrefJournalWorks(issn, lo, hi) {
+  const items = [];
+  let offset = 0;
+  for (let page = 0; page < 3; page++) {
+    const url = `https://api.crossref.org/journals/${encodeURIComponent(issn)}/works?` + new URLSearchParams({
+      filter: `type:journal-article,from-online-pub-date:${lo},until-online-pub-date:${hi}`,
+      rows: '100',
+      offset: String(offset),
+      select: 'DOI,title,abstract,author,published-online,issued',
+      mailto: API_MAIL,
+    });
+    const data = await fetchJSONSoft(url, 20000);
+    const batch = data?.message?.items || [];
+    items.push(...batch);
+    const total = data?.message?.['total-results'] || 0;
+    offset += batch.length;
+    if (!batch.length || offset >= total || offset >= 300) break;
+  }
+  return items;
+}
+function mapCrossrefWork(item, meta, lo, hi) {
+  const title = cleanText((item.title || [])[0] || '');
+  const doi = normDoi(item.DOI);
+  const date = crossrefDay(item);
+  if (!title || !doi || !date || date < lo || date > hi) return null;
+  const abstract = cleanText(item.abstract || '');
+  const author0 = (item.author || [])[0] || {};
+  const authors = cleanText([author0.family, author0.given].filter(Boolean).join(' ') || author0.name || '');
+  const isBasic = !!(meta && meta.basic);
+  const study = detectStudy(title, abstract, isBasic, []);
+  return {
+    id: doi,
+    title,
+    abstract,
+    sections: null,
+    structured: false,
+    journal: meta?.short || '—',
+    issn: meta?.issn || '',
+    platforms: Array.isArray(meta?.platforms) ? meta.platforms.slice() : [],
+    domain: meta?.domain || '综合医学',
+    imp: meta?.if ?? 0,
+    basic: isBasic,
+    studyKey: study.key, studyZh: study.zh, studyRank: study.rank,
+    stars: starTier(meta?.if ?? 0),
+    date,
+    ts: Date.parse(date) || 0,
+    year: date.slice(0, 4),
+    authors,
+    pmid: '',
+    doi,
+    keywords: [],
+    oa: false,
+    pii: undefined,
+  };
+}
+function sectionKeyForLabel(label) {
+  if (!label || SEC_SKIP.test(label)) return '';
+  for (const [k, re] of SEC_HEAD) if (re.test(label)) return k;
+  return 'other';
+}
+function parsePubmedArticle(art) {
+  const nodes = [...art.querySelectorAll('Abstract AbstractText')];
+  const sections = { objective: '', methods: '', results: '', conclusion: '', other: '' };
+  const chunks = [];
+  let mapped = false;
+  for (const n of nodes) {
+    const label = (n.getAttribute('Label') || '').trim();
+    const text = cleanText(n.textContent || '');
+    if (!text) continue;
+    chunks.push(label ? `${label}: ${text}` : text);
+    const key = sectionKeyForLabel(label);
+    if (!key) continue;
+    if (key !== 'other') mapped = true;
+    sections[key] = sections[key] ? sections[key] + ' ' + text : text;
+  }
+  const text = chunks.join('\n');
+  const structured = mapped && !!(sections.objective || sections.methods || sections.results || sections.conclusion);
+  const ids = [...art.querySelectorAll('ArticleId')];
+  const doiNode = ids.find(n => (n.getAttribute('IdType') || '').toLowerCase() === 'doi')
+    || [...art.querySelectorAll('ELocationID')].find(n => (n.getAttribute('EIdType') || '').toLowerCase() === 'doi');
+  return {
+    doi: normDoi(doiNode?.textContent || ''),
+    pmid: art.querySelector('MedlineCitation > PMID')?.textContent?.trim() || '',
+    pubTypes: [...art.querySelectorAll('PublicationType')].map(n => (n.textContent || '').trim()).filter(Boolean),
+    text,
+    structured,
+    sections: structured ? sections : null,
+  };
+}
+function applyPubmedHit(a, hit) {
+  if (hit.pmid) a.pmid = hit.pmid;
+  const text = String(hit.text || '').trim();
+  if (text.length < WEEK_ABS_MIN && abstractChars({ structured: hit.structured, sections: hit.sections, abstract: text }) < WEEK_ABS_MIN) return;
+  a.abstract = hit.structured ? '' : text;
+  a.sections = hit.structured ? hit.sections : null;
+  a.structured = !!hit.structured;
+  const blob = hit.structured ? Object.values(hit.sections).join(' ') : text;
+  const study = detectStudy(a.title, blob, a.basic, hit.pubTypes || []);
+  a.studyKey = study.key;
+  a.studyZh = study.zh;
+  a.studyRank = study.rank;
+}
+async function fillPubmedAbstracts(articles) {
+  const dois = [...new Set(articles.map(a => a.doi).filter(Boolean))];
+  const pmids = [];
+  for (let i = 0; i < dois.length; i += 40) {
+    const chunk = dois.slice(i, i + 40);
+    const term = chunk.map(d => `${d}[doi]`).join(' OR ');
+    const url = EUTILS + 'esearch.fcgi?' + new URLSearchParams({
+      db: 'pubmed', retmode: 'json', retmax: '80', term,
+      tool: 'research-radar', email: API_MAIL,
+    });
+    try {
+      const data = await fetchJSONRetry(url, 2, 20000);
+      pmids.push(...(data?.esearchresult?.idlist || []));
+    } catch (e) { console.warn('[pubmed esearch]', e.message || e); }
+    if (i + 40 < dois.length) await sleep(NCBI_GAP_MS);
+  }
+  const uniq = [...new Set(pmids)];
+  const byDoi = new Map();
+  for (let i = 0; i < uniq.length; i += 80) {
+    if (i) await sleep(NCBI_GAP_MS);
+    const url = EUTILS + 'efetch.fcgi?' + new URLSearchParams({
+      db: 'pubmed', id: uniq.slice(i, i + 80).join(','), retmode: 'xml',
+      tool: 'research-radar', email: API_MAIL,
+    });
+    try {
+      const xml = await fetchTextRetry(url);
+      const doc = new DOMParser().parseFromString(xml, 'text/xml');
+      if (doc.querySelector('parsererror')) continue;
+      for (const art of doc.querySelectorAll('PubmedArticle')) {
+        const hit = parsePubmedArticle(art);
+        if (hit.doi) byDoi.set(hit.doi, hit);
+      }
+    } catch (e) { console.warn('[pubmed efetch]', e.message || e); }
+  }
+  for (const a of articles) {
+    const hit = byDoi.get(a.doi);
+    if (hit) applyPubmedHit(a, hit);
+  }
+}
+async function fetchWeekArticles() {
+  const lo = utcDay(-6);
+  const hi = utcDay(0);
+  const found = [];
+  let attempts = 0;
+  let failures = 0;
+  await mapPool(S.cfg.filter(m => m && m.issn), 3, async (meta) => {
+    attempts++;
+    try {
+      const works = await crossrefJournalWorks(meta.issn, lo, hi);
+      for (const w of works) {
+        const art = mapCrossrefWork(w, meta, lo, hi);
+        if (art) found.push(art);
+      }
+    } catch (e) {
+      failures++;
+      console.warn('[crossref]', meta.issn, e.message || e);
+    }
+  });
+  const byDoi = new Map();
+  for (const a of found) if (!byDoi.has(a.doi)) byDoi.set(a.doi, a);
+  const list = [...byDoi.values()];
+  if (!list.length && attempts && failures === attempts) throw new Error('Crossref 暂时不可用');
+  await fillPubmedAbstracts(list);
+  return list
+    .filter(a => a.title && abstractChars(a) >= WEEK_ABS_MIN)
+    .sort((a, b) => (b.date || '').localeCompare(a.date || '') || a.title.localeCompare(b.title));
+}
+
+/** Crossref+PubMed rows, swapping in the Europe PMC card when the same DOI is already pooled. */
+function weekList() {
+  const pool = new Map();
+  for (const a of S.jr.all || []) {
+    const d = normDoi(a.doi);
+    if (d && !pool.has(d)) pool.set(d, a);
+  }
+  const out = [];
+  const seen = new Set();
+  for (const a of S.week.items || []) {
+    const d = normDoi(a.doi);
+    if (!d || seen.has(d)) continue;
+    seen.add(d);
+    const hit = pool.get(d);
+    out.push(hit && abstractChars(hit) >= WEEK_ABS_MIN ? hit : a);
+  }
+  return out;
+}
+function weekChipCount() {
+  if (!S.week.loaded && !(S.week.items || []).length) return '…';
+  return weekList().length;
+}
+function paintWeek() {
+  if (S.jFilter === 'week') { renderResearch(); return; }
+  const cnt = document.querySelector('#researchChips .chip[data-k="week"] .cnt');
+  if (cnt) cnt.textContent = `(${weekChipCount()})`;
+  else renderResearch();
+}
+async function loadWeek(force = false) {
+  const gen = ++weekGen;
+  if (!S.cfg.length) return;
+  const c = readCache();
+  const fresh = c.week && Date.now() - c.week.at < TTL && Array.isArray(c.week.data?.items);
+  if (!force && fresh) {
+    if (gen !== weekGen) return;
+    S.week = { items: c.week.data.items, loaded: true, loading: false, error: '' };
+    paintWeek();
+    return;
+  }
+  S.week.loading = true;
+  S.week.error = '';
+  paintWeek();
+  try {
+    const items = await fetchWeekArticles();
+    if (gen !== weekGen) return;
+    S.week = { items, loaded: true, loading: false, error: '' };
+    writeCache('week', { items });
+  } catch (e) {
+    if (gen !== weekGen) return;
+    console.warn('[week]', e);
+    S.week.loading = false;
+    S.week.loaded = true;
+    S.week.error = e.message || String(e);
+  }
+  if (gen === weekGen) paintWeek();
 }
 
 /* ---------------- Crossref PII → publisher deep link --------------------
@@ -831,6 +1129,26 @@ function chip(label, count, pressed, onClick, cls = '', key = '') {
   b.addEventListener('click', onClick);
   return b;
 }
+
+/** Navy folder for specialty domains. Utility chips stay outside it. */
+function domainFolderChip(count, open, activeDomain) {
+  const b = el('button', 'chip folder' + (open ? ' is-open' : ''));
+  b.type = 'button';
+  b.dataset.k = 'domains';
+  b.setAttribute('aria-expanded', String(open));
+  const label = activeDomain && !open ? `学科 · ${activeDomain}` : '学科';
+  b.setAttribute('aria-label', open ? '收起学科' : '展开学科');
+  b.append(document.createTextNode(label));
+  b.append(el('span', 'cnt', `(${count})`));
+  b.append(el('span', 'chev', open ? '▴' : '▾'));
+  b.addEventListener('click', () => {
+    S.domainsOpen = !S.domainsOpen;
+    renderResearch();
+    const next = $('#researchChips .chip.folder');
+    if (next) next.focus();
+  });
+  return b;
+}
 function starsNode(n) {
   const w = el('span', 'stars');
   for (let i = 1; i <= 5; i++) w.append(el('span', i <= n ? '' : 'off', '★'));
@@ -864,13 +1182,19 @@ function renderResearch() {
     chip({ ico:'⭐', text:'今日精选' }, S.jr.picks.length, S.jFilter === 'pick', () => setJFilter('pick'), '', 'pick'),
     chip({ ico:'🌐', text:'全部' }, all.length, S.jFilter === 'all', () => setJFilter('all'), '', 'all'),
     chip({ ico:'✨', text:'未读' }, unread, S.jFilter === 'unread', () => setJFilter('unread'), '', 'unread'),
+    chip({ ico:'📅', text:'最近一周' }, weekChipCount(), S.jFilter === 'week', () => setJFilter('week'), '', 'week'),
     chip({ ico:'🧬', text:'基础/分子' }, (S.jr.byKey.basic || []).length, S.jFilter === 'basic', () => setJFilter('basic'), '', 'basic'),
     chip({ ico:'📚', text:'专业词汇' }, S.gloss.length, false, openGlossary),
   );
-  for (const d of DOMAIN_ORDER) {
-    const n = (S.jr.byKey[d] || []).length;
-    if (!n) continue;
-    host.append(chip({ ico: dm(d).ico, text: d, hue: dm(d).hue }, n, S.jFilter === d, () => setJFilter(d)));
+  const domains = DOMAIN_ORDER.filter(d => (S.jr.byKey[d] || []).length);
+  if (domains.length) {
+    const activeDom = domains.includes(S.jFilter) ? S.jFilter : '';
+    host.append(domainFolderChip(domains.length, !!S.domainsOpen, activeDom));
+    if (S.domainsOpen) {
+      for (const d of domains) {
+        host.append(chip({ ico: dm(d).ico, text: d }, (S.jr.byKey[d] || []).length, S.jFilter === d, () => setJFilter(d)));
+      }
+    }
   }
 
   $('#litDate').textContent = S.jr.fetchedAt ? fmtDate(S.jr.fetchedAt) : '—';
@@ -891,7 +1215,9 @@ function renderResearch() {
     $('#researchHead').textContent = headLabel(list.length, isPick);
     $('#researchSub').textContent = isPick
       ? `每日精选 ${PICK_N} 篇 · ${PICK_CLINICAL} 篇临床 + ${PICK_BASIC} 篇基础/分子 · 点卡片展开摘要`
-      : '点卡片任意位置展开摘要（摘要较长可在框内滚动）';
+      : S.jFilter === 'week'
+        ? `在线发表 ${utcDay(-6)} – ${utcDay(0)}（UTC）· Crossref 发现，摘要优先 PubMed`
+        : '点卡片任意位置展开摘要（摘要较长可在框内滚动）';
   }
 
   if (S.jView === 'index') renderIndexTable($('#researchCards'), list);
@@ -902,6 +1228,7 @@ function headLabel(n, isPick) {
   if (S.jFilter === 'pick')   return `今日精选 ${n} 篇`;
   if (S.jFilter === 'all')    return `最新推送 ${n} 篇`;
   if (S.jFilter === 'unread') return `未读 ${n} 篇`;
+  if (S.jFilter === 'week')   return `最近一周 ${n} 篇`;
   if (S.jFilter === 'basic')  return `基础/分子医学 ${n} 篇`;
   return `${S.jFilter} ${n} 篇`;
 }
@@ -986,6 +1313,13 @@ function setSearchQuery(raw) {
   renderResearch();
 }
 
+/** UTC calendar day, same clock as the Europe PMC window (`iso`). */
+function utcDay(offset = 0) {
+  const d = new Date();
+  d.setUTCDate(d.getUTCDate() + offset);
+  return d.toISOString().slice(0, 10);
+}
+
 function filteredArticles() {
   const q = searchQuery();
   if (q) return S.jr.all.filter(a => articleMatches(a, q));
@@ -993,6 +1327,7 @@ function filteredArticles() {
   if (k === 'pick')   return S.jr.picks;
   if (k === 'all')    return S.jr.all;
   if (k === 'unread') return S.jr.all.filter(a => !S.seen.has(a.id));
+  if (k === 'week')   return weekList();
   if (k === 'basic')  return S.jr.byKey.basic || [];
   return S.jr.byKey[k] || [];
 }
@@ -1140,27 +1475,37 @@ function buildArticleBody(a, card) {
   return body;
 }
 
+function researchEmpty() {
+  if (searchQuery()) {
+    return emptyBox('🔍', '没有匹配的文章', '换个关键词，或清空搜索看回当前筛选。', '清除搜索', () => {
+      const input = $('#researchSearch');
+      if (input) input.value = '';
+      setSearchQuery('');
+    });
+  }
+  if (S.jFilter === 'week') {
+    if ((S.week.loading || !S.week.loaded) && !weekList().length) {
+      return emptyBox('📅', '正在查找最近一周', '从 Crossref 按在线发表日发现，再向 PubMed 要摘要。');
+    }
+    if (S.week.error && !weekList().length) {
+      return emptyBox('📅', '最近一周暂时取不到', '主列表不受影响。稍后点右上角刷新重试。', '重新加载', () => refresh(true));
+    }
+    return emptyBox('📅', '这 7 天还没有带摘要的新文章', `在线发表日 ${utcDay(-6)} 至 ${utcDay(0)}（UTC）。`);
+  }
+  if (S.jFilter === 'unread') return emptyBox('✅', '都读完了', '这一轮的新文章你都看过了，等明天的更新吧。');
+  return emptyBox('🔍', '这里今天还没有新文章', '摘要入库通常滞后 2–4 天。换个筛选看看。');
+}
+
 function renderArticleList(host, list, isPick) {
   host.replaceChildren();
-  if (!S.jr.loaded) return;
-  if (S.jr.error && !list.length) {
+  if (S.jFilter !== 'week' && !S.jr.loaded) return;
+  if (S.jr.error && !list.length && S.jFilter !== 'week') {
     host.append(emptyBox('📡', '数据暂时取不到',
       '网络或接口波动，稍后重试。', '重新加载', () => refresh(true)));
     return;
   }
   if (!list.length) {
-    if (searchQuery()) {
-      host.append(emptyBox('🔍', '没有匹配的文章', '换个关键词，或清空搜索看回当前筛选。', '清除搜索', () => {
-        const input = $('#researchSearch');
-        if (input) input.value = '';
-        setSearchQuery('');
-      }));
-      return;
-    }
-    const msg = S.jFilter === 'unread'
-      ? ['✅', '都读完了', '这一轮的新文章你都看过了，等明天的更新吧。']
-      : ['🔍', '这里今天还没有新文章', '摘要入库通常滞后 2–4 天。换个筛选看看。'];
-    host.append(emptyBox(msg[0], msg[1], msg[2], null, null));
+    host.append(researchEmpty());
     return;
   }
   const frag = document.createDocumentFragment();
@@ -1185,9 +1530,9 @@ function sortByJournal(list) {
 
 function renderIndexTable(host, list) {
   host.replaceChildren();
+  if (S.jFilter !== 'week' && !S.jr.loaded) return;
   if (!list.length) {
-    host.append(emptyBox('🔍', searchQuery() ? '没有匹配的文章' : '这里今天还没有新文章',
-      searchQuery() ? '换个关键词，或清空搜索。' : '换个筛选看看。', null, null));
+    host.append(researchEmpty());
     return;
   }
   const wrap = el('div', 'idxwrap');
@@ -1431,7 +1776,7 @@ function setTab(tab) {
   $('#panel-research').hidden = tab !== 'research';
   $('#panel-builders').hidden = tab !== 'builders';
   $('#scrollArea').scrollTop = 0;
-  $('#brandSub').textContent = tab === 'research' ? '临床顶刊 + 基础医学 · 每日速递' : 'AI Builder · 一手动态';
+  $('#brandSub').textContent = tab === 'research' ? '科研雷达 · 临床顶刊每日速递' : '科研雷达 · AI Builder 一手动态';
   if (tab === 'builders' && !S.ai.loaded) loadBuilders(false);
   if (tab === 'builders' && !S.bd.loaded) loadBuilderDigest();
 }
@@ -1442,7 +1787,7 @@ async function refresh(force = true) {
   btn.classList.add('spin');
   toast('正在拉取最新数据…', 1600);
   try {
-    await Promise.all([loadResearch(true), loadBuilders(true)]);
+    await Promise.all([loadResearch(true), loadBuilders(true), loadWeek(true)]);
     await loadDigest();                       // 让「重新生成」后新生成的 digest 立刻生效
     await loadBuilderDigest();                // 同上：AI Builder 总览 + 每条动态的一句话也立即生效
     const ok = (S.jr.all.length ? 1 : 0) + (S.ai.all.length ? 1 : 0);
@@ -1488,6 +1833,9 @@ async function boot() {
   S.seen = readSeen();
 
   const c = readCache();
+  if (c.week?.data?.items?.length) {
+    S.week = { items: c.week.data.items, loaded: true, loading: false, error: '' };
+  }
   if (c.jr?.data?.all?.length) {
     const d = c.jr.data;
     d.picks = d.picks?.length ? d.picks : curate(d.all);
@@ -1509,6 +1857,7 @@ async function boot() {
   renderResearch();
   renderBuilders();
 
+  loadWeek(false);
   await loadResearch(false);
   await loadDigest();                    // maps 创新/看点 onto S.jr.all, then re-renders
   await loadBuilderDigest();             // 今日 AI 动态总览 + 每条动态的中文一句话
