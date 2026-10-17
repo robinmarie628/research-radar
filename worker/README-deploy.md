@@ -97,35 +97,9 @@ const WORKER_URL = 'https://REPLACE-ME.workers.dev';
 等 **1–2 分钟**（GitHub 跑完两个 workflow 并提交） → 点右上角 **🔄** 刷新，
 就能看到新生成的今日精选 / 摘要。
 
-## 收藏邮件（POST /favorites）
+## 收藏
 
-`POST /` 仍然只触发 GitHub Actions。`POST /favorites` 把收藏 Markdown 发给
-**robinmarie628@gmail.com**，收件人写死在 `favorites-mail.js`，请求体里的 `to` 如果不是这个地址会被拒绝。
-
-`wrangler.toml` 里已经有：
-
-```toml
-[[send_email]]
-name = "EMAIL"
-destination_address = "robinmarie628@gmail.com"
-
-[observability]
-enabled = true
-
-[observability.traces]
-enabled = true
-```
-
-`destination_address` 让这个绑定只能发给这一个已验证地址（Workers Free 的免费路径）。
-
-部署前还要：
-
-1. Dashboard → **Compute → Email Service → Email Routing → Destination addresses**，添加 `robinmarie628@gmail.com`，并在 Gmail 里点验证链接。
-2. 在同一个 Email Routing 页面 **Onboard Domain**，用你自己的、DNS 在 Cloudflare 的域名。发件地址必须落在这个域名上。
-3. 给 Worker 加纯文本变量 `EMAIL_FROM`，例如 `Radar for Meds <favorites@yourdomain.com>`。不要写成 Gmail，也不要写进 Secret。
-4. `npx wrangler deploy`。compatibility date 已是 `2026-10-17`。
-
-Pages 项目上的同一套步骤见仓库根目录 `CLOUDFLARE_PAGES.md`。页面会先请求 `/api/favorites`，再回落到这个 Worker。
+页面在「收藏」里下载 Markdown，不请求 `/favorites`。发信要自有域名上的 Email Routing；这个账号还没有自定义域名，所以 `wrangler.toml` 里先不放 `[[send_email]]`，部署 trigger Worker 时不用去 Dashboard 配邮箱。`favorites-mail.js` 先留着，等有域名再接上。
 
 ## 排查
 

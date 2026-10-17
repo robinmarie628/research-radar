@@ -4,12 +4,14 @@
               + Crossref online dates & PubMed abstracts (最近一周)
               + follow-builders (AI builders)
    Zero build, zero API keys in the client.
-   Favorites email goes through a Pages Function or the trigger Worker.
+   Favorites stay in localStorage. The 收藏 view downloads a Markdown file.
+   Email Routing needs a custom domain, which this account does not have,
+   so the page does not call /api/favorites or the Worker /favorites route.
    ============================================================ */
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.17.17';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.17.18';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -31,8 +33,6 @@ const TTL      = 30 * 60e3; // cache freshness
 const LS_KEY   = 'rr.cache.v2';
 const SEEN_KEY = 'rr.seen.v1';
 const FAV_KEY  = 'rr.fav.v1';
-/** Shown in the UI only. The server ignores any other recipient. */
-const MAIL_TO  = 'robinmarie628@gmail.com';
 /* Crossref polite pool + NCBI identification. Browsers forbid a custom
  * User-Agent, so Crossref gets `mailto` and NCBI gets tool + email.
  * Not a secret; no API key. */
@@ -359,6 +359,16 @@ function favTitle(a) {
   const zh = (a?.digest && a.digest.titleZh) || a?.titleZh || '';
   return String(zh || a?.title || '未命名').trim();
 }
+function favAbstract(a) {
+  const direct = String(a?.abstract || '').trim();
+  if (direct) return direct;
+  const sec = a?.sections;
+  if (!sec) return '';
+  return ['objective', 'methods', 'results', 'conclusion', 'other']
+    .map(k => String(sec[k] || '').trim())
+    .filter(Boolean)
+    .join('\n\n');
+}
 function favSnapshot(a) {
   const k = favKey(a);
   return {
@@ -366,6 +376,7 @@ function favSnapshot(a) {
     doi: a.doi || (k.startsWith('10.') ? k : ''),
     title: a.title || '',
     titleZh: (a.digest && a.digest.titleZh) || '',
+    abstract: favAbstract(a).slice(0, 12000),
     journal: a.journal || '',
     domain: a.domain || '',
     studyKey: a.studyKey || 'other',
@@ -383,7 +394,7 @@ function articleFromFavSnap(snap, key) {
     id: snap.id || key,
     doi,
     title: snap.title || '',
-    abstract: '',
+    abstract: snap.abstract || '',
     sections: null,
     structured: false,
     journal: snap.journal || '—',
@@ -415,12 +426,23 @@ function articleIndex() {
 function favoriteArticles() {
   const pool = articleIndex();
   const out = [];
+  let dirty = false;
   for (const k of S.fav.order) {
     const live = pool.get(k);
-    if (live) { out.push(live); continue; }
+    if (live) {
+      const abs = favAbstract(live);
+      const snap = S.fav.items[k];
+      if (snap && abs && !snap.abstract) {
+        snap.abstract = abs.slice(0, 12000);
+        dirty = true;
+      }
+      out.push(live);
+      continue;
+    }
     const snap = S.fav.items[k];
     if (snap) out.push(articleFromFavSnap(snap, k));
   }
+  if (dirty) writeFav();
   return out;
 }
 function paintFavChrome(key) {
@@ -1368,13 +1390,13 @@ function renderResearch() {
     $('#researchSub').textContent = isPick
       ? `每日精选 ${PICK_N} 篇 · ${PICK_CLINICAL} 篇临床 + ${PICK_BASIC} 篇基础/分子 · 点卡片展开摘要`
       : S.jFilter === 'fav'
-        ? '小红心只存在这台浏览器 · 可把清单发到 ' + MAIL_TO
+        ? '小红心只存在这台浏览器 · 可下载 Markdown 清单'
         : S.jFilter === 'week'
           ? `在线发表 ${utcDay(-6)} – ${utcDay(0)}（UTC）· Crossref 发现，摘要优先 PubMed`
           : '点卡片任意位置展开摘要（摘要较长可在框内滚动）';
   }
-  const mailBtn = $('#mailFavBtn');
-  if (mailBtn) mailBtn.hidden = S.jFilter !== 'fav' || !!q;
+  const dlBtn = $('#downloadFavBtn');
+  if (dlBtn) dlBtn.hidden = S.jFilter !== 'fav' || !!q;
 
   if (S.jView === 'index') renderIndexTable($('#researchCards'), list);
   else renderArticleList($('#researchCards'), list, isPick);
@@ -1986,114 +2008,57 @@ async function triggerRegenerate() {
   }
 }
 
-/* ---------------- favorites email ---------------- */
-function favAbstract(a) {
-  const direct = String(a?.abstract || '').trim();
-  if (direct) return direct;
-  const sec = a?.sections;
-  if (!sec) return '';
-  return ['objective', 'methods', 'results', 'conclusion', 'other']
-    .map(k => String(sec[k] || '').trim())
-    .filter(Boolean)
-    .join('\n\n');
+/* ---------------- favorites markdown download ----------------
+   Cloudflare Email Routing cannot send without a custom domain.
+   The 收藏 view writes a local .md file instead of calling
+   /api/favorites or the Worker /favorites route. */
+function favDoiToken(a) {
+  let s = String(a?.doi || '').trim();
+  s = s.replace(/^https?:\/\/(?:dx\.)?doi\.org\//i, '');
+  if (!/^10\.\d{4,9}\/\S+$/i.test(s)) return '';
+  return s;
 }
-function mailItems() {
-  return favoriteArticles().map(a => ({
-    title: favTitle(a).slice(0, 500),
-    titleEn: String(a.title || '').slice(0, 500),
-    journal: String(a.journal || '').slice(0, 160),
-    abstract: favAbstract(a).slice(0, 4000),
-    doi: String(a.doi || '').replace(/^https?:\/\/(?:dx\.)?doi\.org\//i, '').slice(0, 200),
-  }));
+function favFileDate(d = new Date()) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
 }
-function localPreviewMarkdown(items) {
-  const d = new Date();
-  const date = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-  const lines = ['# Radar for Meds 收藏', '', `${date} · ${items.length} 篇`, ''];
-  items.forEach((item, i) => {
-    lines.push('---', '', `## ${i + 1}. ${item.title}`, '');
-    if (item.titleEn && item.titleEn !== item.title) lines.push(item.titleEn, '');
-    if (item.journal) lines.push(`- 期刊：${item.journal}`);
-    lines.push(`- DOI：${item.doi ? 'https://doi.org/' + item.doi : '无'}`, '', item.abstract || '（没有摘要）', '');
+function oneLine(s) {
+  return String(s || '').replace(/\s+/g, ' ').trim();
+}
+function favoritesMarkdown(articles, now = new Date()) {
+  const date = favFileDate(now);
+  const lines = ['# Radar for Meds 收藏', '', `${date} · ${articles.length} 篇`, ''];
+  articles.forEach((a, i) => {
+    const title = oneLine(favTitle(a)) || '未命名';
+    const titleEn = oneLine(a.title || '');
+    const doi = favDoiToken(a);
+    lines.push('---', '', `## ${i + 1}. ${title}`, '');
+    if (titleEn && titleEn !== title) lines.push(titleEn, '');
+    lines.push(doi ? `https://doi.org/${doi}` : '（没有 DOI）', '');
+    lines.push(favAbstract(a) || '（没有摘要）', '');
   });
-  return lines.join('\n');
+  return lines.join('\n').trim() + '\n';
 }
-function openMailPreview(markdown, note) {
-  const sheet = $('#mailSheet');
-  const pre = $('#mailPreview');
-  const hint = $('#mailNote');
-  if (!sheet || !pre) return;
-  pre.textContent = markdown || '';
-  if (hint) hint.textContent = note || ('收件人固定为 ' + MAIL_TO + '。这封邮件没有发出。');
-  sheet.hidden = false;
+function favoritesFilename(now = new Date()) {
+  return `radar-favorites-${favFileDate(now)}.md`;
 }
-function closeMailPreview() {
-  const sheet = $('#mailSheet');
-  if (sheet) sheet.hidden = true;
-}
-function mailApiUrls() {
-  const urls = ['/api/favorites'];
-  const local = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-  // 本地静态预览不要打到线上 trigger：旧 Worker 会把任意 POST 当成「重新生成」。
-  if (!local && WORKER_URL && !WORKER_URL.includes('REPLACE-ME')) {
-    urls.push(WORKER_URL.replace(/\/$/, '') + '/favorites');
-  }
-  return urls;
-}
-async function postFavoritesMail(body) {
-  const urls = mailApiUrls();
-  let last = '发信接口没有响应';
-  for (const url of urls) {
-    let res;
-    let data = null;
-    try {
-      res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-        cache: 'no-store',
-      });
-      data = await res.json().catch(() => null);
-    } catch {
-      last = '网络连不上发信接口';
-      continue;
-    }
-    // 旧 trigger 的成功/失败体带 results，那不是发信接口。
-    if (data && Array.isArray(data.results)) {
-      last = '线上 Worker 还是旧版，还不会发收藏邮件';
-      continue;
-    }
-    if (res.status === 404 || !data) { last = '发信接口还没部署'; continue; }
-    if (data.dryRun) return data;
-    if (res.ok && data.ok) return data;
-    throw new Error(data.error || ('发送失败 HTTP ' + res.status));
-  }
-  const err = new Error(last);
-  err.fallback = true;
-  throw err;
-}
-async function sendFavoritesMail() {
-  const items = mailItems();
-  if (!items.length) { toast('还没有收藏，先点文章上的小红心'); return; }
-  const btn = $('#mailFavBtn');
-  if (btn) btn.disabled = true;
-  try {
-    const result = await postFavoritesMail({ items });
-    if (result.dryRun) {
-      openMailPreview(result.markdown, (result.note || '没有发信。') + ' 收件人固定为 ' + MAIL_TO);
-      return;
-    }
-    toast('已发送到 ' + MAIL_TO, 3600);
-  } catch (e) {
-    const local = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-    if (local && e.fallback) {
-      openMailPreview(localPreviewMarkdown(items), '本地没有发信接口，下面只是预览，邮件没有发出。收件人固定为 ' + MAIL_TO);
-      return;
-    }
-    toast(e.message || '发送失败', 4200);
-  } finally {
-    if (btn) btn.disabled = false;
-  }
+function downloadFavoritesMarkdown() {
+  const articles = favoriteArticles();
+  if (!articles.length) { toast('还没有收藏，先点文章上的小红心'); return; }
+  const filename = favoritesFilename();
+  const blob = new Blob([favoritesMarkdown(articles)], { type: 'text/markdown;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+  toast('已下载 ' + filename, 2800);
 }
 
 /* ---------------- boot ---------------- */
@@ -2154,13 +2119,10 @@ if (researchSearchClear) researchSearchClear.addEventListener('click', () => {
   setSearchQuery('');
 });
 $('#glossSheet').addEventListener('click', e => { if (e.target.closest('[data-close]')) closeGlossary(); });
-const mailSheet = $('#mailSheet');
-if (mailSheet) mailSheet.addEventListener('click', e => { if (e.target.closest('[data-close-mail]')) closeMailPreview(); });
-const mailFavBtn = $('#mailFavBtn');
-if (mailFavBtn) mailFavBtn.addEventListener('click', () => sendFavoritesMail());
+const downloadFavBtn = $('#downloadFavBtn');
+if (downloadFavBtn) downloadFavBtn.addEventListener('click', () => downloadFavoritesMarkdown());
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
-  if (mailSheet && !mailSheet.hidden) { closeMailPreview(); return; }
   closeGlossary();
 });
 window.addEventListener('hashchange', () => {
