@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Validate the journal pool and emit data/journals.config.json.
 
-Pool = 40 clinical top journals + 18 CNS / basic-science journals, per
+Pool = 40 clinical top journals + 17 CNS / basic-science journals, per
 daily_journal_watch_prompt.md. Each ISSN is probed against Europe PMC; anything
 returning 0 hits over 90 days is rejected (a wrong ISSN fails silently as 0 rows).
 
@@ -78,7 +78,7 @@ POOL = {
     "0895-7967": ("血管外科",   False, "Semin Vasc Surg",      4.6),
     "1708-5381": ("血管外科",   False, "Vascular",             1.0),  # 90d 仅 ~1 篇，量很低
     "1538-5744": ("血管外科",   False, "Vasc Endovasc Surg",   1.0),
-    # ── 18 本基础 / 分子医学（CNS 及其生物医学子刊）──────────────────
+    # ── 17 本基础 / 分子医学（CNS 及其生物医学子刊）──────────────────
     "0092-8674": ("基础医学",   True,  "Cell",                45.5),
     "0028-0836": ("基础医学",   True,  "Nature",              50.5),
     "0036-8075": ("基础医学",   True,  "Science",             44.7),
@@ -88,7 +88,6 @@ POOL = {
     "1934-5909": ("基础医学",   True,  "Cell Stem Cell",      19.8),
     "1946-6234": ("基础医学",   True,  "Sci Transl Med",      15.8),
     "2375-2548": ("基础医学",   True,  "Sci Adv",             11.7),
-    "2041-1723": ("基础医学",   True,  "Nat Commun",          14.7),
     "2211-1247": ("基础医学",   True,  "Cell Rep",             7.5),
     # 1553-7358 is PLoS Comput Biol's eISSN, not this journal. Europe PMC
     # reports the print ISSN below as `issn` (essn 1934-6069).
