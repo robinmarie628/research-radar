@@ -14,7 +14,12 @@ Provider defaults to DeepSeek but any OpenAI-compatible endpoint works:
     LLM_MODEL      (default deepseek-flash)
     LLM_API_KEY / DEEPSEEK_API_KEY
 
-stdlib only.  Usage:  python build_digest.py [--n 5] [--dry-run]
+stdlib only.  Usage:  python build_digest.py [--n 8] [--dry-run]
+
+The shortlist is always exactly --n papers (default 8 = 4 clinical + 4 basic).
+Fresh (not-yet-pushed) papers are preferred. If that side of the pool is short,
+already-covered papers from the same window fill the gap. The script refuses to
+overwrite digest.json when it cannot hit that split.
 """
 import argparse
 import json
@@ -183,6 +188,63 @@ def extract_json(text):
         return json.loads(m.group(0))
 
 
+def _doi(a):
+    return (a.get("doi") or a.get("id") or "").lower()
+
+
+def choose_eight(fresh, full, n=8, n_basic=4, n_clinical=4):
+    """Exactly n_basic basic + n_clinical clinical, or None.
+
+    Prefer `fresh` (not in pushed.txt). Top up from `full` (the whole window,
+    including papers already pushed) and relax the per-journal cap only after
+    the strict pass fails. Never borrows from the other side to pad the total.
+    """
+    if n_basic + n_clinical != n:
+        n_basic, n_clinical = n // 2, n - (n // 2)
+
+    def rank(a):
+        return (a.get("studyRank") or 0) * 1000 + (a.get("imp") or 0)
+
+    picked, used = [], set()
+    nb = nc = 0
+
+    def take(a):
+        nonlocal nb, nc
+        i = _doi(a)
+        if not a or not i or i in used:
+            return False
+        used.add(i)
+        picked.append(a)
+        if a.get("basic"):
+            nb += 1
+        else:
+            nc += 1
+        return True
+
+    def fill(pool, caps):
+        ordered = sorted(pool, key=rank, reverse=True)
+        for cap_b, cap_c in caps:
+            for a in ordered:
+                basic = bool(a.get("basic"))
+                if basic and nb >= n_basic:
+                    continue
+                if not basic and nc >= n_clinical:
+                    continue
+                cap = cap_b if basic else cap_c
+                if sum(1 for x in picked if x.get("journal") == a.get("journal")) >= cap:
+                    continue
+                take(a)
+            if nb >= n_basic and nc >= n_clinical:
+                return
+
+    fill(fresh or [], ((1, 2), (99, 99)))
+    if nb < n_basic or nc < n_clinical:
+        fill(full or [], ((1, 2), (99, 99)))
+    if nb != n_basic or nc != n_clinical or len(picked) != n:
+        return None
+    return picked
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--n", type=int, default=8, help="papers per day")
@@ -204,10 +266,18 @@ def main():
     fresh = [x for x in items if (x.get("doi") or "").lower() not in pushed]
     print(f"      {len(fresh)} not yet covered ({len(pushed)} in pushed.txt)")
 
-    picks = bs.curate(fresh, a.n) if fresh else []
+    n_basic, n_clinical = a.n // 2, a.n - (a.n // 2)
+    picks = choose_eight(fresh, items, a.n, n_basic, n_clinical)
     if not picks:
-        print("no fresh candidates — nothing to do")
-        return 0
+        nb = sum(1 for x in items if x.get("basic"))
+        nc = len(items) - nb
+        print(
+            f"ERROR: need exactly {n_clinical} clinical + {n_basic} basic "
+            f"(got a window of {nc} clinical / {nb} basic, {len(fresh)} fresh). "
+            f"Refusing to overwrite digest.json.",
+            file=sys.stderr,
+        )
+        return 1
 
     papers = "\n".join(paper_block(i + 1, p) for i, p in enumerate(picks))
     prompt = PROMPT.format(n=len(picks), papers=papers)

@@ -7,7 +7,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.17.10';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.17.11';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -31,30 +31,31 @@ const SEEN_KEY = 'rr.seen.v1';
 
 /* ---------------- 领域 (domain) ---------------- */
 const DOMAIN_META = {
-  '综合医学':   { ico:'🏥', hue:212 },
-  '心血管':     { ico:'❤️', hue:352 },
-  '呼吸与重症': { ico:'🌬️', hue:196 },
-  '肿瘤':       { ico:'🎗️', hue:330 },
-  '神经':       { ico:'🧠', hue:268 },
-  '感染':       { ico:'🦠', hue:150 },
-  '血液':       { ico:'🩸', hue:0   },
-  '内分泌代谢': { ico:'🧪', hue:36  },
-  '消化肝病':   { ico:'⚕️', hue:20  },
-  '公共卫生':   { ico:'🌍', hue:172 },
-  '眼科':       { ico:'👁️', hue:220 },
-  '儿科':       { ico:'🧒', hue:44  },
-  '精神心理':   { ico:'🧩', hue:288 },
-  '风湿免疫':   { ico:'🛡️', hue:186 },
-  '肾脏':       { ico:'💧', hue:206 },
-  '皮肤':       { ico:'✋', hue:14  },
-  '泌尿':       { ico:'🚹', hue:236 },
-  '血管外科':   { ico:'🦵', hue:256 },
-  '全球健康':   { ico:'🌏', hue:158 },
-  '数字医疗':   { ico:'📱', hue:246 },
-  '老年医学':   { ico:'🧓', hue:30  },
-  '基础医学':   { ico:'🧬', hue:300 },
+  '综合医学':   { ico:'🏥', hue:212, py:'zongheyixue' },
+  '心血管':     { ico:'❤️', hue:352, py:'xinxueguan' },
+  '呼吸与重症': { ico:'🌬️', hue:196, py:'huxiyuzhongzheng' },
+  '肿瘤':       { ico:'🎗️', hue:330, py:'zhongliu' },
+  '神经':       { ico:'🧠', hue:268, py:'shenjing' },
+  '感染':       { ico:'🦠', hue:150, py:'ganran' },
+  '血液':       { ico:'🩸', hue:0,   py:'xueye' },
+  '内分泌代谢': { ico:'🧪', hue:36,  py:'neifenmidaxie' },
+  '消化肝病':   { ico:'⚕️', hue:20,  py:'xiaohuaganbing' },
+  '公共卫生':   { ico:'🌍', hue:172, py:'gonggongweisheng' },
+  '眼科':       { ico:'👁️', hue:220, py:'yanke' },
+  '儿科':       { ico:'🧒', hue:44,  py:'erke' },
+  '精神心理':   { ico:'🧩', hue:288, py:'jingshenxinli' },
+  '风湿免疫':   { ico:'🛡️', hue:186, py:'fengshimianyi' },
+  '肾脏':       { ico:'💧', hue:206, py:'shenzang' },
+  '皮肤':       { ico:'✋', hue:14,  py:'pifu' },
+  '泌尿':       { ico:'🚹', hue:236, py:'miniao' },
+  '血管外科':   { ico:'🦵', hue:256, py:'xueguanwaike' },
+  '全球健康':   { ico:'🌏', hue:158, py:'quanqiujiankang' },
+  '数字医疗':   { ico:'📱', hue:246, py:'shuziyiliao' },
+  '老年医学':   { ico:'🧓', hue:30,  py:'laonianyixue' },
+  '基础医学':   { ico:'🧬', hue:300, py:'jichuyixue' },
 };
-const DOMAIN_ORDER = Object.keys(DOMAIN_META);
+const DOMAIN_ORDER = Object.keys(DOMAIN_META).sort((a, b) => dmPy(a).localeCompare(dmPy(b)));
+function dmPy(name) { return (DOMAIN_META[name] && DOMAIN_META[name].py) || name; }
 const dm = d => DOMAIN_META[d] || { ico:'📄', hue:212 };
 
 /* ---------------- 研究类型 (study design) ----------------
@@ -135,6 +136,7 @@ const S = {
   bd: { date: null, headline: '', bullets: [], sentiment: '', byId: new Map(), loaded: false },
   jFilter: 'pick',
   jView: 'card',
+  q: '',
   aFilter: 'all',
   seen: new Set(),
   tab: 'research',
@@ -348,6 +350,7 @@ function mapArticle(r) {
     authors: cleanText(r.authorString || '').split(',')[0] || '',
     pmid: r.pmid || '',
     doi: r.doi || '',
+    keywords: keywordList(r.keywordList),
     oa: !!r.isOpenAccess,
     pii: undefined,
   };
@@ -391,7 +394,15 @@ function curate(items, n = PICK_N) {
   }
   // 3) 某一边不足时补足总数
   for (const it of pool) { if (picked.length >= n) break; add(it, 2); }
+  // 4) 一刊上限仍挡路时放开，池子够大就凑满 n
+  for (const it of pool) { if (picked.length >= n) break; add(it, 99); }
   return picked.slice(0, n).sort((a, b) => rank(b) - rank(a));
+}
+
+function keywordList(list) {
+  const raw = list?.keyword ?? list;
+  const arr = Array.isArray(raw) ? raw : raw ? [raw] : [];
+  return arr.map(k => cleanText(typeof k === 'string' ? k : (k?.text || k?.value || ''))).filter(Boolean);
 }
 
 /** 文章列表 + 精选的指纹。后台重新校验时用它判断「数据有没有真的变」，
@@ -436,8 +447,6 @@ async function loadResearch(force) {
       fetchedAt: new Date().toISOString(),       // 数据实际拉取时间（≠ 最新文章发表日；Europe PMC 索引有 1-2 天延迟，发表日会滞后）
       loaded: true, error: null,
     };
-    writeCache('jr', { all: items, byKey, picks: S.jr.picks, updated: S.jr.updated, fetchedAt: S.jr.fetchedAt });
-    loadPII(S.jr.picks);
   } catch (e) {
     console.warn('[research] live fetch failed:', e);
     if (!S.jr.loaded) {
@@ -456,6 +465,13 @@ async function loadResearch(force) {
     }
   }
   applyDigest();
+  if (S.jr.loaded && S.jr.all?.length) {
+    writeCache('jr', {
+      all: S.jr.all, byKey: S.jr.byKey, picks: S.jr.picks,
+      updated: S.jr.updated, fetchedAt: S.jr.fetchedAt,
+    });
+  }
+  loadPII(S.jr.picks);
   const sig = jrSignature();
   const prev = S.jr._sig;
   S.jr._sig = sig;
@@ -646,6 +662,7 @@ async function trySnapshot(path) {
 async function loadDigest() {
   const d = await trySnapshot('data/digest.json');
   if (!d || !Array.isArray(d.items) || !d.items.length) return;
+  await loadSnapArticles();
   S.digest = {
     date: d.date || null,
     items: d.items,
@@ -655,6 +672,20 @@ async function loadDigest() {
   };
   applyDigest();
   renderResearch();
+}
+
+/** Snapshot articles, keyed by DOI. Used when a digest pick has fallen out of
+ *  the live Europe PMC pool (that pool keeps only 8 papers per journal). */
+async function loadSnapArticles() {
+  if (S.snapByDoi) return S.snapByDoi;
+  const snap = await trySnapshot('data/snapshot-journals.json');
+  const map = new Map();
+  for (const a of [...(snap?.items || []), ...(snap?.picks || [])]) {
+    const doi = String(a?.doi || a?.id || '').toLowerCase();
+    if (doi && !map.has(doi)) map.set(doi, a);
+  }
+  S.snapByDoi = map;
+  return map;
 }
 
 /** 今日 AI 动态总览 + 每条动态的中文一句话（由 scripts/build_builder_digest.py 生成） */
@@ -673,16 +704,114 @@ async function loadBuilderDigest() {
 }
 
 function applyDigest() {
-  if (!S.digest.loaded) return;
+  if (!S.digest.loaded || !S.jr.all) return;
   const ageDays = S.digest.date ? (Date.now() - Date.parse(S.digest.date)) / 864e5 : 999;
-  if (ageDays > 5) return;                       // stale — trust live curation instead
-  const byDoi = new Map(S.jr.all.map(a => [a.doi.toLowerCase(), a]));
-  const picked = [];
-  for (const d of S.digest.items) {
-    const a = byDoi.get(String(d.doi || '').toLowerCase());
-    if (a) { a.digest = d; picked.push(a); }
+  if (ageDays > 5) {                              // stale — live curation, still 4+4
+    S.jr.picks = composeEight(curate(S.jr.all), S.jr.all);
+    return;
   }
-  if (picked.length >= 3) S.jr.picks = picked;
+  // A digest DOI missing from the live pool used to be dropped (`if (a) picked.push`).
+  // Nature / Nat Immunol in the 2026-10-17 digest fell out of the 8-per-journal cap,
+  // so 今日精选 showed 6. Resolve every digest row, from the live article, else the
+  // snapshot, else the digest record itself, then top up to 4 clinical + 4 basic.
+  const byDoi = new Map(S.jr.all.map(a => [String(a.doi || '').toLowerCase(), a]));
+  const preferred = [];
+  for (const d of S.digest.items) {
+    const doi = String(d.doi || '').toLowerCase();
+    let a = doi ? byDoi.get(doi) : null;
+    if (a) a.digest = d;
+    else a = articleFromDigest(d);
+    if (!a) continue;
+    ensureInAll(a);
+    preferred.push(a);
+  }
+  S.jr.picks = composeEight(preferred, S.jr.all);
+}
+
+function articleFromDigest(d) {
+  const doi = String(d?.doi || '').toLowerCase();
+  const snap = doi && S.snapByDoi ? S.snapByDoi.get(doi) : null;
+  if (snap) return { ...snap, id: snap.id || doi, doi: snap.doi || doi, digest: d };
+  const meta = S.cfg.find(c => c.short === d.journal || c.title === d.journal) || null;
+  if (!doi && !d?.title) return null;
+  return {
+    id: doi || ('digest:' + (d.title || '')),
+    title: d.title || d.titleZh || '（无标题）',
+    abstract: '',
+    sections: null,
+    structured: false,
+    journal: d.journal || meta?.short || '—',
+    issn: meta?.issn || '',
+    platforms: Array.isArray(d.platforms) ? d.platforms : (meta?.platforms || []),
+    domain: d.domain || meta?.domain || '综合医学',
+    imp: meta?.if ?? 0,
+    basic: d.basic != null ? !!d.basic : !!meta?.basic,
+    studyKey: d.studyKey || 'other',
+    studyZh: d.studyZh || '研究论文',
+    studyRank: 3,
+    stars: starTier(meta?.if ?? 0),
+    date: d.date || '',
+    ts: d.date ? Date.parse(d.date) : 0,
+    year: (d.date || '').slice(0, 4),
+    authors: '',
+    pmid: '',
+    doi,
+    keywords: [],
+    oa: false,
+    pii: undefined,
+    digest: d,
+  };
+}
+
+function ensureInAll(a) {
+  if (!a) return;
+  const doi = String(a.doi || '').toLowerCase();
+  const exists = S.jr.all.some(x => (doi && String(x.doi || '').toLowerCase() === doi) || x.id === a.id);
+  if (exists) return;
+  S.jr.all.push(a);
+  if (!S.jr.byKey) S.jr.byKey = {};
+  (S.jr.byKey[a.domain] ||= []).push(a);
+  (S.jr.byKey[a.basic ? 'basic' : 'clinical'] ||= []).push(a);
+}
+
+/** Exactly 4 clinical + 4 basic when the pool allows it. Digest order is kept
+ *  for the papers already chosen; the short side is filled from `pool`. */
+function composeEight(preferred, pool) {
+  const picked = [];
+  const used = new Set();
+  const idOf = a => String(a?.doi || a?.id || '').toLowerCase();
+  const take = a => {
+    const id = idOf(a);
+    if (!a || !id || used.has(id)) return false;
+    used.add(id);
+    picked.push(a);
+    return true;
+  };
+  let nb = 0, nc = 0;
+  for (const a of preferred || []) {
+    if (a.basic && nb < PICK_BASIC && take(a)) nb++;
+    else if (!a.basic && nc < PICK_CLINICAL && take(a)) nc++;
+  }
+  const rank = a => (a.studyRank || 0) * 1000 + (a.imp || 0);
+  const rest = [...(pool || [])].sort((a, b) => rank(b) - rank(a));
+  const fill = (basic, need) => {
+    for (const cap of [basic ? 1 : 2, 99]) {
+      for (const a of rest) {
+        if ((basic ? nb : nc) >= need) return;
+        if (!!a.basic !== basic) continue;
+        const before = picked.length;
+        const perJ = picked.filter(x => x.journal === a.journal).length;
+        if (perJ >= cap) continue;
+        if (take(a)) {
+          if (basic) nb++; else nc++;
+        }
+        if (picked.length === before) continue;
+      }
+    }
+  };
+  fill(true, PICK_BASIC);
+  fill(false, PICK_CLINICAL);
+  return picked.slice(0, PICK_N);
 }
 
 /* ---------------- cache ---------------- */
@@ -757,12 +886,18 @@ function renderResearch() {
   if (eClin) eClin.textContent = nClin || '—';
   if (eBas)  eBas.textContent  = nBas  || '—';
 
+  const q = searchQuery();
   const list = filteredArticles();
-  const isPick = S.jFilter === 'pick';
-  $('#researchHead').textContent = headLabel(list.length, isPick);
-  $('#researchSub').textContent = isPick
-    ? `每日精选 ${PICK_N} 篇 · ${PICK_CLINICAL} 篇临床 + ${PICK_BASIC} 篇基础/分子 · 点卡片展开摘要`
-    : '点卡片任意位置展开摘要（摘要较长可在框内滚动）';
+  const isPick = !q && S.jFilter === 'pick';
+  if (q) {
+    $('#researchHead').textContent = `搜索结果 ${list.length} 篇`;
+    $('#researchSub').textContent = `在全部 ${all.length} 篇里匹配「${S.q.trim()}」· 标题、摘要、期刊、关键词`;
+  } else {
+    $('#researchHead').textContent = headLabel(list.length, isPick);
+    $('#researchSub').textContent = isPick
+      ? `每日精选 ${PICK_N} 篇 · ${PICK_CLINICAL} 篇临床 + ${PICK_BASIC} 篇基础/分子 · 点卡片展开摘要`
+      : '点卡片任意位置展开摘要（摘要较长可在框内滚动）';
+  }
 
   if (S.jView === 'index') renderIndexTable($('#researchCards'), list);
   else renderArticleList($('#researchCards'), list, isPick);
@@ -776,7 +911,89 @@ function headLabel(n, isPick) {
   return `${S.jFilter} ${n} 篇`;
 }
 
+function searchQuery() { return String(S.q || '').trim(); }
+
+function searchTokens(q) {
+  return String(q || '').trim().toLowerCase().split(/\s+/).filter(Boolean);
+}
+
+function articleHaystack(a) {
+  const d = a.digest || {};
+  const parts = [
+    a.title, d.titleZh, a.abstract, a.journal, a.domain, a.studyZh,
+    ...(a.keywords || []),
+  ];
+  if (a.sections) parts.push(...Object.values(a.sections));
+  for (const k of ['background', 'methods', 'innovation', 'takeaway', 'future']) {
+    if (d[k]) parts.push(d[k]);
+  }
+  return parts.filter(Boolean).join('\n').toLowerCase();
+}
+
+function articleMatches(a, q) {
+  const tokens = searchTokens(q);
+  if (!tokens.length) return true;
+  const hay = articleHaystack(a);
+  return tokens.every(t => hay.includes(t));
+}
+
+function escapeReg(s) {
+  return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/** Paint `text` into `node` with <mark class="hit"> around each query token. */
+function fillHighlighted(node, text, q) {
+  const src = String(text || '');
+  const tokens = searchTokens(q);
+  node.replaceChildren();
+  if (!tokens.length) { node.textContent = src; return; }
+  const re = new RegExp(tokens.map(escapeReg).join('|'), 'gi');
+  let last = 0;
+  let m;
+  while ((m = re.exec(src))) {
+    if (!m[0]) { re.lastIndex++; continue; }
+    if (m.index > last) node.append(document.createTextNode(src.slice(last, m.index)));
+    node.append(el('mark', 'hit', m[0]));
+    last = m.index + m[0].length;
+  }
+  if (last < src.length) node.append(document.createTextNode(src.slice(last)));
+}
+
+function matchSnippet(a, q) {
+  const tokens = searchTokens(q);
+  if (!tokens.length) return '';
+  const visible = [a.title, (a.digest && a.digest.titleZh) || '', a.journal].join(' ').toLowerCase();
+  if (tokens.every(t => visible.includes(t))) return '';
+  const d = a.digest || {};
+  const blobs = [a.abstract, ...(a.keywords || [])];
+  if (a.sections) blobs.push(...Object.values(a.sections));
+  for (const k of ['background', 'methods', 'innovation', 'takeaway', 'future']) {
+    if (d[k]) blobs.push(d[k]);
+  }
+  const blob = blobs.filter(Boolean).join(' ');
+  const lower = blob.toLowerCase();
+  let at = -1;
+  let tok = '';
+  for (const t of tokens) {
+    const i = lower.indexOf(t);
+    if (i >= 0 && (at < 0 || i < at)) { at = i; tok = t; }
+  }
+  if (at < 0) return '';
+  const start = Math.max(0, at - 28);
+  const end = Math.min(blob.length, at + tok.length + 42);
+  return (start ? '…' : '') + blob.slice(start, end).trim() + (end < blob.length ? '…' : '');
+}
+
+function setSearchQuery(raw) {
+  S.q = String(raw || '');
+  const btn = $('#researchSearchClear');
+  if (btn) btn.hidden = !searchQuery();
+  renderResearch();
+}
+
 function filteredArticles() {
+  const q = searchQuery();
+  if (q) return S.jr.all.filter(a => articleMatches(a, q));
   const k = S.jFilter;
   if (k === 'pick')   return S.jr.picks;
   if (k === 'all')    return S.jr.all;
@@ -807,7 +1024,9 @@ function articleCard(a, isPick, pickRank) {
   else if (isPick) titleWrap.append(el('span', 'pick-num', 'NO.' + pickRank));
   // 有中文标题就用中文（英文原标题收进下方的「英文原标题与摘要」折叠块）
   const titleZh = (a.digest && a.digest.titleZh) || '';
-  titleWrap.append(el('h3', 'art-title', titleZh || a.title));
+  const h3 = el('h3', 'art-title');
+  fillHighlighted(h3, titleZh || a.title, searchQuery());
+  titleWrap.append(h3);
   top.append(caret, titleWrap);
 
   const badges = el('div', 'art-badges');
@@ -816,11 +1035,19 @@ function articleCard(a, isPick, pickRank) {
   badges.append(db);
   badges.append(el('span', 'badge study s-' + a.studyKey, a.studyZh));
   badges.append(el('span', 'badge ' + (a.basic ? 'bas' : 'clin'), a.basic ? '基础' : '临床'));
-  badges.append(el('span', 'badge jr', a.journal));
+  const jr = el('span', 'badge jr');
+  fillHighlighted(jr, a.journal, searchQuery());
+  badges.append(jr);
   badges.append(starsNode(a.stars));
   if (a.year) badges.append(el('span', 'yr', a.year));
 
   c.append(top, badges);
+  const snip = matchSnippet(a, searchQuery());
+  if (snip) {
+    const p = el('p', 'search-snip');
+    fillHighlighted(p, snip, searchQuery());
+    c.append(p);
+  }
 
   let body = null;
   c.addEventListener('click', ev => {
@@ -868,7 +1095,9 @@ function buildArticleBody(a, card) {
   const box = el('div', 'rawbox');
   const enTitle = el('div', 'rawtitle');
   enTitle.append(el('span', 'rawtitle-lab', 'EN'));
-  enTitle.append(el('span', 'rawtitle-txt', a.title));
+  const enTxt = el('span', 'rawtitle-txt');
+  fillHighlighted(enTxt, a.title, searchQuery());
+  enTitle.append(enTxt);
   box.append(enTitle);
 
   if (a.structured && a.sections) {
@@ -877,11 +1106,15 @@ function buildArticleBody(a, card) {
       if (!txt) continue;
       const row = el('div', 'sec sec-' + k);
       row.append(el('span', 'sec-lab', SEC_LABEL[k] || '其他'));
-      row.append(el('p', 'sec-txt', txt));
+      const p = el('p', 'sec-txt');
+      fillHighlighted(p, txt, searchQuery());
+      row.append(p);
       box.append(row);
     }
   } else if (a.abstract) {
-    box.append(el('p', 'art-abstract', a.abstract));
+    const p = el('p', 'art-abstract');
+    fillHighlighted(p, a.abstract, searchQuery());
+    box.append(p);
   }
 
   if (hasDigest) {
@@ -923,6 +1156,14 @@ function renderArticleList(host, list, isPick) {
     return;
   }
   if (!list.length) {
+    if (searchQuery()) {
+      host.append(emptyBox('🔍', '没有匹配的文章', '换个关键词，或清空搜索看回当前筛选。', '清除搜索', () => {
+        const input = $('#researchSearch');
+        if (input) input.value = '';
+        setSearchQuery('');
+      }));
+      return;
+    }
     const msg = S.jFilter === 'unread'
       ? ['✅', '都读完了', '这一轮的新文章你都看过了，等明天的更新吧。']
       : ['🔍', '这里今天还没有新文章', '摘要入库通常滞后 2–4 天。换个筛选看看。'];
@@ -935,10 +1176,25 @@ function renderArticleList(host, list, isPick) {
 }
 
 /** 窄索引表 — # / 期刊 / 类型 / 领域 / 临床或基础 */
+function indexLetter(journal) {
+  const ch = String(journal || '').trim().charAt(0);
+  if (!ch) return '#';
+  return /[A-Za-z]/.test(ch) ? ch.toUpperCase() : ch;
+}
+
+function sortByJournal(list) {
+  return [...list].sort((a, b) => {
+    const c = String(a.journal || '').localeCompare(String(b.journal || ''), 'en', { sensitivity: 'base' });
+    if (c) return c;
+    return String(a.title || '').localeCompare(String(b.title || ''), 'en', { sensitivity: 'base' });
+  });
+}
+
 function renderIndexTable(host, list) {
   host.replaceChildren();
   if (!list.length) {
-    host.append(emptyBox('🔍', '这里今天还没有新文章', '换个筛选看看。', null, null));
+    host.append(emptyBox('🔍', searchQuery() ? '没有匹配的文章' : '这里今天还没有新文章',
+      searchQuery() ? '换个关键词，或清空搜索。' : '换个筛选看看。', null, null));
     return;
   }
   const wrap = el('div', 'idxwrap');
@@ -948,10 +1204,22 @@ function renderIndexTable(host, list) {
   ['#', '期刊', '类型', '领域', '临/基'].forEach(h => hr.append(el('th', '', h)));
   thead.append(hr);
   const tb = el('tbody');
-  list.forEach((a, i) => {
+  let letter = '';
+  sortByJournal(list).forEach((a, i) => {
+    const L = indexLetter(a.journal);
+    if (L !== letter) {
+      letter = L;
+      const lr = el('tr', 'idx-letter');
+      const ltd = el('td', '', L);
+      ltd.colSpan = 5;
+      lr.append(ltd);
+      tb.append(lr);
+    }
     const tr = el('tr');
     tr.append(el('td', 'n', String(i + 1)));
-    tr.append(el('td', 'j', a.journal));
+    const jd = el('td', 'j');
+    fillHighlighted(jd, a.journal, searchQuery());
+    tr.append(jd);
     const ts = el('td', 't');
     ts.append(el('span', 'mini s-' + a.studyKey, a.studyZh));
     tr.append(ts);
@@ -1130,14 +1398,27 @@ function openGlossary() {
   setTimeout(() => $('#glossSearch').focus(), 320);
 }
 function closeGlossary() { $('#glossSheet').hidden = true; }
+function glossLetter(en) {
+  const ch = String(en || '').trim().charAt(0);
+  if (!ch) return '#';
+  return /[A-Za-z]/.test(ch) ? ch.toUpperCase() : ch;
+}
+
 function renderGlossary(q) {
   const host = $('#glossList');
   const key = q.trim().toLowerCase();
-  const list = key ? S.gloss.filter(g => (g.en + g.zh + g.def).toLowerCase().includes(key)) : S.gloss;
+  const list = (key ? S.gloss.filter(g => (g.en + g.zh + g.def).toLowerCase().includes(key)) : S.gloss.slice())
+    .sort((a, b) => String(a.en || '').localeCompare(String(b.en || ''), 'en', { sensitivity: 'base' }));
   host.replaceChildren();
   if (!list.length) { host.append(emptyBox('🔍', '没有匹配的术语', '换个关键词试试。', null, null)); return; }
   const frag = document.createDocumentFragment();
+  let letter = '';
   for (const g of list) {
+    const L = glossLetter(g.en);
+    if (L !== letter) {
+      letter = L;
+      frag.append(el('div', 'gl-letter', L));
+    }
     const d = el('div', 'gl');
     const head = el('div', '');
     head.append(el('span', 'gl-en', g.en), el('span', 'gl-zh', g.zh));
@@ -1253,6 +1534,13 @@ $$('.seg').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab))
 $('#refreshBtn').addEventListener('click', () => refresh(true));
 $('#regenBtn').addEventListener('click', triggerRegenerate);
 $('#glossSearch').addEventListener('input', e => renderGlossary(e.target.value));
+const researchSearch = $('#researchSearch');
+if (researchSearch) researchSearch.addEventListener('input', e => setSearchQuery(e.target.value));
+const researchSearchClear = $('#researchSearchClear');
+if (researchSearchClear) researchSearchClear.addEventListener('click', () => {
+  if (researchSearch) { researchSearch.value = ''; researchSearch.focus(); }
+  setSearchQuery('');
+});
 $('#glossSheet').addEventListener('click', e => { if (e.target.closest('[data-close]')) closeGlossary(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeGlossary(); });
 

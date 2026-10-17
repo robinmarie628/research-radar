@@ -198,6 +198,34 @@ body{
 .bm i{font-style:normal;font-size:11px;line-height:1}
 .bm b{color:var(--brand);font-weight:800}
 
+/* ---------- search ---------- */
+.searchbar{
+  display:flex;align-items:center;gap:8px;
+  margin:12px 0 0;padding:2px 6px 2px 12px;
+  background:#fff;border:1px solid var(--line);border-radius:12px;
+  box-shadow:0 1px 2px rgba(19,58,110,.04);color:#7d96b8;
+}
+.searchbar input{
+  flex:1;min-width:0;border:0;background:transparent;
+  font-family:inherit;font-size:16px;font-weight:600;color:var(--ink);
+  padding:9px 0;outline:none;
+}
+.searchbar input::placeholder{color:#8aa0bd;font-weight:600;font-size:13.5px}
+.searchbar input::-webkit-search-cancel-button{display:none}
+.search-clear, #researchSearchClear{
+  flex:0 0 auto;width:28px;height:28px;border:0;border-radius:8px;
+  background:#eef4fd;color:#3a5f96;font:800 16px/1 inherit;cursor:pointer;
+}
+#researchSearchClear:active{transform:scale(.94)}
+mark.hit{
+  background:#fff4d6;color:#7a5200;font-weight:800;
+  border-radius:3px;padding:0 1px;
+}
+.search-snip{
+  margin:6px 0 0 22px;font-size:12px;line-height:1.45;
+  color:var(--ink-3);font-weight:600;
+}
+
 /* ---------- chips ---------- */
 .chips{
   display:flex;flex-wrap:wrap;gap:8px;
@@ -428,6 +456,11 @@ table.idx td{
 table.idx tr:last-child td{border-bottom:0}
 table.idx tbody tr{cursor:pointer}
 table.idx tbody tr:active{background:#f7fbff}
+table.idx tr.idx-letter{cursor:default}
+table.idx tr.idx-letter td{
+  background:#f4f8ff;color:#3a5f96;font-weight:800;font-size:11px;
+  letter-spacing:.4px;padding:6px 10px;
+}
 table.idx .n{width:22px;text-align:center;color:var(--ink-4);font-weight:800}
 table.idx .j{
   width:30%;font-weight:800;color:var(--brand-ink);
@@ -599,6 +632,12 @@ table.idx .b{width:42px;text-align:center}
 }
 .sheet-search:focus{border-color:#a9cbf5;background:#fff}
 .sheet-list{flex:1 1 auto;min-height:0;overflow-y:auto;padding:0 16px 20px}
+.gl-letter{
+  position:sticky;top:0;z-index:1;
+  background:#f4f8ff;color:#3a5f96;
+  font-size:11px;font-weight:800;letter-spacing:.4px;
+  padding:6px 2px 4px;border-bottom:1px solid var(--line-2);
+}
 .gl{
   padding:11px 0;border-bottom:1px solid var(--line-2);
 }
