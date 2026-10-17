@@ -3,12 +3,13 @@
    Live data: Europe PMC (journals) + Crossref (PII → ClinicalKey / ScienceDirect)
               + Crossref online dates & PubMed abstracts (最近一周)
               + follow-builders (AI builders)
-   Zero build, zero backend, zero API keys.
+   Zero build, zero API keys in the client.
+   Favorites email goes through a Pages Function or the trigger Worker.
    ============================================================ */
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.17.15';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.17.17';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -29,6 +30,9 @@ const PICK_CLINICAL = 4;    // …其中临床研究
 const TTL      = 30 * 60e3; // cache freshness
 const LS_KEY   = 'rr.cache.v2';
 const SEEN_KEY = 'rr.seen.v1';
+const FAV_KEY  = 'rr.fav.v1';
+/** Shown in the UI only. The server ignores any other recipient. */
+const MAIL_TO  = 'robinmarie628@gmail.com';
 /* Crossref polite pool + NCBI identification. Browsers forbid a custom
  * User-Agent, so Crossref gets `mailto` and NCBI gets tool + email.
  * Not a secret; no API key. */
@@ -149,6 +153,7 @@ const S = {
   domainsOpen: false,
   aFilter: 'all',
   seen: new Set(),
+  fav: { order: [], items: {} },
   tab: 'research',
 };
 
@@ -328,6 +333,152 @@ function bumpUnread() {
   const n = S.jr.all.filter(a => !S.seen.has(a.id)).length;
   const c = chip.querySelector('.cnt');
   if (c) c.textContent = `(${n})`;
+}
+
+/* ---------------- favorites / 小红心 ----------------
+   Local only. The key is the lowercased DOI when one exists, else the
+   article id, so a paper stays favorited after it leaves the 30-day pool.
+   A small snapshot keeps the 收藏 list readable in that case. */
+function readFav() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(FAV_KEY) || 'null');
+    if (Array.isArray(raw)) return { order: raw.map(k => String(k).toLowerCase()).filter(Boolean), items: {} };
+    const order = Array.isArray(raw?.order) ? raw.order.map(k => String(k).toLowerCase()).filter(Boolean) : [];
+    const items = raw?.items && typeof raw.items === 'object' ? raw.items : {};
+    return { order, items };
+  } catch { return { order: [], items: {} }; }
+}
+function writeFav() {
+  try { localStorage.setItem(FAV_KEY, JSON.stringify({ order: S.fav.order, items: S.fav.items })); }
+  catch { /* quota / private mode */ }
+}
+function favKey(a) {
+  return String(a?.doi || a?.id || '').trim().toLowerCase();
+}
+function favTitle(a) {
+  const zh = (a?.digest && a.digest.titleZh) || a?.titleZh || '';
+  return String(zh || a?.title || '未命名').trim();
+}
+function favSnapshot(a) {
+  const k = favKey(a);
+  return {
+    id: a.id || k,
+    doi: a.doi || (k.startsWith('10.') ? k : ''),
+    title: a.title || '',
+    titleZh: (a.digest && a.digest.titleZh) || '',
+    journal: a.journal || '',
+    domain: a.domain || '',
+    studyKey: a.studyKey || 'other',
+    studyZh: a.studyZh || '',
+    basic: !!a.basic,
+    stars: a.stars || 0,
+    year: a.year || '',
+    date: a.date || '',
+    pmid: a.pmid || '',
+  };
+}
+function articleFromFavSnap(snap, key) {
+  const doi = snap.doi || (String(key).startsWith('10.') ? key : '');
+  return {
+    id: snap.id || key,
+    doi,
+    title: snap.title || '',
+    abstract: '',
+    sections: null,
+    structured: false,
+    journal: snap.journal || '—',
+    platforms: [],
+    domain: snap.domain || '',
+    basic: !!snap.basic,
+    studyKey: snap.studyKey || 'other',
+    studyZh: snap.studyZh || '',
+    stars: snap.stars || 0,
+    year: snap.year || '',
+    date: snap.date || '',
+    pmid: snap.pmid || '',
+    keywords: [],
+    digest: snap.titleZh ? { titleZh: snap.titleZh } : null,
+    pii: undefined,
+  };
+}
+function articleIndex() {
+  const map = new Map();
+  const add = a => {
+    const k = favKey(a);
+    if (k && !map.has(k)) map.set(k, a);
+  };
+  for (const a of S.jr.all || []) add(a);
+  for (const a of S.jr.picks || []) add(a);
+  for (const a of (S.week && S.week.items) || []) add(a);
+  return map;
+}
+function favoriteArticles() {
+  const pool = articleIndex();
+  const out = [];
+  for (const k of S.fav.order) {
+    const live = pool.get(k);
+    if (live) { out.push(live); continue; }
+    const snap = S.fav.items[k];
+    if (snap) out.push(articleFromFavSnap(snap, k));
+  }
+  return out;
+}
+function paintFavChrome(key) {
+  const on = S.fav.order.includes(key);
+  for (const b of document.querySelectorAll('.fav-btn')) {
+    if ((b.dataset.fav || '') !== key) continue;
+    b.classList.toggle('is-on', on);
+    b.setAttribute('aria-pressed', String(on));
+    b.setAttribute('aria-label', on ? '取消收藏' : '收藏');
+  }
+  const cnt = document.querySelector('#researchChips .chip[data-k="fav"] .cnt');
+  if (cnt) cnt.textContent = `(${S.fav.order.length})`;
+}
+function toggleFav(a) {
+  const k = favKey(a);
+  if (!k) { toast('这篇文章缺少稳定编号，暂时无法收藏'); return; }
+  const idx = S.fav.order.indexOf(k);
+  if (idx >= 0) {
+    S.fav.order.splice(idx, 1);
+    delete S.fav.items[k];
+    toast('已取消收藏');
+  } else {
+    S.fav.order.unshift(k);
+    S.fav.items[k] = favSnapshot(a);
+    if (S.fav.order.length > 200) {
+      const drop = S.fav.order.pop();
+      if (drop) delete S.fav.items[drop];
+    }
+    toast('已加入收藏');
+  }
+  writeFav();
+  if (S.jFilter === 'fav' && !searchQuery()) renderResearch();
+  else paintFavChrome(k);
+}
+function favButton(a) {
+  const k = favKey(a);
+  const on = !!(k && S.fav.order.includes(k));
+  const b = el('button', 'fav-btn' + (on ? ' is-on' : ''));
+  b.type = 'button';
+  if (k) b.dataset.fav = k;
+  b.setAttribute('aria-pressed', String(on));
+  b.setAttribute('aria-label', on ? '取消收藏' : '收藏');
+  b.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 19.2C12 19.2 5.2 15.2 5.2 10.6 5.2 8.1 7.1 6.5 9.4 6.5c1.3 0 2.3.7 2.6 1.6.3-.9 1.3-1.6 2.6-1.6 2.3 0 4.2 1.6 4.2 4.1 0 4.6-6.8 8.6-6.8 8.6z"/></svg>';
+  if (!k) b.disabled = true;
+  b.addEventListener('click', ev => {
+    ev.preventDefault();
+    ev.stopPropagation();
+    toggleFav(a);
+  });
+  return b;
+}
+function syncFavHash() {
+  const url = new URL(location.href);
+  const want = S.jFilter === 'fav';
+  if (want) url.hash = 'fav';
+  else if (url.hash === '#fav') url.hash = '';
+  else return;
+  if (url.href !== location.href) history.replaceState(null, '', url);
 }
 
 /* ---------------- Europe PMC ---------------- */
@@ -1183,6 +1334,7 @@ function renderResearch() {
     chip({ ico:'🌐', text:'全部' }, all.length, S.jFilter === 'all', () => setJFilter('all'), '', 'all'),
     chip({ ico:'✨', text:'未读' }, unread, S.jFilter === 'unread', () => setJFilter('unread'), '', 'unread'),
     chip({ ico:'📅', text:'最近一周' }, weekChipCount(), S.jFilter === 'week', () => setJFilter('week'), '', 'week'),
+    chip({ ico:'♥', text:'收藏' }, S.fav.order.length, S.jFilter === 'fav', () => setJFilter('fav'), '', 'fav'),
     chip({ ico:'🧬', text:'基础/分子' }, (S.jr.byKey.basic || []).length, S.jFilter === 'basic', () => setJFilter('basic'), '', 'basic'),
     chip({ ico:'📚', text:'专业词汇' }, S.gloss.length, false, openGlossary),
   );
@@ -1215,10 +1367,14 @@ function renderResearch() {
     $('#researchHead').textContent = headLabel(list.length, isPick);
     $('#researchSub').textContent = isPick
       ? `每日精选 ${PICK_N} 篇 · ${PICK_CLINICAL} 篇临床 + ${PICK_BASIC} 篇基础/分子 · 点卡片展开摘要`
-      : S.jFilter === 'week'
-        ? `在线发表 ${utcDay(-6)} – ${utcDay(0)}（UTC）· Crossref 发现，摘要优先 PubMed`
-        : '点卡片任意位置展开摘要（摘要较长可在框内滚动）';
+      : S.jFilter === 'fav'
+        ? '小红心只存在这台浏览器 · 可把清单发到 ' + MAIL_TO
+        : S.jFilter === 'week'
+          ? `在线发表 ${utcDay(-6)} – ${utcDay(0)}（UTC）· Crossref 发现，摘要优先 PubMed`
+          : '点卡片任意位置展开摘要（摘要较长可在框内滚动）';
   }
+  const mailBtn = $('#mailFavBtn');
+  if (mailBtn) mailBtn.hidden = S.jFilter !== 'fav' || !!q;
 
   if (S.jView === 'index') renderIndexTable($('#researchCards'), list);
   else renderArticleList($('#researchCards'), list, isPick);
@@ -1229,6 +1385,7 @@ function headLabel(n, isPick) {
   if (S.jFilter === 'all')    return `最新推送 ${n} 篇`;
   if (S.jFilter === 'unread') return `未读 ${n} 篇`;
   if (S.jFilter === 'week')   return `最近一周 ${n} 篇`;
+  if (S.jFilter === 'fav')    return `收藏 ${n} 篇`;
   if (S.jFilter === 'basic')  return `基础/分子医学 ${n} 篇`;
   return `${S.jFilter} ${n} 篇`;
 }
@@ -1328,12 +1485,14 @@ function filteredArticles() {
   if (k === 'all')    return S.jr.all;
   if (k === 'unread') return S.jr.all.filter(a => !S.seen.has(a.id));
   if (k === 'week')   return weekList();
+  if (k === 'fav')    return favoriteArticles();
   if (k === 'basic')  return S.jr.byKey.basic || [];
   return S.jr.byKey[k] || [];
 }
 
 function setJFilter(k) {
   S.jFilter = k;
+  syncFavHash();
   renderResearch();
   const sc = $('#scrollArea');
   sc.scrollTo({ top: Math.max(0, $('#researchChips').offsetTop - 96), behavior: 'smooth' });
@@ -1357,7 +1516,7 @@ function articleCard(a, isPick, pickRank) {
   const h3 = el('h3', 'art-title');
   fillHighlighted(h3, titleZh || a.title, searchQuery());
   titleWrap.append(h3);
-  top.append(caret, titleWrap);
+  top.append(caret, titleWrap, favButton(a));
 
   const badges = el('div', 'art-badges');
   badges.append(el('span', 'badge dom', a.domain));
@@ -1492,14 +1651,15 @@ function researchEmpty() {
     }
     return emptyBox('📅', '这 7 天还没有带摘要的新文章', `在线发表日 ${utcDay(-6)} 至 ${utcDay(0)}（UTC）。`);
   }
+  if (S.jFilter === 'fav') return emptyBox('♥', '还没有收藏', '点文章卡片右上角的小红心，把想留下来的文献收进这里。收藏只存在这台设备上。');
   if (S.jFilter === 'unread') return emptyBox('✅', '都读完了', '这一轮的新文章你都看过了，等明天的更新吧。');
   return emptyBox('🔍', '这里今天还没有新文章', '摘要入库通常滞后 2–4 天。换个筛选看看。');
 }
 
 function renderArticleList(host, list, isPick) {
   host.replaceChildren();
-  if (S.jFilter !== 'week' && !S.jr.loaded) return;
-  if (S.jr.error && !list.length && S.jFilter !== 'week') {
+  if (S.jFilter !== 'week' && S.jFilter !== 'fav' && !S.jr.loaded) return;
+  if (S.jr.error && !list.length && S.jFilter !== 'week' && S.jFilter !== 'fav') {
     host.append(emptyBox('📡', '数据暂时取不到',
       '网络或接口波动，稍后重试。', '重新加载', () => refresh(true)));
     return;
@@ -1530,7 +1690,7 @@ function sortByJournal(list) {
 
 function renderIndexTable(host, list) {
   host.replaceChildren();
-  if (S.jFilter !== 'week' && !S.jr.loaded) return;
+  if (S.jFilter !== 'week' && S.jFilter !== 'fav' && !S.jr.loaded) return;
   if (!list.length) {
     host.append(researchEmpty());
     return;
@@ -1578,7 +1738,8 @@ function renderIndexTable(host, list) {
 
 function openFromIndex(a) {
   S.jView = 'card';
-  S.jFilter = S.jFilter === 'pick' ? 'pick' : 'all';
+  if (S.jFilter !== 'pick' && S.jFilter !== 'fav') S.jFilter = 'all';
+  syncFavHash();
   renderResearch();
   const node = $(`#researchCards .art[data-id="${CSS.escape(a.id)}"]`);
   if (node) {
@@ -1825,12 +1986,124 @@ async function triggerRegenerate() {
   }
 }
 
+/* ---------------- favorites email ---------------- */
+function favAbstract(a) {
+  const direct = String(a?.abstract || '').trim();
+  if (direct) return direct;
+  const sec = a?.sections;
+  if (!sec) return '';
+  return ['objective', 'methods', 'results', 'conclusion', 'other']
+    .map(k => String(sec[k] || '').trim())
+    .filter(Boolean)
+    .join('\n\n');
+}
+function mailItems() {
+  return favoriteArticles().map(a => ({
+    title: favTitle(a).slice(0, 500),
+    titleEn: String(a.title || '').slice(0, 500),
+    journal: String(a.journal || '').slice(0, 160),
+    abstract: favAbstract(a).slice(0, 4000),
+    doi: String(a.doi || '').replace(/^https?:\/\/(?:dx\.)?doi\.org\//i, '').slice(0, 200),
+  }));
+}
+function localPreviewMarkdown(items) {
+  const d = new Date();
+  const date = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const lines = ['# Radar for Meds 收藏', '', `${date} · ${items.length} 篇`, ''];
+  items.forEach((item, i) => {
+    lines.push('---', '', `## ${i + 1}. ${item.title}`, '');
+    if (item.titleEn && item.titleEn !== item.title) lines.push(item.titleEn, '');
+    if (item.journal) lines.push(`- 期刊：${item.journal}`);
+    lines.push(`- DOI：${item.doi ? 'https://doi.org/' + item.doi : '无'}`, '', item.abstract || '（没有摘要）', '');
+  });
+  return lines.join('\n');
+}
+function openMailPreview(markdown, note) {
+  const sheet = $('#mailSheet');
+  const pre = $('#mailPreview');
+  const hint = $('#mailNote');
+  if (!sheet || !pre) return;
+  pre.textContent = markdown || '';
+  if (hint) hint.textContent = note || ('收件人固定为 ' + MAIL_TO + '。这封邮件没有发出。');
+  sheet.hidden = false;
+}
+function closeMailPreview() {
+  const sheet = $('#mailSheet');
+  if (sheet) sheet.hidden = true;
+}
+function mailApiUrls() {
+  const urls = ['/api/favorites'];
+  const local = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  // 本地静态预览不要打到线上 trigger：旧 Worker 会把任意 POST 当成「重新生成」。
+  if (!local && WORKER_URL && !WORKER_URL.includes('REPLACE-ME')) {
+    urls.push(WORKER_URL.replace(/\/$/, '') + '/favorites');
+  }
+  return urls;
+}
+async function postFavoritesMail(body) {
+  const urls = mailApiUrls();
+  let last = '发信接口没有响应';
+  for (const url of urls) {
+    let res;
+    let data = null;
+    try {
+      res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        cache: 'no-store',
+      });
+      data = await res.json().catch(() => null);
+    } catch {
+      last = '网络连不上发信接口';
+      continue;
+    }
+    // 旧 trigger 的成功/失败体带 results，那不是发信接口。
+    if (data && Array.isArray(data.results)) {
+      last = '线上 Worker 还是旧版，还不会发收藏邮件';
+      continue;
+    }
+    if (res.status === 404 || !data) { last = '发信接口还没部署'; continue; }
+    if (data.dryRun) return data;
+    if (res.ok && data.ok) return data;
+    throw new Error(data.error || ('发送失败 HTTP ' + res.status));
+  }
+  const err = new Error(last);
+  err.fallback = true;
+  throw err;
+}
+async function sendFavoritesMail() {
+  const items = mailItems();
+  if (!items.length) { toast('还没有收藏，先点文章上的小红心'); return; }
+  const btn = $('#mailFavBtn');
+  if (btn) btn.disabled = true;
+  try {
+    const result = await postFavoritesMail({ items });
+    if (result.dryRun) {
+      openMailPreview(result.markdown, (result.note || '没有发信。') + ' 收件人固定为 ' + MAIL_TO);
+      return;
+    }
+    toast('已发送到 ' + MAIL_TO, 3600);
+  } catch (e) {
+    const local = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+    if (local && e.fallback) {
+      openMailPreview(localPreviewMarkdown(items), '本地没有发信接口，下面只是预览，邮件没有发出。收件人固定为 ' + MAIL_TO);
+      return;
+    }
+    toast(e.message || '发送失败', 4200);
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
 /* ---------------- boot ---------------- */
 async function boot() {
   window.__rr = S;                 // debug/QA hook
   S.fullTextLink = fullTextLink;
   S.articlePlatforms = articlePlatforms;
   S.seen = readSeen();
+  S.fav = readFav();
+  if (location.hash === '#fav') S.jFilter = 'fav';
 
   const c = readCache();
   if (c.week?.data?.items?.length) {
@@ -1881,7 +2154,20 @@ if (researchSearchClear) researchSearchClear.addEventListener('click', () => {
   setSearchQuery('');
 });
 $('#glossSheet').addEventListener('click', e => { if (e.target.closest('[data-close]')) closeGlossary(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeGlossary(); });
+const mailSheet = $('#mailSheet');
+if (mailSheet) mailSheet.addEventListener('click', e => { if (e.target.closest('[data-close-mail]')) closeMailPreview(); });
+const mailFavBtn = $('#mailFavBtn');
+if (mailFavBtn) mailFavBtn.addEventListener('click', () => sendFavoritesMail());
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (mailSheet && !mailSheet.hidden) { closeMailPreview(); return; }
+  closeGlossary();
+});
+window.addEventListener('hashchange', () => {
+  const on = location.hash === '#fav';
+  if (on && S.jFilter !== 'fav') setJFilter('fav');
+  else if (!on && S.jFilter === 'fav') setJFilter('pick');
+});
 
 $$('.viewtog button').forEach(b => b.addEventListener('click', () => {
   S.jView = b.dataset.view;

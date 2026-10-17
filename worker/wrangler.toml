@@ -1,6 +1,21 @@
 name = "research-radar-trigger"
 main = "trigger.js"
-compatibility_date = "2024-09-23"
+compatibility_date = "2026-10-17"
 
 # GitHub PAT 通过 `wrangler secret put GITHUB_PAT` 设置，千万不要写在这个文件里。
 # 这个 Worker 不读任何请求体 / 不含敏感信息，CORS 用 * 即可。
+
+# 收藏邮件只发给这一个已验证地址。Workers Free 可以给 Email Routing
+# 的 verified destination 发信，不能改成任意收件人。
+# 发件地址 EMAIL_FROM 必须是你账号里已开通 Email Routing 的域名，
+# 部署前改成你自己的，例如 "Radar for Meds <favorites@example.com>"。
+# 不要把 Gmail 写进 from。
+[[send_email]]
+name = "EMAIL"
+destination_address = "robinmarie628@gmail.com"
+
+[observability]
+enabled = true
+
+[observability.traces]
+enabled = true

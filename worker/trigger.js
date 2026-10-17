@@ -13,8 +13,13 @@
  *   3) npx wrangler deploy
  *   4) 记下输出的 *.workers.dev 地址，填进前端 assets/app.js 的 WORKER_URL。
  *
+ * POST /            触发上面的两个 workflow。
+ * POST /favorites  把收藏 Markdown 发给已验证的 Gmail（见 favorites-mail.js）。
+ *
  * 详见同目录 README-deploy.md
  */
+
+import { handleFavoritesRequest } from './favorites-mail.js';
 
 const REPO = 'robinmarie628/research-radar';
 const WORKFLOWS = ['daily-digest.yml', 'refresh-snapshots.yml'];
@@ -42,6 +47,9 @@ export default {
     if (request.method === 'OPTIONS') {
       return new Response(null, { status: 204, headers: corsHeaders() });
     }
+    const path = new URL(request.url).pathname.replace(/\/+$/, '') || '/';
+    // 收藏邮件。收件人在 favorites-mail.js 里写死，不走下面的 GitHub 触发。
+    if (path === '/favorites') return handleFavoritesRequest(request, env);
     if (request.method !== 'POST') {
       return json({ ok: false, error: '只接受 POST 请求' }, 405);
     }
