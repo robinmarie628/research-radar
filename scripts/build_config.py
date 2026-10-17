@@ -103,6 +103,92 @@ POOL = {
 # mirrors BASIC_FRAGMENTS in the prompt doc: basic is decided by journal NAME
 BASIC_FRAGMENTS = ("Cell", "Nature", "Science", "Neuron", "JACC: Basic")
 
+# Full-text buttons for an Elsevier PII. The page shows ClinicalKey when "ck"
+# is present, otherwise ScienceDirect when "sd" is present, otherwise DOI only.
+# Cell Press is ScienceDirect-only. Other Elsevier titles in this pool are on
+# both. Non-Elsevier titles stay [] so a stray PII does not grow a button.
+# A platforms list already saved in journals.config.json is kept on rebuild
+# (see resolve_platforms) so a hand edit is not wiped by the next run.
+SD_ONLY = ["sd"]
+CK_AND_SD = ["ck", "sd"]
+PLATFORMS = {
+    # Cell Press — ScienceDirect only
+    "0092-8674": SD_ONLY,   # Cell
+    "1934-5909": SD_ONLY,   # Cell Stem Cell
+    "2211-1247": SD_ONLY,   # Cell Rep
+    "1931-3128": SD_ONLY,   # Cell Host Microbe
+    "2405-4712": SD_ONLY,   # Cell Syst
+    "0896-6273": SD_ONLY,   # Neuron
+    # Lancet family + EClinicalMedicine
+    "0140-6736": CK_AND_SD,
+    "1470-2045": CK_AND_SD,
+    "1474-4422": CK_AND_SD,
+    "1473-3099": CK_AND_SD,
+    "2213-2600": CK_AND_SD,
+    "2213-8587": CK_AND_SD,
+    "2468-1253": CK_AND_SD,
+    "2352-3026": CK_AND_SD,
+    "2215-0366": CK_AND_SD,
+    "2468-2667": CK_AND_SD,
+    "2214-109X": CK_AND_SD,
+    "2589-7500": CK_AND_SD,
+    "2352-4642": CK_AND_SD,
+    "2665-9913": CK_AND_SD,
+    "2352-3018": CK_AND_SD,
+    "2666-5247": CK_AND_SD,
+    "2589-5370": CK_AND_SD,  # EClinicalMedicine
+    "2542-5196": CK_AND_SD,
+    "2666-7568": CK_AND_SD,
+    # JACC family
+    "0735-1097": CK_AND_SD,
+    "1936-8798": CK_AND_SD,
+    "2213-1779": CK_AND_SD,
+    "1936-878X": CK_AND_SD,
+    "2405-5018": CK_AND_SD,
+    "2452-302X": CK_AND_SD,
+    "2666-0873": CK_AND_SD,
+    "2772-963X": CK_AND_SD,
+    # other Elsevier clinical titles named in the pool
+    "0012-3692": CK_AND_SD,  # Chest
+    "0161-6420": CK_AND_SD,  # Ophthalmology
+    "2468-6530": CK_AND_SD,
+    "2589-4196": CK_AND_SD,
+    "2666-9145": CK_AND_SD,
+    "0002-9394": CK_AND_SD,  # Am J Ophthalmol
+    "0923-7534": CK_AND_SD,  # Ann Oncol
+    "0168-8278": CK_AND_SD,  # J Hepatol
+    "0085-2538": CK_AND_SD,  # Kidney Int
+    "0190-9622": CK_AND_SD,  # JAAD
+    "0302-2838": CK_AND_SD,  # Eur Urol
+    # Elsevier vascular titles — ClinicalKey coverage not re-checked title by title
+    "0741-5214": CK_AND_SD,  # J Vasc Surg
+    "1078-5884": CK_AND_SD,  # Eur J Vasc Endovasc
+    "2213-333X": CK_AND_SD,  # J Vasc Surg Venous
+    "0890-5096": CK_AND_SD,  # Ann Vasc Surg
+    "0895-7967": CK_AND_SD,  # Semin Vasc Surg
+}
+
+
+def resolve_platforms(issn, previous):
+    """Keep a platforms list already stored for this ISSN; otherwise use PLATFORMS.
+
+    Non-Elsevier ISSNs (and anything new that is not listed) default to [],
+    which means DOI only.
+    """
+    if isinstance(previous, dict) and isinstance(previous.get("platforms"), list):
+        return [p for p in previous["platforms"] if p in ("ck", "sd")]
+    return list(PLATFORMS.get(issn, []))
+
+
+def load_previous_config(path):
+    if not os.path.exists(path):
+        return {}
+    try:
+        rows = json.load(open(path, encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    return {r.get("issn"): r for r in rows if isinstance(r, dict) and r.get("issn")}
+
 
 def get(url, tries=4, timeout=45):
     last = None
@@ -157,6 +243,9 @@ def main():
     lo90 = (date.today() - timedelta(days=90)).isoformat()
     lo30 = (date.today() - timedelta(days=30)).isoformat()
 
+    out = os.path.join(DATA, "journals.config.json")
+    previous = load_previous_config(out)
+
     print(f"Validating {len(POOL)} ISSNs over {lo90} .. {hi}\n")
     cfg, bad, all_heads = [], [], []
 
@@ -177,7 +266,8 @@ def main():
         # basic flag must agree with the doc's name-fragment rule
         by_name = any(f in title for f in BASIC_FRAGMENTS) or basic
         cfg.append({"issn": issn, "title": title or short, "short": short,
-                    "domain": domain, "basic": bool(by_name), "if": imp, "n90": hits})
+                    "domain": domain, "basic": bool(by_name), "if": imp, "n90": hits,
+                    "platforms": resolve_platforms(issn, previous.get(issn))})
 
         if a.sample:
             hs, pts = sample_headings(issn, lo30, hi)
@@ -194,8 +284,8 @@ def main():
     print("basic-tagged:", sum(1 for c in cfg if c["basic"]),
           " clinical:", sum(1 for c in cfg if not c["basic"]))
 
-    out = os.path.join(DATA, "journals.config.json")
     json.dump(cfg, open(out, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+    open(out, "a", encoding="utf-8").write("\n")
     print(f"\nwrote {os.path.abspath(out)}")
 
     if a.sample and all_heads:

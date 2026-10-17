@@ -7,7 +7,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.17.9';   // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.17.10';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -336,6 +336,7 @@ function mapArticle(r) {
     structured: parsed.structured,
     journal: meta?.short || j.medlineAbbreviation || j.isoabbreviation || '—',
     issn: meta?.issn || issn,
+    platforms: Array.isArray(meta?.platforms) ? meta.platforms.slice() : [],
     domain: meta?.domain || '综合医学',
     imp: meta?.if ?? 0,
     basic: isBasic,
@@ -462,46 +463,14 @@ async function loadResearch(force) {
   renderResearch();
 }
 
-/* ---------------- Cell Press → ScienceDirect, everyone else → ClinicalKey ----
-   Membership is an explicit ISSN list, joined to journals.config.json.
-   Snapshot / cached items often have no ISSN, so they match the config row's
-   own `short` or `title` (exact string). Never a prefix or /cell/i test.     */
-const CELL_FAMILY_ISSNS = new Set([
-  '0092-8674', // Cell
-  '1934-5909', // Cell Stem Cell
-  '2211-1247', // Cell Rep
-  '1931-3128', // Cell Host Microbe
-  '2405-4712', // Cell Syst
-  '0896-6273', // Neuron
-]);
-const cellFamily = {
-  issns: new Set(CELL_FAMILY_ISSNS),
-  titles: new Set(['Cell', 'Cell Stem Cell', 'Cell Rep', 'Cell Host Microbe', 'Cell Syst', 'Neuron']),
-};
-
-/** Keep only the ISSNs that are actually present in the loaded config, and
- *  take short/title from that row so a renamed label still matches snapshots. */
-function indexCellFamily(cfg) {
-  const issns = new Set();
-  const titles = new Set();
-  for (const row of cfg || []) {
-    if (!row || !CELL_FAMILY_ISSNS.has(row.issn)) continue;
-    issns.add(row.issn);
-    if (row.short) titles.add(row.short);
-    if (row.title) titles.add(row.title);
-  }
-  if (!issns.size) return; // config missing — keep the seed list
-  cellFamily.issns = issns;
-  cellFamily.titles = titles;
-}
-
-function isCellFamily(a) {
-  if (!a) return false;
-  if (a.issn && cellFamily.issns.has(a.issn)) return true;
-  return !!(a.journal && cellFamily.titles.has(a.journal));
-}
-
 /* ---------------- Crossref PII → publisher deep link --------------------
+   Which button to show lives on the journal row (`platforms` in
+   journals.config.json), not in a hardcoded title list:
+     ck in platforms + PII → ClinicalKey
+     else sd in platforms + PII → ScienceDirect
+     else DOI only
+   ClinicalKey wins when both are listed. Snapshot items often have no ISSN;
+   those match the config row's exact `short` or `title`.
    Europe PMC exposes no PII, so it comes from Crossref's alternative-id.
    `filter=doi:a,doi:b` batches ~20 DOIs per request.
    The id is the compact Elsevier PII (`S` + digits, no hyphens), which is
@@ -556,21 +525,44 @@ async function loadPII(items) {
   });
 }
 
-/** Publisher chip for a resolved PII. Cell Press → ScienceDirect; else ClinicalKey. */
+/** Config row for this article: exact ISSN, else exact short/title. */
+function journalRow(a) {
+  if (!a || !S.cfg?.length) return null;
+  if (a.issn) {
+    const byIssn = S.cfg.find(c => c.issn === a.issn);
+    if (byIssn) return byIssn;
+  }
+  if (!a.journal) return null;
+  return S.cfg.find(c => c.short === a.journal || c.title === a.journal) || null;
+}
+
+/** Platforms from the current config row, else the copy stored on the article. */
+function articlePlatforms(a) {
+  const row = journalRow(a);
+  if (row && Array.isArray(row.platforms)) return row.platforms;
+  if (a && Array.isArray(a.platforms)) return a.platforms;
+  return [];
+}
+
+/** Publisher chip for a resolved PII. ck beats sd; neither means DOI only. */
 function fullTextLink(a) {
   if (!a || !a.pii) return null;
-  if (isCellFamily(a)) {
+  const plats = articlePlatforms(a);
+  if (plats.includes('ck')) {
+    return {
+      href: 'https://www.clinicalkey.com/#!/content/playContent/1-s2.0-' + a.pii,
+      label: 'ClinicalKey',
+      cls: 'ck',
+    };
+  }
+  if (plats.includes('sd')) {
     return {
       href: 'https://www.sciencedirect.com/science/article/pii/' + a.pii,
       label: 'ScienceDirect',
       cls: 'sd',
     };
   }
-  return {
-    href: 'https://www.clinicalkey.com/#!/content/playContent/1-s2.0-' + a.pii,
-    label: 'ClinicalKey',
-    cls: 'ck',
-  };
+  return null;
 }
 
 function addFullTextLink(node, a) {
@@ -1220,8 +1212,8 @@ async function triggerRegenerate() {
 /* ---------------- boot ---------------- */
 async function boot() {
   window.__rr = S;                 // debug/QA hook
-  S.isCellFamily = isCellFamily;
   S.fullTextLink = fullTextLink;
+  S.articlePlatforms = articlePlatforms;
   S.seen = readSeen();
 
   const c = readCache();
@@ -1241,7 +1233,6 @@ async function boot() {
     ]);
     S.cfg = cfg || [];
     S.gloss = gloss || [];
-    indexCellFamily(S.cfg);
   } catch (e) { console.warn('[boot] config load failed:', e); S.cfg = []; S.gloss = []; }
 
   renderResearch();
