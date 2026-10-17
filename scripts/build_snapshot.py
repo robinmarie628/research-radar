@@ -258,7 +258,30 @@ def curate(items, n=8, n_basic=4, n_clinical=4):
             break
         add(it, 2)
 
+    for it in pool:                                    # 一刊上限仍挡路时放开，池子够大就凑满 n
+        if len(picked) >= n:
+            break
+        add(it, 99)
+
     return sorted(picked[:n], key=rank, reverse=True)
+
+
+def keyword_list(raw):
+    """Europe PMC keywordList → plain strings. Mirrors assets/app.js keywordList."""
+    if not raw:
+        return []
+    if isinstance(raw, dict):
+        raw = raw.get("keyword") or []
+    if isinstance(raw, str):
+        raw = [raw]
+    out = []
+    for k in raw:
+        if isinstance(k, dict):
+            k = k.get("text") or k.get("value") or ""
+        t = clean(str(k or ""))
+        if t:
+            out.append(t)
+    return out
 
 
 def build_journals(days, cap_per_journal=8):
@@ -328,6 +351,7 @@ def build_journals(days, cap_per_journal=8):
             "year": r.get("pubYear") or (d[:4] if d else ""),
             "authors": (clean(r.get("authorString")).split(",") or [""])[0],
             "pmid": r.get("pmid") or "", "doi": r.get("doi") or "",
+            "keywords": keyword_list(r.get("keywordList")),
             "oa": bool(r.get("isOpenAccess")),
         })
 

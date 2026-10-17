@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<!-- data-theme: navy (default) | teal | mono. Change this one attribute to switch the palette. -->
+<html lang="zh-CN" data-theme="navy">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5" />
-<meta name="theme-color" content="#eaf2fe" />
+<meta name="theme-color" content="#f6f3ee" />
 <title>科研雷达 · 顶刊速递 &amp; AI Builder</title>
 <meta name="description" content="每日更新的心血管与重症医学顶刊速递，以及 AI Builder 一手动态。" />
 <link rel="manifest" href="manifest.webmanifest" />
@@ -62,6 +63,16 @@
           <span class="bm"><i>🧬</i><b id="jBasic">—</b> 本 CNS / 基础</span>
           <span class="bm"><i>📅</i>文献更新 <b id="litDate">—</b></span>
         </div>
+      </div>
+
+      <div class="searchbar">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M16 16l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <input id="researchSearch" type="search" enterkeyhint="search" autocomplete="off"
+               placeholder="搜索标题、摘要、期刊、关键词…" aria-label="搜索文章" />
+        <button id="researchSearchClear" type="button" hidden aria-label="清除搜索">×</button>
       </div>
 
       <div class="chips" id="researchChips"></div>
