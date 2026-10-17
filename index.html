@@ -89,7 +89,10 @@
           </div>
         </div>
         <small id="researchSub">每日精选 8 篇 · 4 篇临床 + 4 篇基础/分子 · 点卡片展开摘要</small>
-        <button id="shareFavBtn" class="share-fav" type="button" hidden>生成分享图</button>
+        <button id="mailFavBtn" class="mail-fav" type="button" hidden>
+          发送到邮箱
+          <span class="mail-to">robinmarie628@gmail.com</span>
+        </button>
       </div>
 
       <div class="cards" id="researchCards">
@@ -159,33 +162,26 @@
   </div>
 </div>
 
-<div class="sheet" id="shareSheet" hidden>
-  <div class="sheet-mask" data-close-share></div>
-  <div class="sheet-body share-sheet" role="dialog" aria-modal="true" aria-label="分享收藏">
+<div class="sheet" id="mailSheet" hidden>
+  <div class="sheet-mask" data-close-mail></div>
+  <div class="sheet-body" role="dialog" aria-modal="true" aria-label="邮件预览">
     <div class="sheet-grip" aria-hidden="true"></div>
     <div class="sheet-head">
-      <h3>分享收藏</h3>
-      <button class="icon-btn" type="button" data-close-share aria-label="关闭">
+      <h3>邮件预览 · 未发送</h3>
+      <button class="icon-btn" type="button" data-close-mail aria-label="关闭">
         <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
           <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.2"
                 stroke-linecap="round"/>
         </svg>
       </button>
     </div>
-    <p class="share-hint">四角是深色，发到微信不会露出白边。长按图片也能保存。</p>
-    <div class="share-preview">
-      <img id="shareImg" alt="Radar for Meds 收藏分享图" />
-    </div>
-    <div class="share-actions">
-      <button id="shareSave" type="button">保存图片</button>
-      <button id="shareNative" type="button" hidden>转发</button>
-    </div>
+    <p class="mail-note" id="mailNote">收件人固定为 robinmarie628@gmail.com。</p>
+    <pre class="mail-preview" id="mailPreview"></pre>
   </div>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script src="assets/qrcode.js"></script>
 <script src="assets/app.js"></script>
 </body>
 </html>

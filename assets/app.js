@@ -3,12 +3,13 @@
    Live data: Europe PMC (journals) + Crossref (PII → ClinicalKey / ScienceDirect)
               + Crossref online dates & PubMed abstracts (最近一周)
               + follow-builders (AI builders)
-   Zero build, zero backend, zero API keys.
+   Zero build, zero API keys in the client.
+   Favorites email goes through a Pages Function or the trigger Worker.
    ============================================================ */
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.17.16';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.17.17';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -30,10 +31,8 @@ const TTL      = 30 * 60e3; // cache freshness
 const LS_KEY   = 'rr.cache.v2';
 const SEEN_KEY = 'rr.seen.v1';
 const FAV_KEY  = 'rr.fav.v1';
-const SITE_URL = 'https://research-radar-f5j.pages.dev';
-const FAV_LINK = SITE_URL + '/#fav';
-const SHARE_MAX = 14;
-const SHARE_FONT = '"WenQuanYi Micro Hei","Droid Sans Fallback","PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif';
+/** Shown in the UI only. The server ignores any other recipient. */
+const MAIL_TO  = 'robinmarie628@gmail.com';
 /* Crossref polite pool + NCBI identification. Browsers forbid a custom
  * User-Agent, so Crossref gets `mailto` and NCBI gets tool + email.
  * Not a secret; no API key. */
@@ -1369,13 +1368,13 @@ function renderResearch() {
     $('#researchSub').textContent = isPick
       ? `每日精选 ${PICK_N} 篇 · ${PICK_CLINICAL} 篇临床 + ${PICK_BASIC} 篇基础/分子 · 点卡片展开摘要`
       : S.jFilter === 'fav'
-        ? '小红心只存在这台浏览器 · 可生成带二维码的分享图'
+        ? '小红心只存在这台浏览器 · 可把清单发到 ' + MAIL_TO
         : S.jFilter === 'week'
           ? `在线发表 ${utcDay(-6)} – ${utcDay(0)}（UTC）· Crossref 发现，摘要优先 PubMed`
           : '点卡片任意位置展开摘要（摘要较长可在框内滚动）';
   }
-  const shareBtn = $('#shareFavBtn');
-  if (shareBtn) shareBtn.hidden = S.jFilter !== 'fav' || !!q;
+  const mailBtn = $('#mailFavBtn');
+  if (mailBtn) mailBtn.hidden = S.jFilter !== 'fav' || !!q;
 
   if (S.jView === 'index') renderIndexTable($('#researchCards'), list);
   else renderArticleList($('#researchCards'), list, isPick);
@@ -1987,291 +1986,111 @@ async function triggerRegenerate() {
   }
 }
 
-/* ---------------- share image ---------------- */
-function shareFont(weight, px) { return `${weight} ${px}px ${SHARE_FONT}`; }
-function localISODate() {
+/* ---------------- favorites email ---------------- */
+function favAbstract(a) {
+  const direct = String(a?.abstract || '').trim();
+  if (direct) return direct;
+  const sec = a?.sections;
+  if (!sec) return '';
+  return ['objective', 'methods', 'results', 'conclusion', 'other']
+    .map(k => String(sec[k] || '').trim())
+    .filter(Boolean)
+    .join('\n\n');
+}
+function mailItems() {
+  return favoriteArticles().map(a => ({
+    title: favTitle(a).slice(0, 500),
+    titleEn: String(a.title || '').slice(0, 500),
+    journal: String(a.journal || '').slice(0, 160),
+    abstract: favAbstract(a).slice(0, 4000),
+    doi: String(a.doi || '').replace(/^https?:\/\/(?:dx\.)?doi\.org\//i, '').slice(0, 200),
+  }));
+}
+function localPreviewMarkdown(items) {
   const d = new Date();
-  const p = n => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
-}
-function shareDateLabel() {
-  const d = new Date();
-  return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
-}
-function wrapLines(ctx, text, maxW) {
-  const src = String(text || '').replace(/\s+/g, ' ').trim();
-  if (!src) return [''];
-  const byWord = /[A-Za-z]{3}/.test(src) && !/[\u3400-\u9fff]/.test(src);
-  const parts = byWord ? src.split(' ') : [...src];
-  const lines = [];
-  let line = '';
-  for (const p of parts) {
-    const next = byWord ? (line ? line + ' ' + p : p) : line + p;
-    if (line && ctx.measureText(next).width > maxW) { lines.push(line); line = p; }
-    else line = next;
-  }
-  if (line) lines.push(line);
-  return lines;
-}
-function clampLines(ctx, text, maxW, maxLines) {
-  const lines = wrapLines(ctx, text, maxW);
-  if (lines.length <= maxLines) return lines;
-  const out = lines.slice(0, maxLines);
-  let last = out[maxLines - 1];
-  while (last.length > 1 && ctx.measureText(last + '…').width > maxW) last = last.slice(0, -1);
-  out[maxLines - 1] = last.replace(/\s+$/, '') + '…';
-  return out;
-}
-function ellipsisTo(ctx, text, maxW) {
-  let s = String(text || '');
-  if (ctx.measureText(s).width <= maxW) return s;
-  while (s.length > 1 && ctx.measureText(s + '…').width > maxW) s = s.slice(0, -1);
-  return s + '…';
-}
-function traceRoundRect(ctx, x, y, w, h, r) {
-  const rr = Math.min(r, w / 2, h / 2);
-  ctx.beginPath();
-  ctx.moveTo(x + rr, y);
-  ctx.arcTo(x + w, y, x + w, y + h, rr);
-  ctx.arcTo(x + w, y + h, x, y + h, rr);
-  ctx.arcTo(x, y + h, x, y, rr);
-  ctx.arcTo(x, y, x + w, y, rr);
-  ctx.closePath();
-}
-function drawHeart(ctx, x, y, s, fill) {
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.scale(s / 24, s / 24);
-  ctx.beginPath();
-  ctx.moveTo(12, 19.2);
-  ctx.bezierCurveTo(12, 19.2, 5.2, 15.2, 5.2, 10.6);
-  ctx.bezierCurveTo(5.2, 8.1, 7.1, 6.5, 9.4, 6.5);
-  ctx.bezierCurveTo(10.7, 6.5, 11.7, 7.2, 12, 8.1);
-  ctx.bezierCurveTo(12.3, 7.2, 13.3, 6.5, 14.6, 6.5);
-  ctx.bezierCurveTo(16.9, 6.5, 18.8, 8.1, 18.8, 10.6);
-  ctx.bezierCurveTo(18.8, 15.2, 12, 19.2, 12, 19.2);
-  ctx.closePath();
-  ctx.fillStyle = fill;
-  ctx.fill();
-  ctx.restore();
-}
-function qrModules(text) {
-  if (typeof qrcode !== 'function') throw new Error('二维码组件未加载');
-  const qr = qrcode(0, 'M');
-  qr.addData(text);
-  qr.make();
-  const n = qr.getModuleCount();
-  const m = [];
-  for (let r = 0; r < n; r++) {
-    const row = new Array(n);
-    for (let c = 0; c < n; c++) row[c] = !!qr.isDark(r, c);
-    m.push(row);
-  }
-  return m;
-}
-function drawQrModules(ctx, modules, x, y, size) {
-  const n = modules.length;
-  const quiet = 4;
-  const cells = n + quiet * 2;
-  const cell = Math.max(1, Math.floor(size / cells));
-  const dim = cell * cells;
-  const ox = Math.round(x + (size - dim) / 2);
-  const oy = Math.round(y + (size - dim) / 2);
-  ctx.fillStyle = '#ffffff';
-  ctx.fillRect(ox, oy, dim, dim);
-  ctx.fillStyle = '#111111';
-  for (let r = 0; r < n; r++) {
-    for (let c = 0; c < n; c++) {
-      if (!modules[r][c]) continue;
-      ctx.fillRect(ox + (c + quiet) * cell, oy + (r + quiet) * cell, cell, cell);
-    }
-  }
-}
-function renderShareCanvas(list) {
-  const sc = 2;
-  const W = 540 * sc;
-  const frame = 18 * sc;
-  const cardW = W - frame * 2;
-  const pad = 22 * sc;
-  const headH = 128 * sc;
-  const qrSize = 118 * sc;
-  const footH = 156 * sc;
-  const shown = list.slice(0, SHARE_MAX);
-  const extra = list.length - shown.length;
-  const titleW = cardW - pad * 2 - 34 * sc;
-
-  const probe = document.createElement('canvas').getContext('2d');
-  probe.font = shareFont(700, 15 * sc);
-  const rows = shown.map((a, i) => {
-    const lines = clampLines(probe, favTitle(a), titleW, 2);
-    const h = (16 + lines.length * 21 + 16) * sc;
-    return { a, i, lines, h };
+  const date = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const lines = ['# Radar for Meds 收藏', '', `${date} · ${items.length} 篇`, ''];
+  items.forEach((item, i) => {
+    lines.push('---', '', `## ${i + 1}. ${item.title}`, '');
+    if (item.titleEn && item.titleEn !== item.title) lines.push(item.titleEn, '');
+    if (item.journal) lines.push(`- 期刊：${item.journal}`);
+    lines.push(`- DOI：${item.doi ? 'https://doi.org/' + item.doi : '无'}`, '', item.abstract || '（没有摘要）', '');
   });
-  let listH = rows.reduce((sum, r) => sum + r.h, 0);
-  if (extra > 0) listH += 28 * sc;
-  const cardH = headH + 10 * sc + listH + footH;
-  const H = frame * 2 + cardH;
-
-  const canvas = document.createElement('canvas');
-  canvas.width = W;
-  canvas.height = H;
-  const ctx = canvas.getContext('2d');
-  ctx.fillStyle = '#111111';
-  ctx.fillRect(0, 0, W, H);
-  ctx.textBaseline = 'top';
-
-  const x = frame;
-  const y = frame;
-  traceRoundRect(ctx, x, y, cardW, cardH, 22 * sc);
-  ctx.save();
-  ctx.clip();
-  ctx.fillStyle = '#f6f3ee';
-  ctx.fillRect(x, y, cardW, cardH);
-  ctx.fillStyle = '#1b3a5f';
-  ctx.fillRect(x, y, cardW, headH);
-
-  ctx.strokeStyle = 'rgba(246,243,238,.88)';
-  ctx.lineWidth = Math.max(1, sc);
-  const ruleY = y + headH - 16 * sc;
-  ctx.beginPath();
-  ctx.moveTo(x + pad, ruleY);
-  ctx.lineTo(x + cardW - pad, ruleY);
-  ctx.moveTo(x + pad, ruleY + 5 * sc);
-  ctx.lineTo(x + cardW - pad, ruleY + 5 * sc);
-  ctx.stroke();
-
-  const brandY = y + 24 * sc;
-  ctx.fillStyle = '#f6f3ee';
-  ctx.font = shareFont(800, 26 * sc);
-  ctx.fillText('Radar for Meds', x + pad, brandY);
-  ctx.font = shareFont(700, 13 * sc);
-  ctx.fillStyle = 'rgba(246,243,238,.78)';
-  const date = shareDateLabel();
-  ctx.fillText(date, x + cardW - pad - ctx.measureText(date).width, brandY + 8 * sc);
-
-  ctx.fillStyle = '#f6f3ee';
-  ctx.font = shareFont(700, 15 * sc);
-  ctx.fillText('科研雷达 · 我的收藏', x + pad, y + 62 * sc);
-  drawHeart(ctx, x + pad, y + 90 * sc, 15 * sc, '#e23b3b');
-  ctx.font = shareFont(700, 13 * sc);
-  ctx.fillStyle = 'rgba(246,243,238,.92)';
-  ctx.fillText(`${list.length} 篇`, x + pad + 20 * sc, y + 91 * sc);
-
-  let cy = y + headH + 14 * sc;
-  for (const r of rows) {
-    ctx.font = shareFont(800, 12 * sc);
-    ctx.fillStyle = '#1b3a5f';
-    ctx.fillText(String(r.i + 1).padStart(2, '0'), x + pad, cy + 1 * sc);
-    ctx.fillText(ellipsisTo(ctx, r.a.journal || '—', cardW - pad * 2 - 40 * sc), x + pad + 32 * sc, cy + 1 * sc);
-    ctx.font = shareFont(700, 15 * sc);
-    ctx.fillStyle = '#1c1916';
-    r.lines.forEach((ln, li) => {
-      ctx.fillText(ln, x + pad + 32 * sc, cy + (20 + li * 21) * sc);
-    });
-    const last = r === rows[rows.length - 1];
-    if (!last) {
-      const lineY = cy + r.h - 8 * sc;
-      ctx.strokeStyle = '#e4ddd2';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(x + pad, lineY);
-      ctx.lineTo(x + cardW - pad, lineY);
-      ctx.stroke();
-    }
-    cy += r.h;
-  }
-  if (extra > 0) {
-    ctx.font = shareFont(700, 12 * sc);
-    ctx.fillStyle = '#5c564c';
-    ctx.fillText(`还有 ${extra} 篇，打开收藏可看全部`, x + pad, cy + 4 * sc);
-  }
-
-  const footTop = y + cardH - footH;
-  ctx.strokeStyle = '#d9d1c6';
-  ctx.lineWidth = Math.max(1, sc);
-  ctx.beginPath();
-  ctx.moveTo(x + pad, footTop);
-  ctx.lineTo(x + cardW - pad, footTop);
-  ctx.stroke();
-
-  const qrX = x + cardW - pad - qrSize;
-  const qrY = footTop + Math.round((footH - qrSize) / 2);
-  const modules = qrModules(FAV_LINK);
-  drawQrModules(ctx, modules, qrX, qrY, qrSize);
-
-  const textMax = qrX - x - pad - 16 * sc;
-  ctx.fillStyle = '#1b3a5f';
-  ctx.font = shareFont(800, 12 * sc);
-  ctx.fillText('扫码打开', x + pad, footTop + 28 * sc);
-  ctx.font = shareFont(800, 16 * sc);
-  ctx.fillText(ellipsisTo(ctx, 'Radar for Meds', textMax), x + pad, footTop + 48 * sc);
-  ctx.font = shareFont(600, 11 * sc);
-  ctx.fillStyle = '#5c564c';
-  ctx.fillText(ellipsisTo(ctx, 'research-radar-f5j.pages.dev', textMax), x + pad, footTop + 76 * sc);
-  ctx.fillText(ellipsisTo(ctx, '收藏保存在你的浏览器', textMax), x + pad, footTop + 96 * sc);
-  ctx.restore();
-  return canvas;
+  return lines.join('\n');
 }
-
-let shareBlobUrl = '';
-let shareBlob = null;
-let shareName = '';
-function openShareSheet(blob) {
-  const sheet = $('#shareSheet');
-  const img = $('#shareImg');
-  if (!sheet || !img) return;
-  if (shareBlobUrl) URL.revokeObjectURL(shareBlobUrl);
-  shareBlob = blob;
-  shareBlobUrl = URL.createObjectURL(blob);
-  shareName = `Radar-for-Meds-favorites-${localISODate()}.png`;
-  img.src = shareBlobUrl;
-  const native = $('#shareNative');
-  let can = false;
-  try {
-    const file = new File([blob], shareName, { type: 'image/png' });
-    can = !!(navigator.canShare && navigator.canShare({ files: [file] }));
-  } catch { can = false; }
-  if (native) native.hidden = !can;
+function openMailPreview(markdown, note) {
+  const sheet = $('#mailSheet');
+  const pre = $('#mailPreview');
+  const hint = $('#mailNote');
+  if (!sheet || !pre) return;
+  pre.textContent = markdown || '';
+  if (hint) hint.textContent = note || ('收件人固定为 ' + MAIL_TO + '。这封邮件没有发出。');
   sheet.hidden = false;
 }
-function closeShare() {
-  const sheet = $('#shareSheet');
+function closeMailPreview() {
+  const sheet = $('#mailSheet');
   if (sheet) sheet.hidden = true;
 }
-function saveShare() {
-  if (!shareBlobUrl) return;
-  const a = document.createElement('a');
-  a.href = shareBlobUrl;
-  a.download = shareName || 'Radar-for-Meds-favorites.png';
-  document.body.append(a);
-  a.click();
-  a.remove();
-}
-async function nativeShare() {
-  if (!shareBlob) return;
-  const file = new File([shareBlob], shareName || 'favorites.png', { type: 'image/png' });
-  try { await navigator.share({ files: [file], title: 'Radar for Meds 收藏' }); }
-  catch (e) {
-    if (e && e.name === 'AbortError') return;
-    saveShare();
+function mailApiUrls() {
+  const urls = ['/api/favorites'];
+  const local = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  // 本地静态预览不要打到线上 trigger：旧 Worker 会把任意 POST 当成「重新生成」。
+  if (!local && WORKER_URL && !WORKER_URL.includes('REPLACE-ME')) {
+    urls.push(WORKER_URL.replace(/\/$/, '') + '/favorites');
   }
+  return urls;
 }
-async function shareFavorites() {
-  const list = favoriteArticles();
-  if (!list.length) { toast('还没有收藏，先点文章上的小红心'); return; }
-  const btn = $('#shareFavBtn');
+async function postFavoritesMail(body) {
+  const urls = mailApiUrls();
+  let last = '发信接口没有响应';
+  for (const url of urls) {
+    let res;
+    let data = null;
+    try {
+      res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        cache: 'no-store',
+      });
+      data = await res.json().catch(() => null);
+    } catch {
+      last = '网络连不上发信接口';
+      continue;
+    }
+    // 旧 trigger 的成功/失败体带 results，那不是发信接口。
+    if (data && Array.isArray(data.results)) {
+      last = '线上 Worker 还是旧版，还不会发收藏邮件';
+      continue;
+    }
+    if (res.status === 404 || !data) { last = '发信接口还没部署'; continue; }
+    if (data.dryRun) return data;
+    if (res.ok && data.ok) return data;
+    throw new Error(data.error || ('发送失败 HTTP ' + res.status));
+  }
+  const err = new Error(last);
+  err.fallback = true;
+  throw err;
+}
+async function sendFavoritesMail() {
+  const items = mailItems();
+  if (!items.length) { toast('还没有收藏，先点文章上的小红心'); return; }
+  const btn = $('#mailFavBtn');
   if (btn) btn.disabled = true;
   try {
-    if (document.fonts && document.fonts.ready) await document.fonts.ready;
-    const canvas = renderShareCanvas(list);
-    window.__shareCanvas = canvas;
-    const blob = await new Promise((resolve, reject) => {
-      canvas.toBlob(b => b ? resolve(b) : reject(new Error('png')), 'image/png');
-    });
-    openShareSheet(blob);
+    const result = await postFavoritesMail({ items });
+    if (result.dryRun) {
+      openMailPreview(result.markdown, (result.note || '没有发信。') + ' 收件人固定为 ' + MAIL_TO);
+      return;
+    }
+    toast('已发送到 ' + MAIL_TO, 3600);
   } catch (e) {
-    console.warn('[share]', e);
-    toast('分享图生成失败，请重试');
+    const local = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+    if (local && e.fallback) {
+      openMailPreview(localPreviewMarkdown(items), '本地没有发信接口，下面只是预览，邮件没有发出。收件人固定为 ' + MAIL_TO);
+      return;
+    }
+    toast(e.message || '发送失败', 4200);
   } finally {
     if (btn) btn.disabled = false;
   }
@@ -2335,17 +2154,13 @@ if (researchSearchClear) researchSearchClear.addEventListener('click', () => {
   setSearchQuery('');
 });
 $('#glossSheet').addEventListener('click', e => { if (e.target.closest('[data-close]')) closeGlossary(); });
-const shareSheet = $('#shareSheet');
-if (shareSheet) shareSheet.addEventListener('click', e => { if (e.target.closest('[data-close-share]')) closeShare(); });
-const shareFavBtn = $('#shareFavBtn');
-if (shareFavBtn) shareFavBtn.addEventListener('click', () => shareFavorites());
-const shareSave = $('#shareSave');
-if (shareSave) shareSave.addEventListener('click', saveShare);
-const shareNative = $('#shareNative');
-if (shareNative) shareNative.addEventListener('click', () => nativeShare());
+const mailSheet = $('#mailSheet');
+if (mailSheet) mailSheet.addEventListener('click', e => { if (e.target.closest('[data-close-mail]')) closeMailPreview(); });
+const mailFavBtn = $('#mailFavBtn');
+if (mailFavBtn) mailFavBtn.addEventListener('click', () => sendFavoritesMail());
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
-  if (shareSheet && !shareSheet.hidden) { closeShare(); return; }
+  if (mailSheet && !mailSheet.hidden) { closeMailPreview(); return; }
   closeGlossary();
 });
 window.addEventListener('hashchange', () => {

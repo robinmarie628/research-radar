@@ -8,9 +8,9 @@
 #   Production branch      : main
 #
 # Why stage into dist/ instead of publishing the repo root:
-# the repo also contains scripts/, worker/, .github/ and docs. Publishing them
-# is harmless (the repo is public) but clutters the site and leaks the Worker
-# source path. This copies only the files the app actually serves.
+# the repo also contains scripts/, worker/, functions/, .github/ and docs.
+# Pages compiles functions/ from the repo root; do not copy it into dist.
+# This copies only the files the app actually serves.
 set -euo pipefail
 
 rm -rf dist
