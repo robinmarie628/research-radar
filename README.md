@@ -154,9 +154,10 @@ Europe PMC 返回的摘要**自带小标题**（`<h4>Background</h4>…<h4>Resul
 
 ### 原文链接
 
-- **ClinicalKey 深链**：Europe PMC 不提供 PII，所以向 Crossref 取 `alternative-id`。`filter=doi:a,doi:b` 支持一次批量查 20 个 DOI，因此整个列表只需几次请求。只有真的 PII（`^S[0-9X]{10,}$`）才生成 ClinicalKey 链接。
-  `https://www.clinicalkey.com/#!/content/playContent/1-s2.0-<PII>`
-- **DOI 全文**：`https://doi.org/<DOI>`（无 ClinicalKey 订阅权限时的兜底，始终显示）
+- **出版商全文**：Europe PMC 不提供 PII，所以向 Crossref 取 `alternative-id`。`filter=doi:a,doi:b` 支持一次批量查 20 个 DOI，因此整个列表只需几次请求。只有真的 PII（`^S[0-9X]{10,}$`，即 ScienceDirect / ClinicalKey 都接受的无连字符形式，如 `S0092867411001279`）才生成按钮。
+  - **Cell Press**（按 `journals.config.json` 的 ISSN 精确匹配，不用刊名模糊匹配）：Cell `0092-8674`、Cell Stem Cell `1934-5909`、Cell Rep `2211-1247`、Cell Host Microbe `1931-3128`、Cell Syst `2405-4712`、Neuron `0896-6273`。有 PII 时按钮是 **ScienceDirect**，链到 `https://www.sciencedirect.com/science/article/pii/<PII>`。这些刊不显示 ClinicalKey。
+  - **其余期刊**仍是 ClinicalKey：`https://www.clinicalkey.com/#!/content/playContent/1-s2.0-<PII>`。
+- **DOI 全文**：`https://doi.org/<DOI>`（无出版商订阅权限时的兜底，始终显示）
 - **PubMed**：`https://pubmed.ncbi.nlm.nih.gov/<PMID>/`
 
 ### 去重记录（未读）

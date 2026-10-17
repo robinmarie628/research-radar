@@ -1,13 +1,13 @@
 /* ============================================================
    科研雷达 · Research Radar
-   Live data: Europe PMC (journals) + Crossref (PII/ClinicalKey)
+   Live data: Europe PMC (journals) + Crossref (PII → ClinicalKey / ScienceDirect)
               + follow-builders (AI builders)
    Zero build, zero backend, zero API keys.
    ============================================================ */
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.01.8';   // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.17.9';   // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -335,6 +335,7 @@ function mapArticle(r) {
     sections: parsed.sections,
     structured: parsed.structured,
     journal: meta?.short || j.medlineAbbreviation || j.isoabbreviation || '—',
+    issn: meta?.issn || issn,
     domain: meta?.domain || '综合医学',
     imp: meta?.if ?? 0,
     basic: isBasic,
@@ -461,9 +462,51 @@ async function loadResearch(force) {
   renderResearch();
 }
 
-/* ---------------- Crossref PII → ClinicalKey deep link ----------------
+/* ---------------- Cell Press → ScienceDirect, everyone else → ClinicalKey ----
+   Membership is an explicit ISSN list, joined to journals.config.json.
+   Snapshot / cached items often have no ISSN, so they match the config row's
+   own `short` or `title` (exact string). Never a prefix or /cell/i test.     */
+const CELL_FAMILY_ISSNS = new Set([
+  '0092-8674', // Cell
+  '1934-5909', // Cell Stem Cell
+  '2211-1247', // Cell Rep
+  '1931-3128', // Cell Host Microbe
+  '2405-4712', // Cell Syst
+  '0896-6273', // Neuron
+]);
+const cellFamily = {
+  issns: new Set(CELL_FAMILY_ISSNS),
+  titles: new Set(['Cell', 'Cell Stem Cell', 'Cell Rep', 'Cell Host Microbe', 'Cell Syst', 'Neuron']),
+};
+
+/** Keep only the ISSNs that are actually present in the loaded config, and
+ *  take short/title from that row so a renamed label still matches snapshots. */
+function indexCellFamily(cfg) {
+  const issns = new Set();
+  const titles = new Set();
+  for (const row of cfg || []) {
+    if (!row || !CELL_FAMILY_ISSNS.has(row.issn)) continue;
+    issns.add(row.issn);
+    if (row.short) titles.add(row.short);
+    if (row.title) titles.add(row.title);
+  }
+  if (!issns.size) return; // config missing — keep the seed list
+  cellFamily.issns = issns;
+  cellFamily.titles = titles;
+}
+
+function isCellFamily(a) {
+  if (!a) return false;
+  if (a.issn && cellFamily.issns.has(a.issn)) return true;
+  return !!(a.journal && cellFamily.titles.has(a.journal));
+}
+
+/* ---------------- Crossref PII → publisher deep link --------------------
    Europe PMC exposes no PII, so it comes from Crossref's alternative-id.
-   `filter=doi:a,doi:b` batches ~20 DOIs per request.                      */
+   `filter=doi:a,doi:b` batches ~20 DOIs per request.
+   The id is the compact Elsevier PII (`S` + digits, no hyphens), which is
+   what both ClinicalKey (`1-s2.0-` + PII) and ScienceDirect (`/pii/` + PII)
+   accept. Example: S0092867411001279.                                        */
 const PII_RE = /^S[0-9X]{10,}$/;
 const PII_KEY = 'rr.pii.v1';
 let piiCache = readPiiMap();
@@ -509,16 +552,37 @@ async function loadPII(items) {
 
   $$('#researchCards .art').forEach(node => {
     const a = S.jr.all.find(x => x.id === node.dataset.id);
-    if (a && a.pii) addCkLink(node, a);
+    if (a && a.pii) addFullTextLink(node, a);
   });
 }
-function addCkLink(node, a) {
+
+/** Publisher chip for a resolved PII. Cell Press → ScienceDirect; else ClinicalKey. */
+function fullTextLink(a) {
+  if (!a || !a.pii) return null;
+  if (isCellFamily(a)) {
+    return {
+      href: 'https://www.sciencedirect.com/science/article/pii/' + a.pii,
+      label: 'ScienceDirect',
+      cls: 'sd',
+    };
+  }
+  return {
+    href: 'https://www.clinicalkey.com/#!/content/playContent/1-s2.0-' + a.pii,
+    label: 'ClinicalKey',
+    cls: 'ck',
+  };
+}
+
+function addFullTextLink(node, a) {
   const links = node.querySelector('.art-links');
-  if (!links || links.querySelector('.lnk.ck') || !a.pii) return;
-  const ck = el('a', 'lnk ck', 'ClinicalKey ↗');
-  ck.href = 'https://www.clinicalkey.com/#!/content/playContent/1-s2.0-' + a.pii;
-  ck.target = '_blank'; ck.rel = 'noopener noreferrer';
-  links.prepend(ck);
+  const spec = fullTextLink(a);
+  if (!links || !spec || links.querySelector('.lnk.ck, .lnk.sd')) return;
+  links.prepend(link(spec.href, spec.label, spec.cls));
+  // The body was built before the PII arrived, so the DOI chip missed the
+  // secondary style it gets when the publisher link is known up front.
+  for (const n of links.querySelectorAll('.lnk')) {
+    if (/doi\.org/.test(n.getAttribute('href') || '')) n.classList.add('alt');
+  }
 }
 
 /* ---------------- follow-builders ---------------- */
@@ -776,7 +840,7 @@ function articleCard(a, isPick, pickRank) {
     if (!body) body = buildArticleBody(a, c);
     c.append(body);
     markSeen(a);
-    if (a.pii === undefined) loadPII([a]).then(() => { if (a.pii) addCkLink(c, a); });
+    if (a.pii === undefined) loadPII([a]).then(() => { if (a.pii) addFullTextLink(c, a); });
     requestAnimationFrame(() => c.scrollIntoView({ block: 'nearest', behavior: 'smooth' }));
   });
   return c;
@@ -850,7 +914,8 @@ function buildArticleBody(a, card) {
   body.append(meta);
 
   const links = el('div', 'art-links');
-  if (a.pii)  links.append(link('https://www.clinicalkey.com/#!/content/playContent/1-s2.0-' + a.pii, 'ClinicalKey', 'ck'));
+  const ft = fullTextLink(a);
+  if (ft)     links.append(link(ft.href, ft.label, ft.cls));
   if (a.doi)  links.append(link('https://doi.org/' + a.doi, 'DOI 全文', a.pii ? 'alt' : ''));
   if (a.pmid) links.append(link('https://pubmed.ncbi.nlm.nih.gov/' + a.pmid + '/', 'PubMed', 'alt'));
   body.append(links);
@@ -1155,6 +1220,8 @@ async function triggerRegenerate() {
 /* ---------------- boot ---------------- */
 async function boot() {
   window.__rr = S;                 // debug/QA hook
+  S.isCellFamily = isCellFamily;
+  S.fullTextLink = fullTextLink;
   S.seen = readSeen();
 
   const c = readCache();
@@ -1174,6 +1241,7 @@ async function boot() {
     ]);
     S.cfg = cfg || [];
     S.gloss = gloss || [];
+    indexCellFamily(S.cfg);
   } catch (e) { console.warn('[boot] config load failed:', e); S.cfg = []; S.gloss = []; }
 
   renderResearch();

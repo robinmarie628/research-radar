@@ -90,7 +90,9 @@ POOL = {
     "2375-2548": ("基础医学",   True,  "Sci Adv",             11.7),
     "2041-1723": ("基础医学",   True,  "Nat Commun",          14.7),
     "2211-1247": ("基础医学",   True,  "Cell Rep",             7.5),
-    "1553-7358": ("基础医学",   True,  "Cell Host Microbe",   20.6),
+    # 1553-7358 is PLoS Comput Biol's eISSN, not this journal. Europe PMC
+    # reports the print ISSN below as `issn` (essn 1934-6069).
+    "1931-3128": ("基础医学",   True,  "Cell Host Microbe",   20.6),
     "2405-4712": ("基础医学",   True,  "Cell Syst",            9.0),
     "2157-846X": ("基础医学",   True,  "Nat Biomed Eng",      26.8),  # 2372-7705 is not indexed
     "1087-0156": ("基础医学",   True,  "Nat Biotechnol",      33.1),
