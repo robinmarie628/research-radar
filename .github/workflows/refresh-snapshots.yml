@@ -39,7 +39,8 @@ jobs:
           if git diff --cached --quiet; then
             echo "no change"
           else
-            git commit -m "chore: refresh snapshots [skip ci]"
+            # 不要加 [skip ci]：Cloudflare Pages 识别它并跳过构建，每日快照就不会部署。
+            git commit -m "chore: refresh snapshots"
             # 与 daily-digest.yml 保持一致：先 rebase 再 push，否则和用户/机器人并发推送会撞车
             git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
             git push

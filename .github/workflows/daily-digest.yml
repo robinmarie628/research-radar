@@ -64,6 +64,9 @@ jobs:
             echo "no change"
             exit 0
           fi
-          git commit -m "chore: daily digest [skip ci]"
+          # 注意：不要加 [skip ci]。Cloudflare Pages 会识别它并跳过构建，
+          # 导致每天的新数据 push 上去但 Pages 不重新部署。这两个 workflow
+          # 只在 schedule / workflow_dispatch 触发，不会因 push 自触发，所以无需跳过。
+          git commit -m "chore: daily digest"
           git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
           git push

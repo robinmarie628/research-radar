@@ -1,0 +1,21 @@
+# Cloudflare Pages response headers
+# Docs: https://developers.cloudflare.com/pages/configuration/headers/
+
+# The bot rewrites these JSON files every day. Never let the edge cache them,
+# or users keep seeing yesterday's data after a fresh deploy.
+/data/*
+  Cache-Control: no-cache
+
+# The service worker must be revalidated on every load, otherwise a bumped
+# cache name (rr-vN) is never picked up and users keep running old JS.
+/sw.js
+  Cache-Control: no-cache
+
+# Entry point: revalidate so a new deploy is visible immediately.
+/index.html
+  Cache-Control: no-cache
+
+# Assets change in place (same filenames), so let the service worker's
+# install-time fetch get a fresh copy rather than a long-lived edge copy.
+/assets/*
+  Cache-Control: public, max-age=0, must-revalidate
