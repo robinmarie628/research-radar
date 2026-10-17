@@ -7,7 +7,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.17.13';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.17.14';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -885,6 +885,7 @@ function renderResearch() {
     chip({ ico:'⭐', text:'今日精选' }, S.jr.picks.length, S.jFilter === 'pick', () => setJFilter('pick'), '', 'pick'),
     chip({ ico:'🌐', text:'全部' }, all.length, S.jFilter === 'all', () => setJFilter('all'), '', 'all'),
     chip({ ico:'✨', text:'未读' }, unread, S.jFilter === 'unread', () => setJFilter('unread'), '', 'unread'),
+    chip({ ico:'📅', text:'最近一周' }, all.filter(inLastWeek).length, S.jFilter === 'week', () => setJFilter('week'), '', 'week'),
     chip({ ico:'🧬', text:'基础/分子' }, (S.jr.byKey.basic || []).length, S.jFilter === 'basic', () => setJFilter('basic'), '', 'basic'),
     chip({ ico:'📚', text:'专业词汇' }, S.gloss.length, false, openGlossary),
   );
@@ -917,7 +918,9 @@ function renderResearch() {
     $('#researchHead').textContent = headLabel(list.length, isPick);
     $('#researchSub').textContent = isPick
       ? `每日精选 ${PICK_N} 篇 · ${PICK_CLINICAL} 篇临床 + ${PICK_BASIC} 篇基础/分子 · 点卡片展开摘要`
-      : '点卡片任意位置展开摘要（摘要较长可在框内滚动）';
+      : S.jFilter === 'week'
+        ? `首次发表日 ${utcDay(-6)} 至 ${utcDay(0)}（含今天，UTC）· 点卡片展开摘要`
+        : '点卡片任意位置展开摘要（摘要较长可在框内滚动）';
   }
 
   if (S.jView === 'index') renderIndexTable($('#researchCards'), list);
@@ -928,6 +931,7 @@ function headLabel(n, isPick) {
   if (S.jFilter === 'pick')   return `今日精选 ${n} 篇`;
   if (S.jFilter === 'all')    return `最新推送 ${n} 篇`;
   if (S.jFilter === 'unread') return `未读 ${n} 篇`;
+  if (S.jFilter === 'week')   return `最近一周 ${n} 篇`;
   if (S.jFilter === 'basic')  return `基础/分子医学 ${n} 篇`;
   return `${S.jFilter} ${n} 篇`;
 }
@@ -1012,6 +1016,21 @@ function setSearchQuery(raw) {
   renderResearch();
 }
 
+/** UTC calendar day, same clock as the Europe PMC window (`iso`). */
+function utcDay(offset = 0) {
+  const d = new Date();
+  d.setUTCDate(d.getUTCDate() + offset);
+  return d.toISOString().slice(0, 10);
+}
+
+/** True when `a.date` (firstPublicationDate, else electronic, else creation)
+ *  falls on one of the last 7 UTC calendar days, including today. */
+function inLastWeek(a) {
+  const day = String(a?.date || '').slice(0, 10);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(day)) return false;
+  return day >= utcDay(-6) && day <= utcDay(0);
+}
+
 function filteredArticles() {
   const q = searchQuery();
   if (q) return S.jr.all.filter(a => articleMatches(a, q));
@@ -1019,6 +1038,7 @@ function filteredArticles() {
   if (k === 'pick')   return S.jr.picks;
   if (k === 'all')    return S.jr.all;
   if (k === 'unread') return S.jr.all.filter(a => !S.seen.has(a.id));
+  if (k === 'week')   return S.jr.all.filter(inLastWeek);
   if (k === 'basic')  return S.jr.byKey.basic || [];
   return S.jr.byKey[k] || [];
 }
@@ -1185,7 +1205,9 @@ function renderArticleList(host, list, isPick) {
     }
     const msg = S.jFilter === 'unread'
       ? ['✅', '都读完了', '这一轮的新文章你都看过了，等明天的更新吧。']
-      : ['🔍', '这里今天还没有新文章', '摘要入库通常滞后 2–4 天。换个筛选看看。'];
+      : S.jFilter === 'week'
+        ? ['📅', '最近一周还没有新文章', '按首次发表日计算，含今天在内的 7 天。入库通常滞后几天。']
+        : ['🔍', '这里今天还没有新文章', '摘要入库通常滞后 2–4 天。换个筛选看看。'];
     host.append(emptyBox(msg[0], msg[1], msg[2], null, null));
     return;
   }
@@ -1212,7 +1234,8 @@ function sortByJournal(list) {
 function renderIndexTable(host, list) {
   host.replaceChildren();
   if (!list.length) {
-    host.append(emptyBox('🔍', searchQuery() ? '没有匹配的文章' : '这里今天还没有新文章',
+    host.append(emptyBox('🔍',
+      searchQuery() ? '没有匹配的文章' : (S.jFilter === 'week' ? '最近一周还没有新文章' : '这里今天还没有新文章'),
       searchQuery() ? '换个关键词，或清空搜索。' : '换个筛选看看。', null, null));
     return;
   }
