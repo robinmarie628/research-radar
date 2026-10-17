@@ -259,7 +259,7 @@ def main():
 
     print(f"[1/4] fetching candidates (last {a.days}d) ...")
     jr = bs.build_journals(a.days)
-    items = jr["items"]
+    items = [x for x in jr["items"] if not bs.is_excluded_article(x)]
     print(f"      {len(items)} articles from {jr['journals']} journals")
 
     pushed = set(load_pushed())

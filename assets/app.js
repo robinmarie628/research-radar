@@ -11,7 +11,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.17.19';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.17.20';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -30,7 +30,8 @@ const PICK_N   = 8;         // 今日精选 size
 const PICK_BASIC    = 4;    // …其中基础 / 分子医学
 const PICK_CLINICAL = 4;    // …其中临床研究
 const TTL      = 30 * 60e3; // cache freshness
-const LS_KEY   = 'rr.cache.v2';
+const LS_KEY   = 'rr.cache.v3'; // v2 replayed the pool after a journal was removed
+const LS_KEY_PREV = 'rr.cache.v2';
 const SEEN_KEY = 'rr.seen.v1';
 const FAV_KEY  = 'rr.fav.v1';
 /* Crossref polite pool + NCBI identification. Browsers forbid a custom
@@ -40,6 +41,76 @@ const API_MAIL = 'research-radar@users.noreply.github.com';
 const EUTILS   = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/';
 const WEEK_ABS_MIN = 40;
 const NCBI_GAP_MS  = 400;
+
+/* Nature Communications (ISSN 2041-1723) is no longer in the pool.
+   localStorage rr.cache.v2 and a stale service-worker copy of the config
+   can still replay it after a refresh, and Europe PMC can return a row
+   whose ISSN was not in the query. Drop it by ISSN, journal name, or DOI. */
+const BLOCKED_ISSNS = new Set(['2041-1723']);
+const BLOCKED_NAMES = new Set(['nat commun', 'nature communications']);
+const BLOCKED_DOI_BITS = ['10.1038/s41467', '10.1038/ncomms'];
+
+function normJournalName(value) {
+  return String(value || '').toLowerCase().replace(/\./g, '').replace(/\s+/g, ' ').trim();
+}
+function isExcludedArticle(a) {
+  if (!a) return false;
+  const ids = [a.issn, a.essn].map(s => String(s || '').trim());
+  if (ids.some(s => BLOCKED_ISSNS.has(s))) return true;
+  const names = [normJournalName(a.journal), normJournalName(a.short)];
+  if (names.some(n => BLOCKED_NAMES.has(n))) return true;
+  const doi = String(a.doi || a.id || '').toLowerCase();
+  return BLOCKED_DOI_BITS.some(bit => doi.includes(bit));
+}
+function dropExcluded(list) {
+  return (list || []).filter(a => a && !isExcludedArticle(a));
+}
+function sanitizePool(data) {
+  if (!data) return data;
+  const all = dropExcluded(data.all);
+  const picks = dropExcluded(data.picks);
+  const byKey = {};
+  for (const it of all) {
+    (byKey[it.domain] ||= []).push(it);
+    (byKey[it.basic ? 'basic' : 'clinical'] ||= []).push(it);
+  }
+  return { ...data, all, picks, byKey };
+}
+function scrubResearchPool() {
+  if (!S.jr) return;
+  const all = dropExcluded(S.jr.all);
+  const picks = dropExcluded(S.jr.picks);
+  if (all.length === (S.jr.all || []).length && picks.length === (S.jr.picks || []).length) return;
+  const byKey = {};
+  for (const it of all) {
+    (byKey[it.domain] ||= []).push(it);
+    (byKey[it.basic ? 'basic' : 'clinical'] ||= []).push(it);
+  }
+  S.jr.all = all;
+  S.jr.picks = picks;
+  S.jr.byKey = byKey;
+}
+function poolConfig(rows) {
+  return (rows || []).filter(c => c && !isExcludedArticle({
+    issn: c.issn, journal: c.short, short: c.title,
+  }));
+}
+/** v2 is the article pool from before this journal was removed. Keep the
+ *  other papers, drop Nature Communications, then forget the old key. */
+function migrateArticleCache() {
+  try {
+    if (!localStorage.getItem(LS_KEY)) {
+      const raw = localStorage.getItem(LS_KEY_PREV);
+      if (raw) {
+        const old = JSON.parse(raw);
+        if (old?.jr?.data) old.jr.data = sanitizePool(old.jr.data);
+        if (old?.week?.data?.items) old.week.data.items = dropExcluded(old.week.data.items);
+        localStorage.setItem(LS_KEY, JSON.stringify(old));
+      }
+    }
+    localStorage.removeItem(LS_KEY_PREV);
+  } catch { try { localStorage.removeItem(LS_KEY_PREV); } catch { /* ignore */ } }
+}
 
 /* ---------------- 领域 (domain) ---------------- */
 const DOMAIN_META = {
@@ -342,10 +413,25 @@ function bumpUnread() {
 function readFav() {
   try {
     const raw = JSON.parse(localStorage.getItem(FAV_KEY) || 'null');
-    if (Array.isArray(raw)) return { order: raw.map(k => String(k).toLowerCase()).filter(Boolean), items: {} };
+    if (Array.isArray(raw)) {
+      const order = raw.map(k => String(k).toLowerCase()).filter(k => k && !isExcludedArticle({ doi: k, id: k }));
+      return { order, items: {} };
+    }
     const order = Array.isArray(raw?.order) ? raw.order.map(k => String(k).toLowerCase()).filter(Boolean) : [];
     const items = raw?.items && typeof raw.items === 'object' ? raw.items : {};
-    return { order, items };
+    const kept = [];
+    const clean = {};
+    for (const k of order) {
+      const item = items[k];
+      if (isExcludedArticle(item || { doi: k, id: k })) continue;
+      kept.push(k);
+      if (item) clean[k] = item;
+    }
+    const fav = { order: kept, items: clean };
+    if (kept.length !== order.length) {
+      try { localStorage.setItem(FAV_KEY, JSON.stringify(fav)); } catch { /* quota */ }
+    }
+    return fav;
   } catch { return { order: [], items: {} }; }
 }
 function writeFav() {
@@ -430,6 +516,7 @@ function favoriteArticles() {
   for (const k of S.fav.order) {
     const live = pool.get(k);
     if (live) {
+      if (isExcludedArticle(live)) continue;
       const abs = favAbstract(live);
       const snap = S.fav.items[k];
       if (snap && abs && !snap.abstract) {
@@ -507,10 +594,11 @@ function syncFavHash() {
 function epmcURLs(issns) {
   const hi = iso(new Date());
   const lo = iso(new Date(Date.now() - DAYS * 864e5));
-  const step = Math.ceil(issns.length / CHUNKS);
+  const pool = (issns || []).map(x => String(x || '').trim()).filter(x => x && !BLOCKED_ISSNS.has(x));
+  const step = Math.ceil(pool.length / CHUNKS) || 1;
   const urls = [];
-  for (let i = 0; i < issns.length; i += step) {
-    const slice = issns.slice(i, i + step);
+  for (let i = 0; i < pool.length; i += step) {
+    const slice = pool.slice(i, i + step);
     const q = `(${slice.map(x => `ISSN:"${x}"`).join(' OR ')}) AND SRC:MED `
             + `AND HAS_ABSTRACT:Y AND FIRST_PDATE:[${lo} TO ${hi}]`;
     urls.push(EPMC + '?' + new URLSearchParams({
@@ -523,8 +611,14 @@ function epmcURLs(issns) {
 
 function mapArticle(r) {
   const j = r.journalInfo?.journal || {};
-  const issn = j.issn || j.essn || '';
-  const meta = S.cfg.find(c => c.issn === issn) || null;
+  const ids = [j.issn, j.essn].map(s => String(s || '').trim()).filter(Boolean);
+  const label = j.medlineAbbreviation || j.title || j.isoabbreviation || '';
+  const doi = r.doi || '';
+  if (isExcludedArticle({ issn: ids[0], essn: ids[1], journal: label, doi, id: r.id })) return null;
+  const meta = (S.cfg || []).find(c => ids.includes(c.issn)) || null;
+  // A loaded config is the allow-list. A row Europe PMC attached to some other
+  // ISSN in the query must not become a card.
+  if ((S.cfg || []).length && !meta) return null;
   const title = cleanText(r.title);
   if (!title) return null;
 
@@ -542,7 +636,7 @@ function mapArticle(r) {
     sections: parsed.sections,
     structured: parsed.structured,
     journal: meta?.short || j.medlineAbbreviation || j.isoabbreviation || '—',
-    issn: meta?.issn || issn,
+    issn: meta?.issn || ids[0] || '',
     platforms: Array.isArray(meta?.platforms) ? meta.platforms.slice() : [],
     domain: meta?.domain || '综合医学',
     imp: meta?.if ?? 0,
@@ -619,7 +713,8 @@ function jrSignature() {
 async function loadResearch(force) {
   const c = readCache();
   if (!force && c.jr && Date.now() - c.jr.at < TTL) {
-    S.jr = { ...S.jr, ...c.jr.data, loaded: true, fromCache: true };
+    const data = sanitizePool(c.jr.data);
+    S.jr = { ...S.jr, ...data, loaded: true, fromCache: true };
     applyDigest();
     S.jr._sig = jrSignature();
     renderResearch();
@@ -656,20 +751,23 @@ async function loadResearch(force) {
     console.warn('[research] live fetch failed:', e);
     if (!S.jr.loaded) {
       const snap = await trySnapshot('data/snapshot-journals.json');
-      if (snap?.items?.length) {
+      const items = dropExcluded(snap?.items);
+      if (items.length) {
         const byKey = {};
-        for (const it of snap.items) {
+        for (const it of items) {
           (byKey[it.domain] ||= []).push(it);
           (byKey[it.basic ? 'basic' : 'clinical'] ||= []).push(it);
         }
-        S.jr = { all: snap.items, byKey, picks: curate(snap.items),
+        S.jr = { all: items, byKey, picks: curate(items),
                  updated: snap.updated, fetchedAt: snap.generatedAt, loaded: true, error: 'snapshot' };
       } else {
         S.jr = { ...S.jr, loaded: true, error: e.message };
       }
     }
+    scrubResearchPool();
   }
   applyDigest();
+  scrubResearchPool();
   if (S.jr.loaded && S.jr.all?.length) {
     writeCache('jr', {
       all: S.jr.all, byKey: S.jr.byKey, picks: S.jr.picks,
@@ -865,7 +963,7 @@ async function fetchWeekArticles() {
   const found = [];
   let attempts = 0;
   let failures = 0;
-  await mapPool(S.cfg.filter(m => m && m.issn), 3, async (meta) => {
+  await mapPool(poolConfig(S.cfg).filter(m => m && m.issn), 3, async (meta) => {
     attempts++;
     try {
       const works = await crossrefJournalWorks(meta.issn, lo, hi);
@@ -880,7 +978,7 @@ async function fetchWeekArticles() {
   });
   const byDoi = new Map();
   for (const a of found) if (!byDoi.has(a.doi)) byDoi.set(a.doi, a);
-  const list = [...byDoi.values()];
+  const list = dropExcluded([...byDoi.values()]);
   if (!list.length && attempts && failures === attempts) throw new Error('Crossref 暂时不可用');
   await fillPubmedAbstracts(list);
   return list
@@ -891,13 +989,13 @@ async function fetchWeekArticles() {
 /** Crossref+PubMed rows, swapping in the Europe PMC card when the same DOI is already pooled. */
 function weekList() {
   const pool = new Map();
-  for (const a of S.jr.all || []) {
+  for (const a of dropExcluded(S.jr.all)) {
     const d = normDoi(a.doi);
     if (d && !pool.has(d)) pool.set(d, a);
   }
   const out = [];
   const seen = new Set();
-  for (const a of S.week.items || []) {
+  for (const a of dropExcluded(S.week.items)) {
     const d = normDoi(a.doi);
     if (!d || seen.has(d)) continue;
     seen.add(d);
@@ -923,7 +1021,7 @@ async function loadWeek(force = false) {
   const fresh = c.week && Date.now() - c.week.at < TTL && Array.isArray(c.week.data?.items);
   if (!force && fresh) {
     if (gen !== weekGen) return;
-    S.week = { items: c.week.data.items, loaded: true, loading: false, error: '' };
+    S.week = { items: dropExcluded(c.week.data.items), loaded: true, loading: false, error: '' };
     paintWeek();
     return;
   }
@@ -933,8 +1031,8 @@ async function loadWeek(force = false) {
   try {
     const items = await fetchWeekArticles();
     if (gen !== weekGen) return;
-    S.week = { items, loaded: true, loading: false, error: '' };
-    writeCache('week', { items });
+    S.week = { items: dropExcluded(items), loaded: true, loading: false, error: '' };
+    writeCache('week', { items: S.week.items });
   } catch (e) {
     if (gen !== weekGen) return;
     console.warn('[week]', e);
@@ -1128,11 +1226,13 @@ async function trySnapshot(path) {
 async function loadDigest() {
   const d = await trySnapshot('data/digest.json');
   if (!d || !Array.isArray(d.items) || !d.items.length) return;
+  const items = dropExcluded(d.items);
+  if (!items.length) return;
   await loadSnapArticles();
   S.digest = {
     date: d.date || null,
-    items: d.items,
-    byDoi: new Map(d.items.map(x => [String(x.doi || '').toLowerCase(), x])),
+    items,
+    byDoi: new Map(items.map(x => [String(x.doi || '').toLowerCase(), x])),
     model: d.model || '',
     loaded: true,
   };
@@ -1147,6 +1247,7 @@ async function loadSnapArticles() {
   const snap = await trySnapshot('data/snapshot-journals.json');
   const map = new Map();
   for (const a of [...(snap?.items || []), ...(snap?.picks || [])]) {
+    if (isExcludedArticle(a)) continue;
     const doi = String(a?.doi || a?.id || '').toLowerCase();
     if (doi && !map.has(doi)) map.set(doi, a);
   }
@@ -1183,6 +1284,7 @@ function applyDigest() {
   const byDoi = new Map(S.jr.all.map(a => [String(a.doi || '').toLowerCase(), a]));
   const preferred = [];
   for (const d of S.digest.items) {
+    if (isExcludedArticle(d)) continue;
     const doi = String(d.doi || '').toLowerCase();
     let a = doi ? byDoi.get(doi) : null;
     if (a) a.digest = d;
@@ -1195,6 +1297,7 @@ function applyDigest() {
 }
 
 function articleFromDigest(d) {
+  if (isExcludedArticle(d)) return null;
   const doi = String(d?.doi || '').toLowerCase();
   const snap = doi && S.snapByDoi ? S.snapByDoi.get(doi) : null;
   if (snap) return { ...snap, id: snap.id || doi, doi: snap.doi || doi, digest: d };
@@ -1230,7 +1333,7 @@ function articleFromDigest(d) {
 }
 
 function ensureInAll(a) {
-  if (!a) return;
+  if (!a || isExcludedArticle(a)) return;
   const doi = String(a.doi || '').toLowerCase();
   const exists = S.jr.all.some(x => (doi && String(x.doi || '').toLowerCase() === doi) || x.id === a.id);
   if (exists) return;
@@ -1346,6 +1449,7 @@ function emptyBox(ico, title, desc, btn, onClick) {
 
 /* ---------------- render: research ---------------- */
 function renderResearch() {
+  scrubResearchPool();
   const host = $('#researchChips');
   const all = S.jr.all;
   const unread = all.filter(a => !S.seen.has(a.id)).length;
@@ -2066,16 +2170,17 @@ async function boot() {
   window.__rr = S;                 // debug/QA hook
   S.fullTextLink = fullTextLink;
   S.articlePlatforms = articlePlatforms;
+  migrateArticleCache();
   S.seen = readSeen();
   S.fav = readFav();
   if (location.hash === '#fav') S.jFilter = 'fav';
 
   const c = readCache();
   if (c.week?.data?.items?.length) {
-    S.week = { items: c.week.data.items, loaded: true, loading: false, error: '' };
+    S.week = { items: dropExcluded(c.week.data.items), loaded: true, loading: false, error: '' };
   }
   if (c.jr?.data?.all?.length) {
-    const d = c.jr.data;
+    const d = sanitizePool(c.jr.data);
     d.picks = d.picks?.length ? d.picks : curate(d.all);
     S.jr = { ...d, loaded: true };
     renderResearch();
@@ -2088,7 +2193,7 @@ async function boot() {
       fetchJSON('data/journals.config.json', 15000),
       fetchJSON('data/glossary.json', 15000).catch(() => []),
     ]);
-    S.cfg = cfg || [];
+    S.cfg = poolConfig(cfg);
     S.gloss = gloss || [];
   } catch (e) { console.warn('[boot] config load failed:', e); S.cfg = []; S.gloss = []; }
 
@@ -2172,6 +2277,8 @@ async function forceUpdate() {
       const keys = await caches.keys();
       await Promise.all(keys.map(k => caches.delete(k).catch(() => {})));
     }
+    localStorage.removeItem(LS_KEY);
+    localStorage.removeItem(LS_KEY_PREV);
   } catch { /* 忽略 —— 下面照样硬刷新 */ }
   const u = new URL(location.href);
   u.searchParams.set('_u', Date.now().toString(36));
