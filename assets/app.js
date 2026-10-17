@@ -7,7 +7,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.17.11';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.17.12';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -238,11 +238,6 @@ function starTier(imp) {
   if (imp >= 8)  return 3;
   if (imp >= 4)  return 2;
   return 1;
-}
-function hueOf(str) {
-  let h = 0;
-  for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) % 360;
-  return h;
 }
 function initials(name) {
   const p = String(name || '?').trim().split(/[\s_-]+/).filter(Boolean);
@@ -1030,9 +1025,7 @@ function articleCard(a, isPick, pickRank) {
   top.append(caret, titleWrap);
 
   const badges = el('div', 'art-badges');
-  const db = el('span', 'badge dom', a.domain);
-  db.style.background = `hsl(${dm(a.domain).hue} 72% 44%)`;
-  badges.append(db);
+  badges.append(el('span', 'badge dom', a.domain));
   badges.append(el('span', 'badge study s-' + a.studyKey, a.studyZh));
   badges.append(el('span', 'badge ' + (a.basic ? 'bas' : 'clin'), a.basic ? '基础' : '临床'));
   const jr = el('span', 'badge jr');
@@ -1225,7 +1218,6 @@ function renderIndexTable(host, list) {
     tr.append(ts);
     const td = el('td', 'd');
     const dot = el('span', 'dot');
-    dot.style.background = `hsl(${dm(a.domain).hue} 72% 46%)`;
     td.append(dot, document.createTextNode(a.domain));
     tr.append(td);
     const tb2 = el('td', 'b');
@@ -1328,8 +1320,6 @@ function postCard(p) {
   const c = el('article', 'card post');
   const top = el('div', 'post-top');
   const av = el('div', 'avatar', initials(p.name));
-  const h = hueOf(p.handle || p.name || 'x');
-  av.style.background = `linear-gradient(140deg, hsl(${h} 68% 58%), hsl(${(h + 38) % 360} 66% 46%))`;
   const who = el('div', 'who');
   who.append(el('div', 'nm', p.title || p.name));
   who.append(el('div', 'hd', (p.handle ? '@' + p.handle + ' · ' : '') + p.kind));
