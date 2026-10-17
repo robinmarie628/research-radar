@@ -287,8 +287,8 @@ def keyword_list(raw):
 def build_journals(days, cap_per_journal=8):
     """Query Europe PMC in chunks, merge, then cap per journal.
 
-    A single query lets one high-volume journal (Nat Commun publishes ~2282 items
-    per quarter) crowd out every other title, so we split the ISSN list and rebalance.
+    A single query lets one high-volume journal crowd out every other title,
+    so we split the ISSN list and rebalance.
     """
     cfg = json.load(open(os.path.join(DATA, "journals.config.json"), encoding="utf-8"))
     by_issn = {c["issn"]: c for c in cfg}

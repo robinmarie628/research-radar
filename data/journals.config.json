@@ -693,16 +693,6 @@
     "platforms": []
   },
   {
-    "issn": "2041-1723",
-    "title": "Nat Commun",
-    "short": "Nat Commun",
-    "domain": "基础医学",
-    "basic": true,
-    "if": 14.7,
-    "n90": 2282,
-    "platforms": []
-  },
-  {
     "issn": "2211-1247",
     "title": "Cell Rep",
     "short": "Cell Rep",

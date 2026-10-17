@@ -45,10 +45,10 @@ research-radar/
 
 ## 期刊池
 
-**38 本临床顶刊 + 17 本 CNS / 基础医学期刊（共 55 本）**，全部逐个校验过 ISSN。
+**38 本临床顶刊 + 16 本 CNS / 基础医学期刊（共 54 本）**，全部逐个校验过 ISSN。
 
 - **临床**：Lancet 全家族（肿瘤/神经/感染/呼吸/内分泌/消化肝病/血液/风湿/精神/公共卫生/全球健康/数字医疗/儿科/老年/HIV/微生物）、JACC 全家族、CHEST、Ophthalmology 家族、Annals of Oncology、Journal of Hepatology、Kidney International、JAAD、European Urology、NEJM、EClinicalMedicine
-- **基础/分子**：Cell、Nature、Science、Nature Genetics、Nature Immunology、Cell Stem Cell、Science Translational Medicine、Science Advances、Nature Communications、Cell Reports、Cell Host & Microbe、Cell Systems、Nature Biomedical Engineering、Nature Biotechnology、Nature Neuroscience、Neuron、JACC: Basic to Translational Science
+- **基础/分子**：Cell、Nature、Science、Nature Genetics、Nature Immunology、Cell Stem Cell、Science Translational Medicine、Science Advances、Cell Reports、Cell Host & Microbe、Cell Systems、Nature Biomedical Engineering、Nature Biotechnology、Nature Neuroscience、Neuron、JACC: Basic to Translational Science
 
 > 原任务文档里的 **CHEST Pulmonary (2949-7884)** 和 **CHEST Critical Care (2949-7892)** 在 Europe PMC 返回 0 条——两本刊太新，尚未被 MEDLINE 收录，因此未纳入。**Nature Biomedical Engineering** 的正确 ISSN 是 `2157-846X`（`2372-7705` 无效）。
 
@@ -56,7 +56,7 @@ research-radar/
 
 ## 科研顶刊是怎么来的
 
-**一句话：Europe PMC 一次查询拿到 55 本顶刊近 30 天带摘要的全部新文章，在浏览器里解析结构、判定研究类型、按规则精选。**
+**一句话：Europe PMC 一次查询拿到 54 本顶刊近 30 天带摘要的全部新文章，在浏览器里解析结构、判定研究类型、按规则精选。**
 
 选 Europe PMC 而不是 Scopus / PubMed 的原因：**免 key、免配额、带摘要、支持多 ISSN 联合查询**。（Crossref 对 Elsevier 系期刊完全不返回摘要，NEJM、Lancet、JACC 全部 0/20。）
 
@@ -69,7 +69,7 @@ research-radar/
 
 1. **必须加 `HAS_ABSTRACT:Y`。** `journal-article` 类型太粗，会混进勘误（`Department of Error`）、讣告、通讯、评论。「有摘要」是唯一能干净分出真正研究论文的条件。
 2. **窗口取 30 天，不是 1 天。** 摘要入库滞后发表 2–4 天，1 天窗口基本是空的。
-3. **拆成 3 段查询再合并。** 单次查询会被高产期刊淹没——Nature Communications 一季度 2282 篇。拆段 + **每刊最多 8 篇**，保证小刊也能露脸。
+3. **拆成 3 段查询再合并。** 单次查询会被高产期刊淹没。拆段 + **每刊最多 8 篇**，保证小刊也能露脸。
 4. **不写「今日发表」。** 显示的是文章真实的 `firstPublicationDate`。
 
 ### 领域（21 个）
