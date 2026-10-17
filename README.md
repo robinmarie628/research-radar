@@ -23,7 +23,7 @@ research-radar/
 │   ├── app.js                     # 全部逻辑（零依赖，原生 JS）
 │   └── icon.svg / icon-*.png      # 应用图标
 ├── data/
-│   ├── journals.config.json       # 55 本期刊 + ISSN + 领域 + 临床/基础 + 影响因子
+│   ├── journals.config.json       # 期刊 + ISSN + 领域 + 临床/基础 + 影响因子 + platforms
 │   ├── glossary.json              # 96 条专业词汇
 │   ├── digest.json                # 每日「创新 / 看点」（由 GitHub Action 生成）
 │   ├── builder-digest.json        # 今日 AI 动态总览 + 每条动态的中文一句话
@@ -154,9 +154,15 @@ Europe PMC 返回的摘要**自带小标题**（`<h4>Background</h4>…<h4>Resul
 
 ### 原文链接
 
-- **ClinicalKey 深链**：Europe PMC 不提供 PII，所以向 Crossref 取 `alternative-id`。`filter=doi:a,doi:b` 支持一次批量查 20 个 DOI，因此整个列表只需几次请求。只有真的 PII（`^S[0-9X]{10,}$`）才生成 ClinicalKey 链接。
-  `https://www.clinicalkey.com/#!/content/playContent/1-s2.0-<PII>`
-- **DOI 全文**：`https://doi.org/<DOI>`（无 ClinicalKey 订阅权限时的兜底，始终显示）
+按钮由 `data/journals.config.json` 里每本刊的 `platforms` 决定，不在 `app.js` 里写死刊名。Europe PMC 不提供 PII，所以向 Crossref 取 `alternative-id`。`filter=doi:a,doi:b` 一次最多约 20 个 DOI。只有紧凑形式的 Elsevier PII（`^S[0-9X]{10,}$`，无连字符，如 `S0092867411001279`）才算数。有 PII 时：
+
+1. `platforms` 含 `"ck"` → **ClinicalKey**（`https://www.clinicalkey.com/#!/content/playContent/1-s2.0-<PII>`）。两边都有时优先 ClinicalKey。
+2. 否则 `platforms` 含 `"sd"` → **ScienceDirect**（`https://www.sciencedirect.com/science/article/pii/<PII>`）。
+3. 否则不显示出版商按钮，只留 DOI。
+
+当前取值：Cell Press（Cell、Cell Stem Cell、Cell Rep、Cell Host Microbe、Cell Syst、Neuron）是 `["sd"]`。Lancet 系列、JACC 系列、CHEST、Ophthalmology 系列、Annals of Oncology、J Hepatol、Kidney Int、JAAD、Eur Urol、EClinicalMedicine，以及其余爱思唯尔临床刊，是 `["ck","sd"]`。Nature / Science / NEJM / Circulation 等非爱思唯尔刊是 `[]`。文章按 ISSN 对上配置行；快照没有 ISSN 时，用配置里的 `short` / `title` 精确匹配。
+
+- **DOI 全文**：`https://doi.org/<DOI>`（没有出版商按钮，或没有订阅权限时的兜底，始终显示）
 - **PubMed**：`https://pubmed.ncbi.nlm.nih.gov/<PMID>/`
 
 ### 去重记录（未读）
@@ -234,10 +240,11 @@ git push -u origin main
 
 ```json
 { "issn": "0140-6736", "title": "The Lancet", "short": "Lancet",
-  "domain": "综合医学", "basic": false, "if": 98.4 }
+  "domain": "综合医学", "basic": false, "if": 98.4,
+  "platforms": ["ck", "sd"] }
 ```
 
-`domain` 取上面 21 个领域之一；`basic: true` 表示基础/分子医学期刊。
+`domain` 取上面 21 个领域之一；`basic: true` 表示基础/分子医学期刊。`platforms` 取 `"ck"`（ClinicalKey）和 `"sd"`（ScienceDirect）的组合：两边都写时页面只显示 ClinicalKey；只在 ScienceDirect 的刊写 `["sd"]`；都不是就写 `[]`。`scripts/build_config.py` 重写这份配置时会保留已有的 `platforms`，不会在每日数据更新里丢掉。
 
 **加完必须校验 ISSN**——错的 ISSN 会静默返回 0 条，不报错：
 

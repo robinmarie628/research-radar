@@ -314,6 +314,10 @@ def build_journals(days, cap_per_journal=8):
             "sections": parsed["sections"],
             "structured": parsed["structured"],
             "journal": meta.get("short") or j.get("medlineAbbreviation") or "—",
+            "issn": meta.get("issn") or issn,
+            # copied from journals.config.json so a snapshot item still knows
+            # which full-text button to show if the config row cannot be joined
+            "platforms": list(meta.get("platforms") or []),
             "domain": meta.get("domain") or "综合医学",
             "imp": meta.get("if", 0),
             "basic": is_basic,

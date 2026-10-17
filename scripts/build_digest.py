@@ -239,6 +239,7 @@ def main():
             "doi": (p.get("doi") or "").lower(),
             "title": p.get("title"),
             "journal": p.get("journal"),
+            "platforms": list(p.get("platforms") or []),
             "domain": p.get("domain"),
             "basic": bool(p.get("basic")),
             "studyKey": p.get("studyKey"),

@@ -1,13 +1,13 @@
 /* ============================================================
    科研雷达 · Research Radar
-   Live data: Europe PMC (journals) + Crossref (PII/ClinicalKey)
+   Live data: Europe PMC (journals) + Crossref (PII → ClinicalKey / ScienceDirect)
               + follow-builders (AI builders)
    Zero build, zero backend, zero API keys.
    ============================================================ */
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.01.8';   // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.17.10';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -335,6 +335,8 @@ function mapArticle(r) {
     sections: parsed.sections,
     structured: parsed.structured,
     journal: meta?.short || j.medlineAbbreviation || j.isoabbreviation || '—',
+    issn: meta?.issn || issn,
+    platforms: Array.isArray(meta?.platforms) ? meta.platforms.slice() : [],
     domain: meta?.domain || '综合医学',
     imp: meta?.if ?? 0,
     basic: isBasic,
@@ -461,9 +463,19 @@ async function loadResearch(force) {
   renderResearch();
 }
 
-/* ---------------- Crossref PII → ClinicalKey deep link ----------------
+/* ---------------- Crossref PII → publisher deep link --------------------
+   Which button to show lives on the journal row (`platforms` in
+   journals.config.json), not in a hardcoded title list:
+     ck in platforms + PII → ClinicalKey
+     else sd in platforms + PII → ScienceDirect
+     else DOI only
+   ClinicalKey wins when both are listed. Snapshot items often have no ISSN;
+   those match the config row's exact `short` or `title`.
    Europe PMC exposes no PII, so it comes from Crossref's alternative-id.
-   `filter=doi:a,doi:b` batches ~20 DOIs per request.                      */
+   `filter=doi:a,doi:b` batches ~20 DOIs per request.
+   The id is the compact Elsevier PII (`S` + digits, no hyphens), which is
+   what both ClinicalKey (`1-s2.0-` + PII) and ScienceDirect (`/pii/` + PII)
+   accept. Example: S0092867411001279.                                        */
 const PII_RE = /^S[0-9X]{10,}$/;
 const PII_KEY = 'rr.pii.v1';
 let piiCache = readPiiMap();
@@ -509,16 +521,60 @@ async function loadPII(items) {
 
   $$('#researchCards .art').forEach(node => {
     const a = S.jr.all.find(x => x.id === node.dataset.id);
-    if (a && a.pii) addCkLink(node, a);
+    if (a && a.pii) addFullTextLink(node, a);
   });
 }
-function addCkLink(node, a) {
+
+/** Config row for this article: exact ISSN, else exact short/title. */
+function journalRow(a) {
+  if (!a || !S.cfg?.length) return null;
+  if (a.issn) {
+    const byIssn = S.cfg.find(c => c.issn === a.issn);
+    if (byIssn) return byIssn;
+  }
+  if (!a.journal) return null;
+  return S.cfg.find(c => c.short === a.journal || c.title === a.journal) || null;
+}
+
+/** Platforms from the current config row, else the copy stored on the article. */
+function articlePlatforms(a) {
+  const row = journalRow(a);
+  if (row && Array.isArray(row.platforms)) return row.platforms;
+  if (a && Array.isArray(a.platforms)) return a.platforms;
+  return [];
+}
+
+/** Publisher chip for a resolved PII. ck beats sd; neither means DOI only. */
+function fullTextLink(a) {
+  if (!a || !a.pii) return null;
+  const plats = articlePlatforms(a);
+  if (plats.includes('ck')) {
+    return {
+      href: 'https://www.clinicalkey.com/#!/content/playContent/1-s2.0-' + a.pii,
+      label: 'ClinicalKey',
+      cls: 'ck',
+    };
+  }
+  if (plats.includes('sd')) {
+    return {
+      href: 'https://www.sciencedirect.com/science/article/pii/' + a.pii,
+      label: 'ScienceDirect',
+      cls: 'sd',
+    };
+  }
+  return null;
+}
+
+function addFullTextLink(node, a) {
   const links = node.querySelector('.art-links');
-  if (!links || links.querySelector('.lnk.ck') || !a.pii) return;
-  const ck = el('a', 'lnk ck', 'ClinicalKey ↗');
-  ck.href = 'https://www.clinicalkey.com/#!/content/playContent/1-s2.0-' + a.pii;
-  ck.target = '_blank'; ck.rel = 'noopener noreferrer';
-  links.prepend(ck);
+  const spec = fullTextLink(a);
+  if (!links || !spec || links.querySelector('.lnk.ck, .lnk.sd')) return;
+  links.prepend(link(spec.href, spec.label, spec.cls));
+  // The body was built before the PII arrived, so the DOI chip missed the
+  // secondary style it gets when the publisher link is known up front.
+  for (const n of links.querySelectorAll('.lnk')) {
+    if (/doi\.org/.test(n.getAttribute('href') || '')) n.classList.add('alt');
+  }
 }
 
 /* ---------------- follow-builders ---------------- */
@@ -776,7 +832,7 @@ function articleCard(a, isPick, pickRank) {
     if (!body) body = buildArticleBody(a, c);
     c.append(body);
     markSeen(a);
-    if (a.pii === undefined) loadPII([a]).then(() => { if (a.pii) addCkLink(c, a); });
+    if (a.pii === undefined) loadPII([a]).then(() => { if (a.pii) addFullTextLink(c, a); });
     requestAnimationFrame(() => c.scrollIntoView({ block: 'nearest', behavior: 'smooth' }));
   });
   return c;
@@ -850,7 +906,8 @@ function buildArticleBody(a, card) {
   body.append(meta);
 
   const links = el('div', 'art-links');
-  if (a.pii)  links.append(link('https://www.clinicalkey.com/#!/content/playContent/1-s2.0-' + a.pii, 'ClinicalKey', 'ck'));
+  const ft = fullTextLink(a);
+  if (ft)     links.append(link(ft.href, ft.label, ft.cls));
   if (a.doi)  links.append(link('https://doi.org/' + a.doi, 'DOI 全文', a.pii ? 'alt' : ''));
   if (a.pmid) links.append(link('https://pubmed.ncbi.nlm.nih.gov/' + a.pmid + '/', 'PubMed', 'alt'));
   body.append(links);
@@ -1155,6 +1212,8 @@ async function triggerRegenerate() {
 /* ---------------- boot ---------------- */
 async function boot() {
   window.__rr = S;                 // debug/QA hook
+  S.fullTextLink = fullTextLink;
+  S.articlePlatforms = articlePlatforms;
   S.seen = readSeen();
 
   const c = readCache();
