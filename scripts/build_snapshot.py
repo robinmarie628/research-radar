@@ -284,6 +284,56 @@ def keyword_list(raw):
     return out
 
 
+BLOCKED_ISSNS = {"2041-1723"}
+BLOCKED_NAMES = {"nat commun", "nature communications"}
+BLOCKED_DOI_BITS = ("10.1038/s41467", "10.1038/ncomms")
+
+
+def _norm_name(value):
+    return " ".join(str(value or "").lower().replace(".", "").split())
+
+
+def _ids(record):
+    if not isinstance(record, dict):
+        return []
+    return [str(record.get("issn") or "").strip(), str(record.get("essn") or "").strip()]
+
+
+def _blocked_ids(record):
+    return any(x in BLOCKED_ISSNS for x in _ids(record) if x)
+
+
+def _blocked_doi(record, doi=""):
+    d = str(doi or (record or {}).get("doi") or (record or {}).get("id") or "").lower()
+    return any(bit in d for bit in BLOCKED_DOI_BITS)
+
+
+def is_excluded_journal(journal, doi=""):
+    """Europe PMC journal object: ISSN, electronic ISSN, or journal title."""
+    journal = journal or {}
+    if _blocked_ids(journal) or _blocked_doi({}, doi):
+        return True
+    names = (_norm_name(journal.get("medlineAbbreviation")), _norm_name(journal.get("title")))
+    return any(n in BLOCKED_NAMES for n in names if n)
+
+
+def is_excluded_article(article):
+    """Saved article or digest row. `title` is the paper, so it is not tested."""
+    article = article or {}
+    if _blocked_ids(article) or _blocked_doi(article):
+        return True
+    names = (_norm_name(article.get("journal")), _norm_name(article.get("short")))
+    return any(n in BLOCKED_NAMES for n in names if n)
+
+
+def meta_for_journal(journal, by_issn):
+    """Config row for this record. Match print ISSN or electronic ISSN."""
+    for key in _ids(journal):
+        if key and key in by_issn:
+            return by_issn[key]
+    return None
+
+
 def build_journals(days, cap_per_journal=8):
     """Query Europe PMC in chunks, merge, then cap per journal.
 
@@ -318,8 +368,13 @@ def build_journals(days, cap_per_journal=8):
     for r in merged:
         ji = r.get("journalInfo", {}) or {}
         j = ji.get("journal", {}) or {}
-        issn = j.get("issn") or j.get("essn") or ""
-        meta = by_issn.get(issn, {})
+        doi = r.get("doi") or ""
+        # Not in the pool, or Nature Communications slipped through the ISSN query.
+        if is_excluded_journal(j, doi) or is_excluded_article({"doi": doi, "id": r.get("id")}):
+            continue
+        meta = meta_for_journal(j, by_issn)
+        if not meta:
+            continue
         title = clean(r.get("title"))
         if not title:
             continue
@@ -337,7 +392,7 @@ def build_journals(days, cap_per_journal=8):
             "sections": parsed["sections"],
             "structured": parsed["structured"],
             "journal": meta.get("short") or j.get("medlineAbbreviation") or "—",
-            "issn": meta.get("issn") or issn,
+            "issn": meta.get("issn") or "",
             # copied from journals.config.json so a snapshot item still knows
             # which full-text button to show if the config row cannot be joined
             "platforms": list(meta.get("platforms") or []),
