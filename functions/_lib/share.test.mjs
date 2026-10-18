@@ -566,6 +566,55 @@ test('a vertical pan scrolls the abstract and is not a tap that closes the card'
   assert.match(abs, /overscroll-behavior:contain/);
 });
 
+test('text size slider stays between 100 and 150 and bold is a light step', () => {
+  const src = readFileSync(new URL('../../assets/app.js', import.meta.url), 'utf8');
+  const start = src.indexOf('function textPercent');
+  const end = src.indexOf('function applyTextSize');
+  const { textPercent, boldOn } = new Function(src.slice(start, end) + '\nreturn { textPercent, boldOn };')();
+  assert.equal(textPercent(null), 100);
+  assert.equal(textPercent('sm'), 100);
+  assert.equal(textPercent('90'), 100);
+  assert.equal(textPercent('md'), 110);
+  assert.equal(textPercent('lg'), 120);
+  assert.equal(textPercent('115'), 115);
+  assert.equal(textPercent('140'), 140);
+  assert.equal(textPercent('150'), 150);
+  assert.equal(textPercent('180'), 150);
+  assert.equal(boldOn(null), false);
+  assert.equal(boldOn('0'), false);
+  assert.equal(boldOn('1'), true);
+
+  const html = readFileSync(new URL('../../index.html', import.meta.url), 'utf8');
+  assert.match(html, /id="typeRange"[^>]*min="100"[^>]*max="150"/);
+  assert.match(html, /id="boldBtn"/);
+  assert.match(html, /rr\.bold\.v1/);
+  assert.doesNotMatch(html, /data-step="md"/);
+
+  const css = readFileSync(new URL('../../assets/styles.css', import.meta.url), 'utf8');
+  assert.match(css, /html\{--read:1\}/);
+  assert.doesNotMatch(css, /data-text="md"/);
+  assert.match(css, /\.art-title\{[^}]*calc\(14px \* var\(--read\)\)/);
+  assert.match(css, /\.sec-txt\{[^}]*calc\(12\.5px \* var\(--read\)\)/);
+  const bold = css.slice(css.indexOf('html[data-bold]'), css.indexOf('html,body{height:100%}'));
+  assert.match(bold, /\.sec-txt/);
+  assert.match(bold, /font-weight:600/);
+  assert.doesNotMatch(bold, /font-weight:800/);
+  assert.doesNotMatch(bold, /\.art-title/);
+  assert.doesNotMatch(bold, /\.sec-lab/);
+  assert.doesNotMatch(bold, /\.chip/);
+  assert.doesNotMatch(bold, /\.seg/);
+  assert.doesNotMatch(bold, /\.badge/);
+  const lab = css.slice(css.indexOf('.sec-lab{'), css.indexOf('.sec-txt{'));
+  assert.match(lab, /font-size:10px/);
+  assert.doesNotMatch(lab, /var\(--read\)/);
+  const chip = css.slice(css.indexOf('.chip{'), css.indexOf('.chip .cnt'));
+  assert.match(chip, /font-size:12\.5px/);
+  assert.doesNotMatch(chip, /var\(--read\)/);
+  const seg = css.slice(css.indexOf('.seg{'), css.indexOf('.seg.is-active'));
+  assert.match(seg, /font-size:14px/);
+  assert.doesNotMatch(seg, /var\(--read\)/);
+});
+
 test('RIS, BibTeX, and Vancouver use the metadata we have', () => {
   const ris = cite.ris(sample);
   assert.match(ris, /^TY {2}- JOUR/m);
