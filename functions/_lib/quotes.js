@@ -9,16 +9,46 @@ export const ABSTRACT_MAX = 14000;
 export const QUOTE_SYSTEM = `You choose quotations from one medical abstract for a Chinese physician.
 You will receive a numbered list of sentences. The number in brackets is the index.
 Pick the 3 sentences that are the most clinically meaningful and the most likely to start a discussion.
+Prefer findings and conclusions. Skip methods sentences that are full of numbers, sample sizes, and confidence intervals.
+Prefer a sentence under 220 characters. Do not stitch clauses together to make one shorter.
 Return JSON only, no markdown: {"quotes":[{"i":0,"zh":"..."},{"i":1,"zh":"..."},{"i":2,"zh":"..."}]}
 Rules:
 1. i must be an index from the list. Do not invent, merge, shorten, or rewrite a sentence.
 2. zh is a Simplified Chinese translation of that exact sentence.
 3. Keep drug names, gene and protein names, trial names, and acronyms in English.
 4. Drug names may appear as placeholders like [D1]. Copy every placeholder into zh unchanged.
-5. Translate faithfully. Do not add or omit facts.`;
+5. Translate faithfully. Do not add or omit facts.
+6. If fewer than 3 sentences are under 220 characters, fill the remaining slots with the next most meaningful sentences, still copied verbatim.`;
 
 const ABBREV = /(?:et al|Figs?|vs|Dr|Mr|Mrs|Ms|Prof|e\.g|i\.e|U\.S|No|Vol|Jr|Sr|St|approx|ca|al)$/i;
 const HINT = /patient|risk|mortality|death|outcome|significant|associat|treatment|therapy|reduc|increas|improv|therefore|thus|we found|demonstrat|suggest|benefit|hazard|survival|disease|failure|conclus|trial|effect|among|compared/i;
+const FINDING = /therefore|thus|conclus|we found|these findings|in summary|suggest|demonstrat/i;
+const METHODS_LEAD = /^(between \d|women aged|the median age|patients were|participants were|we randomly|randomly allocated|eligible |inclusion |exclusion |methods\b|this (?:study|trial) (?:is|was) registered)/i;
+export const PREFER_LEN = 220;
+
+/** Methods prose packed with counts and confidence intervals. */
+export function isDenseMethods(s) {
+  const text = String(s || '');
+  const digits = text.match(/\d/g);
+  const digitCount = digits ? digits.length : 0;
+  const ci = /confidence interval|\bCIs?\b|95\s*%|hazard ratio|\bodds ratio\b|\bHR\b|\bOR\b|p\s*[<=>]/i.test(text);
+  const methods = /\b(randomi[sz]ed|randomly assigned|we enrolled|were enrolled|participants were|patients were|eligible patients|inclusion criteria|exclusion criteria|statistical analysis|cox proportional|intention-to-treat|full analysis set|modified full analysis)\b/i.test(text);
+  if (ci && digitCount >= 8) return true;
+  if (methods && digitCount >= 6) return true;
+  if (digitCount >= 14) return true;
+  return false;
+}
+
+function sentenceQuality(s) {
+  let q = 0;
+  if (s.length <= PREFER_LEN) q += 3;
+  else if (s.length > 280) q -= 3;
+  if (isDenseMethods(s)) q -= 6;
+  else if (METHODS_LEAD.test(s)) q -= 2;
+  if (HINT.test(s)) q += 2;
+  if (FINDING.test(s)) q += 2;
+  return q;
+}
 
 export function normSpace(s) {
   return String(s || '').replace(/\s+/g, ' ').trim();
@@ -61,25 +91,39 @@ export function pickHeuristic(sentences, n = 3) {
   const rows = sentences.map((s, i) => {
     let sc = 0;
     if (HINT.test(s)) sc += 4;
+    if (FINDING.test(s)) sc += 3;
     const len = s.length;
-    if (len >= 70 && len <= 260) sc += 3;
-    else if (len > 340) sc -= 3;
-    else if (len < 45) sc -= 2;
+    if (len <= PREFER_LEN && len >= 60) sc += 4;
+    else if (len <= PREFER_LEN) sc += 2;
+    else if (len <= 280) sc -= 1;
+    else sc -= 4;
+    if (isDenseMethods(s)) sc -= 8;
+    else if (METHODS_LEAD.test(s)) sc -= 5;
     if (sentences.length > 1) sc += (i / (sentences.length - 1)) * 2;
     return { s, i, sc, len };
   }).sort((a, b) => b.sc - a.sc || a.len - b.len);
 
+  const passes = [
+    (row) => row.len <= PREFER_LEN && !isDenseMethods(row.s),
+    (row) => !isDenseMethods(row.s),
+    () => true,
+  ];
   const picked = [];
-  const take = (gap) => {
+  const take = (ok, gap) => {
     for (const row of rows) {
       if (picked.length >= n) return;
+      if (!ok(row)) continue;
       if (picked.some(p => p.i === row.i)) continue;
       if (gap && sentences.length >= n + 2 && picked.some(p => Math.abs(p.i - row.i) < gap)) continue;
       picked.push(row);
     }
   };
-  take(2);
-  take(0);
+  for (const ok of passes.slice(0, 2)) {
+    take(ok, 2);
+    take(ok, 0);
+    if (picked.length >= n) break;
+  }
+  if (!picked.length) take(passes[2], 0);
   return picked.sort((a, b) => a.i - b.i).slice(0, n).map(p => p.s);
 }
 
@@ -110,6 +154,30 @@ export function resolveQuotePicks(abstract, modelQuotes) {
       out.push({ en, zh: '' });
     }
   }
+  if (sentences.some(s => !isDenseMethods(s))) {
+    const kept = out.filter(p => !isDenseMethods(p.en));
+    out.length = 0;
+    for (const p of kept) out.push(p);
+    const taken = new Set(out.map(p => p.en));
+    for (const en of pickHeuristic(sentences, 3)) {
+      if (out.length >= 3) break;
+      if (taken.has(en)) continue;
+      taken.add(en);
+      out.push({ en, zh: '' });
+    }
+  }
+  let guard = 0;
+  while (guard++ < out.length) {
+    let worst = 0;
+    for (let i = 1; i < out.length; i++) {
+      if (sentenceQuality(out[i].en) < sentenceQuality(out[worst].en)) worst = i;
+    }
+    const taken = new Set(out.map(p => p.en));
+    const alt = pickHeuristic(sentences.filter(s => !taken.has(s)), 1)[0];
+    if (!alt || sentenceQuality(alt) <= sentenceQuality(out[worst].en)) break;
+    out[worst] = { en: alt, zh: '' };
+  }
+  out.sort((a, b) => sentences.indexOf(a.en) - sentences.indexOf(b.en));
   return out.slice(0, 3);
 }
 

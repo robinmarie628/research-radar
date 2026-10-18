@@ -991,8 +991,8 @@ table.idx .b{width:42px;text-align:center}
 .share-row{display:flex;gap:8px}
 .share-row .share-choice{flex:1}
 .share-preview{
-  display:block;width:100%;height:auto;border-radius:18px;
-  background:#111;margin:0 0 10px;
+  display:block;width:100%;height:auto;
+  background:#111111;margin:0 0 10px;
 }
 .share-status,.share-note{
   margin:0 0 10px;font-size:12.5px;line-height:1.55;font-weight:600;color:var(--ink-3);

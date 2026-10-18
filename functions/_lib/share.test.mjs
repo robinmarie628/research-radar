@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import {
   splitSentences, findVerbatim, pickHeuristic, resolveQuotePicks, parseQuoteResponse,
+  isDenseMethods,
 } from './quotes.js';
 import { handleTranslate, __setMtResources } from '../api/translate.js';
 
@@ -37,6 +38,33 @@ test('heuristic picks are verbatim and prefer a short clinical sentence', () => 
   const picked = pickHeuristic(sentences, 3);
   assert.equal(picked.length, 3);
   for (const s of picked) assert.ok(sentences.includes(s));
+});
+
+test('heuristic skips a methods sentence packed with confidence intervals', () => {
+  const finding = 'Patients who received the higher dose had fewer ischemic events than those on standard care.';
+  const second = 'The primary endpoint was reduced compared with standard care in this screened population.';
+  const third = 'Therefore these findings support using the higher dose for similar patients.';
+  const methods = 'Women were enrolled and randomly assigned across 140 sites (hazard ratio 0.81, 95% CI 0.74-0.89; p<0.001) with a median follow-up of 4.6 years in the modified full analysis set.';
+  assert.equal(isDenseMethods(methods), true);
+  assert.equal(isDenseMethods(finding), false);
+  const abstract = [finding, second, third, methods].join(' ');
+  const picked = pickHeuristic(splitSentences(abstract), 3);
+  assert.equal(picked.length, 3);
+  assert.equal(picked.some(s => /95% CI/.test(s)), false);
+  for (const s of picked) assert.ok(s.length <= 220, s);
+});
+
+test('a long methods pick is replaced by a shorter finding', () => {
+  const finding = 'Patients who received the higher dose had fewer ischemic events than those on standard care.';
+  const second = 'Therefore these findings support using the higher dose for similar patients after screening.';
+  const methods = 'Between 2018 and 2022 the trial randomly assigned 8421 adults and reported a hazard ratio of 0.81 (95% CI 0.74-0.89; p<0.001) across 140 sites in the modified full analysis set.';
+  const abstract = [finding, methods, second].join(' ');
+  const sentences = splitSentences(abstract);
+  const picks = resolveQuotePicks(abstract, [{ i: sentences.findIndex(s => /95% CI/.test(s)), zh: '不该用这句方法学' }]);
+  assert.equal(picks.some(p => /95% CI/.test(p.en)), false);
+  assert.equal(picks.some(p => /不该用这句方法学/.test(p.zh)), false);
+  assert.equal(picks.some(p => p.en === finding), true);
+  for (const p of picks) assert.ok(abstract.includes(p.en));
 });
 
 test('quote JSON parser reads indexes', () => {
