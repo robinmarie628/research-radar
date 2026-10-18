@@ -21,7 +21,7 @@ import {
   isDenseMethods, isBoilerplate, excerptQuote,
 } from './quotes.js';
 import { handleTranslate, __setMtResources } from '../api/translate.js';
-import { extractPassages, extractHtmlPassages } from './fulltext.js';
+import { extractPassages, extractHtmlPassages, openAccessPassages } from './fulltext.js';
 import { isTranslatedZh } from './mt.js';
 
 const require = createRequire(import.meta.url);
@@ -418,6 +418,54 @@ test('the sleep-pressure abstract yields three separate sentences', () => {
     assert.equal((p.en.match(/\. /g) || []).length <= 1, true, p.en);
     assert.ok(wordCountOk(p.en), p.en);
   }
+});
+
+test('the Neuron mind abstract is only two sentences, so the card does not invent a third', () => {
+  const abstract = 'Artificial intelligence is starting to automate scientific discovery, raising the prospect of an automated science of the mind. We chart this field around four challenges: representing experiments, generating synthetic behavior, synthesizing models, and closing the loop to discover psychological theories.';
+  assert.equal(splitSentences(abstract).length, 2);
+  const picks = resolveQuotePicks(abstract, []);
+  assert.equal(picks.length, 2);
+  for (const p of picks) {
+    for (const core of piecesOf(p.en)) assert.ok(abstract.includes(core), p.en);
+  }
+});
+
+test('a paywalled journal article is not quoted from its arXiv preprint', async () => {
+  const doi = '10.1016/j.neuron.2026.09.012';
+  const calls = [];
+  const fetchImpl = async (url) => {
+    const href = String(url);
+    calls.push(href);
+    if (href.includes('europepmc')) {
+      return {
+        ok: true,
+        json: async () => ({ resultList: { result: [{ doi, isOpenAccess: 'N' }] } }),
+        text: async () => '',
+      };
+    }
+    if (href.includes('unpaywall')) {
+      return {
+        ok: true,
+        json: async () => ({
+          is_oa: true,
+          oa_status: 'green',
+          journal_is_oa: false,
+          oa_locations: [{
+            host_type: 'repository',
+            version: 'submittedVersion',
+            url: 'https://arxiv.org/pdf/2603.20988',
+            license: 'cc-by',
+          }],
+        }),
+        text: async () => '',
+      };
+    }
+    throw new Error('unexpected fetch ' + href);
+  };
+  const oa = await openAccessPassages(doi, fetchImpl);
+  assert.equal(oa.status, 'closed');
+  assert.equal(oa.text, '');
+  assert.equal(calls.some(href => /arxiv|sciencedirect|cell\.com/i.test(href)), false);
 });
 
 test('a short abstract with no gold-style sentence still returns quotes', () => {

@@ -2504,13 +2504,13 @@ function downloadFavoritesMarkdown() {
 }
 
 /* ---------------- 机翻标题 + 划词翻译 ----------------
-   Non-featured articles from the last 15 calendar days get a Chinese title
-   under the English one, tagged 机翻. 今日精选 already has an editorial
-   titleZh and is left alone. The 30-day pool (DAYS) is unchanged.
+   The journal list is a 30-day pool. Machine titles cover that same window,
+   tagged 机翻 under the English title. 今日精选 is also translated when a
+   pick's date falls just outside the cutoff. An editorial titleZh replaces 机翻.
    normTitle / the cutoff match functions/_lib/mt.js. */
 const MT_LS = 'rr.mt.v1';
 const SEL_SS = 'rr.selzh.v1';
-const MT_DAYS = 15;
+const MT_DAYS = 30;
 const SEL_MAX = 1500;
 
 function normTitle(s) {
@@ -2535,13 +2535,23 @@ function mtId(a) {
 }
 function mtFeatured(a) {
   // An editorial Chinese title already replaces 机翻. A curated pick with no
-  // titleZh is still an ordinary recent paper and should be translated.
+  // titleZh is still an ordinary paper and should be translated.
   return !!(a?.digest && String(a.digest.titleZh || '').trim());
 }
-function mtEligible(a) {
+function machineTitleWanted(a, cutoff, pickIds) {
   if (!a?.title || !a.date) return false;
   if (mtFeatured(a)) return false;
-  return String(a.date) >= mtCutoff();
+  if (String(a.date) >= cutoff) return true;
+  const id = mtId(a);
+  return !!(id && pickIds && pickIds.has(id));
+}
+function mtEligible(a) {
+  const pickIds = new Set();
+  for (const p of S.jr.picks || []) {
+    const id = mtId(p);
+    if (id) pickIds.add(id);
+  }
+  return machineTitleWanted(a, mtCutoff(), pickIds);
 }
 function mtLists() {
   return [S.jr.all, S.jr.picks, S.week && S.week.items];
@@ -2672,7 +2682,7 @@ function queueMachineTitles() {
   if (queueMachineTitles.running) { queueMachineTitles.dirty = true; return; }
   const need = [];
   const seen = new Set();
-  for (const list of [S.jr.all, S.week && S.week.items]) {
+  for (const list of [S.jr.picks, S.jr.all, S.week && S.week.items]) {
     for (const a of list || []) {
       if (!mtEligible(a) || a.mtZh) continue;
       const id = mtId(a);

@@ -22,9 +22,42 @@ test('system prompt keeps the tested placeholder and JSON rules', () => {
   assert.match(TITLE_SYSTEM, /延迟治疗启动/);
 });
 
-test('15-day cutoff is an inclusive UTC window', () => {
-  assert.equal(titleZhCutoff(new Date('2026-10-18T01:58:00Z')), '2026-10-04');
-  assert.equal(titleZhCutoff(new Date('2026-10-18T23:00:00Z')), '2026-10-04');
+test('30-day cutoff matches the journal list and is an inclusive UTC window', () => {
+  assert.equal(titleZhCutoff(new Date('2026-10-18T01:58:00Z')), '2026-09-19');
+  assert.equal(titleZhCutoff(new Date('2026-10-18T23:00:00Z')), '2026-09-19');
+});
+
+test('list titles outside the old 15-day window still want a machine title', () => {
+  const src = fs.readFileSync(path.join(root, 'assets/app.js'), 'utf8');
+  const start = src.indexOf('function mtId');
+  const end = src.indexOf('function mtLists');
+  const { machineTitleWanted } = new Function(src.slice(start, end) + '\nreturn { machineTitleWanted };')();
+  const cutoff = '2026-09-19';
+  const resolve = {
+    title: '8 weeks versus 12 weeks of sofosbuvir-velpatasvir for treatment-naive, non-cirrhotic, chronic hepatitis C (RESOLVE): a multicentre, open-label, non-inferiority, randomised controlled trial in India.',
+    date: '2026-09-30',
+    doi: '10.1016/s0140-6736(26)01380-2',
+  };
+  const survodutide = {
+    title: 'Survodutide Once Weekly in Adults with Obesity and Type 2 Diabetes.',
+    date: '2026-10-01',
+    doi: '10.1056/nejmoa2607219',
+  };
+  const neuron = {
+    title: 'Toward an automated science of the mind.',
+    date: '2026-10-01',
+    doi: '10.1016/j.neuron.2026.09.012',
+  };
+  assert.equal(machineTitleWanted(resolve, cutoff, new Set()), true);
+  assert.equal(machineTitleWanted(survodutide, cutoff, new Set()), true);
+  assert.equal(machineTitleWanted(neuron, cutoff, new Set()), true);
+  assert.equal(machineTitleWanted({ title: 'Old paper.', date: '2026-09-01', doi: '10.1000/old' }, cutoff, new Set()), false);
+  assert.equal(machineTitleWanted({ title: 'Old pick.', date: '2026-09-01', doi: '10.1000/old-pick' }, cutoff, new Set(['10.1000/old-pick'])), true);
+  assert.equal(machineTitleWanted({ ...neuron, digest: { titleZh: '已有编辑标题' } }, cutoff, new Set([neuron.doi])), false);
+  assert.equal(machineTitleWanted({ title: '', date: '2026-10-08', doi: '10.1/x' }, cutoff, new Set()), false);
+
+  const queue = src.slice(src.indexOf('function queueMachineTitles'), src.indexOf('let mtPopToken'));
+  assert.ok(queue.indexOf('S.jr.picks') < queue.indexOf('S.jr.all'));
 });
 
 test('normTitle ignores case, trailing period, and space', () => {

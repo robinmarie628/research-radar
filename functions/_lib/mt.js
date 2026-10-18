@@ -8,7 +8,7 @@
 
 export const MT_MODEL = '@cf/qwen/qwen3-30b-a3b-fp8';
 export const TITLE_BATCH = 10;
-export const TITLE_ZH_DAYS = 15;
+export const TITLE_ZH_DAYS = 30;
 export const SELECTION_MAX = 1500;
 export const TITLE_MAX = 500;
 
