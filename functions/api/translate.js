@@ -295,7 +295,7 @@ async function translateQuotes(request, env, body) {
 
   const { glossary, overrides } = await loadResources(request, env);
   const sections = body.sections && typeof body.sections === 'object' ? body.sections : null;
-  const key = 'quotes/v6/' + (await sha256Hex(normTitle(abstract))).slice(0, 32);
+  const key = 'quotes/v7/' + (await sha256Hex(normTitle(abstract))).slice(0, 32);
   const hit = await cacheGet(request, key);
   if (hit?.quotes?.length) return json({ quotes: hit.quotes, cached: true });
 
@@ -324,7 +324,7 @@ async function translateQuotes(request, env, body) {
       const masked = missing.map(p => maskDrugs(p.en));
       const raw = await runModel(
         env,
-        SELECTION_SYSTEM + '\nYou will receive a JSON array of sentences. Reply with a JSON array of Simplified Chinese translations, same length and order, and nothing else.',
+        SELECTION_SYSTEM + '\nYou will receive a JSON array of excerpts. Reply with a JSON array of Simplified Chinese translations, same length and order, and nothing else. If an excerpt begins or ends with the ellipsis …, keep … at the same end of the Chinese line and translate only the words that are present.',
         JSON.stringify(masked.map(m => m.text)),
         2000,
       );
@@ -338,7 +338,7 @@ async function translateQuotes(request, env, body) {
     }
   }
 
-  const quotes = picks.filter(p => p.en && p.zh).slice(0, 3).map(p => ({ role: p.role, en: p.en, zh: p.zh }));
+  const quotes = picks.filter(p => p.en && p.zh).slice(0, 4).map(p => ({ role: p.role, en: p.en, zh: p.zh }));
   if (!quotes.length) return json({ error: 'ai_failed', message: '摘句翻译失败，请再试一次。' }, 502);
   await cachePut(request, key, { quotes });
   return json({ quotes, cached: false });

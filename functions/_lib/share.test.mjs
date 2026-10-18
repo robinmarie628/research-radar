@@ -1,5 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+
+function quoteCore(en) {
+  return String(en || '').replace(/…/g, '').replace(/\s+/g, ' ').trim();
+}
+function wordCountOk(en) {
+  const n = quoteCore(en).split(/\s+/).filter(Boolean).length;
+  return n > 0 && n <= 25;
+}
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import {
@@ -29,8 +37,12 @@ test('a paraphrased sentence is rejected and a real one is kept', () => {
     { i: 2, en: 'early review somehow helped', zh: '因此，早期评估容量状态降低了死亡率。' },
   ]);
   assert.equal(picks.length, 3);
-  for (const p of picks) assert.ok(ABSTRACT.includes(p.en), p.en);
-  assert.equal(picks.some(p => p.en === sentences[2] && /死亡率/.test(p.zh)), true);
+  for (const p of picks) {
+    const core = p.en.replace(/…/g, '').trim();
+    assert.ok(ABSTRACT.includes(core), p.en);
+    assert.ok(wordCountOk(p.en), p.en);
+  }
+  assert.equal(picks.some(p => /early review of volume status reduced mortality/.test(p.en)), true);
   assert.equal(picks.some(p => /不该采用/.test(p.zh)), false);
 });
 
@@ -64,8 +76,8 @@ test('a long methods pick is replaced by a shorter finding', () => {
   const picks = resolveQuotePicks(abstract, [{ i: sentences.findIndex(s => /95% CI/.test(s)), zh: '不该用这句方法学' }]);
   assert.equal(picks.some(p => /95% CI/.test(p.en)), false);
   assert.equal(picks.some(p => /不该用这句方法学/.test(p.zh)), false);
-  assert.equal(picks.some(p => p.en === finding), true);
-  for (const p of picks) assert.ok(abstract.includes(p.en));
+  assert.equal(picks.some(p => quoteCore(p.en) && finding.includes(quoteCore(p.en))), true);
+  for (const p of picks) assert.ok(abstract.includes(quoteCore(p.en)), p.en);
 });
 
 test('registration, funding, ethics, and copyright lines are never quoted', () => {
@@ -176,8 +188,40 @@ test('the only results sentence is kept even when it carries a confidence interv
     objective: bg, results: finding, conclusion: meaning,
   });
   assert.equal(picks.map(p => p.role).join(','), 'background,finding,significance');
-  assert.equal(picks[1].en, finding);
+  assert.match(picks[1].en, /significantly faster with deucrictibant than placebo/);
+  assert.doesNotMatch(picks[1].en, /95% CI/);
+  assert.ok(finding.includes(quoteCore(picks[1].en)));
+  assert.ok(wordCountOk(picks[1].en));
   assert.equal(picks[2].en, meaning);
+});
+
+test('GIMAP6-style abstract adds a mechanism excerpt and keeps each quote short', () => {
+  const bg = 'Controlling hyperlipidemia has reduced but not eliminated atherosclerotic cardiovascular disease (ASCVD) as a major cause of human mortality.';
+  const finding = 'Here, we report that loss of the immunoregulatory gene GTPase of immunity-associated protein 6 (Gimap6) in mice causes an inflammatory vasculopathy and accelerated atherosclerosis in the absence of hyperlipidemia.';
+  const mechanism = 'Human hypomorphic GIMAP6 variants, including the African-ancestry-enriched V65I allele, are associated with altered monocyte redox balance, increased CD36-mediated lipid uptake, and early ASCVD.';
+  const meaning = 'Thus, GIMAP6 is a crucial safeguard for vascular integrity that restrains endothelial dysfunction, macrophage foam cell generation, and inflammation that can cause lethal ASCVD independently of systemic hyperlipidemia.';
+  const abstract = [bg, finding, mechanism, meaning].join(' ');
+  const picks = resolveQuotePicks(abstract, []);
+  assert.deepEqual(picks.map(p => p.role), ['background', 'finding', 'mechanism', 'significance']);
+  assert.match(picks[1].en, /^…loss of the immunoregulatory gene/);
+  assert.match(picks[2].en, /CD36-mediated lipid uptake/);
+  assert.doesNotMatch(picks[1].en, /CD36-mediated lipid uptake/);
+  for (const p of picks) {
+    assert.ok(abstract.includes(quoteCore(p.en)), p.en);
+    assert.ok(wordCountOk(p.en), p.en);
+  }
+});
+
+test('a trial without a mechanism stays at three excerpts', () => {
+  const bg = 'In hereditary angioedema, oral on-demand treatments that provide rapid relief remain scant.';
+  const finding = 'Onset of symptom relief occurred significantly faster with deucrictibant than placebo, with median times of 1.28 h (95% CI 1.05 to 1.52) (p<0.0001).';
+  const meaning = 'These results support the use of deucrictibant as an oral treatment for attacks.';
+  const picks = resolveQuotePicks([bg, finding, meaning].join(' '), [], {
+    objective: bg, results: finding, conclusion: meaning,
+  });
+  assert.deepEqual(picks.map(p => p.role), ['background', 'finding', 'significance']);
+  assert.doesNotMatch(picks[1].en, /95% CI|p</);
+  assert.ok(wordCountOk(picks[1].en));
 });
 
 test('quote JSON parser reads indexes', () => {
@@ -213,8 +257,8 @@ test('quotes mode drops a fake sentence and restores a drug placeholder', async 
   assert.equal(res.status, 200);
   const data = await res.json();
   assert.equal(data.quotes.length, 3);
-  for (const q of data.quotes) assert.ok(abstract.includes(q.en), q.en);
-  const first = data.quotes.find(q => q.en === sentences[0]);
+  for (const q of data.quotes) assert.ok(abstract.includes(quoteCore(q.en)), q.en);
+  const first = data.quotes.find(q => quoteCore(q.en) && sentences[0].includes(quoteCore(q.en)) && /durvalumab/i.test(q.en));
   assert.ok(first);
   assert.match(first.zh, /durvalumab/);
   assert.doesNotMatch(first.zh, /\[D1\]/);

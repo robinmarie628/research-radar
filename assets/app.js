@@ -11,7 +11,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.18.31';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.18.32';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -2796,10 +2796,11 @@ function downloadBlob(filename, blob) {
 function exactQuote(en, abstract) {
   const abs = String(abstract || '').replace(/\s+/g, ' ').trim();
   const needle = String(en || '').replace(/\s+/g, ' ').trim();
-  if (!needle || !abs.includes(needle)) return '';
+  const core = needle.replace(/…/g, '').replace(/\s+/g, ' ').trim();
+  if (!core || !abs.includes(core)) return '';
   return needle;
 }
-const QUOTE_LS = 'rr.quotes.v6';
+const QUOTE_LS = 'rr.quotes.v7';
 function quoteKey(a, abs) {
   let h = 5381;
   const s = String(abs || '').slice(0, 4000);
@@ -2856,7 +2857,7 @@ async function fetchQuotes(a) {
     if (en && zh) quotes.push({ en, zh, role: q.role || '' });
   }
   if (!quotes.length) return { error: '没有从摘要里抽出可用的原句。' };
-  const out = quotes.slice(0, 3);
+  const out = quotes.slice(0, 4);
   writeQuoteCache(key, out);
   return { quotes: out };
 }

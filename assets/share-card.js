@@ -1,8 +1,9 @@
 /* Share card. Ports make_card.py: 1080-wide navy newspaper on cream,
    corners filled #111111 (opaque; WeChat paints transparent corners white).
    Font sizes and line heights are the GIMAP6 reference and never shrink.
-   All three quotations are drawn. The card grows past the old 1920px cap
-   instead of dropping a quote. Line spacing stays at or above the reference. */
+   Every quotation is drawn, including a mechanism line when the abstract
+   states one. The card grows with the text. Line spacing stays at or above
+   the reference. */
 (function () {
   const S = 1.8;
   const W = Math.round(600 * S);
@@ -587,7 +588,7 @@
   function fitSpec(ctx, spec, G, markPad, markDrop) {
     const title_zh = fitTitleZh(ctx, spec.title_zh || '');
     const title_en = trimDesignSubtitle(spec.title_en || '');
-    const quotes = (spec.quotes || []).filter(q => q && (q.en || q.zh)).slice(0, 3);
+    const quotes = (spec.quotes || []).filter(q => q && (q.en || q.zh)).slice(0, 4);
     const next = Object.assign({}, spec, { title_zh, title_en, quotes });
     const rawHeight = layout(ctx, next, G, false, 0, markPad, markDrop).height;
     return { spec: next, rawHeight, dropped: false };
