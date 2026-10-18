@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import {
   splitSentences, findVerbatim, pickHeuristic, resolveQuotePicks, parseQuoteResponse,
@@ -151,6 +152,34 @@ test('a conclusion that mentions an unmet need is not the background quote', () 
   assert.equal(heuristic[2].en, meaning);
 });
 
+test('a plain result replaces a confidence-interval sentence for the same finding', () => {
+  const bg = 'Oral treatments that stop an attack quickly remain scant.';
+  const plain = 'Symptom relief was significantly faster with the study drug than placebo.';
+  const clutter = 'Onset of symptom relief occurred significantly faster with the study drug than placebo, with median times of 1.28 h (95% CI 1.05 to 1.52) and more than 12 h (5.82 to more than 12) (p<0.0001).';
+  const meaning = 'These findings suggest the study drug should be offered when an attack starts.';
+  const abstract = [bg, clutter, plain, meaning].join(' ');
+  const picks = resolveQuotePicks(abstract, [
+    { role: 'finding', i: 1, zh: '不该用带置信区间的长句' },
+  ], { objective: bg, results: clutter + ' ' + plain, conclusion: meaning });
+  assert.equal(picks[1].role, 'finding');
+  assert.equal(picks[1].en, plain);
+  assert.equal(picks[1].zh, '');
+  assert.equal(picks.some(p => /95% CI/.test(p.en)), false);
+});
+
+test('the only results sentence is kept even when it carries a confidence interval', () => {
+  const bg = 'In hereditary angioedema, oral on-demand treatments remain scant.';
+  const finding = 'Onset of symptom relief occurred significantly faster with deucrictibant than placebo, with median times of 1.28 h (95% CI 1.05 to 1.52) and more than 12 h (p<0.0001).';
+  const meaning = 'These results support the use of deucrictibant as an oral treatment for attacks.';
+  const abstract = [bg, finding, meaning].join(' ');
+  const picks = resolveQuotePicks(abstract, [], {
+    objective: bg, results: finding, conclusion: meaning,
+  });
+  assert.equal(picks.map(p => p.role).join(','), 'background,finding,significance');
+  assert.equal(picks[1].en, finding);
+  assert.equal(picks[2].en, meaning);
+});
+
 test('quote JSON parser reads indexes', () => {
   const parsed = parseQuoteResponse('```json\n{"quotes":[{"i":1,"zh":"甲"}]}\n```');
   assert.deepEqual(parsed, [{ i: 1, role: '', en: '', zh: '甲' }]);
@@ -191,6 +220,21 @@ test('quotes mode drops a fake sentence and restores a drug placeholder', async 
   assert.doesNotMatch(first.zh, /\[D1\]/);
   assert.equal(data.quotes.some(q => /编造|invented/.test(q.en + q.zh)), false);
   assert.ok(calls >= 1);
+});
+
+test('a trial-design subtitle is removed and a scientific subtitle stays', () => {
+  const src = readFileSync(new URL('../../assets/share-card.js', import.meta.url), 'utf8');
+  const start = src.indexOf('function isDesignSubtitle');
+  const end = src.indexOf('function cwrap');
+  const { trimDesignSubtitle } = new Function(src.slice(start, end) + '\nreturn { trimDesignSubtitle };')();
+  const lancet = 'Oral deucrictibant for on-demand treatment of hereditary angioedema attacks: a phase 3, multicentre, randomised, double-blind, placebo-controlled crossover trial.';
+  assert.equal(trimDesignSubtitle(lancet), 'Oral deucrictibant for on-demand treatment of hereditary angioedema attacks');
+  const resolve = '8 weeks versus 12 weeks of sofosbuvir-velpatasvir for treatment-naive, non-cirrhotic, chronic hepatitis C (RESOLVE): a multicentre, open-label, non-inferiority, randomised controlled trial in India.';
+  assert.match(trimDesignSubtitle(resolve), /\(RESOLVE\)$/);
+  assert.doesNotMatch(trimDesignSubtitle(resolve), /randomised/);
+  const kept = "Nutritional interventions' effects on human milk composition: three trials in resource-limited settings.";
+  assert.equal(trimDesignSubtitle(kept), kept);
+  assert.equal(trimDesignSubtitle('Immunoregulatory gene GIMAP6 suppresses lethal disease.'), 'Immunoregulatory gene GIMAP6 suppresses lethal disease.');
 });
 
 const sample = {

@@ -235,7 +235,10 @@ function scoreRole(s, role) {
     if (/^(results?|findings?)\b/i.test(s)) q += 8;
     if (RESULT.test(s) || /\b(we found|we show|we report|showed that)\b/i.test(s)) q += 6;
     if (/\b(significantly|compared with|than placebo|than usual|faster|slower|greater|lower risk|higher rate)\b/i.test(s)) q += 5;
-    if (/\b(primary (?:end ?point|efficacy|outcome)|symptom relief)\b/i.test(s)) q += 4;
+    if (/\b(primary (?:end ?point|efficacy|outcome)|symptom relief|percentage change)\b/i.test(s)) q += 4;
+    if (statesEffect(s) && !isClutteredResult(s)) q += 4;
+    if (isClutteredResult(s)) q -= 4;
+    if (isRunIn(s)) q -= 8;
     if (/\b(not eliminated|despite|unknown|unclear)\b/i.test(s)) q -= 5;
     if (INTERP.test(s)) q -= 3;
     if (isDenseMethods(s) && !RESULT.test(s)) q -= 8;
@@ -266,18 +269,44 @@ function candidatesFor(role, sentences, sections) {
   return tagged.length ? tagged : sentences.filter(s => !isBoilerplate(s));
 }
 
+function statesEffect(s) {
+  return RESULT.test(s)
+    || /\b(we found|we show|we report|showed that)\b/i.test(s)
+    || /\b(significantly|than placebo|compared with placebo|than usual|faster|slower|reduced|increased|improved|fewer|symptom relief|lower risk|higher rate|percentage change|treatment difference)\b/i.test(s);
+}
+
+/** Confidence intervals and p-values, not the result itself. */
+function isClutteredResult(s) {
+  return /95\s*%|\bCIs?\b|confidence interval|\bp\s*[<=>]|\bp\s*</i.test(s);
+}
+
+function isRunIn(s) {
+  return CENSUS.test(s)
+    || /\b(completed the (?:study|trial)(?: drug)?|were screened|were randomly assigned|randomly assigned to|were enrolled)\b/i.test(s);
+}
+
+function plainResult(s) {
+  return statesEffect(s) && !isClutteredResult(s) && !isRunIn(s) && !isBoilerplate(s) && !isDesign(s);
+}
+
 function bestFor(role, sentences, sections, used) {
   const pool = candidatesFor(role, sentences, sections).filter(s => !used.has(s) && !isBoilerplate(s));
+  let rows = pool;
+  if (role === 'finding') {
+    const effects = pool.filter(s => statesEffect(s) && !isRunIn(s));
+    if (effects.length) rows = effects;
+  }
   let best = '';
   let bestSc = -1e9;
-  for (const s of pool) {
-    const effect = /\b(significantly|than placebo|than usual|faster|slower|reduced|increased|improved|symptom relief)\b/i.test(s);
+  const hasPlain = role === 'finding' && rows.some(plainResult);
+  for (const s of rows) {
     if (role !== 'finding' && isDenseMethods(s) && pool.some(o => !isDenseMethods(o))) continue;
-    if (role === 'finding' && isDenseMethods(s) && !effect && pool.some(o => !isDenseMethods(o) || /\b(significantly|than placebo|faster|reduced|improved)\b/i.test(o))) continue;
+    if (role === 'finding' && hasPlain && isClutteredResult(s)) continue;
+    if (role === 'finding' && isRunIn(s) && rows.some(o => statesEffect(o) && !isRunIn(o))) continue;
     const sc = scoreRole(s, role);
     if (sc > bestSc) { bestSc = sc; best = s; }
   }
-  if (best && bestSc > -5) return best;
+  if (best && (bestSc > -5 || (role === 'finding' && statesEffect(best) && !isRunIn(best)))) return best;
   const spare = sentences.find(s => !used.has(s) && !isBoilerplate(s) && !isDenseMethods(s) && !isDesign(s));
   return spare || '';
 }
@@ -298,7 +327,11 @@ export function resolveQuotePicks(abstract, modelQuotes, sections) {
     const role = assignRole(q, cand, sections);
     if (!role || chosen[role]) continue;
     if (role === 'finding' && CENSUS.test(cand)) {
-      const better = candidatesFor('finding', sentences, sections).some(s => s !== cand && /\b(significantly|than placebo|faster|reduced|improved|symptom relief)\b/i.test(s));
+      const better = candidatesFor('finding', sentences, sections).some(s => s !== cand && statesEffect(s));
+      if (better) continue;
+    }
+    if (role === 'finding' && isClutteredResult(cand)) {
+      const better = candidatesFor('finding', sentences, sections).some(s => s !== cand && plainResult(s));
       if (better) continue;
     }
     if (role === 'background' && /\bwe (investigated|aimed|sought)\b/i.test(cand)) {

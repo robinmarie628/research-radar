@@ -1,8 +1,8 @@
 /* Share card. Ports make_card.py: 1080-wide navy newspaper on cream,
    corners filled #111111 (opaque; WeChat paints transparent corners white).
    Font sizes and line heights are the GIMAP6 reference and never shrink.
-   Three quotations stay when they fit in 1920px. Otherwise the card uses two
-   and ends at the content, with the reference gap above the bottom bar. */
+   All three quotations are drawn. The card grows past the old 1920px cap
+   instead of dropping a quote. Line spacing stays at or above the reference. */
 (function () {
   const S = 1.8;
   const W = Math.round(600 * S);
@@ -108,6 +108,25 @@
       L[L.length - 2] = L[L.length - 2].slice(0, -2);
     }
     return L.filter(line => line.trim());
+  }
+
+  /** Trial-design tail such as ": a phase 3, multicentre, randomised … trial." */
+  function isDesignSubtitle(tail) {
+    const t = String(tail || '').replace(/\s+/g, ' ').trim().replace(/\.+$/, '');
+    if (!/^(a|an)\b/i.test(t) || !/\b(trial|study)\b/i.test(t)) return false;
+    const markers = t.match(/\b(phase\s+[0-9ivx]+|multicentre|multicenter|randomi[sz]ed|double-blind|placebo-controlled|open-label|crossover|non-inferiority|parallel-group|single-blind|active-controlled)\b/ig) || [];
+    if (markers.length >= 2) return true;
+    return /^(a|an)\s+(phase\s+[0-9ivx]+|multicentre|multicenter|double-blind|placebo-controlled|open-label|crossover)\b/i.test(t);
+  }
+
+  function trimDesignSubtitle(title) {
+    const s = String(title || '').replace(/\s+/g, ' ').trim();
+    const idx = s.search(/[：:]/);
+    if (idx < 12) return s;
+    const head = s.slice(0, idx).trim();
+    const tail = s.slice(idx + 1).trim();
+    if (!head || !isDesignSubtitle(tail)) return s;
+    return head;
   }
 
   function cwrap(ctx, text, font, width) {
@@ -567,22 +586,11 @@
 
   function fitSpec(ctx, spec, G, markPad, markDrop) {
     const title_zh = fitTitleZh(ctx, spec.title_zh || '');
-    let quotes = (spec.quotes || []).filter(q => q && (q.en || q.zh)).slice(0, 3);
-    const pack = (qs) => Object.assign({}, spec, { title_zh, quotes: qs });
-    const full = pack(quotes);
-    const rawHeight = layout(ctx, full, G, false, 0, markPad, markDrop).height;
-    let next = full;
-    let dropped = false;
-    if (rawHeight > MAX_H && quotes.length > 2) {
-      dropped = true;
-      let drop = 0;
-      for (let i = 1; i < quotes.length; i++) {
-        if ((quotes[i].en || '').length >= (quotes[drop].en || '').length) drop = i;
-      }
-      quotes = quotes.filter((_, i) => i !== drop);
-      next = pack(quotes);
-    }
-    return { spec: next, rawHeight, dropped };
+    const title_en = trimDesignSubtitle(spec.title_en || '');
+    const quotes = (spec.quotes || []).filter(q => q && (q.en || q.zh)).slice(0, 3);
+    const next = Object.assign({}, spec, { title_zh, title_en, quotes });
+    const rawHeight = layout(ctx, next, G, false, 0, markPad, markDrop).height;
+    return { spec: next, rawHeight, dropped: false };
   }
 
   function probeContext() {
