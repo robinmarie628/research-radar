@@ -111,13 +111,20 @@
     return L.filter(line => line.trim());
   }
 
-  /** Trial-design tail such as ": a phase 3, multicentre, randomised … trial." */
+  /** Design tail after a colon: a trial, or an observational / review design. */
   function isDesignSubtitle(tail) {
     const t = String(tail || '').replace(/\s+/g, ' ').trim().replace(/\.+$/, '');
-    if (!/^(a|an)\b/i.test(t) || !/\b(trial|study)\b/i.test(t)) return false;
-    const markers = t.match(/\b(phase\s+[0-9ivx]+|multicentre|multicenter|randomi[sz]ed|double-blind|placebo-controlled|open-label|crossover|non-inferiority|parallel-group|single-blind|active-controlled)\b/ig) || [];
+    if (!t || !/\b(trial|study|review|meta-analysis|meta analysis)\b/i.test(t)) return false;
+    if (/\b(?:three|two|several|multiple)\s+trials\b/i.test(t)) return false;
+    const markers = t.match(/\b(phase\s+[0-9ivx]+|multicentre|multicenter|randomi[sz]ed|double-blind|placebo-controlled|open-label|crossover|non-inferiority|parallel-group|single-blind|active-controlled|case-control|case control|cohort|cross-sectional|cross sectional|population-based|population based|nationwide|register-based|registry-based|systematic review|meta-analysis|meta analysis|observational)\b/ig) || [];
     if (markers.length >= 2) return true;
-    return /^(a|an)\s+(phase\s+[0-9ivx]+|multicentre|multicenter|double-blind|placebo-controlled|open-label|crossover)\b/i.test(t);
+    if (/^(a|an)\s+(phase\s+[0-9ivx]+|multicentre|multicenter|double-blind|placebo-controlled|open-label|crossover|nationwide|population|prospective|retrospective|cohort|cross-sectional|systematic)\b/i.test(t)) return true;
+    const words = t.split(/\s+/).filter(Boolean).length;
+    if (words > 18) return false;
+    if (/\b(case-control|case control|cross-sectional|cross sectional|systematic review|meta-analysis|meta analysis)\b/i.test(t)) return true;
+    if (/\b(nationwide|population[- ]based|register-based|registry-based)\b/i.test(t) && /\b(study|cohort|trial|review)\b/i.test(t)) return true;
+    if (/\b(prospective|retrospective|observational)\s+cohort\b/i.test(t)) return true;
+    return false;
   }
 
   function trimDesignSubtitle(title) {

@@ -604,7 +604,10 @@ def build_journals(days, cap_per_journal=8):
             "authors": (clean(r.get("authorString")).split(",") or [""])[0],
             "pmid": r.get("pmid") or "", "doi": r.get("doi") or "",
             "keywords": keyword_list(r.get("keywordList")),
-            "oa": bool(r.get("isOpenAccess")),
+            "volume": ((r.get("journalInfo") or {}).get("volume") or ""),
+            "issue": ((r.get("journalInfo") or {}).get("issue") or ""),
+            "pages": r.get("pageInfo") or "",
+            "oa": str(r.get("isOpenAccess") or "").strip().upper() in {"Y", "TRUE", "1"},
         })
 
     items = compose_pool(cands)

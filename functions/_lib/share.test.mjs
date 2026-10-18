@@ -109,13 +109,15 @@ test('registration, funding, ethics, and copyright lines are never quoted', () =
 test('a dull mortality sentence loses to a result that breaks the usual assumption', () => {
   const bg = 'Controlling hyperlipidemia has reduced but not eliminated atherosclerotic disease as a major cause of death.';
   const finding = 'Loss of GIMAP6 caused inflammatory vasculopathy and accelerated atherosclerosis in the absence of hyperlipidemia.';
+  const cascade = 'GIMAP6 loss precipitates a mitochondrial ROS-PPARγ-CD36 lipid-influx cascade that lowers the threshold for foam-cell formation.';
   const meaning = 'GIMAP6 restrains lethal vascular disease independently of systemic hyperlipidemia.';
   const methods = 'Mice were examined and randomly assigned across 12 cages with a hazard ratio of 0.80 (95% CI 0.70-0.90; p<0.001) in the modified full analysis set.';
   const reg = 'The study is registered on ClinicalTrials.gov (NCT03377036).';
-  const picks = resolveQuotePicks([bg, methods, finding, reg, meaning].join(' '), []);
+  const picks = resolveQuotePicks([bg, methods, finding, cascade, reg, meaning].join(' '), []);
   const blob = picks.map(p => p.en).join(' ');
-  assert.match(blob, /in the absence of hyperlipidemia/);
-  assert.match(blob, /independently of systemic hyperlipidemia/);
+  assert.match(picks[0].en, /in the absence of hyperlipidemia/);
+  assert.match(blob, /lipid-influx cascade|CD36/);
+  assert.equal((blob.match(/hyperlipidemia/gi) || []).length, 1);
   assert.doesNotMatch(blob, /major cause of death|NCT|95% CI/);
   for (const p of picks) {
     assert.ok(wordCountOk(p.en), p.en);
@@ -238,6 +240,64 @@ test('a trial-design subtitle is removed and a scientific subtitle stays', () =>
   const kept = "Nutritional interventions' effects on human milk composition: three trials in resource-limited settings.";
   assert.equal(trimDesignSubtitle(kept), kept);
   assert.equal(trimDesignSubtitle('Immunoregulatory gene GIMAP6 suppresses lethal disease.'), 'Immunoregulatory gene GIMAP6 suppresses lethal disease.');
+  const hpv = 'Quadrivalent human papillomavirus vaccination before pregnancy and pregnancy outcomes: nationwide, population based case-control study.';
+  assert.equal(trimDesignSubtitle(hpv), 'Quadrivalent human papillomavirus vaccination before pregnancy and pregnancy outcomes');
+  const cohort = 'Air pollution and asthma admissions: a nationwide population-based cohort study.';
+  assert.equal(trimDesignSubtitle(cohort), 'Air pollution and asthma admissions');
+  const review = 'Vitamin D and fracture risk: systematic review and meta-analysis.';
+  assert.equal(trimDesignSubtitle(review), 'Vitamin D and fracture risk');
+});
+
+test('an open-access flag is true only for Y or a Creative Commons license', () => {
+  const src = readFileSync(new URL('../../assets/app.js', import.meta.url), 'utf8');
+  const start = src.indexOf('function isOpenAccessFlag');
+  const end = src.indexOf('async function publisherRecord');
+  const { isOpenAccessFlag, licenseIsOpen, reliableVolume, reliablePages } = new Function(
+    src.slice(start, end) + '\nreturn { isOpenAccessFlag, licenseIsOpen, reliableVolume, reliablePages };',
+  )();
+  assert.equal(isOpenAccessFlag('Y'), true);
+  assert.equal(isOpenAccessFlag('N'), false);
+  assert.equal(isOpenAccessFlag(''), false);
+  assert.equal(isOpenAccessFlag(true), true);
+  assert.equal(licenseIsOpen([{ URL: 'http://creativecommons.org/licenses/by-nc/4.0/' }]), true);
+  assert.equal(licenseIsOpen([{ URL: 'https://doi.org/10.1136/bmj-2026-100739' }]), false);
+  assert.equal(reliableVolume('395', '395'), '395');
+  assert.equal(reliableVolume('395', '380'), '');
+  assert.equal(reliableVolume('395'), '395');
+  assert.equal(reliableVolume(''), '');
+  assert.equal(reliablePages('e100739'), 'e100739');
+  assert.equal(reliablePages('1455-1472'), '1455-1472');
+  assert.equal(reliablePages('6792-6809.e21'), '6792-6809.e21');
+  assert.equal(reliablePages('S0140-6736(26)01296-1'), '');
+});
+
+test('the main result is first and a repeated younger-age claim is not quoted twice', () => {
+  const lower = 'After adjustment for confounders, quadrivalent human papillomavirus vaccination was associated with lower odds of all included adverse pregnancy outcomes.';
+  const ages = 'Risk reduction was generally more pronounced among women vaccinated at younger ages.';
+  const again = 'Quadrivalent human papillomavirus vaccination before pregnancy was associated with a lower risk of adverse pregnancy outcomes, particularly among women vaccinated at earlier ages, extending benefits of human papillomavirus vaccination beyond cancer prevention.';
+  const picks = resolveQuotePicks([lower, ages, again].join(' '), []);
+  assert.match(picks[0].en, /lower odds of all included adverse pregnancy outcomes/);
+  const ageLines = picks.filter(p => /younger ages|earlier ages|more pronounced|particularly among/i.test(p.en));
+  assert.equal(ageLines.length, 1);
+  assert.match(picks.map(p => p.en).join(' '), /beyond cancer prevention/);
+  for (const p of picks) assert.ok(wordCountOk(p.en), p.en);
+});
+
+test('a trial card keeps one worded efficacy line ahead of adverse events', () => {
+  const agonist = 'Retatrutide is an agonist of GIP, GLP-1, and glucagon receptors, and is currently under investigation for the treatment of obesity and type 2 diabetes.';
+  const weight = 'For the treatment regimen estimand, the mean percentage change from baseline in bodyweight at week 80 was -18.8% with retatrutide 12 mg and -5.1% with placebo.';
+  const gi = 'Gastrointestinal adverse events were more common in the retatrutide groups than in the placebo group.';
+  const hypo = 'Hypotension and dysesthesia were more frequent with retatrutide than with placebo.';
+  const efficacy = 'Treatment with retatrutide resulted in substantial improvements in bodyweight and was associated with improvements in glycaemic control in participants with obesity and type 2 diabetes, with a safety profile generally consistent with other molecules with GLP-1 receptor agonism.';
+  const picks = resolveQuotePicks([agonist, weight, gi, hypo, efficacy].join(' '), [
+    { i: 2, zh: '不良反应' },
+    { i: 3, zh: '低血压' },
+  ]);
+  assert.match(picks[0].en, /substantial improvements in bodyweight/);
+  assert.match(picks[0].en, /glycaemic control/);
+  assert.match(picks.map(p => p.en).join(' '), /[Hh]ypotension|adverse events/);
+  assert.equal(picks.filter(p => /bodyweight/i.test(p.en)).length, 1);
+  for (const p of picks) assert.ok(wordCountOk(p.en), p.en);
 });
 
 const sample = {

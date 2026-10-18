@@ -11,7 +11,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.18.34';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.18.35';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -50,7 +50,7 @@ const PICK_N   = 8;         // 今日精选 size
 const PICK_BASIC    = 4;    // …其中基础 / 分子医学
 const PICK_CLINICAL = 4;    // …其中临床研究
 const TTL      = 30 * 60e3; // cache freshness
-const LS_KEY   = 'rr.cache.v4';  // v3 pools used one cap of 8 for every journal
+const LS_KEY   = 'rr.cache.v5';  // v4 treated Europe PMC isOpenAccess "N" as open access
 const SEEN_KEY = 'rr.seen.v1';
 const FAV_KEY  = 'rr.fav.v1';
 /* Crossref polite pool + NCBI identification. Browsers forbid a custom
@@ -670,6 +670,52 @@ function crossrefAuthorCite(authors) {
   return names;
 }
 
+function isOpenAccessFlag(v) {
+  if (v === true || v === 1) return true;
+  const s = String(v == null ? '' : v).trim().toUpperCase();
+  return s === 'Y' || s === 'TRUE' || s === '1';
+}
+function licenseIsOpen(license) {
+  const blob = Array.isArray(license)
+    ? license.map(x => String((x && (x.URL || x.url)) || x || '')).join(' ')
+    : String(license || '');
+  return /creativecommons\.org\/licenses\/(?:by|cc0)\b/i.test(blob);
+}
+/** Keep a volume only when the sources agree and it looks like a journal volume. */
+function reliableVolume(current, other) {
+  const ok = v => /^\d{1,4}[A-Za-z]?$/.test(String(v || '').trim());
+  const c = String(current || '').trim();
+  if (arguments.length < 2) return ok(c) ? c : '';
+  const o = String(other || '').trim();
+  if (c && o && c !== o) return '';
+  const v = c || o;
+  return ok(v) ? v : '';
+}
+/** Page labels such as 1455-1472 or e100739. A DOI or PII is not a page range. */
+function reliablePages(p) {
+  const s = String(p || '').trim().replace(/\s+/g, '');
+  return /^(?:e\d+|\d+(?:[–—-]\d+)?(?:\.e\d+)?)$/i.test(s) ? s : '';
+}
+async function publisherRecord(a) {
+  if (a && a._pub) return a._pub;
+  const doi = String(a?.doi || '').trim();
+  if (!/^10\.\d{4,}\//.test(doi)) return null;
+  try {
+    const res = await fetch(CROSSREF + '/' + encodeURIComponent(doi));
+    if (!res.ok) return null;
+    const msg = (await res.json())?.message || {};
+    const pub = {
+      oa: licenseIsOpen(msg.license) || isOpenAccessFlag(a?.oa),
+      volume: msg.volume || '',
+      pages: msg.page || '',
+    };
+    if (a) a._pub = pub;
+    return pub;
+  } catch {
+    return null;
+  }
+}
+
 function mapArticle(r) {
   const j = r.journalInfo?.journal || {};
   const meta = metaForEpmc(r);
@@ -704,13 +750,13 @@ function mapArticle(r) {
     year: r.pubYear || (date ? date.slice(0, 4) : ''),
     authors: cleanText(r.authorString || '').split(',')[0] || '',
     authorCite: epmcAuthorCite(r),
-    volume: r.journalInfo?.volume || '',
+    volume: reliableVolume(r.journalInfo?.volume),
     issue: r.journalInfo?.issue || '',
-    pages: r.pageInfo || '',
+    pages: reliablePages(r.pageInfo),
     pmid: r.pmid || '',
     doi: r.doi || '',
     keywords: keywordList(r.keywordList),
-    oa: !!r.isOpenAccess,
+    oa: isOpenAccessFlag(r.isOpenAccess) || licenseIsOpen(r.license),
     pii: undefined,
   };
 }
@@ -1026,13 +1072,13 @@ function mapCrossrefWork(item, meta, lo, hi) {
     year: date.slice(0, 4),
     authors,
     authorCite,
-    volume: item.volume || '',
+    volume: reliableVolume(item.volume),
     issue: item.issue || '',
-    pages: item.page || '',
+    pages: reliablePages(item.page),
     pmid: '',
     doi,
     keywords: [],
-    oa: false,
+    oa: licenseIsOpen(item.license),
     pii: undefined,
   };
 }
@@ -2801,7 +2847,7 @@ function exactQuote(en, blobs) {
   if (!hay.includes(core)) return '';
   return needle;
 }
-const QUOTE_LS = 'rr.quotes.v9';
+const QUOTE_LS = 'rr.quotes.v10';
 function quoteKey(a, abs) {
   let h = 5381;
   const s = String(abs || '').slice(0, 4000);
@@ -2978,9 +3024,16 @@ async function showShareImage(a) {
       pmid: a.pmid,
     });
     if (!target) throw new Error('这篇文章没有可分享的链接。');
-    const [titleZh, quoteRes] = await Promise.all([ensureCardTitle(a), fetchQuotes(a)]);
+    const [titleZh, quoteRes, pub] = await Promise.all([ensureCardTitle(a), fetchQuotes(a), publisherRecord(a)]);
     if (gen !== shareGen) return;
     if (quoteRes.error) throw new Error(quoteRes.error);
+    if (pub) {
+      a.oa = pub.oa;
+      a.volume = reliableVolume(a.volume, pub.volume);
+      const have = reliablePages(a.pages);
+      const next = reliablePages(pub.pages);
+      a.pages = have && next && have !== next ? '' : (have || next);
+    }
     body.replaceChildren(el('p', 'share-status', '正在排版…'));
     const canvas = await window.RRCard.render(cardSpec(a, titleZh, quoteRes.quotes, target));
     if (gen !== shareGen) return;
