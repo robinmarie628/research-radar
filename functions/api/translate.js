@@ -10,6 +10,7 @@
  *
  * mode "titles"    — up to 10 titles, qwen3 system prompt, JSON array back
  * mode "selection" — one highlighted span, short medical prompt
+ * mode "quotes"    — 3 verbatim abstract sentences plus Chinese, for the share card
  * Drug names are masked as [D1]… before the model call and restored after.
  * Results are cached in the Cache API keyed by the English text.
  */
@@ -19,6 +20,9 @@ import {
   maskDrugs, restoreDrugs, applyGlossary, parseTranslationArray,
   extractAiText, isQuotaError, normTitle, sha256Hex,
 } from '../_lib/mt.js';
+import {
+  QUOTE_SYSTEM, ABSTRACT_MAX, splitSentences, resolveQuotePicks, parseQuoteResponse,
+} from '../_lib/quotes.js';
 
 const CACHE_PREFIX = 'v1';
 
@@ -272,7 +276,71 @@ export async function handleTranslate(request, env) {
   }
   if (body.mode === 'selection') return translateSelection(request, env, body);
   if (body.mode === 'titles') return translateTitles(request, env, body);
+  if (body.mode === 'quotes') return translateQuotes(request, env, body);
   return json({ error: 'bad_mode' }, 400);
+}
+
+async function translateQuotes(request, env, body) {
+  const abstract = String(body.abstract || '').replace(/\s+/g, ' ').trim();
+  if (!abstract) {
+    return json({ error: 'empty', message: '这篇没有英文摘要，做不了摘句卡片。' }, 400);
+  }
+  if (abstract.length > ABSTRACT_MAX) {
+    return json({ error: 'too_long', message: '摘要太长了，暂时做不了摘句卡片。' }, 400);
+  }
+  const sentences = splitSentences(abstract);
+  if (!sentences.length) {
+    return json({ error: 'empty', message: '摘要里没有可用的句子。' }, 400);
+  }
+
+  const { glossary, overrides } = await loadResources(request, env);
+  const key = 'quotes/' + (await sha256Hex(normTitle(abstract))).slice(0, 32);
+  const hit = await cacheGet(request, key);
+  if (hit?.quotes?.length) return json({ quotes: hit.quotes, cached: true });
+
+  let picks = [];
+  try {
+    const listing = sentences.map((s, i) => '[' + i + '] ' + maskDrugs(s).text).join('\n');
+    const raw = await runModel(env, QUOTE_SYSTEM, listing, 2000);
+    const restored = parseQuoteResponse(raw).map(q => {
+      const i = Number(q.i);
+      const en = Number.isInteger(i) && sentences[i] ? sentences[i] : '';
+      let zh = q.zh || '';
+      if (en && zh) {
+        zh = applyGlossary(en, restoreDrugs(zh, maskDrugs(en).drugs), glossary, overrides);
+      }
+      return { i: q.i, en: q.en, zh };
+    });
+    picks = resolveQuotePicks(abstract, restored);
+  } catch (err) {
+    if (err?.code === 'quota' || isQuotaError(err) || err?.code === 'ai_unconfigured') return fail(err);
+    picks = resolveQuotePicks(abstract, []);
+  }
+
+  const missing = picks.filter(p => !p.zh);
+  if (missing.length) {
+    try {
+      const masked = missing.map(p => maskDrugs(p.en));
+      const raw = await runModel(
+        env,
+        SELECTION_SYSTEM + '\nYou will receive a JSON array of sentences. Reply with a JSON array of Simplified Chinese translations, same length and order, and nothing else.',
+        JSON.stringify(masked.map(m => m.text)),
+        2000,
+      );
+      const parts = parseTranslationArray(raw, missing.length);
+      missing.forEach((p, j) => {
+        p.zh = applyGlossary(p.en, restoreDrugs(parts[j], masked[j].drugs), glossary, overrides);
+      });
+    } catch (err) {
+      picks = picks.filter(p => p.zh);
+      if (!picks.length) return fail(err);
+    }
+  }
+
+  const quotes = picks.filter(p => p.en && p.zh).slice(0, 3).map(p => ({ en: p.en, zh: p.zh }));
+  if (!quotes.length) return json({ error: 'ai_failed', message: '摘句翻译失败，请再试一次。' }, 502);
+  await cachePut(request, key, { quotes });
+  return json({ quotes, cached: false });
 }
 
 export function onRequest(context) {

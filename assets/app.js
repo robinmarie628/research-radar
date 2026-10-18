@@ -11,7 +11,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.18.21';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.18.22';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -388,6 +388,14 @@ function favSnapshot(a) {
     year: a.year || '',
     date: a.date || '',
     pmid: a.pmid || '',
+    authorCite: Array.isArray(a.authorCite) ? a.authorCite.slice(0, 24) : [],
+    volume: a.volume || '',
+    issue: a.issue || '',
+    pages: a.pages || '',
+    oa: !!a.oa,
+    issn: a.issn || '',
+    platforms: Array.isArray(a.platforms) ? a.platforms.slice() : [],
+    pii: a.pii || '',
   };
 }
 function articleFromFavSnap(snap, key) {
@@ -400,7 +408,7 @@ function articleFromFavSnap(snap, key) {
     sections: null,
     structured: false,
     journal: snap.journal || '—',
-    platforms: [],
+    platforms: Array.isArray(snap.platforms) ? snap.platforms.slice() : [],
     domain: snap.domain || '',
     basic: !!snap.basic,
     studyKey: snap.studyKey || 'other',
@@ -409,9 +417,15 @@ function articleFromFavSnap(snap, key) {
     year: snap.year || '',
     date: snap.date || '',
     pmid: snap.pmid || '',
+    authorCite: Array.isArray(snap.authorCite) ? snap.authorCite : [],
+    volume: snap.volume || '',
+    issue: snap.issue || '',
+    pages: snap.pages || '',
+    oa: !!snap.oa,
+    issn: snap.issn || '',
     keywords: [],
     digest: snap.titleZh ? { titleZh: snap.titleZh } : null,
-    pii: undefined,
+    pii: snap.pii || undefined,
   };
 }
 function articleIndex() {
@@ -523,6 +537,38 @@ function epmcURLs(issns) {
   return urls;
 }
 
+function asList(x) { return x == null ? [] : (Array.isArray(x) ? x : [x]); }
+function citeInitials(given) {
+  const s = String(given || '').replace(/\./g, '').trim();
+  if (!s) return '';
+  if (/^[A-Z]{1,4}$/.test(s)) return s;
+  return s.split(/[\s-]+/).filter(Boolean).map(p => p[0] || '').join('').toUpperCase();
+}
+function citePerson(family, given) {
+  const last = String(family || '').trim();
+  const ini = citeInitials(given);
+  if (last && ini) return last + ' ' + ini;
+  return last || ini;
+}
+function epmcAuthorCite(r) {
+  const names = [];
+  for (const a of asList(r?.authorList?.author)) {
+    const n = citePerson(a.lastName, a.initials || a.firstName);
+    if (n) names.push(n);
+    else if (a.fullName) names.push(String(a.fullName).replace(/\s+/g, ' ').trim());
+  }
+  if (names.length) return names;
+  return String(r?.authorString || '').split(/,\s*/).map(s => s.replace(/\.$/, '').trim()).filter(Boolean);
+}
+function crossrefAuthorCite(authors) {
+  const names = [];
+  for (const au of authors || []) {
+    const n = citePerson(au.family, au.given) || String(au.name || '').trim();
+    if (n) names.push(n);
+  }
+  return names;
+}
+
 function mapArticle(r) {
   const j = r.journalInfo?.journal || {};
   const issn = j.issn || j.essn || '';
@@ -555,6 +601,10 @@ function mapArticle(r) {
     ts: date ? Date.parse(date) : 0,
     year: r.pubYear || (date ? date.slice(0, 4) : ''),
     authors: cleanText(r.authorString || '').split(',')[0] || '',
+    authorCite: epmcAuthorCite(r),
+    volume: r.journalInfo?.volume || '',
+    issue: r.journalInfo?.issue || '',
+    pages: r.pageInfo || '',
     pmid: r.pmid || '',
     doi: r.doi || '',
     keywords: keywordList(r.keywordList),
@@ -746,8 +796,9 @@ function mapCrossrefWork(item, meta, lo, hi) {
   const date = crossrefDay(item);
   if (!title || !doi || !date || date < lo || date > hi) return null;
   const abstract = cleanText(item.abstract || '');
+  const authorCite = crossrefAuthorCite(item.author);
   const author0 = (item.author || [])[0] || {};
-  const authors = cleanText([author0.family, author0.given].filter(Boolean).join(' ') || author0.name || '');
+  const authors = authorCite[0] || cleanText([author0.family, author0.given].filter(Boolean).join(' ') || author0.name || '');
   const isBasic = !!(meta && meta.basic);
   const study = detectStudy(title, abstract, isBasic, []);
   return {
@@ -768,6 +819,10 @@ function mapCrossrefWork(item, meta, lo, hi) {
     ts: Date.parse(date) || 0,
     year: date.slice(0, 4),
     authors,
+    authorCite,
+    volume: item.volume || '',
+    issue: item.issue || '',
+    pages: item.page || '',
     pmid: '',
     doi,
     keywords: [],
@@ -1544,7 +1599,9 @@ function articleCard(a, isPick, pickRank) {
   titleWrap.append(h3);
   const zhLine = machineTitleNode(a);
   if (zhLine) titleWrap.append(zhLine);
-  top.append(caret, titleWrap, favButton(a));
+  const actions = el('div', 'art-actions');
+  actions.append(shareButton(a), favButton(a));
+  top.append(caret, titleWrap, actions);
 
   const badges = el('div', 'art-badges');
   badges.append(el('span', 'badge dom', a.domain));
@@ -2422,6 +2479,325 @@ async function syncMtPop() {
   }
 }
 
+/* ---------------- share: citation file + image card ---------------- */
+const JOURNAL_ZH = {
+  'Lancet': '《柳叶刀》',
+  'Lancet Oncol': '《柳叶刀·肿瘤学》',
+  'Lancet Neurol': '《柳叶刀·神经病学》',
+  'Lancet Infect Dis': '《柳叶刀·传染病》',
+  'Lancet Respir Med': '《柳叶刀·呼吸医学》',
+  'Lancet Diabetes Endo': '《柳叶刀·糖尿病与内分泌学》',
+  'Lancet Gastro Hepat': '《柳叶刀·胃肠病学和肝病学》',
+  'Lancet Haematol': '《柳叶刀·血液学》',
+  'Lancet Psychiatry': '《柳叶刀·精神病学》',
+  'Lancet Public Health': '《柳叶刀·公共卫生》',
+  'Lancet Glob Health': '《柳叶刀·全球健康》',
+  'Lancet Digit Health': '《柳叶刀·数字健康》',
+  'Lancet Child Adolesc': '《柳叶刀·儿童与青少年健康》',
+  'Lancet Rheumatol': '《柳叶刀·风湿病学》',
+  'Lancet HIV': '《柳叶刀·HIV》',
+  'Lancet Microbe': '《柳叶刀·微生物》',
+  'EClinicalMedicine': '《e临床医药》',
+  'Lancet Planet Health': '《柳叶刀·星球健康》',
+  'Lancet Healthy Longev': '《柳叶刀·健康长寿》',
+  'JACC': '《美国心脏病学会杂志》',
+  'JACC Interv': '《JACC 介入》',
+  'JACC Heart Fail': '《JACC 心力衰竭》',
+  'JACC Imaging': '《JACC 影像》',
+  'JACC Clin EP': '《JACC 临床电生理》',
+  'JACC Basic Transl': '《JACC 基础与转化》',
+  'JACC CardioOncol': '《JACC 心脏肿瘤》',
+  'JACC Adv': '《JACC 进展》',
+  'Circulation': '《循环》',
+  'Chest': '《胸》',
+  'Ophthalmology': '《眼科学》',
+  'Ophthalmol Retina': '《眼科学·视网膜》',
+  'Ophthalmol Glaucoma': '《眼科学·青光眼》',
+  'Ophthalmol Sci': '《眼科学·科学》',
+  'Am J Ophthalmol': '《美国眼科杂志》',
+  'Ann Oncol': '《肿瘤学年鉴》',
+  'J Hepatol': '《肝脏病学杂志》',
+  'Kidney Int': '《肾脏国际》',
+  'JAAD': '《美国皮肤病学会杂志》',
+  'Eur Urol': '《欧洲泌尿学》',
+  'J Vasc Surg': '《血管外科杂志》',
+  'Eur J Vasc Endovasc': '《欧洲血管与腔内血管外科杂志》',
+  'J Vasc Surg Venous': '《血管外科杂志·静脉与淋巴》',
+  'J Endovasc Ther': '《腔内治疗杂志》',
+  'Ann Vasc Surg': '《血管外科年鉴》',
+  'Semin Vasc Surg': '《血管外科研讨》',
+  'Vascular': '《血管》',
+  'Vasc Endovasc Surg': '《血管与腔内外科》',
+  'Cell': '《细胞》',
+  'Nature': '《自然》',
+  'Science': '《科学》',
+  'NEJM': '《新英格兰医学杂志》',
+  'Nat Genet': '《自然·遗传学》',
+  'Nat Immunol': '《自然·免疫学》',
+  'Cell Stem Cell': '《细胞·干细胞》',
+  'Sci Transl Med': '《科学·转化医学》',
+  'Sci Adv': '《科学进展》',
+  'Cell Rep': '《细胞报告》',
+  'Cell Host Microbe': '《细胞·宿主与微生物》',
+  'Cell Syst': '《细胞系统》',
+  'Nat Biomed Eng': '《自然·生物医学工程》',
+  'Nat Biotechnol': '《自然·生物技术》',
+  'Nat Neurosci': '《自然·神经科学》',
+  'Neuron': '《神经元》',
+};
+
+function shareButton(a) {
+  const b = el('button', 'share-btn');
+  b.type = 'button';
+  b.setAttribute('aria-label', '分享');
+  b.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 4.5v9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8.2 8.2L12 4.4l3.8 3.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 12.5V18a1.5 1.5 0 0 0 1.5 1.5h9A1.5 1.5 0 0 0 18 18v-5.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  b.addEventListener('click', ev => {
+    ev.preventDefault();
+    ev.stopPropagation();
+    openShareSheet(a);
+  });
+  return b;
+}
+
+function journalZhName(a) {
+  return JOURNAL_ZH[a?.journal] || JOURNAL_ZH[journalRow(a)?.short] || '';
+}
+function fileStem(a) {
+  return 'radar-' + String(a?.doi || a?.pmid || a?.id || 'article').replace(/[^\w.-]+/g, '_').slice(0, 80);
+}
+function downloadBlob(filename, blob) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
+function exactQuote(en, abstract) {
+  const abs = String(abstract || '').replace(/\s+/g, ' ').trim();
+  const needle = String(en || '').replace(/\s+/g, ' ').trim();
+  if (!needle || !abs.includes(needle)) return '';
+  return needle;
+}
+const QUOTE_LS = 'rr.quotes.v1';
+function quoteKey(a, abs) {
+  let h = 5381;
+  const s = String(abs || '').slice(0, 4000);
+  for (let i = 0; i < s.length; i++) h = ((h << 5) + h) ^ s.charCodeAt(i);
+  return (a?.id || a?.doi || '') + ':' + (h >>> 0).toString(16);
+}
+function readQuoteCache(key) {
+  try {
+    const arr = JSON.parse(localStorage.getItem(QUOTE_LS) || '[]');
+    const hit = Array.isArray(arr) ? arr.find(row => row && row.key === key) : null;
+    return hit?.quotes || null;
+  } catch { return null; }
+}
+function writeQuoteCache(key, quotes) {
+  try {
+    const prev = JSON.parse(localStorage.getItem(QUOTE_LS) || '[]');
+    const next = (Array.isArray(prev) ? prev : []).filter(row => row && row.key !== key);
+    next.push({ key, quotes });
+    localStorage.setItem(QUOTE_LS, JSON.stringify(next.slice(-80)));
+  } catch { /* private mode or quota */ }
+}
+async function fetchQuotes(a) {
+  const abs = favAbstract(a);
+  if (!abs) return { error: '这篇没有英文摘要，做不了摘句卡片。' };
+  const key = quoteKey(a, abs);
+  const cached = readQuoteCache(key);
+  if (cached?.length) return { quotes: cached };
+  let res;
+  try {
+    res = await fetch('/api/translate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mode: 'quotes', id: a.id || a.doi || '', abstract: abs.slice(0, 12000) }),
+    });
+  } catch {
+    return { error: '摘句翻译失败，请再试一次。' };
+  }
+  const data = await res.json().catch(() => ({}));
+  if (data.error === 'quota' || res.status === 429) {
+    return { error: data.message || '今天的免费翻译额度用完了，明天会恢复。' };
+  }
+  if (!res.ok || !Array.isArray(data.quotes)) {
+    return { error: data.message || '摘句翻译失败，请再试一次。' };
+  }
+  const quotes = [];
+  for (const q of data.quotes) {
+    const en = exactQuote(q?.en, abs);
+    const zh = String(q?.zh || '').trim();
+    if (en && zh) quotes.push({ en, zh });
+  }
+  if (!quotes.length) return { error: '没有从摘要里抽出可用的原句。' };
+  const out = quotes.slice(0, 3);
+  writeQuoteCache(key, out);
+  return { quotes: out };
+}
+async function ensureCardTitle(a) {
+  const editorial = a?.digest && String(a.digest.titleZh || '').trim();
+  if (editorial) return editorial;
+  const cached = a.mtZh || lookupMt(a);
+  if (cached) return cached;
+  const res = await fetch('/api/translate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ mode: 'titles', items: [{ id: a.id || a.doi || a.title, text: a.title }] }),
+  });
+  const data = await res.json().catch(() => ({}));
+  const zh = data.items && data.items[0] && data.items[0].zh;
+  if (zh) {
+    rememberMt(a, zh);
+    if (mtEligible(a)) { a.mtZh = zh; patchMachineTitles(); }
+    return zh;
+  }
+  if (data.error === 'quota' || res.status === 429) {
+    throw new Error(data.message || '今天的免费翻译额度用完了，明天会恢复。');
+  }
+  throw new Error(data.message || '标题翻译失败，请再试一次。');
+}
+function cardSpec(a, titleZh, quotes, target) {
+  const names = window.RRCite.authorList(a);
+  const jzh = journalZhName(a);
+  return {
+    title_zh: titleZh,
+    title_en: a.title || '',
+    quotes,
+    journal: a.journal || '',
+    journal_en: a.journal || '',
+    journal_zh: jzh,
+    date: String(a.date || '').slice(0, 10),
+    type: 'Article',
+    type_line: a.studyZh || '研究论文',
+    article_no: [a.volume ? 'Vol ' + a.volume : '', a.issue ? 'Issue ' + a.issue : '', a.pages || ''].filter(Boolean).join(', '),
+    doi: a.doi || '',
+    authors: window.RRCite.etAl(names),
+    url: target.url,
+    qr_note: '链接直达 ' + target.name + ' 全文',
+    qr_sub: a.oa ? '开放获取' : '访问以机构订阅为准',
+    corner_fill: '#111111',
+  };
+}
+function shareChoice(strong, sub) {
+  const b = el('button', 'share-choice');
+  b.type = 'button';
+  b.append(el('strong', '', strong), el('span', '', sub));
+  return b;
+}
+function openShareSheet(a) {
+  hideMtPop();
+  const sheet = $('#shareSheet');
+  const body = $('#shareBody');
+  const title = $('#shareTitle');
+  if (!sheet || !body || !title || !window.RRCite) return;
+  title.textContent = '分享';
+  body.replaceChildren();
+  const citeBtn = shareChoice('导出文献', '下载 RIS、BibTeX，或复制一条 Vancouver 引用');
+  const imgBtn = shareChoice('分享图片', '生成卡片，用系统分享发到微信、邮件或其他应用');
+  citeBtn.addEventListener('click', () => showCiteChoices(a));
+  imgBtn.addEventListener('click', () => showShareImage(a));
+  body.append(citeBtn, imgBtn);
+  sheet.hidden = false;
+}
+function showCiteChoices(a) {
+  const body = $('#shareBody');
+  const title = $('#shareTitle');
+  title.textContent = '导出文献';
+  body.replaceChildren();
+  const ris = shareChoice('下载 RIS', 'EndNote、Zotero、Mendeley');
+  const bib = shareChoice('下载 BibTeX', 'LaTeX 与多数文献库');
+  const van = shareChoice('复制 Vancouver 引用', '纯文本，可粘贴到邮件或微信');
+  ris.addEventListener('click', () => {
+    downloadBlob(fileStem(a) + '.ris', new Blob([window.RRCite.ris(a)], { type: 'application/x-research-info-systems' }));
+    toast('已下载 RIS');
+  });
+  bib.addEventListener('click', () => {
+    downloadBlob(fileStem(a) + '.bib', new Blob([window.RRCite.bibtex(a)], { type: 'application/x-bibtex' }));
+    toast('已下载 BibTeX');
+  });
+  van.addEventListener('click', async () => {
+    const text = window.RRCite.vancouver(a);
+    try {
+      await navigator.clipboard.writeText(text);
+      toast('引用已复制');
+    } catch {
+      downloadBlob(fileStem(a) + '.txt', new Blob([text], { type: 'text/plain;charset=utf-8' }));
+      toast('剪贴板不可用，已下载文本');
+    }
+  });
+  body.append(ris, bib, van);
+}
+let shareGen = 0;
+async function showShareImage(a) {
+  const gen = ++shareGen;
+  const body = $('#shareBody');
+  const title = $('#shareTitle');
+  title.textContent = '分享图片';
+  body.replaceChildren(el('p', 'share-status', '正在确认全文链接，并挑选三句原文…'));
+  try {
+    if (a.doi && !a.pii) {
+      if (a.pii === '') a.pii = undefined;
+      try { await loadPII([a]); } catch { /* DOI remains available */ }
+    }
+    if (gen !== shareGen) return;
+    const target = window.RRCite.shareTarget({
+      pii: a.pii,
+      platforms: articlePlatforms(a),
+      doi: a.doi,
+      pmid: a.pmid,
+    });
+    if (!target) throw new Error('这篇文章没有可分享的链接。');
+    const [titleZh, quoteRes] = await Promise.all([ensureCardTitle(a), fetchQuotes(a)]);
+    if (gen !== shareGen) return;
+    if (quoteRes.error) throw new Error(quoteRes.error);
+    body.replaceChildren(el('p', 'share-status', '正在排版…'));
+    const canvas = await window.RRCard.render(cardSpec(a, titleZh, quoteRes.quotes, target));
+    if (gen !== shareGen) return;
+    const blob = await new Promise((resolve, reject) => {
+      canvas.toBlob(b => (b ? resolve(b) : reject(new Error('图片生成失败'))), 'image/png');
+    });
+    const file = new File([blob], fileStem(a) + '.png', { type: 'image/png' });
+    paintShareResult(body, canvas, file, target.name);
+  } catch (err) {
+    if (gen !== shareGen) return;
+    body.replaceChildren(el('p', 'share-status is-warn', err.message || '图片生成失败，请再试一次。'));
+  }
+}
+function paintShareResult(body, canvas, file, platform) {
+  body.replaceChildren();
+  const img = document.createElement('img');
+  img.className = 'share-preview';
+  img.alt = '分享卡片';
+  img.src = canvas.toDataURL('image/png');
+  const note = el('p', 'share-note', '二维码指向 ' + platform + '。iPhone 上点「系统分享」，微信、邮件以及已安装且接收图片的应用会出现在系统面板里。微信内置浏览器通常不支持文件分享，请长按图片保存。');
+  const row = el('div', 'share-row');
+  const share = shareChoice('系统分享', '微信 / 邮件 / 其他应用');
+  const save = shareChoice('保存图片', '下载 PNG，或长按预览图');
+  share.addEventListener('click', async () => {
+    const payload = { files: [file], title: file.name };
+    if (navigator.canShare && navigator.canShare(payload)) {
+      try { await navigator.share(payload); return; }
+      catch (err) { if (err && err.name === 'AbortError') return; }
+    }
+    downloadBlob(file.name, file);
+    toast('这台浏览器不能直接分享文件，已改为下载');
+  });
+  save.addEventListener('click', () => {
+    downloadBlob(file.name, file);
+    toast('已下载图片');
+  });
+  row.append(share, save);
+  body.append(img, note, row);
+}
+function closeShareSheet() {
+  shareGen++;
+  const sheet = $('#shareSheet');
+  if (sheet) sheet.hidden = true;
+}
+
 /* ---------------- boot ---------------- */
 async function boot() {
   window.__rr = S;                 // debug/QA hook
@@ -2487,7 +2863,12 @@ if (downloadFavBtn) downloadFavBtn.addEventListener('click', () => downloadFavor
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
   hideMtPop();
+  closeShareSheet();
   closeGlossary();
+});
+const shareSheetEl = $('#shareSheet');
+if (shareSheetEl) shareSheetEl.addEventListener('click', e => {
+  if (e.target.closest('[data-close]')) closeShareSheet();
 });
 document.addEventListener('selectionchange', scheduleMtPop);
 document.addEventListener('pointerdown', e => {

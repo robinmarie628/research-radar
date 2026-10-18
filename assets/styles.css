@@ -634,13 +634,18 @@ mark.hit{
 
 /* ---- 今日精选 ---- */
 .art-titlewrap{flex:1;min-width:0}
-.fav-btn{
+.art-actions{display:flex;flex:0 0 auto;align-items:flex-start;margin:-8px -6px 0 0}
+.share-btn,.fav-btn{
   flex:0 0 auto;
-  width:36px;height:36px;margin:-8px -6px 0 2px;padding:0;
+  width:36px;height:36px;margin:0;padding:0;
   display:grid;place-items:center;
   border:0;border-radius:999px;background:transparent;
   color:#b7b0a6;cursor:pointer;
 }
+.share-btn{color:#8aa0b8}
+.share-btn svg{display:block}
+.share-btn:active{transform:scale(.9)}
+.share-btn:focus-visible{outline:2px solid var(--focus);outline-offset:1px}
 .fav-btn svg{display:block}
 .fav-btn path{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round}
 .fav-btn.is-on{color:#e23b3b}
@@ -970,6 +975,29 @@ table.idx .b{width:42px;text-align:center}
 .gl .gl-en{font-size:13.5px;font-weight:800;color:var(--brand-ink);letter-spacing:.1px}
 .gl .gl-zh{font-size:12px;font-weight:700;color:var(--ink-2);margin-left:7px}
 .gl .gl-def{margin:4px 0 0;font-size:12px;line-height:1.65;color:var(--ink-3);font-weight:500}
+.share-sheet{z-index:80}
+.share-actions{flex:1 1 auto;min-height:0;overflow-y:auto;padding:4px 16px 18px}
+.share-choice{
+  display:flex;flex-direction:column;align-items:flex-start;gap:3px;
+  width:100%;text-align:left;margin:0 0 8px;
+  font-family:inherit;color:var(--ink);
+  background:var(--surface);border:1px solid var(--line);border-radius:14px;
+  padding:12px 14px;cursor:pointer;
+}
+.share-choice strong{font-size:14.5px;font-weight:800}
+.share-choice span{font-size:12px;line-height:1.45;color:var(--ink-3);font-weight:600}
+.share-choice:active{transform:scale(.99)}
+.share-choice:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.share-row{display:flex;gap:8px}
+.share-row .share-choice{flex:1}
+.share-preview{
+  display:block;width:100%;height:auto;border-radius:18px;
+  background:#111;margin:0 0 10px;
+}
+.share-status,.share-note{
+  margin:0 0 10px;font-size:12.5px;line-height:1.55;font-weight:600;color:var(--ink-3);
+}
+.share-status.is-warn{color:#8a3b2a}
 /* ---------- toast ---------- */
 .toast{
   position:fixed;left:50%;bottom:calc(28px + var(--safe-b));
