@@ -11,7 +11,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.18.39';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.18.40';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -2859,6 +2859,14 @@ function downloadBlob(filename, blob) {
   link.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1500);
 }
+/** Chinese slot must contain Han text. An echo of the English sentence is not a translation. */
+function quoteZhOk(zh) {
+  const z = String(zh || '').trim();
+  const han = (z.match(/[\u4e00-\u9fff]/g) || []).length;
+  if (han < 2) return false;
+  const latin = (z.match(/[A-Za-z]/g) || []).length;
+  return !(latin > 24 && latin > han * 3);
+}
 function exactQuote(en, blobs) {
   const needle = String(en || '').replace(/\s+/g, ' ').trim();
   if (!needle) return '';
@@ -2870,7 +2878,7 @@ function exactQuote(en, blobs) {
   }
   return needle;
 }
-const QUOTE_LS = 'rr.quotes.v13';
+const QUOTE_LS = 'rr.quotes.v14';
 function quoteKey(a, abs) {
   let h = 5381;
   const s = String(abs || '').slice(0, 4000);
@@ -2928,7 +2936,7 @@ async function fetchQuotes(a) {
     if (Array.isArray(q?.sentences)) blobs.push(...q.sentences);
     const en = exactQuote(q?.en, blobs);
     const zh = String(q?.zh || '').trim();
-    if (en && zh) quotes.push({ en, zh, role: q?.role || '', source: q?.source || 'abstract', sentence: q?.sentence || '' });
+    if (en && zh && quoteZhOk(zh)) quotes.push({ en, zh, role: q?.role || '', source: q?.source || 'abstract', sentence: q?.sentence || '' });
   }
   if (!quotes.length) return { error: '没有从摘要里抽出可用的原句。' };
   const out = quotes.slice(0, 4);

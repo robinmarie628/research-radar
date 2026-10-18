@@ -22,6 +22,7 @@ import {
 } from './quotes.js';
 import { handleTranslate, __setMtResources } from '../api/translate.js';
 import { extractPassages, extractHtmlPassages } from './fulltext.js';
+import { isTranslatedZh } from './mt.js';
 
 const require = createRequire(import.meta.url);
 const cite = require('../../assets/cite.js');
@@ -378,6 +379,50 @@ test('a structured QTc abstract is quoted from the worded result, not the aim or
   for (const p of picks) for (const core of piecesOf(p.en)) assert.ok(abstract.includes(core), p.en);
 });
 
+test('an echoed English sentence is not a Chinese translation', () => {
+  const en = 'To support shared decision making and taking into account the trade-off between benefits and harms, individual modifiable and non-modifiable risk factors should be considered when choosing antidepressants.';
+  assert.equal(isTranslatedZh(en, en), false);
+  assert.equal(isTranslatedZh(en, '为了支持共同决策并权衡益处与危害，选择抗抑郁药时应考虑个体可改变和不可改变的风险因素。'), true);
+  assert.equal(isTranslatedZh('The effect differed.', '特定抗抑郁药对QTc间期的影响在抑郁症成人中有所不同。'), true);
+});
+
+test('quotes mode translates a line again when the model copies the English', async () => {
+  __setMtResources({ glossary: [], overrides: [] });
+  const finding = 'The effect of specific antidepressants on QTc interval differed between adults with depression.';
+  const meaning = 'To support shared decision making and taking into account the trade-off between benefits and harms, individual modifiable and non-modifiable risk factors should be considered when choosing antidepressants.';
+  const abstract = finding + ' ' + meaning;
+  let calls = 0;
+  const env = {
+    AI: {
+      async run(_model, payload) {
+        calls++;
+        const user = payload.messages[1].content.replace(/^\/no_think\n/, '');
+        if (user.includes('[0]')) {
+          return { response: JSON.stringify({ quotes: [
+            { role: 'finding', i: 0, zh: '特定抗抑郁药对QTc间期的影响在抑郁症成人中有所不同。' },
+            { role: 'significance', i: 1, zh: meaning },
+          ] }) };
+        }
+        const arr = JSON.parse(user);
+        if (calls === 2) return { response: JSON.stringify(arr) };
+        return { response: JSON.stringify(arr.map(() => '为了支持共同决策并权衡益处与危害，选择抗抑郁药时应考虑个体可改变和不可改变的风险因素。')) };
+      },
+    },
+  };
+  const res = await handleTranslate(new Request('https://research-radar-f5j.pages.dev/api/translate', {
+    method: 'POST',
+    headers: { Origin: 'https://research-radar-f5j.pages.dev', 'Content-Type': 'application/json' },
+    body: JSON.stringify({ mode: 'quotes', doi: '10.1/test', id: 'qtc', abstract }),
+  }), env);
+  assert.equal(res.status, 200);
+  const data = await res.json();
+  const line = data.quotes.find(q => /shared decision/.test(q.en));
+  assert.ok(line);
+  assert.match(line.zh, /共同决策/);
+  assert.equal(line.zh.includes('shared decision'), false);
+  assert.ok(calls >= 3);
+});
+
 test('quotes mode translates a plain abstract instead of returning 502', async () => {
   __setMtResources({ glossary: [], overrides: [] });
   const abstract = 'Methods We conducted a prospective cohort study. Results Antidepressant treatment was associated with QTc prolongation and early major adverse cardiovascular events. Conclusions Clinicians should monitor electrocardiograms when initiating treatment.';
@@ -387,7 +432,7 @@ test('quotes mode translates a plain abstract instead of returning 502', async (
         const user = payload.messages[1].content.replace(/^\/no_think\n/, '');
         if (user.includes('[0]')) return { response: '{"quotes":[]}' };
         const arr = JSON.parse(user);
-        return { response: JSON.stringify(arr.map((s) => '译文：' + s)) };
+        return { response: JSON.stringify(arr.map(() => '译文：抗抑郁治疗与QTc延长及早期主要心血管不良事件相关，开始治疗时应监测心电图。')) };
       },
     },
   };

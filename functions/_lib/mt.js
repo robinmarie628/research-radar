@@ -213,6 +213,24 @@ export function extractAiText(result) {
   return '';
 }
 
+/**
+ * A share-card line counts as Chinese only when it is actually translated.
+ * An echo of the English sentence, or a Latin paragraph with no Han characters, does not.
+ */
+export function isTranslatedZh(en, zh) {
+  const z = String(zh || '').replace(/\s+/g, ' ').trim();
+  if (!z) return false;
+  const han = (z.match(/[\u4e00-\u9fff]/g) || []).length;
+  if (han < 2) return false;
+  const latin = (z.match(/[A-Za-z]/g) || []).length;
+  if (latin > 24 && latin > han * 3) return false;
+  const fold = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]+/g, '');
+  const src = fold(en);
+  const out = fold(z);
+  if (src && out && (out === src || (src.includes(out) && out.length > 40))) return false;
+  return true;
+}
+
 export function parseTranslationArray(raw, n) {
   let s = String(raw || '');
   s = s.replace(/<think>[\s\S]*?<\/think>/gi, '');
