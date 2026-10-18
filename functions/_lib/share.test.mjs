@@ -348,6 +348,62 @@ test('a trial card keeps the worded benefit and can add a striking adverse event
   for (const p of picks) assert.ok(wordCountOk(p.en), p.en);
 });
 
+test('a short abstract with no gold-style sentence still returns quotes', () => {
+  const abstract = 'Methods We conducted a prospective cohort study. Results Antidepressant treatment was associated with QTc prolongation and early major adverse cardiovascular events. Conclusions Clinicians should monitor electrocardiograms when initiating treatment.';
+  const picks = resolveQuotePicks(abstract, []);
+  assert.ok(picks.length >= 2 && picks.length <= 4);
+  assert.match(picks.map(p => p.en).join(' '), /associated with QTc prolongation/);
+  assert.match(picks.map(p => p.en).join(' '), /Clinicians should monitor electrocardiograms/);
+  assert.equal(picks.some(p => /We conducted a prospective cohort study/.test(p.en)), false);
+  for (const p of picks) {
+    for (const core of piecesOf(p.en)) assert.ok(abstract.includes(core), p.en);
+    assert.ok(wordCountOk(p.en), p.en);
+  }
+});
+
+test('a structured QTc abstract is quoted from the worded result, not the aim or the interval', () => {
+  const aim = 'To compare the effect of specific antidepressants with placebo on heart rate corrected QT interval (QTc) during the first eight weeks of treatment for major depressive disorder in adults, and to investigate whether antidepressant use is associated with early major cardiovascular adverse events (MACE).';
+  const method = 'The primary outcome was changes in QTc Fridericia (QTcF) associated with specific antidepressants and placebo after taking into account modifiable and non-modifiable risk factors.';
+  const interval = 'Compared with placebo, escitalopram and amitriptyline were associated with increased QTc intervals (8.7 milliseconds (ms), 95% credibility interval (CrI) 1.6 to 15.8, and 5.3 ms, 0.8 to 9.8, respectively).';
+  const differed = 'The effect of specific antidepressants on QTc interval differed between adults with depression.';
+  const mace = 'No evidence associated antidepressant use with early MACE and non-suicidal sudden death.';
+  const decision = 'To support shared decision making and taking into account the trade-off between benefits and harms, individual modifiable and non-modifiable risk factors should be considered when choosing antidepressants.';
+  const abstract = [aim, method, interval, differed, mace, decision].join(' ');
+  const picks = resolveQuotePicks(abstract, []);
+  const blob = picks.map(p => p.en).join(' ');
+  assert.match(blob, /QTc interval differed between adults with depression/);
+  assert.match(blob, /No evidence associated antidepressant use with early MACE/);
+  assert.match(blob, /should be considered when choosing antidepressants/);
+  assert.doesNotMatch(blob, /To compare the effect|95% credibility|primary outcome was/);
+  for (const p of picks) for (const core of piecesOf(p.en)) assert.ok(abstract.includes(core), p.en);
+});
+
+test('quotes mode translates a plain abstract instead of returning 502', async () => {
+  __setMtResources({ glossary: [], overrides: [] });
+  const abstract = 'Methods We conducted a prospective cohort study. Results Antidepressant treatment was associated with QTc prolongation and early major adverse cardiovascular events. Conclusions Clinicians should monitor electrocardiograms when initiating treatment.';
+  const env = {
+    AI: {
+      async run(_model, payload) {
+        const user = payload.messages[1].content.replace(/^\/no_think\n/, '');
+        if (user.includes('[0]')) return { response: '{"quotes":[]}' };
+        const arr = JSON.parse(user);
+        return { response: JSON.stringify(arr.map((s) => '译文：' + s)) };
+      },
+    },
+  };
+  const res = await handleTranslate(new Request('https://research-radar-f5j.pages.dev/api/translate', {
+    method: 'POST',
+    headers: { Origin: 'https://research-radar-f5j.pages.dev', 'Content-Type': 'application/json' },
+    body: JSON.stringify({ mode: 'quotes', doi: '10.1/test', id: 'test', abstract }),
+  }), env);
+  assert.equal(res.status, 200);
+  const data = await res.json();
+  assert.ok(data.quotes.length >= 2);
+  assert.match(data.quotes.map(q => q.en).join(' '), /associated with QTc prolongation/);
+  assert.match(data.quotes.map(q => q.zh).join(' '), /译文：/);
+  assert.equal(data.quotes.every(q => q.en && q.zh), true);
+});
+
 const sample = {
   title: 'Immunoregulatory gene GIMAP6 suppresses lethal disease',
   journal: 'Cell',

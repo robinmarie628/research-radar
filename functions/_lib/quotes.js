@@ -466,6 +466,78 @@ function roleFloor(role) {
   return 8;
 }
 
+const RESULT_LINE = /\b(associated|differed|compared with|no evidence|did not identify|reduced|increased|improved|fewer|lower odds|faster|resulted in|similar in efficacy|non-inferior|significantly greater)\b/i;
+const MEANING_LINE = /\b(should be considered|clinicians should|shared decision|suggest that|these findings|this finding supports|these results establish|in conclusion|together, these results)\b/i;
+
+/** Ordinary result and conclusion lines, used only when the gold scores all miss. */
+function plainScore(s, index = 0, total = 1) {
+  if (!usableSentence(s) || isDesign(s) || METHODS_LEAD.test(s) || isRunIn(s)) return -40;
+  if (/\b(primary|secondary) (?:outcomes?|end ?points?) (?:was|were)\b/i.test(s)) return -20;
+  if (isDenseMethods(s) && !CONTRAST.test(s)) return -30;
+  let q = 0;
+  if (RESULT_LINE.test(s)) q += 8;
+  if (MEANING_LINE.test(s)) q += 8;
+  if (/^we (?:introduce|identify|demonstrate|benchmark)\b/i.test(s)) q += 6;
+  if (CONTRAST.test(s) && !numberHeavy(s)) q += 4;
+  if (index === 0) q += 4;
+  if (total > 1 && index >= total - 2) q += 4;
+  if (numberHeavy(s)) q -= 6;
+  if (/\b(meta-regression|eligibility criteria|were identified through|were analysed using|were analyzed using|were harmonised|were harmonized|we conducted a)\b/i.test(s)) q -= 12;
+  return q;
+}
+
+function packPlain(role, sentence, indexed, modelQuotes) {
+  if (!sentence) return null;
+  const excerpt = excerptQuote(sentence, role);
+  if (!excerpt) return null;
+  const zh = modelZhFor(modelQuotes, indexed, sentence, role);
+  return {
+    role,
+    en: excerpt,
+    zh: zh && sameWords(excerpt, sentence) ? zh : '',
+    sentence,
+  };
+}
+
+/**
+ * When no sentence clears the gold floor, still quote a worded result and a conclusion.
+ * Methods, confidence-interval dumps, and "To compare…" aims stay out.
+ */
+function plainFallback(sentences, indexed, modelQuotes) {
+  const total = sentences.length;
+  const ranked = sentences
+    .map((s, index) => ({ s, sc: plainScore(s, index, total) }))
+    .filter(row => row.sc >= 4)
+    .sort((a, b) => b.sc - a.sc || a.s.length - b.s.length);
+  const findingLike = (s) => RESULT_LINE.test(s) && !numberHeavy(s);
+  const meaningLike = (s) => MEANING_LINE.test(s);
+  const shown = [];
+  const take = (pred) => {
+    const row = ranked.find(r => pred(r.s) && !shown.some(t => samePoint(t, r.s)));
+    if (!row) return '';
+    shown.push(row.s);
+    return row.s;
+  };
+  const finding = take(s => findingLike(s) && !meaningLike(s) && !/\bno evidence\b/i.test(s))
+    || take(s => /^we (?:introduce|identify)\b/i.test(s))
+    || take(s => findingLike(s) && !meaningLike(s))
+    || take(s => !meaningLike(s) && !/^we\b/i.test(s))
+    || take(() => true);
+  const extra = take(s => findingLike(s) && !meaningLike(s) && !/^we\b/i.test(s));
+  const significance = take(s => meaningLike(s));
+  const background = take(s => !findingLike(s) && !meaningLike(s));
+  const secondRole = extra && (safetyNote(extra) || SUBGROUP.test(extra)) ? 'secondary' : 'finding';
+  const picks = [
+    packPlain('background', background, indexed, modelQuotes),
+    packPlain('finding', finding, indexed, modelQuotes),
+    packPlain(secondRole, extra, indexed, modelQuotes),
+    packPlain('significance', significance, indexed, modelQuotes),
+  ].filter(Boolean);
+  if (picks.length) return picks;
+  const rescued = pickHeuristic(sentences, 3);
+  return rescued.map((sentence, i) => packPlain(i === 0 ? 'background' : i === rescued.length - 1 ? 'significance' : 'finding', sentence, indexed, modelQuotes)).filter(Boolean);
+}
+
 function hintSentence(modelQuotes, sentences, role) {
   const q = (modelQuotes || []).find(m => m && m.role === role);
   if (!q) return '';
@@ -576,7 +648,9 @@ export function resolveQuotePicks(text, modelQuotes) {
   const significance = take('significance');
   const background = take('background');
   const secondary = take('secondary');
-  return [background, finding, secondary, significance].filter(Boolean);
+  const picked = [background, finding, secondary, significance].filter(Boolean);
+  if (picked.length) return picked;
+  return plainFallback(sentences, indexed, modelQuotes);
 }
 
 export function parseQuoteResponse(raw) {
