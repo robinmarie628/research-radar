@@ -6,28 +6,33 @@
 
 export const ABSTRACT_MAX = 14000;
 
-export const QUOTE_SYSTEM = `You choose quotations from one medical abstract for a Chinese physician.
+export const QUOTE_ROLES = ['background', 'finding', 'significance'];
+
+export const QUOTE_SYSTEM = `You choose exactly three quotations from one medical abstract for a Chinese physician.
 You will receive a numbered list of sentences. The number in brackets is the index.
-Pick the 3 sentences that are the most clinically meaningful and the most likely to start a discussion.
-Prefer, in this order: an interpretation or conclusion (sentences that start with Interpretation, These findings, Our results suggest, or that state what the result means), then a key finding in plain language.
-A plain-language finding is better than a sentence dense with confidence intervals, sample sizes, or p values.
-Never choose a sentence about trial registration, an NCT number, ClinicalTrials.gov, funding, ethics approval, accrual or follow-up status, or copyright, if any other sentence exists.
-Prefer a sentence under 220 characters. Do not stitch clauses together to make one shorter.
-Return JSON only, no markdown: {"quotes":[{"i":0,"zh":"..."},{"i":1,"zh":"..."},{"i":2,"zh":"..."}]}
+Return one sentence for each role, in this order:
+1. background — why the study was done: the problem, the gap, or what was still unknown. Not the methods.
+2. finding — the key new result: what the study actually found. One sentence.
+3. significance — what that result means: the interpretation, implication, or conclusion.
+Never choose a sentence about trial registration, an NCT number, ClinicalTrials.gov, funding, ethics approval, accrual or follow-up status, or copyright.
+Do not pick a methods sentence (eligibility, randomisation, sample size, statistics) for any role when another sentence exists.
+Prefer a sentence under 280 characters. Do not stitch clauses together.
+Return JSON only, no markdown:
+{"quotes":[{"role":"background","i":0,"zh":"..."},{"role":"finding","i":1,"zh":"..."},{"role":"significance","i":2,"zh":"..."}]}
 Rules:
-1. i must be an index from the list. Do not invent, merge, shorten, or rewrite a sentence.
-2. zh is a Simplified Chinese translation of that exact sentence.
-3. Keep drug names, gene and protein names, trial names, and acronyms in English.
-4. Drug names may appear as placeholders like [D1]. Copy every placeholder into zh unchanged.
-5. Translate faithfully. Do not add or omit facts.
-6. If fewer than 3 sentences are under 220 characters, fill the remaining slots with the next most meaningful sentences, still copied verbatim.`;
+1. role must be background, then finding, then significance. Exactly one of each.
+2. i must be an index from the list. Do not invent, merge, shorten, or rewrite a sentence.
+3. zh is a Simplified Chinese translation of that exact sentence.
+4. Keep drug names, gene and protein names, trial names, and acronyms in English.
+5. Drug names may appear as placeholders like [D1]. Copy every placeholder into zh unchanged.
+6. Translate faithfully. Do not add or omit facts.`;
 
 const ABBREV = /(?:et al|Figs?|vs|Dr|Mr|Mrs|Ms|Prof|e\.g|i\.e|U\.S|No|Vol|Jr|Sr|St|approx|ca|al)$/i;
 const HINT = /patient|risk|mortality|death|outcome|significant|associat|treatment|therapy|reduc|increas|improv|therefore|thus|we found|demonstrat|suggest|benefit|hazard|survival|disease|failure|conclus|trial|effect|among|compared/i;
 const FINDING = /therefore|thus|conclus|we found|these findings|in summary|suggest|demonstrat|indicates that/i;
 const INTERP = /^(interpretation\b|these findings\b|our results\b|our findings\b|we conclude\b|in conclusion\b|taken together\b|collectively\b)/i;
 const INTERP_BODY = /\b(these findings|our results suggest|we conclude|indicates that|adds substantial evidence|remains investigational|requires .{0,48}validation)\b/i;
-const RESULT = /\b(detected|reduced|increased|fewer|more likely|associated|response rate|survival|mortality|showed|enabled|avoided|no increase|non-inferior|deaths? occurred|adverse events occurred)\b/i;
+const RESULT = /\b(detected|reduced|increased|improved|fewer|more likely|associated|caused|accelerated|response rate|survival|mortality|showed|enabled|avoided|no increase|non-inferior|deaths? occurred|adverse events occurred)\b/i;
 
 function isDesign(s) {
   return /^(?:this (?:single-arm|randomised|randomized|multicentre|multicenter|phase|open-label|study|trial)|[A-Za-z0-9-]{2,} is a )\b/i.test(s)
@@ -166,59 +171,116 @@ export function pickHeuristic(sentences, n = 3) {
   return picked.sort((a, b) => a.i - b.i).slice(0, n).map(p => p.s);
 }
 
+function sentenceFrom(q, sentences) {
+  const i = Number(q?.i);
+  if (Number.isInteger(i) && i >= 0 && i < sentences.length) return sentences[i];
+  return findVerbatim(q?.en, sentences);
+}
+
+function classifySentence(s) {
+  if (!s || isBoilerplate(s) || isDesign(s) || METHODS_LEAD.test(s)) return '';
+  if (INTERP.test(s) || INTERP_BODY.test(s) || /^(interpretation|conclusions?|implications?)\b/i.test(s)) return 'significance';
+  if (/^(background|objectives?|aims?)\b/i.test(s)) return 'background';
+  if (/^(results?|findings?)\b/i.test(s)) return 'finding';
+  if (/\b(not eliminated|unknown|unclear|poorly understood|little is known|remains (?:unclear|unknown|elusive)|despite|unmet|the gap|have been limited)\b/i.test(s)) return 'background';
+  if (RESULT.test(s) || /\b(we found|we show|we report|showed that)\b/i.test(s)) return 'finding';
+  if (FINDING.test(s)) return 'significance';
+  return '';
+}
+
+function scoreRole(s, role) {
+  if (isBoilerplate(s)) return -50;
+  let q = 0;
+  if (s.length <= 320) q += 2;
+  else if (s.length > 480) q -= 2;
+  if (isDesign(s) || METHODS_LEAD.test(s)) q -= 8;
+  const census = /\b(were assessed for eligibility|were randomly allocated|were male|were female|median age|included \d+ participants|of these,? \d+)\b/i.test(s);
+  if (census) q -= 8;
+  if (role === 'background') {
+    if (/\b(not eliminated|unknown|unclear|poorly understood|little is known|despite|unmet|the gap)\b/i.test(s)) q += 8;
+    if (/^(background|objectives?|aims?)\b/i.test(s)) q += 8;
+    if (INTERP.test(s) || /^thus\b/i.test(s)) q -= 4;
+    if (isDenseMethods(s)) q -= 6;
+  } else if (role === 'finding') {
+    if (/^(results?|findings?)\b/i.test(s)) q += 8;
+    if (RESULT.test(s) || /\b(we found|we show|we report|showed that)\b/i.test(s)) q += 6;
+    if (/\b(significantly|compared with|than placebo|than usual|faster|slower|greater|lower risk|higher rate)\b/i.test(s)) q += 5;
+    if (/\b(primary (?:end ?point|efficacy|outcome)|symptom relief)\b/i.test(s)) q += 4;
+    if (/\b(not eliminated|despite|unknown|unclear)\b/i.test(s)) q -= 5;
+    if (INTERP.test(s)) q -= 3;
+    if (isDenseMethods(s) && !RESULT.test(s)) q -= 8;
+  } else {
+    if (INTERP.test(s) || /^(interpretation|conclusions?|implications?)\b/i.test(s)) q += 10;
+    if (INTERP_BODY.test(s) || FINDING.test(s)) q += 6;
+    if (isDenseMethods(s)) q -= 6;
+  }
+  return q;
+}
+
+function sectionText(sections, role) {
+  if (!sections || typeof sections !== 'object') return '';
+  if (role === 'background') return sections.objective || sections.background || '';
+  if (role === 'finding') return sections.results || sections.findings || '';
+  return sections.conclusion || sections.interpretation || '';
+}
+
+/** Sentences that belong to a role. Structured sections win when they exist. */
+function candidatesFor(role, sentences, sections) {
+  const blob = normSpace(sectionText(sections, role));
+  if (blob) {
+    const fromSection = sentences.filter(s => blob.includes(normSpace(s)) && !isBoilerplate(s));
+    if (fromSection.length) return fromSection;
+  }
+  const tagged = sentences.filter(s => classifySentence(s) === role);
+  return tagged.length ? tagged : sentences.filter(s => !isBoilerplate(s));
+}
+
+function bestFor(role, sentences, sections, used) {
+  const pool = candidatesFor(role, sentences, sections).filter(s => !used.has(s) && !isBoilerplate(s));
+  let best = '';
+  let bestSc = -1e9;
+  for (const s of pool) {
+    const effect = /\b(significantly|than placebo|than usual|faster|slower|reduced|increased|improved|symptom relief)\b/i.test(s);
+    if (role !== 'finding' && isDenseMethods(s) && pool.some(o => !isDenseMethods(o))) continue;
+    if (role === 'finding' && isDenseMethods(s) && !effect && pool.some(o => !isDenseMethods(o) || /\b(significantly|than placebo|faster|reduced|improved)\b/i.test(o))) continue;
+    const sc = scoreRole(s, role);
+    if (sc > bestSc) { bestSc = sc; best = s; }
+  }
+  if (best && bestSc > -5) return best;
+  const spare = sentences.find(s => !used.has(s) && !isBoilerplate(s) && !isDenseMethods(s) && !isDesign(s));
+  return spare || '';
+}
+
 /**
- * modelQuotes: [{i, en, zh}]. A valid index wins, because that sentence is
- * copied from the abstract. Otherwise the English must match a sentence
- * exactly. Missing slots are filled heuristically, with zh left blank.
+ * One verbatim sentence per role, in order: background, finding, significance.
+ * A model index is kept only when it is a real sentence and not boilerplate.
+ * sections, when present, are {objective, methods, results, conclusion}.
  */
-export function resolveQuotePicks(abstract, modelQuotes) {
+export function resolveQuotePicks(abstract, modelQuotes, sections) {
   const sentences = splitSentences(abstract);
   const used = new Set();
-  const out = [];
+  const chosen = {};
   for (const q of modelQuotes || []) {
-    const i = Number(q?.i);
-    let en = '';
-    if (Number.isInteger(i) && i >= 0 && i < sentences.length) en = sentences[i];
-    else en = findVerbatim(q?.en, sentences);
-    if (!en || used.has(en)) continue;
-    used.add(en);
-    out.push({ en, zh: normSpace(q?.zh || '') });
-    if (out.length === 3) break;
+    const cand = sentenceFrom(q, sentences);
+    if (!cand || used.has(cand) || isBoilerplate(cand)) continue;
+    if (isDenseMethods(cand) && sentences.some(s => !isDenseMethods(s) && !isBoilerplate(s))) continue;
+    const explicit = QUOTE_ROLES.includes(q?.role) ? q.role : '';
+    const role = explicit || classifySentence(cand);
+    if (!role || chosen[role]) continue;
+    chosen[role] = { role, en: cand, zh: normSpace(q?.zh || '') };
+    used.add(cand);
   }
-  if (out.length < 3) {
-    for (const en of pickHeuristic(sentences, 3)) {
-      if (out.length >= 3) break;
-      if (used.has(en)) continue;
+  const out = [];
+  for (const role of QUOTE_ROLES) {
+    if (!chosen[role]) {
+      const en = bestFor(role, sentences, sections, used);
+      if (!en) continue;
+      chosen[role] = { role, en, zh: '' };
       used.add(en);
-      out.push({ en, zh: '' });
     }
+    out.push(chosen[role]);
   }
-  const spare = sentences.some(s => !isBoilerplate(s) && !isDenseMethods(s));
-  if (spare || sentences.some(s => !isBoilerplate(s))) {
-    const kept = out.filter(p => !isBoilerplate(p.en) && !(spare && isDenseMethods(p.en)));
-    out.length = 0;
-    for (const p of kept) out.push(p);
-    const taken = new Set(out.map(p => p.en));
-    for (const en of pickHeuristic(sentences, 3)) {
-      if (out.length >= 3) break;
-      if (taken.has(en)) continue;
-      taken.add(en);
-      out.push({ en, zh: '' });
-    }
-  }
-  let guard = 0;
-  while (guard++ < out.length) {
-    let worst = 0;
-    for (let i = 1; i < out.length; i++) {
-      if (sentenceQuality(out[i].en) < sentenceQuality(out[worst].en)) worst = i;
-    }
-    const taken = new Set(out.map(p => p.en));
-    const alt = pickHeuristic(sentences.filter(s => !taken.has(s)), 1)[0];
-    if (!alt || sentenceQuality(alt) <= sentenceQuality(out[worst].en)) break;
-    out[worst] = { en: alt, zh: '' };
-  }
-  out.sort((a, b) => sentences.indexOf(a.en) - sentences.indexOf(b.en));
-  return out.slice(0, 3);
+  return out;
 }
 
 export function parseQuoteResponse(raw) {
@@ -238,8 +300,10 @@ export function parseQuoteResponse(raw) {
   return arr.map(item => {
     if (typeof item === 'string') return { i: NaN, en: item, zh: '' };
     const idx = Number(item?.i);
+    const role = QUOTE_ROLES.includes(item?.role) ? item.role : '';
     return {
       i: Number.isInteger(idx) ? idx : NaN,
+      role,
       en: String(item?.en || item?.sentence || ''),
       zh: String(item?.zh || item?.translation || ''),
     };

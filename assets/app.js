@@ -11,7 +11,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.18.28';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.18.29';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -2366,10 +2366,9 @@ function mtId(a) {
   return String(a?.doi || a?.id || '').trim().toLowerCase();
 }
 function mtFeatured(a) {
-  if (a?.digest && String(a.digest.titleZh || '').trim()) return true;
-  const id = mtId(a);
-  if (!id) return false;
-  return (S.jr.picks || []).some(p => mtId(p) === id);
+  // An editorial Chinese title already replaces 机翻. A curated pick with no
+  // titleZh is still an ordinary recent paper and should be translated.
+  return !!(a?.digest && String(a.digest.titleZh || '').trim());
 }
 function mtEligible(a) {
   if (!a?.title || !a.date) return false;
@@ -2511,6 +2510,7 @@ function queueMachineTitles() {
   if (!need.length) return;
   queueMachineTitles.running = true;
   queueMachineTitles.dirty = false;
+  queueMachineTitles.passes = (queueMachineTitles.passes || 0) + 1;
   (async () => {
     let failed = false;
     try {
@@ -2518,43 +2518,49 @@ function queueMachineTitles() {
         if (S.mt.stop) break;
         const batch = need.slice(i, i + 10).filter(a => mtEligible(a) && !a.mtZh);
         if (!batch.length) continue;
-        let res, data = {};
-        try {
-          res = await fetch('/api/translate', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              mode: 'titles',
-              items: batch.map(a => ({ id: mtId(a), text: a.title })),
-            }),
-          });
-          data = await res.json().catch(() => ({}));
-        } catch (e) {
-          console.warn('[mt] titles', e);
-          failed = true;
-          break;
-        }
-        if (data.error === 'quota' || res.status === 429) S.mt.stop = 'quota';
-        if (data.error === 'ai_unconfigured' || res.status === 503) S.mt.stop = 'unconfigured';
-        for (const item of data.items || []) {
-          const zh = stripTitleMeta(item?.zh || '');
-          if (!zh) continue;
-          const id = String(item.id || '').toLowerCase();
-          for (const list of mtLists()) {
-            for (const other of list || []) {
-              if (mtId(other) !== id) continue;
-              other.mtZh = zh;
-              rememberMt(other, zh);
+        let applied = false;
+        for (let attempt = 0; attempt < 2 && !applied && !S.mt.stop; attempt++) {
+          if (attempt) await sleep(500 * attempt);
+          let res, data = {};
+          try {
+            res = await fetch('/api/translate', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                mode: 'titles',
+                items: batch.map(a => ({ id: mtId(a), text: a.title })),
+              }),
+            });
+            data = await res.json().catch(() => ({}));
+          } catch (e) {
+            console.warn('[mt] titles', e);
+            continue;
+          }
+          if (data.error === 'quota' || res.status === 429) { S.mt.stop = 'quota'; break; }
+          if (data.error === 'ai_unconfigured' || res.status === 503) { S.mt.stop = 'unconfigured'; break; }
+          const items = (data.items || []).filter(item => item && item.zh);
+          if (!res.ok || !items.length) continue;
+          for (const item of items) {
+            const zh = stripTitleMeta(item.zh);
+            if (!zh) continue;
+            const id = String(item.id || '').toLowerCase();
+            for (const list of mtLists()) {
+              for (const other of list || []) {
+                if (mtId(other) !== id) continue;
+                other.mtZh = zh;
+                rememberMt(other, zh);
+              }
             }
           }
+          applied = true;
+          patchMachineTitles();
         }
-        patchMachineTitles();
-        if (S.mt.stop) break;
-        if (!(data.items || []).length) { failed = true; break; }
+        if (!applied && !S.mt.stop) failed = true;
       }
     } finally {
       queueMachineTitles.running = false;
-      if (!failed && !S.mt.stop && queueMachineTitles.dirty) queueMachineTitles();
+      const again = queueMachineTitles.dirty || failed;
+      if (!S.mt.stop && again && queueMachineTitles.passes < 3) queueMachineTitles();
     }
   })();
 }
@@ -2793,7 +2799,7 @@ function exactQuote(en, abstract) {
   if (!needle || !abs.includes(needle)) return '';
   return needle;
 }
-const QUOTE_LS = 'rr.quotes.v3';
+const QUOTE_LS = 'rr.quotes.v4';
 function quoteKey(a, abs) {
   let h = 5381;
   const s = String(abs || '').slice(0, 4000);
@@ -2826,7 +2832,12 @@ async function fetchQuotes(a) {
     res = await fetch('/api/translate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mode: 'quotes', id: a.id || a.doi || '', abstract: abs.slice(0, 12000) }),
+      body: JSON.stringify({
+        mode: 'quotes',
+        id: a.id || a.doi || '',
+        abstract: abs.slice(0, 12000),
+        sections: a.sections || undefined,
+      }),
     });
   } catch {
     return { error: '摘句翻译失败，请再试一次。' };
@@ -2842,7 +2853,7 @@ async function fetchQuotes(a) {
   for (const q of data.quotes) {
     const en = exactQuote(q?.en, abs);
     const zh = String(q?.zh || '').trim();
-    if (en && zh) quotes.push({ en, zh });
+    if (en && zh) quotes.push({ en, zh, role: q.role || '' });
   }
   if (!quotes.length) return { error: '没有从摘要里抽出可用的原句。' };
   const out = quotes.slice(0, 3);

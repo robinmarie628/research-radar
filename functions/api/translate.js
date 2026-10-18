@@ -294,7 +294,8 @@ async function translateQuotes(request, env, body) {
   }
 
   const { glossary, overrides } = await loadResources(request, env);
-  const key = 'quotes/v3/' + (await sha256Hex(normTitle(abstract))).slice(0, 32);
+  const sections = body.sections && typeof body.sections === 'object' ? body.sections : null;
+  const key = 'quotes/v4/' + (await sha256Hex(normTitle(abstract))).slice(0, 32);
   const hit = await cacheGet(request, key);
   if (hit?.quotes?.length) return json({ quotes: hit.quotes, cached: true });
 
@@ -311,10 +312,10 @@ async function translateQuotes(request, env, body) {
       }
       return { i: q.i, en: q.en, zh };
     });
-    picks = resolveQuotePicks(abstract, restored);
+    picks = resolveQuotePicks(abstract, restored, sections);
   } catch (err) {
     if (err?.code === 'quota' || isQuotaError(err) || err?.code === 'ai_unconfigured') return fail(err);
-    picks = resolveQuotePicks(abstract, []);
+    picks = resolveQuotePicks(abstract, [], sections);
   }
 
   const missing = picks.filter(p => !p.zh);
@@ -337,7 +338,7 @@ async function translateQuotes(request, env, body) {
     }
   }
 
-  const quotes = picks.filter(p => p.en && p.zh).slice(0, 3).map(p => ({ en: p.en, zh: p.zh }));
+  const quotes = picks.filter(p => p.en && p.zh).slice(0, 3).map(p => ({ role: p.role, en: p.en, zh: p.zh }));
   if (!quotes.length) return json({ error: 'ai_failed', message: '摘句翻译失败，请再试一次。' }, 502);
   await cachePut(request, key, { quotes });
   return json({ quotes, cached: false });

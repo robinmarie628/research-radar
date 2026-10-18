@@ -92,9 +92,39 @@ test('registration, funding, ethics, and copyright lines are never quoted', () =
   assert.equal(forced.some(p => p.en === interp), true);
 });
 
+test('quotes are background, then the finding, then the significance', () => {
+  const bg = 'Controlling hyperlipidemia has reduced but not eliminated atherosclerotic disease as a major cause of death.';
+  const finding = 'Loss of GIMAP6 caused inflammatory vasculopathy and accelerated atherosclerosis without hyperlipidemia.';
+  const meaning = 'These findings suggest GIMAP6 safeguards vascular integrity even when circulating lipids are normal.';
+  const methods = 'Mice were examined and randomly assigned across 12 cages with a hazard ratio of 0.80 (95% CI 0.70-0.90; p<0.001) in the modified full analysis set.';
+  const reg = 'The study is registered on ClinicalTrials.gov (NCT03377036).';
+  const abstract = [bg, methods, finding, reg, meaning].join(' ');
+  const picks = resolveQuotePicks(abstract, []);
+  assert.deepEqual(picks.map(p => p.role), ['background', 'finding', 'significance']);
+  assert.equal(picks[0].en, bg);
+  assert.equal(picks[1].en, finding);
+  assert.equal(picks[2].en, meaning);
+  for (const p of picks) assert.equal(isBoilerplate(p.en), false);
+});
+
+test('structured abstract sections supply the three roles', () => {
+  const bg = 'Patients with uncontrolled hypertension still have a high risk of stroke despite current drugs.';
+  const methods = 'Adults were randomly assigned to the new dose or usual care and followed for two years.';
+  const finding = 'The new dose reduced stroke compared with usual care in this screened population.';
+  const meaning = 'These findings suggest the new dose should be considered for similar adults.';
+  const abstract = [bg, methods, finding, meaning].join(' ');
+  const picks = resolveQuotePicks(abstract, [], {
+    objective: bg, methods, results: finding, conclusion: meaning,
+  });
+  assert.equal(picks[0].role, 'background');
+  assert.equal(picks[0].en, bg);
+  assert.equal(picks[1].en, finding);
+  assert.equal(picks[2].en, meaning);
+});
+
 test('quote JSON parser reads indexes', () => {
   const parsed = parseQuoteResponse('```json\n{"quotes":[{"i":1,"zh":"甲"}]}\n```');
-  assert.deepEqual(parsed, [{ i: 1, en: '', zh: '甲' }]);
+  assert.deepEqual(parsed, [{ i: 1, role: '', en: '', zh: '甲' }]);
 });
 
 test('quotes mode drops a fake sentence and restores a drug placeholder', async () => {
