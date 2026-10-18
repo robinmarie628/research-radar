@@ -70,13 +70,12 @@ PROMPT = """下面是从顶刊筛选出的 {n} 篇论文，每篇附标题、期
    人群或信号，给出 1–2 个合理、有意义、值得做的后续方向。这是唯一允许"超出摘要"的部分，
    但必须是从摘要内容自然推出来的，不能凭空发挥。
 
-另外，为每一篇写 titleZh（中文标题），格式固定为：
+另外，为每一篇写 titleZh（中文标题）：
 
-    <中文主题>（<刊名>，<领域>，<研究类型>）
-
-- 中文主题概括这篇论文在做什么，保留专有名词 / 药物名 / 试验名 / 基因名的英文原文
+- 概括这篇论文在做什么，保留专有名词 / 药物名 / 试验名 / 基因名的英文原文
   （如 ROAM/EORTC-1308、APOE4、BCL11A）
-- 括号里的三项从上面给出的信息里取，用中文逗号分隔
+- 只写标题本身。不要在末尾追加（刊名，领域，研究类型），刊名、领域、研究类型页面上另有位置
+- 标题正文里本来就有的括号要保留，例如缩写（ASCVD）或试验名
 - 不加书名号，结尾不加句号
 
 再从这 {n} 篇中选出 1 篇作为「今日首选」，给出 1 句理由（选证据等级最高、临床影响最大的一篇）。
@@ -113,6 +112,31 @@ def save_pushed(dois):
     keep = dois[-PUSHED_KEEP:]
     with open(PUSHED, "w", encoding="utf-8") as f:
         f.write("\n".join(keep) + ("\n" if keep else ""))
+
+
+# Trailing （journal，domain，study type） from the old title prompt.
+# A parenthesis that is part of the title, such as （ASCVD）, has no study-type label and stays.
+_STUDY_LABELS = {
+    "指南/共识", "荟萃分析", "遗传关联研究", "目标试验模拟", "随机对照试验",
+    "疾病负担分析", "多中心研究", "前瞻队列", "注册研究", "基础研究",
+    "病例对照", "回顾性研究", "综述", "评论/社论", "研究论文",
+}
+_TITLE_META_RE = re.compile(
+    r"(?:（|\()([^（）()]*)[，,]([^（）()]*)[，,]([^（）()]*)(?:）|\))\s*$"
+)
+_JOURNAL_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9 .:&/+-]{0,48}$")
+_DOMAIN_RE = re.compile(r"^[\u4e00-\u9fff]{2,8}(?:与[\u4e00-\u9fff]{1,6})?$")
+
+
+def strip_title_meta(text):
+    s = (text or "").strip()
+    m = _TITLE_META_RE.search(s)
+    if not m:
+        return s
+    journal, domain, kind = (p.strip() for p in m.groups())
+    if _JOURNAL_RE.match(journal) and _DOMAIN_RE.match(domain) and kind in _STUDY_LABELS:
+        return s[:m.start()].strip()
+    return s
 
 
 def paper_block(i, a):
@@ -320,7 +344,7 @@ def main():
             "topPick": i == top_idx,
             "topReason": (top.get("reason") or "").strip() if i == top_idx else "",
         }
-        row["titleZh"] = (got.get("titleZh") or "").strip()
+        row["titleZh"] = strip_title_meta(got.get("titleZh") or "")
         for f in FIELDS:
             row[f] = (got.get(f) or "").strip()
         out_items.append(row)

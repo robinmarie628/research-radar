@@ -11,7 +11,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.18.27';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.18.28';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -128,6 +128,21 @@ const STUDY = [
 ];
 const STUDY_BY_KEY = Object.fromEntries(STUDY.map(s => [s.key, s]));
 const STUDY_OTHER = { key:'other', zh:'研究论文', rank:3 };
+const STUDY_LABELS = new Set(STUDY.map(s => s.zh).concat([STUDY_OTHER.zh]));
+/** Drop a trailing （journal，domain，study type） left by the old digest prompt.
+ *  Parentheses that belong to the translation, such as （ASCVD）, stay. */
+function stripTitleMeta(text) {
+  const s = String(text || '').trim();
+  const m = s.match(/(?:（|\()([^（）()]*)[，,]([^（）()]*)[，,]([^（）()]*)(?:）|\))\s*$/);
+  if (!m) return s;
+  const journal = m[1].trim();
+  const domain = m[2].trim();
+  const kind = m[3].trim();
+  const journalOk = /^[A-Za-z0-9][A-Za-z0-9 .:&/+-]{0,48}$/.test(journal);
+  const domainOk = /^[\u4e00-\u9fff]{2,8}(?:与[\u4e00-\u9fff]{1,6})?$/.test(domain);
+  if (journalOk && domainOk && STUDY_LABELS.has(kind)) return s.slice(0, m.index).trim();
+  return s;
+}
 
 /* ---------------- abstract section headings ----------------
    Europe PMC returns real structure: <h4>Background</h4>…<h4>Results</h4>…
@@ -378,7 +393,7 @@ function favKey(a) {
   return String(a?.doi || a?.id || '').trim().toLowerCase();
 }
 function favTitle(a) {
-  const zh = (a?.digest && a.digest.titleZh) || a?.titleZh || '';
+  const zh = stripTitleMeta((a?.digest && a.digest.titleZh) || a?.titleZh || '');
   return String(zh || a?.title || '未命名').trim();
 }
 function favAbstract(a) {
@@ -397,7 +412,7 @@ function favSnapshot(a) {
     id: a.id || k,
     doi: a.doi || (k.startsWith('10.') ? k : ''),
     title: a.title || '',
-    titleZh: (a.digest && a.digest.titleZh) || '',
+    titleZh: stripTitleMeta((a.digest && a.digest.titleZh) || ''),
     abstract: favAbstract(a).slice(0, 12000),
     journal: a.journal || '',
     domain: a.domain || '',
@@ -444,7 +459,7 @@ function articleFromFavSnap(snap, key) {
     oa: !!snap.oa,
     issn: snap.issn || '',
     keywords: [],
-    digest: snap.titleZh ? { titleZh: snap.titleZh } : null,
+    digest: snap.titleZh ? { titleZh: stripTitleMeta(snap.titleZh) } : null,
     pii: snap.pii || undefined,
   };
 }
@@ -1385,6 +1400,9 @@ async function loadDigest() {
   const d = await trySnapshot('data/digest.json');
   if (!d || !Array.isArray(d.items) || !d.items.length) return;
   await loadSnapArticles();
+  for (const it of d.items) {
+    if (it && it.titleZh) it.titleZh = stripTitleMeta(it.titleZh);
+  }
   S.digest = {
     date: d.date || null,
     items: d.items,
@@ -1782,7 +1800,7 @@ function articleCard(a, isPick, pickRank) {
   if (isPick && isTop) titleWrap.append(el('span', 'pick-ribbon', '⭐ 今日首选'));
   else if (isPick) titleWrap.append(el('span', 'pick-num', 'NO.' + pickRank));
   // 有中文标题就用中文（英文原标题收进下方的「英文原标题与摘要」折叠块）
-  const titleZh = (a.digest && a.digest.titleZh) || '';
+  const titleZh = stripTitleMeta((a.digest && a.digest.titleZh) || '');
   const h3 = el('h3', 'art-title');
   fillHighlighted(h3, titleZh || a.title, searchQuery());
   titleWrap.append(h3);
@@ -2420,18 +2438,18 @@ function lookupMt(a) {
   const id = mtId(a);
   const norm = normTitle(a.title);
   const doiHit = id && S.mt.byDoi.get(id);
-  if (doiHit && (!doiHit.norm || doiHit.norm === norm)) return doiHit.zh;
+  if (doiHit && (!doiHit.norm || doiHit.norm === norm)) return stripTitleMeta(doiHit.zh);
   const normHit = norm && S.mt.byNorm.get(norm);
-  if (normHit) return normHit.zh;
+  if (normHit) return stripTitleMeta(normHit.zh);
   const local = (id && S.mt.local.get(id)) || (norm && S.mt.local.get('t:' + norm));
-  if (local && local.zh && (!local.norm || local.norm === norm)) return local.zh;
+  if (local && local.zh && (!local.norm || local.norm === norm)) return stripTitleMeta(local.zh);
   return '';
 }
 function applyCachedMt(a) {
   if (!mtEligible(a)) return false;
   const zh = lookupMt(a);
   if (!zh) return false;
-  a.mtZh = zh;
+  a.mtZh = stripTitleMeta(zh);
   return true;
 }
 function applyAllCachedMt() {
@@ -2441,7 +2459,7 @@ function machineTitleNode(a) {
   if (!a?.mtZh || !mtEligible(a)) return null;
   const p = el('p', 'art-zh');
   const t = el('span', 'art-zh-txt');
-  fillHighlighted(t, a.mtZh, searchQuery());
+  fillHighlighted(t, stripTitleMeta(a.mtZh), searchQuery());
   p.append(t, el('span', 'art-zh-tag', '机翻'));
   return p;
 }
@@ -2458,7 +2476,7 @@ function patchMachineTitles() {
       continue;
     }
     const t = line.querySelector('.art-zh-txt');
-    if (t) fillHighlighted(t, a.mtZh, searchQuery());
+    if (t) fillHighlighted(t, stripTitleMeta(a.mtZh), searchQuery());
   }
 }
 async function loadTitleSeed() {
@@ -2519,7 +2537,7 @@ function queueMachineTitles() {
         if (data.error === 'quota' || res.status === 429) S.mt.stop = 'quota';
         if (data.error === 'ai_unconfigured' || res.status === 503) S.mt.stop = 'unconfigured';
         for (const item of data.items || []) {
-          const zh = String(item?.zh || '').trim();
+          const zh = stripTitleMeta(item?.zh || '');
           if (!zh) continue;
           const id = String(item.id || '').toLowerCase();
           for (const list of mtLists()) {
@@ -2832,9 +2850,9 @@ async function fetchQuotes(a) {
   return { quotes: out };
 }
 async function ensureCardTitle(a) {
-  const editorial = a?.digest && String(a.digest.titleZh || '').trim();
+  const editorial = stripTitleMeta(a?.digest && a.digest.titleZh);
   if (editorial) return editorial;
-  const cached = a.mtZh || lookupMt(a);
+  const cached = stripTitleMeta(a.mtZh || lookupMt(a));
   if (cached) return cached;
   const res = await fetch('/api/translate', {
     method: 'POST',
@@ -2842,7 +2860,7 @@ async function ensureCardTitle(a) {
     body: JSON.stringify({ mode: 'titles', items: [{ id: a.id || a.doi || a.title, text: a.title }] }),
   });
   const data = await res.json().catch(() => ({}));
-  const zh = data.items && data.items[0] && data.items[0].zh;
+  const zh = stripTitleMeta(data.items && data.items[0] && data.items[0].zh);
   if (zh) {
     rememberMt(a, zh);
     if (mtEligible(a)) { a.mtZh = zh; patchMachineTitles(); }
