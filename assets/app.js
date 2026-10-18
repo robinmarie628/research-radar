@@ -11,7 +11,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.18.33';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.18.34';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -2793,14 +2793,15 @@ function downloadBlob(filename, blob) {
   link.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1500);
 }
-function exactQuote(en, abstract) {
-  const abs = String(abstract || '').replace(/\s+/g, ' ').trim();
+function exactQuote(en, blobs) {
   const needle = String(en || '').replace(/\s+/g, ' ').trim();
   const core = needle.replace(/…/g, '').replace(/\s+/g, ' ').trim();
-  if (!core || !abs.includes(core)) return '';
+  if (!core) return '';
+  const hay = (Array.isArray(blobs) ? blobs : [blobs]).map(b => String(b || '').replace(/\s+/g, ' ')).join('\n');
+  if (!hay.includes(core)) return '';
   return needle;
 }
-const QUOTE_LS = 'rr.quotes.v8';
+const QUOTE_LS = 'rr.quotes.v9';
 function quoteKey(a, abs) {
   let h = 5381;
   const s = String(abs || '').slice(0, 4000);
@@ -2836,6 +2837,7 @@ async function fetchQuotes(a) {
       body: JSON.stringify({
         mode: 'quotes',
         id: a.id || a.doi || '',
+        doi: a.doi || '',
         abstract: abs.slice(0, 12000),
         sections: a.sections || undefined,
       }),
@@ -2852,9 +2854,11 @@ async function fetchQuotes(a) {
   }
   const quotes = [];
   for (const q of data.quotes) {
-    const en = exactQuote(q?.en, abs);
+    const blobs = [abs];
+    if (q?.source === 'fulltext' && q.sentence) blobs.push(q.sentence);
+    const en = exactQuote(q?.en, blobs);
     const zh = String(q?.zh || '').trim();
-    if (en && zh) quotes.push({ en, zh, role: q.role || '' });
+    if (en && zh) quotes.push({ en, zh, role: '', source: q?.source || 'abstract', sentence: q?.sentence || '' });
   }
   if (!quotes.length) return { error: '没有从摘要里抽出可用的原句。' };
   const out = quotes.slice(0, 4);
@@ -2960,7 +2964,7 @@ async function showShareImage(a) {
   const body = $('#shareBody');
   const title = $('#shareTitle');
   title.textContent = '分享图片';
-  body.replaceChildren(el('p', 'share-status', '正在确认全文链接，并挑选三句原文…'));
+  body.replaceChildren(el('p', 'share-status', '正在确认全文链接，并挑选值得读的原文…'));
   try {
     if (a.doi && !a.pii) {
       if (a.pii === '') a.pii = undefined;

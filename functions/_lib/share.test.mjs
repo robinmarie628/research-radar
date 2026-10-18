@@ -15,6 +15,7 @@ import {
   isDenseMethods, isBoilerplate, excerptQuote,
 } from './quotes.js';
 import { handleTranslate, __setMtResources } from '../api/translate.js';
+import { extractPassages } from './fulltext.js';
 
 const require = createRequire(import.meta.url);
 const cite = require('../../assets/cite.js');
@@ -36,11 +37,12 @@ test('a paraphrased sentence is rejected and a real one is kept', () => {
     { i: 99, en: 'Patients had more readmissions.', zh: '不该采用' },
     { i: 2, en: 'early review somehow helped', zh: '因此，早期评估容量状态降低了死亡率。' },
   ]);
-  assert.equal(picks.length, 3);
+  assert.ok(picks.length >= 1 && picks.length <= 4);
   for (const p of picks) {
     const core = p.en.replace(/…/g, '').trim();
     assert.ok(ABSTRACT.includes(core), p.en);
     assert.ok(wordCountOk(p.en), p.en);
+    assert.equal(p.en.includes('...'), false);
   }
   assert.equal(picks.some(p => /early review of volume status reduced mortality/.test(p.en)), true);
   assert.equal(picks.some(p => /不该采用/.test(p.zh)), false);
@@ -95,121 +97,60 @@ test('registration, funding, ethics, and copyright lines are never quoted', () =
   const picked = pickHeuristic(splitSentences(abstract), 3);
   assert.equal(picked.length, 3);
   for (const s of picked) assert.equal(isBoilerplate(s), false, s);
-  assert.equal(picked.includes(interp), true);
-  assert.equal(picked.includes(second), true);
+  assert.equal(picked.includes(plain), true);
   const sentences = splitSentences(abstract);
   const forced = resolveQuotePicks(abstract, [
     { i: sentences.findIndex(s => /NCT03377036/.test(s)), zh: '注册信息' },
   ]);
   assert.equal(forced.some(p => /NCT|注册信息|funded by|ethics committee|Copyright/.test(p.en + p.zh)), false);
-  assert.equal(forced.some(p => p.en === interp), true);
+  assert.equal(forced.some(p => /fewer interval cancers/.test(p.en)), true);
 });
 
-test('quotes are background, then the finding, then the significance', () => {
+test('a dull mortality sentence loses to a result that breaks the usual assumption', () => {
   const bg = 'Controlling hyperlipidemia has reduced but not eliminated atherosclerotic disease as a major cause of death.';
-  const finding = 'Loss of GIMAP6 caused inflammatory vasculopathy and accelerated atherosclerosis without hyperlipidemia.';
-  const meaning = 'These findings suggest GIMAP6 safeguards vascular integrity even when circulating lipids are normal.';
+  const finding = 'Loss of GIMAP6 caused inflammatory vasculopathy and accelerated atherosclerosis in the absence of hyperlipidemia.';
+  const meaning = 'GIMAP6 restrains lethal vascular disease independently of systemic hyperlipidemia.';
   const methods = 'Mice were examined and randomly assigned across 12 cages with a hazard ratio of 0.80 (95% CI 0.70-0.90; p<0.001) in the modified full analysis set.';
   const reg = 'The study is registered on ClinicalTrials.gov (NCT03377036).';
-  const abstract = [bg, methods, finding, reg, meaning].join(' ');
-  const picks = resolveQuotePicks(abstract, []);
-  assert.deepEqual(picks.map(p => p.role), ['background', 'finding', 'significance']);
-  assert.equal(picks[0].en, bg);
-  assert.equal(picks[1].en, finding);
-  assert.equal(picks[2].en, meaning);
-  for (const p of picks) assert.equal(isBoilerplate(p.en), false);
+  const picks = resolveQuotePicks([bg, methods, finding, reg, meaning].join(' '), []);
+  const blob = picks.map(p => p.en).join(' ');
+  assert.match(blob, /in the absence of hyperlipidemia/);
+  assert.match(blob, /independently of systemic hyperlipidemia/);
+  assert.doesNotMatch(blob, /major cause of death|NCT|95% CI/);
+  for (const p of picks) {
+    assert.ok(wordCountOk(p.en), p.en);
+    assert.equal(p.en.includes('...'), false);
+  }
 });
 
-test('structured abstract sections supply the three roles', () => {
-  const bg = 'Patients with uncontrolled hypertension still have a high risk of stroke despite current drugs.';
-  const methods = 'Adults were randomly assigned to the new dose or usual care and followed for two years.';
-  const finding = 'The new dose reduced stroke compared with usual care in this screened population.';
-  const meaning = 'These findings suggest the new dose should be considered for similar adults.';
-  const abstract = [bg, methods, finding, meaning].join(' ');
-  const picks = resolveQuotePicks(abstract, [], {
-    objective: bg, methods, results: finding, conclusion: meaning,
-  });
-  assert.equal(picks[0].role, 'background');
-  assert.equal(picks[0].en, bg);
-  assert.equal(picks[1].en, finding);
-  assert.equal(picks[2].en, meaning);
-});
-
-test('a conclusion that mentions an unmet need is not the background quote', () => {
+test('textbook background and a support-the-use conclusion are not the hooks', () => {
   const bg = 'In hereditary angioedema, oral on-demand treatments that provide rapid relief remain scant.';
   const aim = 'We investigated the efficacy and safety of deucrictibant for on-demand treatment of attacks.';
   const census = 'The primary efficacy analysis included 88 participants with paired treated attacks.';
-  const finding = 'Onset of symptom relief occurred significantly faster with deucrictibant than placebo.';
+  const gap = 'Onset of symptom relief occurred significantly faster with deucrictibant than placebo, with median times of 1.28 h (95% CI 1.05 to 1.52) and more than 12 h (p<0.0001).';
   const short = 'Oral deucrictibant provided faster times to symptom relief than placebo and was generally well tolerated.';
-  const meaning = 'These results support the use of deucrictibant as potentially the first oral antagonist and may address an unmet need for convenient treatment.';
-  const abstract = [bg, aim, census, finding, short, meaning].join(' ');
-  const sections = {
-    objective: bg + ' ' + aim,
-    results: census + ' ' + finding,
-    conclusion: short + ' ' + meaning,
-  };
-  const forced = resolveQuotePicks(abstract, [
-    { role: 'background', i: 5, zh: '意义句被误标成背景' },
-    { role: 'finding', i: 2, zh: '人数统计' },
-    { role: 'significance', i: 4, zh: '较短结论' },
-  ], sections);
-  assert.deepEqual(forced.map(p => p.role), ['background', 'finding', 'significance']);
-  assert.equal(forced[0].en, bg);
-  assert.equal(forced[1].en, finding);
-  assert.equal(forced[2].en, meaning);
-  assert.match(forced[2].zh, /意义/);
-  const heuristic = resolveQuotePicks(abstract, [], sections);
-  assert.equal(heuristic[0].en, bg);
-  assert.equal(heuristic[1].en, finding);
-  assert.equal(heuristic[2].en, meaning);
+  const meaning = 'These results support the use of deucrictibant as potentially the first orally administered antagonist and may address an unmet need for convenient treatment.';
+  const picks = resolveQuotePicks([bg, aim, census, gap, short, meaning].join(' '), []);
+  const blob = picks.map(p => p.en).join(' ');
+  assert.match(blob, /more than 12 h/);
+  assert.match(blob, /first orally administered/);
+  assert.doesNotMatch(blob, /remain scant|generally well tolerated|These results support the use/);
+  assert.ok(picks.length >= 2 && picks.length <= 4);
+  for (const p of picks) assert.ok(wordCountOk(p.en), p.en);
 });
 
-test('a plain result replaces a confidence-interval sentence for the same finding', () => {
+test('a model pick of a census sentence is replaced by the surprising line', () => {
   const bg = 'Oral treatments that stop an attack quickly remain scant.';
   const plain = 'Symptom relief was significantly faster with the study drug than placebo.';
   const clutter = 'Onset of symptom relief occurred significantly faster with the study drug than placebo, with median times of 1.28 h (95% CI 1.05 to 1.52) and more than 12 h (5.82 to more than 12) (p<0.0001).';
-  const meaning = 'These findings suggest the study drug should be offered when an attack starts.';
-  const abstract = [bg, clutter, plain, meaning].join(' ');
-  const picks = resolveQuotePicks(abstract, [
-    { role: 'finding', i: 1, zh: '不该用带置信区间的长句' },
-  ], { objective: bg, results: clutter + ' ' + plain, conclusion: meaning });
-  assert.equal(picks[1].role, 'finding');
-  assert.equal(picks[1].en, plain);
-  assert.equal(picks[1].zh, '');
-  assert.equal(picks.some(p => /95% CI/.test(p.en)), false);
-});
-
-test('the only results sentence is kept even when it carries a confidence interval', () => {
-  const bg = 'In hereditary angioedema, oral on-demand treatments remain scant.';
-  const finding = 'Onset of symptom relief occurred significantly faster with deucrictibant than placebo, with median times of 1.28 h (95% CI 1.05 to 1.52) and more than 12 h (p<0.0001).';
-  const meaning = 'These results support the use of deucrictibant as an oral treatment for attacks.';
-  const abstract = [bg, finding, meaning].join(' ');
-  const picks = resolveQuotePicks(abstract, [], {
-    objective: bg, results: finding, conclusion: meaning,
-  });
-  assert.equal(picks.map(p => p.role).join(','), 'background,finding,significance');
-  assert.match(picks[1].en, /significantly faster with deucrictibant than placebo/);
-  assert.doesNotMatch(picks[1].en, /95% CI/);
-  assert.ok(finding.includes(quoteCore(picks[1].en)));
-  assert.ok(wordCountOk(picks[1].en));
-  assert.equal(picks[2].en, meaning);
-});
-
-test('GIMAP6-style abstract adds a mechanism excerpt and keeps each quote short', () => {
-  const bg = 'Controlling hyperlipidemia has reduced but not eliminated atherosclerotic cardiovascular disease (ASCVD) as a major cause of human mortality.';
-  const finding = 'Here, we report that loss of the immunoregulatory gene GTPase of immunity-associated protein 6 (Gimap6) in mice causes an inflammatory vasculopathy and accelerated atherosclerosis in the absence of hyperlipidemia.';
-  const mechanism = 'Human hypomorphic GIMAP6 variants, including the African-ancestry-enriched V65I allele, are associated with altered monocyte redox balance, increased CD36-mediated lipid uptake, and early ASCVD.';
-  const meaning = 'Thus, GIMAP6 is a crucial safeguard for vascular integrity that restrains endothelial dysfunction, macrophage foam cell generation, and inflammation that can cause lethal ASCVD independently of systemic hyperlipidemia.';
-  const abstract = [bg, finding, mechanism, meaning].join(' ');
-  const picks = resolveQuotePicks(abstract, []);
-  assert.deepEqual(picks.map(p => p.role), ['background', 'finding', 'mechanism', 'significance']);
-  assert.match(picks[1].en, /^…loss of the immunoregulatory gene/);
-  assert.match(picks[2].en, /CD36-mediated lipid uptake/);
-  assert.doesNotMatch(picks[1].en, /CD36-mediated lipid uptake/);
-  for (const p of picks) {
-    assert.ok(abstract.includes(quoteCore(p.en)), p.en);
-    assert.ok(wordCountOk(p.en), p.en);
-  }
+  const meaning = 'These results support the use of the study drug as an oral treatment for attacks.';
+  const picks = resolveQuotePicks([bg, clutter, plain, meaning].join(' '), [
+    { i: 0, zh: '不该用背景' },
+  ]);
+  const blob = picks.map(p => p.en).join(' ');
+  assert.match(blob, /more than 12 h|significantly faster/);
+  assert.doesNotMatch(blob, /remain scant|These results support the use/);
+  assert.equal(picks.some(p => /不该用背景/.test(p.zh)), false);
 });
 
 test('a mechanism window keeps a trailing receptor phrase inside the word budget', () => {
@@ -221,16 +162,25 @@ test('a mechanism window keeps a trailing receptor phrase inside the word budget
   assert.ok(wordCountOk(excerpt), excerpt);
 });
 
-test('a trial without a mechanism stays at three excerpts', () => {
-  const bg = 'In hereditary angioedema, oral on-demand treatments that provide rapid relief remain scant.';
-  const finding = 'Onset of symptom relief occurred significantly faster with deucrictibant than placebo, with median times of 1.28 h (95% CI 1.05 to 1.52) (p<0.0001).';
-  const meaning = 'These results support the use of deucrictibant as an oral treatment for attacks.';
-  const picks = resolveQuotePicks([bg, finding, meaning].join(' '), [], {
-    objective: bg, results: finding, conclusion: meaning,
-  });
-  assert.deepEqual(picks.map(p => p.role), ['background', 'finding', 'significance']);
-  assert.doesNotMatch(picks[1].en, /95% CI|p</);
-  assert.ok(wordCountOk(picks[1].en));
+test('omission marks are a single ellipsis character', () => {
+  const sentence = 'Here, we report that loss of Gimap6 in mice causes inflammatory vasculopathy and accelerated atherosclerosis in the absence of hyperlipidemia and without any change in circulating cholesterol.';
+  const excerpt = excerptQuote(sentence, '');
+  assert.match(excerpt, /^…/);
+  assert.equal(excerpt.includes('...'), false);
+  assert.match(excerpt, /in the absence of hyperlipidemia/);
+  assert.ok(wordCountOk(excerpt), excerpt);
+});
+
+test('open-access full text keeps Results and Discussion only', () => {
+  const xml = `<article><body>
+    <sec disp-level="1"><title>Methods</title><p>Participants were enrolled.</p></sec>
+    <sec disp-level="1"><title>Results</title><p>Loss of the gene caused disease in the absence of the usual risk factor.</p></sec>
+    <sec disp-level="1"><title>Discussion</title><p>The finding challenges the assumption that the risk factor is required.</p></sec>
+    </body><back><sec disp-level="1"><title>Results</title><p>This reference list is not the paper.</p></sec></back></article>`;
+  const text = extractPassages(xml);
+  assert.match(text, /in the absence of the usual risk factor/);
+  assert.match(text, /challenges the assumption/);
+  assert.doesNotMatch(text, /Participants were enrolled|reference list/);
 });
 
 test('quote JSON parser reads indexes', () => {
@@ -265,7 +215,7 @@ test('quotes mode drops a fake sentence and restores a drug placeholder', async 
   }), env);
   assert.equal(res.status, 200);
   const data = await res.json();
-  assert.equal(data.quotes.length, 3);
+  assert.ok(data.quotes.length >= 1 && data.quotes.length <= 4);
   for (const q of data.quotes) assert.ok(abstract.includes(quoteCore(q.en)), q.en);
   const first = data.quotes.find(q => quoteCore(q.en) && sentences[0].includes(quoteCore(q.en)) && /durvalumab/i.test(q.en));
   assert.ok(first);

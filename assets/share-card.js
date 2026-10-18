@@ -499,11 +499,37 @@
       const qx = M + 34 * S;
       const qw = W - qx - M;
       const qen = source(17, true);
+      const qEllipsis = serif(17, false);
       const qenAdv = G.en_lh * S;
       wrap(ctx, q.en || '', qen, qw).forEach((line, li) => {
-        paint(qx, y, line, qen, INK, {
+        const box = textInk(ctx, line, qx, y, qen, 'top');
+        note(box, {
           role: 'qen', run: 'qen-' + i, quote: i, minAdvance: qenAdv, minFont: px(17), line: li,
+          y0: y, fontPx: fontPxOf(qen),
         });
+        if (draw) {
+          ctx.textBaseline = 'top';
+          ctx.fillStyle = INK;
+          if (!line.includes('…')) {
+            ctx.font = qen;
+            ctx.fillText(line, qx, y);
+          } else {
+            let cx = qx;
+            const parts = line.split('…');
+            parts.forEach((part, pi) => {
+              if (part) {
+                ctx.font = qen;
+                ctx.fillText(part, cx, y);
+                cx += ctx.measureText(part).width;
+              }
+              if (pi < parts.length - 1) {
+                ctx.font = qEllipsis;
+                ctx.fillText('…', cx, y);
+                cx += ctx.measureText('…').width;
+              }
+            });
+          }
+        }
         y += qenAdv;
       });
       y += G.en_gap * S;
