@@ -11,7 +11,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.18.45';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.18.46';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -3276,31 +3276,76 @@ async function boot() {
   }, 2500);
 }
 
-/* ---------------- 正文字号 ----------------
-   Three steps. sm is today's size and the minimum. Only --read copy grows. */
+/* ---------------- 正文字号 / 加粗 ----------------
+   Slider is 100–120% of today's size. 100% is the minimum and the default.
+   Only --read copy grows. Badges, chips, tabs, and the share-card image stay put.
+   rr.text.v1 stores the percent (legacy md = 110, lg = 120). rr.bold.v1 is "1" when bold. */
 const TEXT_KEY = 'rr.text.v1';
-function textStepId(raw) {
-  return raw === 'md' || raw === 'lg' ? raw : 'sm';
+const BOLD_KEY = 'rr.bold.v1';
+function textPercent(raw) {
+  if (raw === 'md') return 110;
+  if (raw === 'lg') return 120;
+  const n = Number.parseInt(raw, 10);
+  if (!Number.isFinite(n) || n < 100) return 100;
+  if (n > 120) return 120;
+  return n;
 }
-function applyTextStep(raw) {
-  const id = textStepId(raw);
-  if (id === 'sm') document.documentElement.removeAttribute('data-text');
-  else document.documentElement.setAttribute('data-text', id);
+function boldOn(raw) {
+  return raw === '1';
+}
+function applyTextSize(raw) {
+  const pct = textPercent(raw);
+  const root = document.documentElement;
+  if (pct === 100) root.style.removeProperty('--read');
+  else root.style.setProperty('--read', (pct / 100).toFixed(2));
   try {
-    if (id === 'sm') localStorage.removeItem(TEXT_KEY);
-    else localStorage.setItem(TEXT_KEY, id);
+    if (pct === 100) localStorage.removeItem(TEXT_KEY);
+    else localStorage.setItem(TEXT_KEY, String(pct));
   } catch { /* private mode */ }
-  document.querySelectorAll('.type-size [data-step]').forEach(b => {
-    b.setAttribute('aria-pressed', b.dataset.step === id ? 'true' : 'false');
-  });
-  return id;
+  const range = $('#typeRange');
+  const out = $('#typeOut');
+  if (range) {
+    range.value = String(pct);
+    range.setAttribute('aria-valuenow', String(pct));
+    range.setAttribute('aria-valuetext', pct + '%');
+  }
+  if (out) out.textContent = pct + '%';
+  return pct;
+}
+function applyBold(on) {
+  const root = document.documentElement;
+  if (on) root.setAttribute('data-bold', '');
+  else root.removeAttribute('data-bold');
+  try {
+    if (on) localStorage.setItem(BOLD_KEY, '1');
+    else localStorage.removeItem(BOLD_KEY);
+  } catch { /* private mode */ }
+  const btn = $('#boldBtn');
+  if (btn) btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+  return on;
+}
+function setTypeOpen(open) {
+  const pop = $('#typePop');
+  const btn = $('#typeBtn');
+  if (!pop || !btn) return;
+  pop.hidden = !open;
+  btn.setAttribute('aria-expanded', open ? 'true' : 'false');
 }
 
 /* ---------------- wire up ---------------- */
 $$('.seg').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
-try { applyTextStep(localStorage.getItem(TEXT_KEY)); } catch { applyTextStep('sm'); }
-document.querySelectorAll('.type-size [data-step]').forEach(b => {
-  b.addEventListener('click', () => applyTextStep(b.dataset.step));
+try { applyTextSize(localStorage.getItem(TEXT_KEY)); } catch { applyTextSize(100); }
+try { applyBold(boldOn(localStorage.getItem(BOLD_KEY))); } catch { applyBold(false); }
+const typeBtn = $('#typeBtn');
+if (typeBtn) typeBtn.addEventListener('click', () => {
+  const pop = $('#typePop');
+  setTypeOpen(!pop || pop.hidden);
+});
+const typeRange = $('#typeRange');
+if (typeRange) typeRange.addEventListener('input', e => applyTextSize(e.target.value));
+const boldBtn = $('#boldBtn');
+if (boldBtn) boldBtn.addEventListener('click', () => {
+  applyBold(!document.documentElement.hasAttribute('data-bold'));
 });
 $('#refreshBtn').addEventListener('click', () => refresh(true));
 $('#regenBtn').addEventListener('click', triggerRegenerate);
@@ -3317,6 +3362,7 @@ const downloadFavBtn = $('#downloadFavBtn');
 if (downloadFavBtn) downloadFavBtn.addEventListener('click', () => downloadFavoritesMarkdown());
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
+  setTypeOpen(false);
   hideMtPop();
   closeShareSheet();
   closeGlossary();
@@ -3329,6 +3375,7 @@ document.addEventListener('selectionchange', scheduleMtPop);
 document.addEventListener('pointerdown', e => {
   const t = e.target;
   if (!(t instanceof Element)) return;
+  if (!t.closest('#typeBtn, #typePop')) setTypeOpen(false);
   if (t.closest('#mtPop, .art-title, .art-zh, .rawtitle-txt, .sec-txt, .art-abstract, .search-snip')) return;
   hideMtPop();
 });
@@ -3340,7 +3387,10 @@ if (mtPop) {
   mtPop.addEventListener('touchstart', e => e.preventDefault(), { passive: false });
 }
 const scrollArea = $('#scrollArea');
-if (scrollArea) scrollArea.addEventListener('scroll', () => hideMtPop(), { passive: true });
+if (scrollArea) scrollArea.addEventListener('scroll', () => {
+  setTypeOpen(false);
+  hideMtPop();
+}, { passive: true });
 window.addEventListener('hashchange', () => {
   const on = location.hash === '#fav';
   if (on && S.jFilter !== 'fav') setJFilter('fav');

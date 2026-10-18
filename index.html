@@ -15,7 +15,12 @@
 <meta name="apple-mobile-web-app-title" content="Radar for Meds" />
 <link rel="stylesheet" href="assets/styles.css" />
 <script>
-try{var t=localStorage.getItem('rr.text.v1');if(t==='md'||t==='lg')document.documentElement.setAttribute('data-text',t);}catch(e){}
+try{
+  var t=localStorage.getItem('rr.text.v1');
+  var n=t==='md'?110:t==='lg'?120:parseInt(t,10);
+  if(n>100&&n<=120)document.documentElement.style.setProperty('--read',(n/100).toFixed(2));
+  if(localStorage.getItem('rr.bold.v1')==='1')document.documentElement.setAttribute('data-bold','');
+}catch(e){}
 </script>
 </head>
 <body>
@@ -31,19 +36,24 @@ try{var t=localStorage.getItem('rr.text.v1');if(t==='md'||t==='lg')document.docu
         <p id="brandSub">科研雷达 · 顶刊速递</p>
       </div>
     </div>
-    <div class="type-size" role="group" aria-label="正文字号">
-      <button type="button" data-step="sm" aria-pressed="true" aria-label="标准字号" title="标准字号">A</button>
-      <button type="button" data-step="md" aria-pressed="false" aria-label="中等字号" title="中等字号">A</button>
-      <button type="button" data-step="lg" aria-pressed="false" aria-label="较大字号" title="较大字号">A</button>
-    </div>
-    <button class="icon-btn" id="refreshBtn" type="button" aria-label="刷新数据" title="刷新数据">
+    <div class="top-actions">
+      <button class="icon-btn type-btn" id="typeBtn" type="button" aria-expanded="false" aria-controls="typePop" aria-label="调整字号" title="调整字号">A</button>
+      <button class="icon-btn bold-btn" id="boldBtn" type="button" aria-pressed="false" aria-label="加粗正文" title="加粗正文">B</button>
+      <button class="icon-btn" id="refreshBtn" type="button" aria-label="刷新数据" title="刷新数据">
       <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true">
         <path d="M20 11a8 8 0 1 0-2.3 6.3" fill="none" stroke="currentColor" stroke-width="2.1"
               stroke-linecap="round"/>
         <path d="M20.5 4.5v6h-6" fill="none" stroke="currentColor" stroke-width="2.1"
               stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-    </button>
+      </button>
+    </div>
+    <div class="type-pop" id="typePop" hidden role="group" aria-label="正文字号">
+      <span class="type-a" aria-hidden="true">A</span>
+      <input id="typeRange" type="range" min="100" max="120" step="1" value="100" aria-label="正文字号，100% 到 120%" aria-valuemin="100" aria-valuemax="120" aria-valuenow="100" aria-valuetext="100%">
+      <span class="type-a type-a-lg" aria-hidden="true">A</span>
+      <output id="typeOut" for="typeRange">100%</output>
+    </div>
   </header>
 
   <!-- ══ 切换按钮 ══ -->

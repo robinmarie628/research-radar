@@ -566,23 +566,40 @@ test('a vertical pan scrolls the abstract and is not a tap that closes the card'
   assert.match(abs, /overscroll-behavior:contain/);
 });
 
-test('text size has three steps and the default is today\'s size', () => {
+test('text size slider stays between 100 and 120 and bold is off by default', () => {
   const src = readFileSync(new URL('../../assets/app.js', import.meta.url), 'utf8');
-  const start = src.indexOf('function textStepId');
-  const end = src.indexOf('function applyTextStep');
-  const { textStepId } = new Function(src.slice(start, end) + '\nreturn { textStepId };')();
-  assert.equal(textStepId('sm'), 'sm');
-  assert.equal(textStepId(null), 'sm');
-  assert.equal(textStepId('xl'), 'sm');
-  assert.equal(textStepId('md'), 'md');
-  assert.equal(textStepId('lg'), 'lg');
+  const start = src.indexOf('function textPercent');
+  const end = src.indexOf('function applyTextSize');
+  const { textPercent, boldOn } = new Function(src.slice(start, end) + '\nreturn { textPercent, boldOn };')();
+  assert.equal(textPercent(null), 100);
+  assert.equal(textPercent('sm'), 100);
+  assert.equal(textPercent('90'), 100);
+  assert.equal(textPercent('md'), 110);
+  assert.equal(textPercent('lg'), 120);
+  assert.equal(textPercent('115'), 115);
+  assert.equal(textPercent('140'), 120);
+  assert.equal(boldOn(null), false);
+  assert.equal(boldOn('0'), false);
+  assert.equal(boldOn('1'), true);
+
+  const html = readFileSync(new URL('../../index.html', import.meta.url), 'utf8');
+  assert.match(html, /id="typeRange"[^>]*min="100"[^>]*max="120"/);
+  assert.match(html, /id="boldBtn"/);
+  assert.match(html, /rr\.bold\.v1/);
+  assert.doesNotMatch(html, /data-step="md"/);
 
   const css = readFileSync(new URL('../../assets/styles.css', import.meta.url), 'utf8');
   assert.match(css, /html\{--read:1\}/);
-  assert.match(css, /html\[data-text="md"\]\{--read:1\.1\}/);
-  assert.match(css, /html\[data-text="lg"\]\{--read:1\.2\}/);
+  assert.doesNotMatch(css, /data-text="md"/);
   assert.match(css, /\.art-title\{[^}]*calc\(14px \* var\(--read\)\)/);
   assert.match(css, /\.sec-txt\{[^}]*calc\(12\.5px \* var\(--read\)\)/);
+  const bold = css.slice(css.indexOf('html[data-bold]'), css.indexOf('html,body{height:100%}'));
+  assert.match(bold, /\.art-title/);
+  assert.match(bold, /\.sec-txt/);
+  assert.doesNotMatch(bold, /\.sec-lab/);
+  assert.doesNotMatch(bold, /\.chip/);
+  assert.doesNotMatch(bold, /\.seg/);
+  assert.doesNotMatch(bold, /\.badge/);
   const lab = css.slice(css.indexOf('.sec-lab{'), css.indexOf('.sec-txt{'));
   assert.match(lab, /font-size:10px/);
   assert.doesNotMatch(lab, /var\(--read\)/);
