@@ -533,6 +533,39 @@ const sample = {
   authorCite: ['Xiang C', 'Arusha K', 'Springer D', 'Li M'],
 };
 
+test('a vertical pan scrolls the abstract and is not a tap that closes the card', () => {
+  const src = readFileSync(new URL('../../assets/app.js', import.meta.url), 'utf8');
+  const start = src.indexOf('function cardGestureMoved');
+  const end = src.indexOf('function articleCard');
+  const { cardGestureMoved, abstractPan } = new Function(
+    src.slice(start, end) + '\nreturn { cardGestureMoved, abstractPan };',
+  )();
+  const origin = { x: 40, y: 200 };
+  assert.equal(cardGestureMoved(origin, 42, 204), false);
+  assert.equal(cardGestureMoved(origin, 40, 230), true);
+  assert.equal(cardGestureMoved(null, 40, 230), false);
+
+  const el = { scrollHeight: 480, clientHeight: 168, scrollTop: 0 };
+  assert.equal(abstractPan(el, 12), false);
+  assert.equal(el.scrollTop, 0);
+  assert.equal(abstractPan(el, -20), true);
+  assert.equal(el.scrollTop, 20);
+  el.scrollTop = 480 - 168;
+  assert.equal(abstractPan(el, -8), false);
+  assert.equal(abstractPan(el, 15), true);
+  assert.equal(el.scrollTop, 480 - 168 - 15);
+  assert.equal(abstractPan({ scrollHeight: 100, clientHeight: 168, scrollTop: 0 }, -10), false);
+
+  const css = readFileSync(new URL('../../assets/styles.css', import.meta.url), 'utf8');
+  const sec = css.slice(css.indexOf('.sec-txt{'), css.indexOf('.sec-methods'));
+  assert.match(sec, /overflow-y:auto/);
+  assert.match(sec, /touch-action:pan-y/);
+  assert.match(sec, /overscroll-behavior:contain/);
+  const abs = css.slice(css.indexOf('.art-abstract{'), css.indexOf('.art-abstract::-webkit-scrollbar'));
+  assert.match(abs, /touch-action:pan-y/);
+  assert.match(abs, /overscroll-behavior:contain/);
+});
+
 test('RIS, BibTeX, and Vancouver use the metadata we have', () => {
   const ris = cite.ris(sample);
   assert.match(ris, /^TY {2}- JOUR/m);
