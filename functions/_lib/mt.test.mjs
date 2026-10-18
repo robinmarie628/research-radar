@@ -5,7 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   TITLE_SYSTEM, DEFAULT_OVERRIDES, maskDrugs, restoreDrugs, applyGlossary, stripTitleStop,
-  parseTranslationArray, isDrugToken, normTitle, titleZhCutoff, isAcronym,
+  parseTranslationArray, isDrugToken, normTitle, titleZhCutoff, TITLE_ZH_DAYS, isAcronym,
   extractAiText, preserveTitleContrast, exactTitleZh, settleTitleZh, sha256Hex,
 } from './mt.js';
 import { handleTranslate, __setMtResources } from '../api/translate.js';
@@ -22,9 +22,47 @@ test('system prompt keeps the tested placeholder and JSON rules', () => {
   assert.match(TITLE_SYSTEM, /延迟治疗启动/);
 });
 
-test('15-day cutoff is an inclusive UTC window', () => {
-  assert.equal(titleZhCutoff(new Date('2026-10-18T01:58:00Z')), '2026-10-04');
-  assert.equal(titleZhCutoff(new Date('2026-10-18T23:00:00Z')), '2026-10-04');
+test('15-day cutoff matches the journal pool: today minus 15 days', () => {
+  assert.equal(TITLE_ZH_DAYS, 15);
+  assert.equal(titleZhCutoff(new Date('2026-10-18T01:58:00Z')), '2026-10-03');
+  assert.equal(titleZhCutoff(new Date('2026-10-18T23:00:00Z')), '2026-10-03');
+});
+
+test('machine titles follow the 15-day pool; a favorite outside it still wants one', () => {
+  const src = fs.readFileSync(path.join(root, 'assets/app.js'), 'utf8');
+  const start = src.indexOf('function mtId');
+  const end = src.indexOf('function mtLists');
+  const { machineTitleWanted } = new Function(src.slice(start, end) + '\nreturn { machineTitleWanted };')();
+  const cutoff = '2026-10-03';
+  const resolve = {
+    title: '8 weeks versus 12 weeks of sofosbuvir-velpatasvir for treatment-naive, non-cirrhotic, chronic hepatitis C (RESOLVE): a multicentre, open-label, non-inferiority, randomised controlled trial in India.',
+    date: '2026-09-30',
+    doi: '10.1016/s0140-6736(26)01380-2',
+  };
+  const survodutide = {
+    title: 'Survodutide Once Weekly in Adults with Obesity and Type 2 Diabetes.',
+    date: '2026-10-01',
+    doi: '10.1056/nejmoa2607219',
+  };
+  const neuron = {
+    title: 'Toward an automated science of the mind.',
+    date: '2026-10-01',
+    doi: '10.1016/j.neuron.2026.09.012',
+  };
+  assert.equal(machineTitleWanted(resolve, cutoff, new Set()), false);
+  assert.equal(machineTitleWanted(survodutide, cutoff, new Set()), false);
+  assert.equal(machineTitleWanted(neuron, cutoff, new Set()), false);
+  assert.equal(machineTitleWanted(neuron, cutoff, new Set([neuron.doi])), true);
+  assert.equal(machineTitleWanted({ title: 'In window.', date: '2026-10-08', doi: '10.1/new' }, cutoff, new Set()), true);
+  assert.equal(machineTitleWanted({ title: 'Boundary.', date: '2026-10-03', doi: '10.1/edge' }, cutoff, new Set()), true);
+  assert.equal(machineTitleWanted({ title: 'Day before.', date: '2026-10-02', doi: '10.1/old' }, cutoff, new Set()), false);
+  assert.equal(machineTitleWanted({ title: 'Old paper.', date: '2026-09-01', doi: '10.1000/old' }, cutoff, new Set()), false);
+  assert.equal(machineTitleWanted({ ...neuron, digest: { titleZh: '已有编辑标题' } }, cutoff, new Set([neuron.doi])), false);
+  assert.equal(machineTitleWanted({ title: '', date: '2026-10-08', doi: '10.1/x' }, cutoff, new Set()), false);
+
+  const queue = src.slice(src.indexOf('function queueMachineTitles'), src.indexOf('let mtPopToken'));
+  assert.ok(queue.indexOf('favoriteArticles()') < queue.indexOf('S.jr.all'));
+  assert.ok(queue.indexOf('S.jr.picks') < queue.indexOf('S.jr.all'));
 });
 
 test('normTitle ignores case, trailing period, and space', () => {
@@ -277,4 +315,101 @@ test('selection over 1500 characters is rejected before the model', async () => 
   assert.equal(res.status, 400);
   assert.equal((await res.json()).error, 'too_long');
   assert.equal(called, false);
+});
+
+test('the journal pool drops dates older than 15 days and keeps a favorite locally', () => {
+  const src = fs.readFileSync(path.join(root, 'assets/app.js'), 'utf8');
+  assert.match(src, /const DAYS\s+=\s+15;/);
+  const cutStart = src.indexOf('function poolCutoff');
+  const cutEnd = src.indexOf('function epmcWindow');
+  const { poolCutoff, withinPool } = new Function(
+    'const DAYS = 15;\n' + src.slice(cutStart, cutEnd) + '\nreturn { poolCutoff, withinPool };',
+  )();
+  assert.equal(poolCutoff(new Date('2026-10-18T15:00:00Z')), '2026-10-03');
+  const realNow = new Date();
+  const lo = poolCutoff(realNow);
+  const kept = withinPool([
+    { title: 'before', date: '2026-10-02' },
+    { title: 'edge', date: lo },
+    { title: 'blank', date: '' },
+  ]);
+  assert.deepEqual(kept.map(a => a.title), ['edge']);
+
+  const start = src.indexOf('function favKey');
+  const end = src.indexOf('function toggleFav');
+  const { favoriteArticles, S } = new Function(`
+    function stripTitleMeta(s) { return String(s || '').trim(); }
+    const DIGEST_FIELDS = [['background','背景'],['methods','怎么做'],['innovation','创新点'],['takeaway','看点'],['future','未来方向']];
+    function writeFav() {}
+    const S = { fav: { order: [], items: {} }, jr: { all: [], picks: [] }, week: { items: [] } };
+    ${src.slice(start, end)}
+    return { favoriteArticles, S };
+  `)();
+
+  const doi = '10.1016/s0140-6736(26)01380-2';
+  const aged = {
+    id: doi,
+    doi,
+    title: 'RESOLVE trial title.',
+    date: '2026-09-30',
+    abstract: '',
+    structured: true,
+    sections: { objective: 'Aim.', methods: 'We randomised.', results: 'Non-inferior.', conclusion: 'Eight weeks worked.' },
+    journal: 'Lancet',
+    domain: '感染',
+    studyKey: 'rct',
+    studyZh: '随机对照试验',
+    basic: false,
+    authors: 'Goel A',
+    authorCite: ['Goel A', 'Smith J'],
+    volume: '406',
+    pages: '10-20',
+    mtZh: '缩短疗程仍然有效',
+    digest: { background: '背景句', takeaway: '看点句' },
+    keywords: ['HCV'],
+    platforms: ['ck'],
+    pii: 'S123',
+  };
+  S.jr.all = [aged];
+  S.fav.order = [doi];
+  const live = favoriteArticles();
+  assert.equal(live.length, 1);
+  assert.equal(live[0], aged);
+  assert.equal(S.fav.items[doi].sections.results, 'Non-inferior.');
+  assert.equal(S.fav.items[doi].mtZh, '缩短疗程仍然有效');
+  assert.equal(S.fav.items[doi].digest.background, '背景句');
+  assert.equal(S.fav.items[doi].authorCite[0], 'Goel A');
+  assert.equal(S.fav.items[doi].abstract, '');
+
+  S.jr.all = [];
+  S.jr.picks = [];
+  const stored = favoriteArticles();
+  assert.equal(stored.length, 1);
+  assert.equal(stored[0].title, 'RESOLVE trial title.');
+  assert.equal(stored[0].date, '2026-09-30');
+  assert.equal(stored[0].sections.conclusion, 'Eight weeks worked.');
+  assert.match(stored[0].abstract, /Non-inferior/);
+  assert.equal(stored[0].digest.takeaway, '看点句');
+  assert.equal(stored[0].mtZh, '缩短疗程仍然有效');
+  assert.equal(stored[0].authors, 'Goel A');
+  assert.equal(stored[0].pii, 'S123');
+  assert.equal(S.jr.all.length, 0);
+
+  S.fav.items[doi] = { id: doi, doi, title: 'Legacy title', abstract: 'Plain abstract.', date: '2026-09-01', journal: 'BMJ' };
+  const legacy = favoriteArticles()[0];
+  assert.equal(legacy.title, 'Legacy title');
+  assert.equal(legacy.abstract, 'Plain abstract.');
+  assert.equal(legacy.journal, 'BMJ');
+});
+
+test('shipped journal snapshot stays inside the 15-day window it was built for', () => {
+  const snap = JSON.parse(fs.readFileSync(path.join(root, 'data/snapshot-journals.json'), 'utf8'));
+  assert.equal(snap.windowDays, 15);
+  const gen = String(snap.generatedAt || '').slice(0, 10);
+  const lo = titleZhCutoff(new Date(gen + 'T00:00:00Z'));
+  const rows = [...(snap.items || []), ...(snap.picks || [])];
+  assert.ok(rows.length > 0);
+  for (const a of rows) {
+    assert.ok(a.date >= lo, `${a.doi || a.id} ${a.date} is older than ${lo}`);
+  }
 });
