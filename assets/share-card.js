@@ -146,8 +146,9 @@
     ctx.closePath();
   }
 
-  /** Returns the content height. draw=false only measures. */
-  function layout(ctx, spec, G, draw, slack) {
+  /** Returns the content height. draw=false only measures. qScale shrinks the title and quotations when a long paper would pass 1690. */
+  function layout(ctx, spec, G, draw, slack, qScale) {
+    qScale = qScale || 1;
     ctx.textBaseline = 'top';
     let y = 0;
     const put = (x, text, font, color) => {
@@ -224,13 +225,13 @@
       y += 32 * S;
     }
 
-    const zhFont = serif(30, true);
+    const zhFont = serif(30 * qScale, true);
     for (const line of cwrap(ctx, spec.title_zh || '', zhFont, W - 2 * M)) {
       put(M, line, zhFont, INK);
       y += G.title_zh_lh * S;
     }
     y += 6 * S;
-    const enFont = source(17, false);
+    const enFont = source(17 * qScale, false);
     for (const line of cwrap(ctx, spec.title_en || '', enFont, W - 2 * M)) {
       put(M, line, enFont, GR);
       y += G.title_en_lh * S;
@@ -303,19 +304,19 @@
     for (let i = 0; i < quotes.length; i++) {
       const q = quotes[i];
       if (draw) {
-        ctx.font = play(64, 700);
+        ctx.font = play(64 * qScale, 700);
         ctx.fillStyle = NAVY;
         ctx.fillText('“', M - 2 * S, y - 14 * S);
       }
       const qx = M + 34 * S;
       const qw = W - qx - M;
-      const qen = source(17, true);
+      const qen = source(17 * qScale, true);
       for (const line of wrap(ctx, q.en || '', qen, qw)) {
         put(qx, line, qen, INK);
         y += G.en_lh * S;
       }
       y += G.en_gap * S;
-      const qzh = serif(14, false);
+      const qzh = serif(14 * qScale, false);
       for (const line of wrap(ctx, q.zh || '', qzh, qw)) {
         put(qx, line, qzh, QZH);
         y += G.zh_lh * S;
@@ -385,25 +386,27 @@
     return y + 6 * S;
   }
 
-  function measure(spec, G, slack) {
+  function measure(spec, G, slack, qScale) {
     const c = document.createElement('canvas');
     c.width = W;
     c.height = 10;
-    return layout(c.getContext('2d'), spec, G, false, slack);
+    return layout(c.getContext('2d'), spec, G, false, slack, qScale);
   }
 
   async function render(spec) {
     await ensureFonts();
     const G = Object.assign({}, SPACING, spec.spacing || {});
-    let h = measure(spec, G, 0);
+    let qScale = 1;
+    let h = measure(spec, G, 0, qScale);
     let guard = 0;
-    while (h > TARGET_H && guard < 5) {
+    while (h > TARGET_H && guard < 12) {
       guard++;
-      for (const k of Object.keys(G)) G[k] = G[k] * 0.92;
-      h = measure(spec, G, 0);
+      for (const k of Object.keys(G)) G[k] *= 0.9;
+      if (guard > 3) qScale *= 0.96;
+      h = measure(spec, G, 0, qScale);
     }
     const slack = h < TARGET_H ? TARGET_H - h : 0;
-    const H = Math.round(h + slack);
+    const H = Math.round(Math.min(h + slack, Math.max(h, TARGET_H)));
     const canvas = document.createElement('canvas');
     canvas.width = W;
     canvas.height = H;
@@ -415,7 +418,7 @@
     ctx.clip();
     ctx.fillStyle = PAPER;
     ctx.fillRect(0, 0, W, H);
-    layout(ctx, spec, G, true, slack);
+    layout(ctx, spec, G, true, slack, qScale);
     ctx.restore();
     return canvas;
   }
