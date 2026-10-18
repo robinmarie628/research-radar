@@ -24,7 +24,34 @@ redeploys on every push to `main` — including the bot's daily data commits.
 8. Leave environment variables empty. Click **Save and Deploy**.
 
 The first deploy takes ~1 minute. After that, every push to `main` (including the daily bot
-commit) triggers a new deploy automatically.
+commit) triggers a new deploy automatically. Non-main branches get a Pages preview URL.
+
+## Workers AI binding (机翻标题 / 划词翻译)
+
+`functions/api/translate.js` calls Workers AI as `env.AI`. The binding is declared in
+the repo-root `wrangler.toml`:
+
+```toml
+[ai]
+binding = "AI"
+```
+
+Model: `@cf/qwen/qwen3-30b-a3b-fp8`, thinking off (`/no_think`), temperature 0.1.
+A preview deploy of a branch that contains that file should receive the binding.
+`wrangler.toml` becomes the Pages source of truth for bindings once Pages accepts it
+(`pages_build_output_dir` is set). This project had no dashboard bindings.
+
+If a deploy's `POST /api/translate` still returns `503` with `error: "ai_unconfigured"`,
+add the binding by hand and redeploy:
+
+1. Workers & Pages → **research-radar-f5j** → **Settings** → **Bindings** → **Add** → **Workers AI**.
+2. Variable name: **`AI`** (exact).
+3. Add it for **both Production and Preview**.
+4. Retry the deployment.
+
+Seeded titles in `data/title-zh.json` still show without the binding. Only uncached titles
+and the tap-to-translate popup need `env.AI`. The account is Workers Free (10k neurons/day);
+a quota error is shown in the popup and is not billed.
 
 ## Verify
 

@@ -1,0 +1,617 @@
+{
+ "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+ "seededAt": "2026-10-18",
+ "source": "Workers AI qwen3 title batch reviewed in the 2026-10-18 preview. Glossary overrides applied.",
+ "items": [
+  {
+   "doi": "10.1016/j.jchf.2026.103422",
+   "en": "Artificial Intelligence-Enabled Detection and Management of Physiological Instability in Heart Failure: Results of the Randomized LINK-HF2 Trial.",
+   "zh": "基于人工智能的心力衰竭患者生理不稳定性的检测与管理：随机LINK-HF2试验结果"
+  },
+  {
+   "doi": "10.1177/15266028261495914",
+   "en": "Heart Failure Predicts Contralateral Limb Progression After Endovascular Therapy for Initial Unilateral Chronic Limb-Threatening Ischemia.",
+   "zh": "心力衰竭预测单侧慢性肢体威胁性缺血首次血管内治疗后对侧肢体进展"
+  },
+  {
+   "doi": "10.1016/j.ajo.2026.10.002",
+   "en": "Interpretable Machine Learning for Course Prediction in Central Serous Chorioretinopathy Using Baseline OCT from a Multicenter Cohort.",
+   "zh": "基于多中心队列基线OCT的可解释机器学习在中心性浆液性脉络膜视网膜病变病程预测中的应用"
+  },
+  {
+   "doi": "10.1016/j.kint.2026.09.015",
+   "en": "Technology-Supported Solutions to Improve Guideline-Informed Care for Kidney Disease: Conclusions from a Kidney Disease: Improving Global Outcomes (KDIGO) Controversies Conference.",
+   "zh": "支持性技术改善肾脏疾病指南指导护理的解决方案：来自肾脏疾病改善全球预后（KDIGO）争议会议的结论"
+  },
+  {
+   "doi": "10.1016/j.jaad.2026.10.008",
+   "en": "Comparison of efficacy and tolerability of hedgehog pathway inhibitors for locally advanced basal cell carcinoma: An expert opinion in the new age of immunotherapy.",
+   "zh": "局部晚期基底细胞癌的Hedgehog通路抑制剂疗效和耐受性比较：免疫治疗新时代的专家意见"
+  },
+  {
+   "doi": "10.1016/j.annonc.2026.10.001",
+   "en": "Sofetabart mipitecan, an antibody drug conjugate targeting folate receptor alpha, in high grade ovarian cancer: Results from the first-in-human phase 1 study.",
+   "zh": "Sofetabart mipitecan，一种靶向叶酸受体α的抗体药物偶联物，在高级别卵巢癌中的应用：首次人体Ⅰ期研究结果"
+  },
+  {
+   "doi": "10.1016/j.jacbts.2026.101714",
+   "en": "Histone Demethylase KDM5A Is Activated and Pathogenic in a Mouse Model of LMNA-Cardiomyopathy.",
+   "zh": "组蛋白去甲基化酶KDM5A在LMNA心肌病小鼠模型中的激活及其致病性"
+  },
+  {
+   "doi": "10.1016/s1470-2045(26)00387-6",
+   "en": "Neoadjuvant niraparib monotherapy for unresectable, homologous recombination deficiency-positive, high-grade serous ovarian cancer (NANT): a multicentre, single-arm, phase 2 trial.",
+   "zh": "新辅助niraparib单药治疗不可切除、同源重组缺陷阳性、高级别浆液性卵巢癌（NANT）：一项多中心、单臂、Ⅱ期试验"
+  },
+  {
+   "doi": "10.1016/j.jacadv.2026.103308",
+   "en": "Projected Impact of LDL-C and HbA 1c Control on Cardiovascular Outcomes in ASCVD and Diabetes.",
+   "zh": "低密度脂蛋白胆固醇和糖化血红蛋白控制对动脉粥样硬化性心血管疾病和糖尿病患者心血管结局的预测影响"
+  },
+  {
+   "doi": "10.1016/s2352-3026(26)00228-0",
+   "en": "MK-4002, a B-cell maturation antigen-targeting T-cell engager, in relapsed or refractory multiple myeloma: a first-in-human, open-label, phase 1 study.",
+   "zh": "MK-4002，一种靶向B细胞成熟抗原的T细胞接合剂，在复发或难治性多发性骨髓瘤中的应用：一项首次人体、开放标签、Ⅰ期研究"
+  },
+  {
+   "doi": "10.1016/s2352-4642(26)00221-x",
+   "en": "Safety, antiviral activity, and pharmacokinetics of long-acting cabotegravir plus long-acting rilpivirine in virologically suppressed adolescents living with HIV-1 (IMPAACT 2017/MOCHA): week 96 and end-of-study results from a multinational, phase 1/2, single-arm trial.",
+   "zh": "长效cabotegravir联合长效rilpivirine在HIV-1病毒学抑制的青少年中的安全性、抗病毒活性和药代动力学（IMPAACT 2017/MOCHA）：一项多国、Ⅰ期/Ⅱ期、单臂试验的第96周及研究结束结果"
+  },
+  {
+   "doi": "10.1016/j.jhep.2026.10.002",
+   "en": "First-line durvalumab and tremelimumab in poor-prognosis unresectable hepatocellular carcinoma: Phase IIIb single-arm SIERRA study.",
+   "zh": "durvalumab和tremelimumab作为预后较差的不可切除肝细胞癌的一线治疗：SIERRAⅢb期单臂研究"
+  },
+  {
+   "doi": "10.1161/circulationaha.126.080384",
+   "en": "Lipid Burden and Efficacy of Preventive PCI of Vulnerable Atherosclerotic Coronary Plaques: Post Hoc Analysis From the PREVENT Trial.",
+   "zh": "预防性经皮冠状动脉介入治疗易损动脉粥样硬化冠状动脉斑块的脂质负荷和疗效：来自PREVENT试验的事后分析"
+  },
+  {
+   "doi": "10.1016/s2213-2600(26)00203-1",
+   "en": "Combined amivantamab, lazertinib, and bevacizumab in patients with EGFR-mutant advanced non-small-cell lung cancer with acquired resistance to a third-generation EGFR tyrosine-kinase inhibitor (ETOP 18-21 AMAZE-lung): a prospective, international, multicentre, single-arm, phase 2 trial.",
+   "zh": "amivantamab、lazertinib和bevacizumab联合治疗第三代EGFR酪氨酸激酶抑制剂获得性耐药的EGFR突变晚期非小细胞肺癌患者（ETOP 18-21 AMAZE-lung）：一项前瞻性、国际性、多中心、单臂Ⅱ期试验"
+  },
+  {
+   "doi": "10.1016/j.jhep.2026.08.037",
+   "en": "Effects of MASH risk genotypes on resmetirom efficacy in patients with MASH and fibrosis.",
+   "zh": "MASH风险基因型对resmetirom在MASH合并纤维化患者中疗效的影响"
+  },
+  {
+   "doi": "10.1016/j.jchf.2026.103378",
+   "en": "Early Lower Pulmonary Arterial Diastolic Pressure Monitored With Pulmonary Arterial Catheters Is Associated With Improved Survival During VA ECMO for Patients With Acute Cardiogenic Shock: A Propensity-Matched Study.",
+   "zh": "使用肺动脉导管监测早期肺动脉舒张压与急性心源性休克患者接受VA ECMO治疗后生存率改善相关：一项倾向性评分匹配研究"
+  },
+  {
+   "doi": "10.1016/j.eururo.2026.09.008",
+   "en": "Accumulating Evidence Supports NECTIN4 as a Predictive Biomarker for Enfortumab Vedotin: The Compartment Still Matters.",
+   "zh": "累积证据支持NECTIN4作为Enfortumab Vedotin的预测生物标志物：仍需考虑其分布区域"
+  },
+  {
+   "doi": "10.1016/s2468-1253(26)00237-2",
+   "en": "Short-course prophylaxis with the Toronto HCV protocol for recipients of non-liver solid organ transplants from donors with hepatitis C viraemia: a retrospective, matched cohort study.",
+   "zh": "多伦多HCV方案用于HCV病毒血症供体非肝实体器官移植受者的短期预防：一项回顾性匹配队列研究"
+  },
+  {
+   "doi": "10.1016/s2665-9913(26)00249-3",
+   "en": "CAR T cells for autoimmune diseases: 2026 update of the EBMT-ISCT-JACIE practice harmonisation and consensus recommendations.",
+   "zh": "CAR T细胞治疗自身免疫性疾病：EBMT-ISCT-JACIE临床实践协调和共识建议2026年更新"
+  },
+  {
+   "doi": "10.1038/s41593-026-02472-0",
+   "en": "Alzheimer's disease target and drug discovery by leveraging multiomics and electronic health data.",
+   "zh": "利用多组学和电子健康数据进行阿尔茨海默病靶点和药物发现"
+  },
+  {
+   "doi": "10.1016/j.langlo.2026.104069",
+   "en": "Informing an mpox stockpile investment case: epidemiological modelling and cost-benefit analysis.",
+   "zh": "评估猴痘储备投资案例的流行病学建模与成本效益分析"
+  },
+  {
+   "doi": "10.1016/j.lanmic.2026.101528",
+   "en": "The future of cholera genomics through the lens of clinical, public health, and research practitioners in Africa.",
+   "zh": "通过非洲临床、公共卫生和研究从业者的视角看霍乱基因组学的未来"
+  },
+  {
+   "doi": "10.1016/j.lanmic.2026.101535",
+   "en": "Role of the urobiome in urinary tract infections: current knowledge and research prospects.",
+   "zh": "尿道微生物组在尿路感染中的作用：现有知识与研究前景"
+  },
+  {
+   "doi": "10.1016/j.chest.2026.08.058",
+   "en": "Switching from mepolizumab to benralizumab in eosinophilic granulomatosis with polyangiitis (EGPA).",
+   "zh": "将嗜酸性肉芽肿性多血管炎（EGPA）患者的治疗从mepolizumab转换为benralizumab"
+  },
+  {
+   "doi": "10.1016/j.ajo.2026.10.003",
+   "en": "Ocular Metastasis: Clinical Course and Survival Analysis of 569 Patients (727 Eyes) Over a 40-Year Interval (1979-2018).",
+   "zh": "眼转移：1979-2018年40年间569例患者（727只眼）的临床病程与生存分析"
+  },
+  {
+   "doi": "10.1016/j.jvsv.2026.102637",
+   "en": "A Comparison of Aspiration Thrombectomy to Catheter-Directed Thrombolysis in Management of Paget-Schroetter Syndrome.",
+   "zh": "经皮血栓抽吸术与导管导向溶栓术在Paget-Schroetter综合征管理中的比较"
+  },
+  {
+   "doi": "10.1016/j.jvsv.2026.102639",
+   "en": "Post thrombotic syndrome after thrombotic venous thoracic outlet syndrome.",
+   "zh": "血栓性静脉胸廓出口综合征后血栓后综合征"
+  },
+  {
+   "doi": "10.1016/j.jvs.2026.09.037",
+   "en": "Multicenter Outcomes of Peripheral Vascular Interventions in Patients with Active Cancer.",
+   "zh": "活动性癌症患者外周血管介入术的多中心结果"
+  },
+  {
+   "doi": "10.1016/j.jvs.2026.10.002",
+   "en": "Sex-specific association between preoperative foot infection and vein graft stenosis after distal bypass for chronic limb-threatening ischemia.",
+   "zh": "术前足部感染与慢性肢体威胁性缺血远端旁路术后静脉移植物狭窄的性别特异性关联"
+  },
+  {
+   "doi": "10.1016/j.jvs.2026.09.039",
+   "en": "Faculty Narrative Feedback in the Vascular Surgery Entrustable Professional Activity (EPA) Pilot is Disproportionately Focused on Patient Care and Medical Knowledge Competencies.",
+   "zh": "血管外科可信赖专业活动（EPA）试点中教师叙事反馈过度集中于患者护理和医学知识能力"
+  },
+  {
+   "doi": "10.1016/j.jvs.2026.10.003",
+   "en": "Outcomes among Patients with Single-Vessel Tibial Runoff Undergoing Revascularization for Chronic Limb-Threatening Ischemia, and the Role of Peroneal Communicating Branch Quality.",
+   "zh": "接受下肢慢性肢体威胁性缺血血管重建手术的单支胫后动脉远端病变患者的预后及腓动脉交通支质量的作用"
+  },
+  {
+   "doi": "10.1016/j.ophtha.2026.10.008",
+   "en": "Assessment of the Necessity for High-Level Disinfection (HLD) of Reusable Ophthalmic Devices: A Multisociety Position Paper.",
+   "zh": "评估重复使用眼科器械进行高水平消毒（HLD）的必要性：多学会立场文件"
+  },
+  {
+   "doi": "10.1016/j.ophtha.2026.09.037",
+   "en": "Prevalence of Diabetic Retinopathy and Cardiovascular Risk Factors Among Diverse Hispanic/Latino Adults: HCHS/SOL and SOL Ojos Results.",
+   "zh": "不同西班牙裔/拉丁裔成人糖尿病视网膜病变患病率及心血管危险因素：HCHS/SOL和SOL Ojos研究结果"
+  },
+  {
+   "doi": "10.1016/j.jacbts.2026.101709",
+   "en": "Identifying Cardiac Autoantibody Biomarkers that Predict the Severity of Chagas Cardiomyopathy.",
+   "zh": "识别预测查加斯病心肌病严重程度的心脏自身抗体生物标志物"
+  },
+  {
+   "doi": "10.1016/j.jacbts.2026.101696",
+   "en": "Left Ventricular Structural, Physiological, and Transcriptomic Abnormalities in a Novel Porcine Hypertrophic Cardiomyopathy Model.",
+   "zh": "一种新型猪肥厚型心肌病模型中左心室结构、生理及转录组异常"
+  },
+  {
+   "doi": "10.1016/j.neuron.2026.09.018",
+   "en": "Stepwise engagement of cingulate ensembles underlies motivational decline in chronic pain.",
+   "zh": "前扣带神经元集群的逐步参与导致慢性疼痛中动机下降"
+  },
+  {
+   "doi": "10.1016/j.neuron.2026.08.032",
+   "en": "Tau phosphorylation from neuronal adaptation to Alzheimer's disease.",
+   "zh": "神经元适应性导致的tau蛋白磷酸化与阿尔茨海默病"
+  },
+  {
+   "doi": "10.1016/j.neuron.2026.09.016",
+   "en": "Orbitofrontal value dynamics and striatal population geometry during interruption of automatic behavior.",
+   "zh": "在自动行为中断过程中额叶眶皮层价值动态及纹状体种群几何结构"
+  },
+  {
+   "doi": "10.1126/sciadv.ady6048",
+   "en": "A neuronal GPCR modifies neuropeptide signaling to suppress proteostasis in distal tissues.",
+   "zh": "一种神经元GPCR通过修饰神经肽信号以抑制远端组织的蛋白质稳态"
+  },
+  {
+   "doi": "10.1126/sciadv.aeb1435",
+   "en": "Cell heterogeneity contributes to the variable response of HIV-1 to latency-reversing agents.",
+   "zh": "细胞异质性导致HIV-1对潜伏逆转剂反应的差异性"
+  },
+  {
+   "doi": "10.1126/sciadv.adz4710",
+   "en": "Contagion-preserving compression for multiscale epidemic modeling.",
+   "zh": "保持传染性的多尺度流行病建模压缩"
+  },
+  {
+   "doi": "10.1126/sciadv.aed2180",
+   "en": "Observation of electrically generated polaron-polaritons in a monolayer MoSe 2 microcavity.",
+   "zh": "在单层MoSe 2微腔中观察到电致极子极化子"
+  },
+  {
+   "doi": "10.1126/sciadv.aeg3698",
+   "en": "A helix-loop-helix gene orchestrates male fate in common carp.",
+   "zh": "一种螺旋-环-螺旋基因调控鲤鱼雄性命运"
+  },
+  {
+   "doi": "10.1126/sciadv.aeh5747",
+   "en": "Magnetic omniconversion: Source-independent molding of magnetostatic fields.",
+   "zh": "磁全转换：源无关的静磁场成型"
+  },
+  {
+   "doi": "10.1126/sciadv.adz2555",
+   "en": "Ocean circulation changes rather than global warming drove temperature trends across the Miocene Climatic Optimum.",
+   "zh": "海洋环流变化而非全球变暖驱动了中新世气候最适宜期的温度趋势"
+  },
+  {
+   "doi": "10.1126/sciadv.aeb1692",
+   "en": "Record-setting heavy precipitation occurrence in 2024.",
+   "zh": "2024年创纪录的强降水发生情况"
+  },
+  {
+   "doi": "10.1016/j.celrep.2026.118025",
+   "en": "Inferring binding specificities of human transcription factors with the wisdom of crowds.",
+   "zh": "利用群体智慧推断人类转录因子的结合特异性"
+  },
+  {
+   "doi": "10.1016/s0140-6736(26)01535-7",
+   "en": "Conversational diagnostic artificial intelligence in ambulatory primary care: a prospective feasibility study.",
+   "zh": "门诊初级保健中对话式诊断人工智能：一项前瞻性可行性研究"
+  },
+  {
+   "doi": "10.1016/s0140-6736(26)01296-1",
+   "en": "Oral deucrictibant for on-demand treatment of hereditary angioedema attacks: a phase 3, multicentre, randomised, double-blind, placebo-controlled crossover trial.",
+   "zh": "口服deucrictibant用于遗传性血管性水肿发作的按需治疗：一项Ⅲ期、多中心、随机、双盲、安慰剂对照交叉试验"
+  },
+  {
+   "doi": "10.1016/j.lanplh.2026.101529",
+   "en": "Seven principles for a critical transdisciplinary approach to planetary health.",
+   "zh": "行星健康跨学科方法的七项原则"
+  },
+  {
+   "doi": "10.1016/s1473-3099(26)00424-x",
+   "en": "When the fungus is susceptible, but the patient is not: reading antifungal susceptibility from bench to bedside.",
+   "zh": "当真菌敏感，但患者不敏感：从实验室到临床的抗真菌药物敏感性解读"
+  },
+  {
+   "doi": "10.1016/j.jacadv.2026.103302",
+   "en": "Quantitative Proteomics of Plasma-Derived Extracellular Vesicles Reveals a Plasminogen-Centered Protein Network in Transthyretin Cardiac Amyloidosis.",
+   "zh": "血浆来源细胞外囊泡的定量蛋白质组学揭示了转甲状腺素蛋白心脏淀粉样变中的纤溶酶原中心蛋白网络"
+  },
+  {
+   "doi": "10.1016/j.jaad.2026.10.005",
+   "en": "Acquired Hair Texture Alteration After Regrowth in Alopecia Areata: A Distinct Clinical and Ultrastructural Phenotype.",
+   "zh": "斑秃再生后出现的获得性毛发质地改变：一种独特的临床和超微结构表型"
+  },
+  {
+   "doi": "10.1016/j.ogla.2026.09.011",
+   "en": "Postural Intraocular Pressure Changes and the Trans-Lamina Cribrosa Pressure Difference: A Systematic Review and Meta-Analysis.",
+   "zh": "体位性眼内压变化与经筛板压力差：系统综述和Meta分析"
+  },
+  {
+   "doi": "10.1016/j.avsg.2026.09.040",
+   "en": "Association Between Leg Venous Reflux and Fluid Accumulation Assessed by Bioelectrical Impedance Analysis: A Generalized Estimating Equation Analysis.",
+   "zh": "下肢静脉反流与生物阻抗分析评估的液体积聚之间的关联：广义估计方程分析"
+  },
+  {
+   "doi": "10.1016/j.avsg.2026.09.039",
+   "en": "Efficacy and safety of artificial intelligence-assisted image-guided navigation in complex endovascular aortic repair: a systematic review and meta-analysis.",
+   "zh": "人工智能辅助影像引导导航在复杂血管内主动脉修复中的疗效和安全性：系统综述和Meta分析"
+  },
+  {
+   "doi": "10.1016/j.neuron.2026.09.014",
+   "en": "Simultaneous awake replay of multiple spatial representations.",
+   "zh": "同时清醒的多个空间表征重放"
+  },
+  {
+   "doi": "10.1016/j.cell.2026.09.050",
+   "en": "Comprehensive lineage tracing maps the landscape of cell fate decisions in mouse embryogenesis.",
+   "zh": "全面的谱系追踪揭示了小鼠胚胎发生中细胞命运决定的图谱"
+  },
+  {
+   "doi": "10.1016/j.cell.2026.09.032",
+   "en": "Immunoregulatory gene GIMAP6 suppresses lethal atherosclerotic vasculopathy and ischemic heart failure.",
+   "zh": "免疫调节基因GIMAP6抑制致命性动脉粥样硬化血管病变和缺血性心力衰竭"
+  },
+  {
+   "doi": "10.1016/j.chom.2026.09.009",
+   "en": "Native pathogen-phage networks reveal multilayered defense and gut-active anti-phage immunity.",
+   "zh": "天然病原体-噬菌体网络揭示了多层防御和肠道活性抗噬菌体免疫"
+  },
+  {
+   "doi": "10.1016/j.cell.2026.09.057",
+   "en": "A fluctuation test for gastruloid heterogeneity.",
+   "zh": "用于评估胚状体异质性的波动试验"
+  },
+  {
+   "doi": "10.1016/j.cell.2026.09.030",
+   "en": "Arabidopsis uses distinct coumarins and bacterial pathways for pH-adaptive iron acquisition.",
+   "zh": "拟南芥利用不同的香豆素和细菌途径进行pH适应性铁吸收"
+  },
+  {
+   "doi": "10.1126/science.aee9284",
+   "en": "Nutritional interventions' impacts on human milk: Three trials in low-resource settings.",
+   "zh": "营养干预对人乳的影响：三项在资源匮乏地区进行的试验"
+  },
+  {
+   "doi": "10.1126/science.aed5772",
+   "en": "Safeguarding global terrestrial vertebrate species from future sea-level rise.",
+   "zh": "保护全球陆地脊椎动物物种免受未来海平面上升的影响"
+  },
+  {
+   "doi": "10.1126/science.adz2675",
+   "en": "A fast radio burst at redshift 2, three billion years after the Big Bang.",
+   "zh": "红移2处的快速射电暴：大爆炸后三十亿年"
+  },
+  {
+   "doi": "10.1126/science.ael0508",
+   "en": "A DNA Typewriter records the cell lineage history of a mouse, from zygote to late organogenesis.",
+   "zh": "DNA打字机记录小鼠细胞谱系历史：从受精卵到晚期器官发生"
+  },
+  {
+   "doi": "10.1126/science.ael7318",
+   "en": "Before the immunological Big Bang.",
+   "zh": "免疫学大爆炸之前"
+  },
+  {
+   "doi": "10.1126/science.ael6628",
+   "en": "AI for research mathematics has arrived.",
+   "zh": "人工智能已应用于研究数学"
+  },
+  {
+   "doi": "10.1126/science.aem9876",
+   "en": "In Science Journals.",
+   "zh": "在科学期刊中"
+  },
+  {
+   "doi": "10.1016/j.celrep.2026.118108",
+   "en": "Introgression catalyzing plumage evolution and speciation in an Asian songbird complex.",
+   "zh": "基因渗入促进亚洲鸣禽复合体的羽毛进化和物种形成"
+  },
+  {
+   "doi": "10.1016/j.celrep.2026.118110",
+   "en": "Host-triggered prophage induction drives Lactiplantibacillus plantarum symbiosis through bacterial lysis.",
+   "zh": "宿主触发的噬菌体诱导通过细菌裂解驱动植物乳杆菌共生"
+  },
+  {
+   "doi": "10.1177/15266028261494954",
+   "en": "Mechanical Thrombectomy for High-Risk Pulmonary Embolism in Pregnancy: A Case Report and a Systematic Review of the Literature.",
+   "zh": "妊娠期高危肺栓塞的机械取栓术：病例报告及文献系统综述"
+  },
+  {
+   "doi": "10.1177/15266028261494953",
+   "en": "Stent-Graft Fracture 18 Years After Hybrid Repair of Thoracoabdominal Aortic Aneurysm: A Possible Risk of Retrograde Reconstruction.",
+   "zh": "胸腹主动脉瘤杂交修复术后18年支架移植物断裂：逆行重建的可能风险"
+  },
+  {
+   "doi": "10.1177/15266028261495364",
+   "en": "Early Outcomes of Physician-Modified Endurant Limbs vs Iliac Branch Devices in Narrow Common Iliac Arteries: A Retrospective Cohort Pilot Study.",
+   "zh": "狭窄的髂总动脉中医生改良Endurant肢体与髂支装置的早期结果：一项回顾性队列试点研究"
+  },
+  {
+   "doi": "10.1016/s2213-8587(26)00189-0",
+   "en": "Hashimoto's thyroiditis: two decades on.",
+   "zh": "桥本甲状腺炎：二十年后"
+  },
+  {
+   "doi": "10.1016/j.langlo.2026.104072",
+   "en": "Hospital-based prevalence of culture-confirmed melioidosis among high-risk patients in India, 2023-25: a multicentre prospective study.",
+   "zh": "印度2023-25年高危患者中培养确诊类鼻疽的医院患病率：一项多中心前瞻性研究"
+  },
+  {
+   "doi": "10.1016/s2352-3026(26)00246-2",
+   "en": "Incidence of clinically diagnosed infections in children with sickle cell anaemia treated with oral hydroxyurea in Angola, DR Congo, Kenya, and Uganda: a retrospective cohort study from the REACH trial.",
+   "zh": "安哥拉、刚果民主共和国、肯尼亚和乌干达使用口服羟基脲治疗镰状细胞贫血儿童中临床诊断感染的发生率：来自REACH试验的回顾性队列研究"
+  },
+  {
+   "doi": "10.1016/s0140-6736(26)01366-8",
+   "en": "Migraine.",
+   "zh": "偏头痛"
+  },
+  {
+   "doi": "10.1016/s1473-3099(26)00478-0",
+   "en": "Evidence of artemisinin partial resistance in Zambia: a molecular epidemiology and clinical study.",
+   "zh": "赞比亚青蒿素部分耐药性的证据：分子流行病学和临床研究"
+  },
+  {
+   "doi": "10.1016/j.lanmic.2026.101509",
+   "en": "Regional expansion and adaptive evolution of multidrug-resistant Candida tropicalis in China: a retrospective, multicentre, genomic study.",
+   "zh": "中国多药耐药热带念珠菌的区域扩展和适应性进化：一项回顾性多中心基因组研究"
+  },
+  {
+   "doi": "10.1016/s2352-3018(26)00180-3",
+   "en": "Epidemiological trends of HIV among individuals aged 15-54 years in South Africa from 2004 to 2025: a population-based, longitudinal cohort study.",
+   "zh": "南非15-54岁人群2004年至2025年HIV流行趋势：基于人群的纵向队列研究"
+  },
+  {
+   "doi": "10.1016/j.oret.2026.09.029",
+   "en": "Management of Neovascular Age-Related Macular Degeneration in Routine US Clinical Practice: Impact of Delayed Treatment Initiation.",
+   "zh": "美国常规临床实践中新生血管性年龄相关性黄斑变性的管理：延迟治疗启动的影响"
+  },
+  {
+   "doi": "10.1016/j.jvsv.2026.102635",
+   "en": "Twelve-Month Results of Cyanoacrylate Closure in Patients with Venous Leg Ulceration.",
+   "zh": "氰基丙烯酸酯闭合治疗静脉性腿部溃疡患者的12个月结果"
+  },
+  {
+   "doi": "10.1016/j.ophtha.2026.07.042",
+   "en": "Mitomycin C Application during Trabeculectomy-Injection versus Sponge: A Report by the American Academy of Ophthalmology.",
+   "zh": "在小梁切除术注射与海绵术中应用丝裂霉素C：美国眼科学会报告"
+  },
+  {
+   "doi": "10.1016/j.celrep.2026.118111",
+   "en": "Functional identification of non-coding regulatory regions that drive breast and skin carcinogenesis.",
+   "zh": "非编码调控区域在驱动乳腺癌和皮肤癌发生中的功能鉴定"
+  },
+  {
+   "doi": "10.1016/j.celrep.2026.118082",
+   "en": "SNX17 facilitates entry and infection of Rift Valley fever virus and related bunyaviruses.",
+   "zh": "SNX17促进裂谷热病毒及相关布尼亚病毒的进入和感染"
+  },
+  {
+   "doi": "10.1016/j.celrep.2026.118114",
+   "en": "Mechanical compression activates cAMP signaling in Pseudomonas aeruginosa.",
+   "zh": "机械压缩激活铜绿假单胞菌中的cAMP信号"
+  },
+  {
+   "doi": "10.1016/j.lanhl.2026.100895",
+   "en": "RSV prefusion F vaccine effectiveness in older adults with immunosuppression: a prespecified analysis of the DAN-RSV trial.",
+   "zh": "免疫抑制老年人中RSV前融合F疫苗效果：DAN-RSV试验的预先指定分析"
+  },
+  {
+   "doi": "10.1016/s2352-3026(26)00197-3",
+   "en": "Future-proofing thalassaemia care: harnessing scalable therapies, artificial intelligence, and global collaboration.",
+   "zh": "未来导向的地中海贫血护理：利用可扩展疗法、人工智能和全球合作"
+  },
+  {
+   "doi": "10.1016/s2352-4642(26)00219-1",
+   "en": "Mental health and urinary incontinence in childhood.",
+   "zh": "儿童心理健康和尿失禁"
+  },
+  {
+   "doi": "10.1016/s2352-3026(26)00173-0",
+   "en": "The expanding therapeutic landscape of β-thalassaemia.",
+   "zh": "β-地中海贫血的治疗格局不断扩大"
+  },
+  {
+   "doi": "10.1016/s2352-3018(26)00171-2",
+   "en": "Virological failure and treatment interruption among people with unsuppressed viral load on antiretroviral therapy: a cross-sectional analysis of Population-based HIV Impact Assessment surveys in seven sub-Saharan African countries.",
+   "zh": "在抗逆转录病毒治疗中病毒载量未被抑制的人群中病毒学失败和治疗中断情况：基于七个撒哈拉以南非洲国家人口基础的HIV影响评估调查的横断面分析"
+  },
+  {
+   "doi": "10.1016/j.eururo.2026.09.001",
+   "en": "Major Adverse Cardiovascular Events in Men with High-risk Localized or Metastatic Prostate Cancer Starting Long-term Hormone Therapy in the STAMPEDE Trial.",
+   "zh": "STAMPEDE试验中高危局限性或转移性前列腺癌男性患者开始长期激素治疗后的主要心血管不良事件"
+  },
+  {
+   "doi": "10.1016/j.ejvs.2026.09.053",
+   "en": "Clinical Messages for Fenestrated Endovascular Aortic Repair from the GLOBALSTAR Registry: Outcomes in Salvage Fenestrated Endovascular Aneurysm Repair, Women, and Octogenarians.",
+   "zh": "来自GLOBALSTAR注册库的开窗型腔内主动脉修复的临床信息：挽救性开窗型腔内动脉瘤修复、女性患者和80岁以上人群的结局"
+  },
+  {
+   "doi": "10.1016/j.jvsv.2026.102636",
+   "en": "One-year Outcomes of Mechanical Thrombectomy and Catheter-Directed Thrombolysis in Acute Pulmonary Embolism.",
+   "zh": "急性肺栓塞患者机械取栓术和导管导向溶栓术1年结局"
+  },
+  {
+   "doi": "10.1016/j.annonc.2026.09.014",
+   "en": "Efficacy of Cryotherapy in Preventing Taxane-Induced Neuropathy: The CryoPac Randomised Controlled Trial.",
+   "zh": "冷冻疗法预防紫杉烷类药物诱导的神经病变的有效性：冷冻保护随机对照试验"
+  },
+  {
+   "doi": "10.1161/circulationaha.126.080404",
+   "en": "Incidence, Process of Care, and Outcomes of In-Hospital Cardiac Arrest in China: A Multicenter Prospective Registry Study.",
+   "zh": "中国院内心脏骤停的发病率、护理过程和结局：一项多中心前瞻性注册研究"
+  },
+  {
+   "doi": "10.1161/circulationaha.126.079506",
+   "en": "The Oxidized Phospholipid PGPC Impairs Angiogenesis by Inhibiting Endothelial Autophagosomal-Lysosomal Fusion Through NPC1-Induced Syntaxin 17 Acetylation and Ubiquitination.",
+   "zh": "氧化磷脂PGPC通过NPC1诱导的Syntaxin 17乙酰化和泛素化抑制内皮细胞自噬溶酶体融合从而损害血管生成"
+  },
+  {
+   "doi": "10.1016/j.jcin.2026.07.042",
+   "en": "Mechanical Thrombectomy Versus Anticoagulation Alone in Intermediate-High Risk PE: Improved Functional 90-Day Outcomes in STORM-PE RCT.",
+   "zh": "中高危肺栓塞患者机械取栓术与单独抗凝治疗：STORM-PE RCT中90天功能结局改善"
+  },
+  {
+   "doi": "10.1016/j.landig.2026.101078",
+   "en": "Digital technology in everyday life: emerging associations with social, mental, and physical health and wellbeing.",
+   "zh": "日常生活中数字技术的运用：与社会、心理和身体健康的新兴关联"
+  },
+  {
+   "doi": "10.1016/j.lanplh.2026.101514",
+   "en": "Navigating global health futures under the Shared Socioeconomic Pathways.",
+   "zh": "在共享社会经济路径下的全球健康未来"
+  },
+  {
+   "doi": "10.1016/s2352-4642(26)00214-2",
+   "en": "Growth patterns of children with congenital Zika syndrome in Brazil: a matched-cohort study.",
+   "zh": "巴西先天性寨卡综合征儿童的生长模式：匹配队列研究"
+  },
+  {
+   "doi": "10.1016/s2215-0366(26)00267-1",
+   "en": "From discovery to proof: a Translation Evidence Map for precision psychiatry.",
+   "zh": "从发现到验证：精准精神病学的转化证据图谱"
+  },
+  {
+   "doi": "10.1016/s2352-3018(26)00204-3",
+   "en": "Long-term immunogenicity and efficacy of the quadrivalent human papillomavirus vaccine in women with HIV: a longitudinal cohort study.",
+   "zh": "人类乳头瘤病毒四价疫苗在HIV感染女性中的长期免疫原性和有效性：纵向队列研究"
+  },
+  {
+   "doi": "10.1016/j.jcmg.2026.07.027",
+   "en": "Adverse Remodeling and Fibrosis Predict Outcomes in Excessive Trabeculation of the Left Ventricle: A Multiparametric CMR Risk Score.",
+   "zh": "左心室过度肌小梁的不良重塑和纤维化预测预后：多参数CMR风险评分"
+  },
+  {
+   "doi": "10.1016/j.chest.2026.09.098",
+   "en": "Exacerbation trajectories in biologic-eligible severe asthma patients.",
+   "zh": "生物制剂可选的重度哮喘患者的急性发作轨迹"
+  },
+  {
+   "doi": "10.1016/j.chest.2026.09.100",
+   "en": "From Menarche to Menopause: A Narrative Review of Female Reproductive Milestones and Risk of Chronic Airway Disease.",
+   "zh": "从月经初潮到绝经：女性生殖里程碑与慢性气道疾病风险的叙述性综述"
+  },
+  {
+   "doi": "10.1016/j.chest.2026.09.096",
+   "en": "Sotatercept in Pediatric Pulmonary Hypertension: Experience from the Pediatric Pulmonary Hypertension Network.",
+   "zh": "Sotatercept在儿童肺动脉高压中的应用：儿童肺动脉高压网络的经验"
+  },
+  {
+   "doi": "10.1016/j.chest.2026.09.090",
+   "en": "Lung Cancer Screening Beyond Smoking-Based Eligibility: Evidence, Limits, and Lessons From China.",
+   "zh": "超越吸烟标准的肺癌筛查：来自中国的证据、局限性和经验"
+  },
+  {
+   "doi": "10.1016/j.jaad.2026.09.112",
+   "en": "Primary Melanoma Stage as a Predictor of Survival in Advanced Disease: Findings from the Spanish Melanoma Registry GEM1801.",
+   "zh": "原发性黑色素瘤分期作为晚期疾病生存率的预测因素：西班牙黑色素瘤登记处GEM1801的研究结果"
+  },
+  {
+   "doi": "10.1016/j.ajo.2026.10.001",
+   "en": "Three-dimensional architecture of outer retinal tubulation in Bietti crystalline dystrophy.",
+   "zh": "贝蒂晶体变性中外层视网膜管状结构的三维架构"
+  },
+  {
+   "doi": "10.1016/j.jhep.2026.09.021",
+   "en": "Temporal assessment of spatial and single-cell transcriptomes identifies CD226-NECTIN2 T cell-cholangiocyte interaction in bile duct inflammation.",
+   "zh": "时空评估空间和单细胞转录组揭示胆管炎症中的CD226-NECTIN2 T细胞-胆管上皮细胞相互作用"
+  },
+  {
+   "doi": "10.1016/j.jacadv.2026.103292",
+   "en": "Imaging Comparisons Between Bifurcation Stenting Procedures Performed in Human Patients and Those Within Reanimated Swine Hearts.",
+   "zh": "人类患者与再灌注猪心脏中分叉支架术的影像学比较"
+  },
+  {
+   "doi": "10.1016/j.jacadv.2026.103306",
+   "en": "Comparative Efficacy of Treatments for Resistant or Uncontrolled Hypertension: A Network Meta-Analysis of Randomized Trials.",
+   "zh": "难治性或未控制高血压治疗方案的比较疗效：随机试验的网络Meta分析"
+  },
+  {
+   "doi": "10.1016/j.jacadv.2026.103298",
+   "en": "Ticagrelor Monotherapy or Aspirin Plus Prasugrel After Percutaneous Coronary Intervention: A Network Meta-Analysis.",
+   "zh": "经皮冠状动脉介入治疗后ticagrelor单药治疗或阿司匹林联合普拉格雷：网络Meta分析"
+  },
+  {
+   "doi": "10.1016/j.jacadv.2026.103303",
+   "en": "Real-World Comparison of Cardiac MRI and Nuclear Perfusion Imaging for Myocardial Scar Detection.",
+   "zh": "现实世界中心脏磁共振成像与核灌注成像在心肌瘢痕检测中的比较"
+  },
+  {
+   "doi": "10.1016/j.jacadv.2026.103301",
+   "en": "Feasibility and Safety of Transthoracic Echocardiography-Guided Transvenous Permanent Pacemaker Implantation Without Fluoroscopy.",
+   "zh": "经胸超声心动图引导下无需透视的经静脉永久起搏器植入术的可行性和安全性"
+  },
+  {
+   "doi": "10.1016/j.jacadv.2026.103293",
+   "en": "Increased Out-of-Hospital Cardiac Arrest Risk in Cancer: Evidence From 800,000 Patients and 3.7 Million Controls.",
+   "zh": "癌症患者院外心脏骤停风险增加：来自80万例患者和370万例对照的研究证据"
+  },
+  {
+   "doi": "10.1161/circulationaha.125.079141",
+   "en": "Anticancer Drugs and Cancer-Associated Thrombosis.",
+   "zh": "抗肿瘤药物与癌症相关血栓形成"
+  },
+  {
+   "doi": "10.1016/s0140-6736(26)01611-9",
+   "en": "The public health challenges of children's and adolescents' digital media use: applying the digital determinants of health as an interpretive framework.",
+   "zh": "儿童和青少年数字媒体使用带来的公共卫生挑战：应用数字健康决定因素作为解释框架"
+  },
+  {
+   "doi": "10.1016/s0140-6736(26)01293-6",
+   "en": "Governing the digital determinants of health for children and young people: a global public health imperative.",
+   "zh": "儿童和青少年健康数字决定因素的治理：全球公共卫生的当务之急"
+  },
+  {
+   "doi": "10.1016/s0140-6736(26)01292-4",
+   "en": "The digital determinants of health: a new era for global public health.",
+   "zh": "健康数字决定因素：全球公共卫生的新时代"
+  }
+ ]
+}

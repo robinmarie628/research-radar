@@ -19,3 +19,7 @@
 # install-time fetch get a fresh copy rather than a long-lived edge copy.
 /assets/*
   Cache-Control: public, max-age=0, must-revalidate
+
+# Translation is per request. The function also sends no-store.
+/api/*
+  Cache-Control: no-store

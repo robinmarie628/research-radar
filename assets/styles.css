@@ -574,7 +574,19 @@ mark.hit{
 .art-title{
   margin:0;font-size:14px;font-weight:700;line-height:1.42;color:var(--ink);
   letter-spacing:.1px;
+  -webkit-user-select:text;user-select:text;
 }
+.art-zh{
+  margin:5px 0 0;font-size:12px;line-height:1.45;font-weight:600;color:var(--ink-3);
+  -webkit-user-select:text;user-select:text;
+}
+.art-zh-tag, .mt-pop-tag{
+  display:inline-block;margin-left:6px;
+  font-size:9px;font-weight:800;letter-spacing:.4px;line-height:1.4;
+  color:var(--brand);background:var(--brand-soft);
+  border-radius:4px;padding:1px 4px;vertical-align:1px;
+}
+.rawtitle-txt, .sec-txt, .art-abstract{-webkit-user-select:text;user-select:text}
 .art.open .art-title{color:var(--brand-ink)}
 
 .art-badges{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:8px 0 0 22px}
@@ -971,6 +983,22 @@ table.idx .b{width:42px;text-align:center}
   max-width:82vw;text-align:center;
 }
 .toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- 划词机翻 ---------- */
+.mt-pop{
+  position:fixed;z-index:70;
+  max-width:min(280px, calc(100vw - 16px));
+  padding:8px 10px;
+  background:var(--card);color:var(--ink);
+  border:1px solid var(--brand);border-radius:10px;
+  box-shadow:0 8px 24px rgba(27,58,95,.18);
+  font-size:12.5px;line-height:1.55;font-weight:600;
+  -webkit-user-select:none;user-select:none;
+}
+.mt-pop[hidden]{display:none !important}
+.mt-pop.is-warn{border-color:var(--line);color:var(--ink-2);box-shadow:0 6px 18px rgba(28,25,22,.12)}
+.mt-pop-tag{margin-left:0;margin-right:6px;color:var(--on-brand);background:var(--brand)}
+.mt-pop-txt{font-weight:600}
 
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}

@@ -1,5 +1,5 @@
 /* 科研雷达 service worker — app shell cached, data always network-first */
-const V = 'rr-v19';
+const V = 'rr-v21';
 const SHELL = [
   './', './index.html', './assets/styles.css', './assets/app.js',
   './data/journals.config.json', './data/glossary.json',
@@ -25,6 +25,9 @@ self.addEventListener('fetch', e => {
   if (req.method !== 'GET') return;
 
   const url = new URL(req.url);
+
+  // Pages Functions (translation). Never cache-control these from the shell.
+  if (url.origin === location.origin && url.pathname.startsWith('/api/')) return;
 
   // live data + snapshots: network-first, fall back to cache
   const isData = /europepmc|raw\.githubusercontent|snapshot-/.test(url.href)

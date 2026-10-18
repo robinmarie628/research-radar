@@ -11,7 +11,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.17.19';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.18.21';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -155,6 +155,8 @@ const S = {
   seen: new Set(),
   fav: { order: [], items: {} },
   tab: 'research',
+  /* Machine-translated titles. Seed + localStorage, then /api/translate. */
+  mt: { seeded: false, byDoi: new Map(), byNorm: new Map(), local: new Map(), stop: '' },
 };
 
 const $  = (s, r = document) => r.querySelector(s);
@@ -1398,8 +1400,10 @@ function renderResearch() {
   const dlBtn = $('#downloadFavBtn');
   if (dlBtn) dlBtn.hidden = S.jFilter !== 'fav' || !!q;
 
+  applyAllCachedMt();
   if (S.jView === 'index') renderIndexTable($('#researchCards'), list);
   else renderArticleList($('#researchCards'), list, isPick);
+  queueMachineTitles();
 }
 
 function headLabel(n, isPick) {
@@ -1421,7 +1425,7 @@ function searchTokens(q) {
 function articleHaystack(a) {
   const d = a.digest || {};
   const parts = [
-    a.title, d.titleZh, a.abstract, a.journal, a.domain, a.studyZh,
+    a.title, d.titleZh, a.mtZh, a.abstract, a.journal, a.domain, a.studyZh,
     ...(a.keywords || []),
   ];
   if (a.sections) parts.push(...Object.values(a.sections));
@@ -1538,6 +1542,8 @@ function articleCard(a, isPick, pickRank) {
   const h3 = el('h3', 'art-title');
   fillHighlighted(h3, titleZh || a.title, searchQuery());
   titleWrap.append(h3);
+  const zhLine = machineTitleNode(a);
+  if (zhLine) titleWrap.append(zhLine);
   top.append(caret, titleWrap, favButton(a));
 
   const badges = el('div', 'art-badges');
@@ -1561,7 +1567,11 @@ function articleCard(a, isPick, pickRank) {
   let body = null;
   c.addEventListener('click', ev => {
     // 忽略链接和按钮 —— 否则点「查看英文摘要」会冒泡到这里，把整张卡片折叠掉
-    if (ev.target.closest('a, button, input, select, textarea')) return;
+    if (ev.target.closest('a, button, input, select, textarea, #mtPop')) return;
+    // A drag-selection is not a tap. Opening the card would move the text.
+    const sel = window.getSelection && window.getSelection();
+    if (sel && !sel.isCollapsed && String(sel).trim()) return;
+    hideMtPop();
     const open = c.classList.toggle('open');
     if (!open) { if (body) body.remove(); return; }
 
@@ -2061,6 +2071,357 @@ function downloadFavoritesMarkdown() {
   toast('已下载 ' + filename, 2800);
 }
 
+/* ---------------- 机翻标题 + 划词翻译 ----------------
+   Non-featured articles from the last 15 calendar days get a Chinese title
+   under the English one, tagged 机翻. 今日精选 already has an editorial
+   titleZh and is left alone. The 30-day pool (DAYS) is unchanged.
+   normTitle / the cutoff match functions/_lib/mt.js. */
+const MT_LS = 'rr.mt.v1';
+const SEL_SS = 'rr.selzh.v1';
+const MT_DAYS = 15;
+const SEL_MAX = 1500;
+
+function normTitle(s) {
+  return String(s || '')
+    .toLowerCase()
+    .replace(/&amp;/g, '&')
+    .replace(/[‐‑–—−]/g, '-')
+    .replace(/[‘’′]/g, "'")
+    .replace(/[“”]/g, '"')
+    .replace(/\s+/g, ' ')
+    .replace(/[.。\s]+$/g, '')
+    .trim();
+}
+function mtCutoff() {
+  const d = new Date();
+  d.setUTCHours(0, 0, 0, 0);
+  d.setUTCDate(d.getUTCDate() - (MT_DAYS - 1));
+  return d.toISOString().slice(0, 10);
+}
+function mtId(a) {
+  return String(a?.doi || a?.id || '').trim().toLowerCase();
+}
+function mtFeatured(a) {
+  if (a?.digest && String(a.digest.titleZh || '').trim()) return true;
+  const id = mtId(a);
+  if (!id) return false;
+  return (S.jr.picks || []).some(p => mtId(p) === id);
+}
+function mtEligible(a) {
+  if (!a?.title || !a.date) return false;
+  if (mtFeatured(a)) return false;
+  return String(a.date) >= mtCutoff();
+}
+function mtLists() {
+  return [S.jr.all, S.jr.picks, S.week && S.week.items];
+}
+function findArticleById(id) {
+  const key = String(id || '');
+  for (const list of mtLists()) {
+    const hit = (list || []).find(a => a.id === key || mtId(a) === key.toLowerCase());
+    if (hit) return hit;
+  }
+  return null;
+}
+function indexTitleSeed(data) {
+  S.mt.byDoi = new Map();
+  S.mt.byNorm = new Map();
+  for (const it of data?.items || []) {
+    const zh = String(it?.zh || '').trim();
+    if (!zh) continue;
+    const norm = normTitle(it.en || '');
+    const rec = { zh, norm };
+    if (it.doi) S.mt.byDoi.set(String(it.doi).toLowerCase(), rec);
+    if (norm) S.mt.byNorm.set(norm, rec);
+  }
+}
+function readLocalMt() {
+  S.mt.local = new Map();
+  try {
+    const raw = JSON.parse(localStorage.getItem(MT_LS) || '[]');
+    if (!Array.isArray(raw)) return;
+    for (const row of raw) {
+      if (!row?.zh) continue;
+      if (row.id) S.mt.local.set(String(row.id).toLowerCase(), row);
+      if (row.norm) S.mt.local.set('t:' + row.norm, row);
+    }
+  } catch { /* private mode */ }
+}
+function rememberMt(a, zh) {
+  const id = mtId(a);
+  const norm = normTitle(a.title);
+  const row = { id, norm, zh };
+  if (id) S.mt.local.set(id, row);
+  if (norm) S.mt.local.set('t:' + norm, row);
+  const list = [];
+  const seen = new Set();
+  for (const [k, v] of S.mt.local) {
+    if (String(k).startsWith('t:')) continue;
+    const key = v.id || v.norm;
+    if (!key || !v.zh || seen.has(key)) continue;
+    seen.add(key);
+    list.push({ id: v.id || '', norm: v.norm || '', zh: v.zh });
+  }
+  for (const [k, v] of S.mt.local) {
+    if (!String(k).startsWith('t:') || v.id || !v.norm || seen.has(v.norm)) continue;
+    seen.add(v.norm);
+    list.push({ id: '', norm: v.norm, zh: v.zh });
+  }
+  try { localStorage.setItem(MT_LS, JSON.stringify(list.slice(0, 400))); }
+  catch { /* quota */ }
+}
+function lookupMt(a) {
+  const id = mtId(a);
+  const norm = normTitle(a.title);
+  const doiHit = id && S.mt.byDoi.get(id);
+  if (doiHit && (!doiHit.norm || doiHit.norm === norm)) return doiHit.zh;
+  const normHit = norm && S.mt.byNorm.get(norm);
+  if (normHit) return normHit.zh;
+  const local = (id && S.mt.local.get(id)) || (norm && S.mt.local.get('t:' + norm));
+  if (local && local.zh && (!local.norm || local.norm === norm)) return local.zh;
+  return '';
+}
+function applyCachedMt(a) {
+  if (!mtEligible(a)) return false;
+  const zh = lookupMt(a);
+  if (!zh) return false;
+  a.mtZh = zh;
+  return true;
+}
+function applyAllCachedMt() {
+  for (const list of mtLists()) for (const a of list || []) applyCachedMt(a);
+}
+function machineTitleNode(a) {
+  if (!a?.mtZh || !mtEligible(a)) return null;
+  const p = el('p', 'art-zh');
+  const t = el('span', 'art-zh-txt');
+  fillHighlighted(t, a.mtZh, searchQuery());
+  p.append(t, el('span', 'art-zh-tag', '机翻'));
+  return p;
+}
+function patchMachineTitles() {
+  for (const card of document.querySelectorAll('#researchCards .card.art')) {
+    const a = findArticleById(card.dataset.id || '');
+    if (!a) continue;
+    let line = card.querySelector('.art-zh');
+    if (!a.mtZh || !mtEligible(a)) { if (line) line.remove(); continue; }
+    if (!line) {
+      line = machineTitleNode(a);
+      const h3 = card.querySelector('.art-title');
+      if (line && h3) h3.after(line);
+      continue;
+    }
+    const t = line.querySelector('.art-zh-txt');
+    if (t) fillHighlighted(t, a.mtZh, searchQuery());
+  }
+}
+async function loadTitleSeed() {
+  if (S.mt.seeded) return;
+  readLocalMt();
+  try {
+    const data = await fetchJSON('data/title-zh.json', 12000);
+    indexTitleSeed(data);
+  } catch (e) { console.warn('[mt] seed', e); }
+  S.mt.seeded = true;
+  if (!(S.jr.all && S.jr.all.length)) return;
+  if (document.querySelector('.card.art.open')) {
+    applyAllCachedMt();
+    patchMachineTitles();
+    queueMachineTitles();
+  } else renderResearch();
+}
+function queueMachineTitles() {
+  if (!S.mt.seeded || S.mt.stop) return;
+  if (queueMachineTitles.running) { queueMachineTitles.dirty = true; return; }
+  const need = [];
+  const seen = new Set();
+  for (const list of [S.jr.all, S.week && S.week.items]) {
+    for (const a of list || []) {
+      if (!mtEligible(a) || a.mtZh) continue;
+      const id = mtId(a);
+      if (!id || seen.has(id)) continue;
+      seen.add(id);
+      need.push(a);
+    }
+  }
+  if (!need.length) return;
+  queueMachineTitles.running = true;
+  queueMachineTitles.dirty = false;
+  (async () => {
+    let failed = false;
+    try {
+      for (let i = 0; i < need.length; i += 10) {
+        if (S.mt.stop) break;
+        const batch = need.slice(i, i + 10).filter(a => mtEligible(a) && !a.mtZh);
+        if (!batch.length) continue;
+        let res, data = {};
+        try {
+          res = await fetch('/api/translate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              mode: 'titles',
+              items: batch.map(a => ({ id: mtId(a), text: a.title })),
+            }),
+          });
+          data = await res.json().catch(() => ({}));
+        } catch (e) {
+          console.warn('[mt] titles', e);
+          failed = true;
+          break;
+        }
+        if (data.error === 'quota' || res.status === 429) S.mt.stop = 'quota';
+        if (data.error === 'ai_unconfigured' || res.status === 503) S.mt.stop = 'unconfigured';
+        for (const item of data.items || []) {
+          const zh = String(item?.zh || '').trim();
+          if (!zh) continue;
+          const id = String(item.id || '').toLowerCase();
+          for (const list of mtLists()) {
+            for (const other of list || []) {
+              if (mtId(other) !== id) continue;
+              other.mtZh = zh;
+              rememberMt(other, zh);
+            }
+          }
+        }
+        patchMachineTitles();
+        if (S.mt.stop) break;
+        if (!(data.items || []).length) { failed = true; break; }
+      }
+    } finally {
+      queueMachineTitles.running = false;
+      if (!failed && !S.mt.stop && queueMachineTitles.dirty) queueMachineTitles();
+    }
+  })();
+}
+
+let mtPopToken = 0;
+let mtPopText = '';
+function selCacheMap() {
+  if (selCacheMap.m) return selCacheMap.m;
+  const m = new Map();
+  try {
+    const arr = JSON.parse(sessionStorage.getItem(SEL_SS) || '[]');
+    if (Array.isArray(arr)) for (const row of arr) if (row && row[0] && row[1]) m.set(row[0], row[1]);
+  } catch { /* private mode */ }
+  selCacheMap.m = m;
+  return m;
+}
+function rememberSel(text, zh) {
+  const m = selCacheMap();
+  const key = text.toLowerCase();
+  m.delete(key);
+  m.set(key, zh);
+  const arr = [...m.entries()].slice(-40);
+  selCacheMap.m = new Map(arr);
+  try { sessionStorage.setItem(SEL_SS, JSON.stringify(arr)); } catch { /* quota */ }
+}
+function hideMtPop() {
+  mtPopToken++;
+  mtPopText = '';
+  const pop = $('#mtPop');
+  if (!pop) return;
+  pop.hidden = true;
+  pop.classList.remove('is-warn');
+  pop.replaceChildren();
+}
+function placeMtPop(rect) {
+  const pop = $('#mtPop');
+  if (!pop || pop.hidden || !rect) return;
+  const margin = 8;
+  const w = pop.offsetWidth || 220;
+  const h = pop.offsetHeight || 40;
+  const below = rect.top < window.innerHeight * 0.62;
+  let top = below ? rect.bottom + margin : rect.top - h - margin;
+  if (top < 8) top = rect.bottom + margin;
+  if (top + h > window.innerHeight - 8) top = Math.max(8, rect.top - h - margin);
+  let left = rect.left;
+  left = Math.max(8, Math.min(left, window.innerWidth - w - 8));
+  pop.style.top = Math.round(top) + 'px';
+  pop.style.left = Math.round(left) + 'px';
+}
+function fillMtPop(text, warn) {
+  const pop = $('#mtPop');
+  if (!pop) return;
+  pop.classList.toggle('is-warn', !!warn);
+  pop.replaceChildren(el('span', 'mt-pop-tag', '机翻'), el('span', 'mt-pop-txt', text));
+  pop.hidden = false;
+}
+function looksEnglish(text) {
+  const latin = (text.match(/[A-Za-z]/g) || []).length;
+  const cjk = (text.match(/[\u4e00-\u9fff]/g) || []).length;
+  return latin >= 2 && latin >= cjk;
+}
+function readMtSelection() {
+  const sel = window.getSelection && window.getSelection();
+  if (!sel || sel.isCollapsed || !sel.rangeCount) return null;
+  const text = String(sel).replace(/\s+/g, ' ').trim();
+  const node = sel.anchorNode;
+  const hostEl = node && (node.nodeType === 1 ? node : node.parentElement);
+  if (!hostEl || !hostEl.closest) return { dismiss: true };
+  if (hostEl.closest('#mtPop')) return null;
+  if (hostEl.closest('button, a, input, textarea, .sheet')) return { dismiss: true };
+  const host = hostEl.closest('.art-title, .art-zh-txt, .rawtitle-txt, .sec-txt, .art-abstract, .search-snip');
+  if (!host || text.length < 2 || (text.length <= SEL_MAX && !looksEnglish(text))) return { dismiss: true };
+  let rect = null;
+  try { rect = sel.getRangeAt(0).getBoundingClientRect(); } catch { rect = null; }
+  if (!rect || (!rect.width && !rect.height)) return null;
+  return { text, rect };
+}
+function scheduleMtPop() {
+  clearTimeout(scheduleMtPop.t);
+  scheduleMtPop.t = setTimeout(syncMtPop, 420);
+}
+async function syncMtPop() {
+  const cur = readMtSelection();
+  if (!cur) return;
+  if (cur.dismiss) { hideMtPop(); return; }
+  if (cur.text === mtPopText && $('#mtPop') && !$('#mtPop').hidden) {
+    placeMtPop(cur.rect);
+    return;
+  }
+  mtPopText = cur.text;
+  const token = ++mtPopToken;
+  const rect = cur.rect;
+  if (cur.text.length > SEL_MAX) {
+    fillMtPop('选中的文字太长了（最多 1500 字），请缩短后再试。', true);
+    placeMtPop(rect);
+    return;
+  }
+  const cached = selCacheMap().get(cur.text.toLowerCase());
+  if (cached) {
+    fillMtPop(cached, false);
+    placeMtPop(rect);
+    return;
+  }
+  fillMtPop('翻译中…', false);
+  placeMtPop(rect);
+  try {
+    const res = await fetch('/api/translate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mode: 'selection', text: cur.text }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (token !== mtPopToken) return;
+    if (data.error === 'quota' || res.status === 429) {
+      fillMtPop(data.message || '今天的免费翻译额度用完了，明天会恢复。', true);
+    } else if (data.error === 'too_long') {
+      fillMtPop(data.message || '选中的文字太长了（最多 1500 字），请缩短后再试。', true);
+    } else if (!res.ok || !data.zh) {
+      fillMtPop(data.message || '翻译失败，请再选一次试试。', true);
+    } else {
+      rememberSel(cur.text, data.zh);
+      fillMtPop(data.zh, false);
+    }
+    placeMtPop(rect);
+  } catch {
+    if (token !== mtPopToken) return;
+    fillMtPop('翻译失败，请再选一次试试。', true);
+    placeMtPop(rect);
+  }
+}
+
 /* ---------------- boot ---------------- */
 async function boot() {
   window.__rr = S;                 // debug/QA hook
@@ -2069,6 +2430,7 @@ async function boot() {
   S.seen = readSeen();
   S.fav = readFav();
   if (location.hash === '#fav') S.jFilter = 'fav';
+  const seedP = loadTitleSeed();
 
   const c = readCache();
   if (c.week?.data?.items?.length) {
@@ -2098,6 +2460,7 @@ async function boot() {
   loadWeek(false);
   await loadResearch(false);
   await loadDigest();                    // maps 创新/看点 onto S.jr.all, then re-renders
+  await seedP;                           // 机翻标题种子；不挡首屏，到了再补一行中文
   await loadBuilderDigest();             // 今日 AI 动态总览 + 每条动态的中文一句话
   if (S.tab === 'builders') await loadBuilders(false);
   stampFoot();
@@ -2123,8 +2486,25 @@ const downloadFavBtn = $('#downloadFavBtn');
 if (downloadFavBtn) downloadFavBtn.addEventListener('click', () => downloadFavoritesMarkdown());
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
+  hideMtPop();
   closeGlossary();
 });
+document.addEventListener('selectionchange', scheduleMtPop);
+document.addEventListener('pointerdown', e => {
+  const t = e.target;
+  if (!(t instanceof Element)) return;
+  if (t.closest('#mtPop, .art-title, .art-zh, .rawtitle-txt, .sec-txt, .art-abstract, .search-snip')) return;
+  hideMtPop();
+});
+const mtPop = $('#mtPop');
+if (mtPop) {
+  // Keep the popup up when the finger lands on it. iOS otherwise clears the
+  // selection and selectionchange would race the read.
+  mtPop.addEventListener('pointerdown', e => e.preventDefault());
+  mtPop.addEventListener('touchstart', e => e.preventDefault(), { passive: false });
+}
+const scrollArea = $('#scrollArea');
+if (scrollArea) scrollArea.addEventListener('scroll', () => hideMtPop(), { passive: true });
 window.addEventListener('hashchange', () => {
   const on = location.hash === '#fav';
   if (on && S.jFilter !== 'fav') setJFilter('fav');

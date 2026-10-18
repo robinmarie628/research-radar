@@ -1,0 +1,15 @@
+# Cloudflare Pages project: research-radar-f5j (https://research-radar-f5j.pages.dev).
+# Git integration builds this file with the branch it is deploying.
+# Preview deployments of a branch that contains this file get the AI binding.
+#
+# This is not the trigger Worker. That one lives in worker/wrangler.toml
+# and is deployed from the worker/ directory.
+name = "research-radar-f5j"
+compatibility_date = "2026-10-18"
+pages_build_output_dir = "./dist"
+
+# Workers AI. Pages Functions read it as env.AI.
+# No resource id: unlike KV or R2, the AI binding is just a name.
+# https://developers.cloudflare.com/pages/functions/bindings/#workers-ai
+[ai]
+binding = "AI"
