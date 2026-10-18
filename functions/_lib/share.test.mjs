@@ -1,12 +1,18 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
+function piecesOf(en) {
+  return String(en || '').split(' … ').map(part => part.replace(/…/g, '').replace(/\s+/g, ' ').trim()).filter(Boolean);
+}
 function quoteCore(en) {
-  return String(en || '').replace(/…/g, '').replace(/\s+/g, ' ').trim();
+  return piecesOf(en)[0] || '';
 }
 function wordCountOk(en) {
-  const n = quoteCore(en).split(/\s+/).filter(Boolean).length;
-  return n > 0 && n <= 25;
+  const parts = piecesOf(en);
+  return parts.length > 0 && parts.every(part => {
+    const n = part.split(/\s+/).filter(Boolean).length;
+    return n >= 1 && n <= 25;
+  });
 }
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
@@ -39,8 +45,7 @@ test('a paraphrased sentence is rejected and a real one is kept', () => {
   ]);
   assert.ok(picks.length >= 1 && picks.length <= 4);
   for (const p of picks) {
-    const core = p.en.replace(/…/g, '').trim();
-    assert.ok(ABSTRACT.includes(core), p.en);
+    for (const core of piecesOf(p.en)) assert.ok(ABSTRACT.includes(core), p.en);
     assert.ok(wordCountOk(p.en), p.en);
     assert.equal(p.en.includes('...'), false);
   }
@@ -78,8 +83,8 @@ test('a long methods pick is replaced by a shorter finding', () => {
   const picks = resolveQuotePicks(abstract, [{ i: sentences.findIndex(s => /95% CI/.test(s)), zh: '不该用这句方法学' }]);
   assert.equal(picks.some(p => /95% CI/.test(p.en)), false);
   assert.equal(picks.some(p => /不该用这句方法学/.test(p.zh)), false);
-  assert.equal(picks.some(p => quoteCore(p.en) && finding.includes(quoteCore(p.en))), true);
-  for (const p of picks) assert.ok(abstract.includes(quoteCore(p.en)), p.en);
+  assert.equal(picks.some(p => piecesOf(p.en).some(core => finding.includes(core))), true);
+  for (const p of picks) for (const core of piecesOf(p.en)) assert.ok(abstract.includes(core), p.en);
 });
 
 test('registration, funding, ethics, and copyright lines are never quoted', () => {
@@ -115,10 +120,12 @@ test('a dull mortality sentence loses to a result that breaks the usual assumpti
   const reg = 'The study is registered on ClinicalTrials.gov (NCT03377036).';
   const picks = resolveQuotePicks([bg, methods, finding, cascade, reg, meaning].join(' '), []);
   const blob = picks.map(p => p.en).join(' ');
-  assert.match(picks[0].en, /in the absence of hyperlipidemia/);
-  assert.match(blob, /lipid-influx cascade|CD36/);
-  assert.equal((blob.match(/hyperlipidemia/gi) || []).length, 1);
-  assert.doesNotMatch(blob, /major cause of death|NCT|95% CI/);
+  assert.match(picks[0].en, /not eliminated/);
+  assert.doesNotMatch(picks[0].en, /major cause of death/);
+  const found = picks.find(p => p.role === 'finding');
+  assert.match(found.en, /in the absence of hyperlipidemia/);
+  assert.match(found.en, /lipid-influx cascade|CD36/);
+  assert.doesNotMatch(blob, /independently of|major cause of death|NCT|95% CI/);
   for (const p of picks) {
     assert.ok(wordCountOk(p.en), p.en);
     assert.equal(p.en.includes('...'), false);
@@ -134,10 +141,12 @@ test('textbook background and a support-the-use conclusion are not the hooks', (
   const meaning = 'These results support the use of deucrictibant as potentially the first orally administered antagonist and may address an unmet need for convenient treatment.';
   const picks = resolveQuotePicks([bg, aim, census, gap, short, meaning].join(' '), []);
   const blob = picks.map(p => p.en).join(' ');
-  assert.match(blob, /more than 12 h/);
-  assert.match(blob, /first orally administered/);
-  assert.doesNotMatch(blob, /remain scant|generally well tolerated|These results support the use/);
-  assert.ok(picks.length >= 2 && picks.length <= 4);
+  assert.match(picks.find(p => p.role === 'background').en, /remain scant/);
+  assert.match(picks.find(p => p.role === 'studied').en, /We investigated/);
+  assert.match(picks.find(p => p.role === 'finding').en, /more than 12 h/);
+  assert.match(picks.find(p => p.role === 'significance').en, /first orally administered/);
+  assert.doesNotMatch(blob, /generally well tolerated|These results support the use|primary efficacy analysis/);
+  assert.equal(picks.length, 4);
   for (const p of picks) assert.ok(wordCountOk(p.en), p.en);
 });
 
@@ -147,11 +156,12 @@ test('a model pick of a census sentence is replaced by the surprising line', () 
   const clutter = 'Onset of symptom relief occurred significantly faster with the study drug than placebo, with median times of 1.28 h (95% CI 1.05 to 1.52) and more than 12 h (5.82 to more than 12) (p<0.0001).';
   const meaning = 'These results support the use of the study drug as an oral treatment for attacks.';
   const picks = resolveQuotePicks([bg, clutter, plain, meaning].join(' '), [
-    { i: 0, zh: '不该用背景' },
+    { i: 99, zh: '不该用背景' },
   ]);
   const blob = picks.map(p => p.en).join(' ');
   assert.match(blob, /more than 12 h|significantly faster/);
-  assert.doesNotMatch(blob, /remain scant|These results support the use/);
+  assert.match(picks.find(p => p.role === 'background').en, /remain scant/);
+  assert.doesNotMatch(blob, /These results support the use/);
   assert.equal(picks.some(p => /不该用背景/.test(p.zh)), false);
 });
 
@@ -218,7 +228,7 @@ test('quotes mode drops a fake sentence and restores a drug placeholder', async 
   assert.equal(res.status, 200);
   const data = await res.json();
   assert.ok(data.quotes.length >= 1 && data.quotes.length <= 4);
-  for (const q of data.quotes) assert.ok(abstract.includes(quoteCore(q.en)), q.en);
+  for (const q of data.quotes) for (const core of piecesOf(q.en)) assert.ok(abstract.includes(core), q.en);
   const first = data.quotes.find(q => quoteCore(q.en) && sentences[0].includes(quoteCore(q.en)) && /durvalumab/i.test(q.en));
   assert.ok(first);
   assert.match(first.zh, /durvalumab/);
@@ -271,15 +281,18 @@ test('an open-access flag is true only for Y or a Creative Commons license', () 
   assert.equal(reliablePages('S0140-6736(26)01296-1'), '');
 });
 
-test('the main result is first and a repeated younger-age claim is not quoted twice', () => {
+test('the finding pairs the main result with the younger-age result, and the implication is separate', () => {
   const lower = 'After adjustment for confounders, quadrivalent human papillomavirus vaccination was associated with lower odds of all included adverse pregnancy outcomes.';
   const ages = 'Risk reduction was generally more pronounced among women vaccinated at younger ages.';
   const again = 'Quadrivalent human papillomavirus vaccination before pregnancy was associated with a lower risk of adverse pregnancy outcomes, particularly among women vaccinated at earlier ages, extending benefits of human papillomavirus vaccination beyond cancer prevention.';
   const picks = resolveQuotePicks([lower, ages, again].join(' '), []);
-  assert.match(picks[0].en, /lower odds of all included adverse pregnancy outcomes/);
+  const found = picks.find(p => p.role === 'finding');
+  assert.match(found.en, /lower odds of all included adverse pregnancy outcomes/);
+  assert.match(found.en, /younger ages|more pronounced/);
+  assert.doesNotMatch(found.en, /beyond cancer/);
   const ageLines = picks.filter(p => /younger ages|earlier ages|more pronounced|particularly among/i.test(p.en));
   assert.equal(ageLines.length, 1);
-  assert.match(picks.map(p => p.en).join(' '), /beyond cancer prevention/);
+  assert.match(picks.find(p => p.role === 'significance').en, /beyond cancer prevention/);
   for (const p of picks) assert.ok(wordCountOk(p.en), p.en);
 });
 
@@ -293,9 +306,11 @@ test('a trial card keeps one worded efficacy line ahead of adverse events', () =
     { i: 2, zh: '不良反应' },
     { i: 3, zh: '低血压' },
   ]);
-  assert.match(picks[0].en, /substantial improvements in bodyweight/);
-  assert.match(picks[0].en, /glycaemic control/);
-  assert.match(picks.map(p => p.en).join(' '), /[Hh]ypotension|adverse events/);
+  const found = picks.find(p => p.role === 'finding');
+  assert.match(found.en, /substantial improvements in bodyweight/);
+  assert.match(found.en, /glycaemic control/);
+  assert.match(found.en, /[Hh]ypotension|dysesthesia/);
+  assert.match(picks.find(p => p.role === 'background').en, /currently under investigation/);
   assert.equal(picks.filter(p => /bodyweight/i.test(p.en)).length, 1);
   for (const p of picks) assert.ok(wordCountOk(p.en), p.en);
 });

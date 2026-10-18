@@ -257,7 +257,7 @@
     const mark = a.role === 'mark' ? a : (b.role === 'mark' ? b : null);
     const other = mark === a ? b : (mark === b ? a : null);
     if (!mark || !other) return false;
-    return other.role === 'qen' && other.quote === mark.quote;
+    return (other.role === 'qen' || other.role === 'qlab') && other.quote === mark.quote;
   }
 
   function forbiddenOverlaps(blocks) {
@@ -495,16 +495,24 @@
     y += G.label_h * S;
     y += markPad;
 
+    const ROLE_LABEL = { background: '背景', studied: '研究', finding: '发现', significance: '启示' };
     const quotes = spec.quotes || [];
     for (let i = 0; i < quotes.length; i++) {
       const q = quotes[i];
+      const qx = M + 34 * S;
+      const qw = W - qx - M;
+      const lab = spec.labels !== false ? ROLE_LABEL[q.role] : '';
+      if (lab) {
+        paint(qx, y, lab, serif(12, true), NAVY, {
+          role: 'qlab', quote: i, minFont: px(12),
+        });
+        y += 16 * S;
+      }
       const markFont = play(64, 700);
       const markY = y - 14 * S + markDrop;
       paint(M - 2 * S, markY, '“', markFont, NAVY, {
         role: 'mark', quote: i, minFont: px(64),
       });
-      const qx = M + 34 * S;
-      const qw = W - qx - M;
       const qen = source(17, true);
       const qEllipsis = serif(17, false);
       const qenAdv = G.en_lh * S;

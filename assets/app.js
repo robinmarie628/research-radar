@@ -11,7 +11,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.18.35';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.18.36';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -2841,13 +2841,16 @@ function downloadBlob(filename, blob) {
 }
 function exactQuote(en, blobs) {
   const needle = String(en || '').replace(/\s+/g, ' ').trim();
-  const core = needle.replace(/…/g, '').replace(/\s+/g, ' ').trim();
-  if (!core) return '';
+  if (!needle) return '';
   const hay = (Array.isArray(blobs) ? blobs : [blobs]).map(b => String(b || '').replace(/\s+/g, ' ')).join('\n');
-  if (!hay.includes(core)) return '';
+  const parts = needle.split(' … ');
+  for (const part of parts) {
+    const core = part.replace(/…/g, '').replace(/\s+/g, ' ').trim();
+    if (!core || !hay.includes(core)) return '';
+  }
   return needle;
 }
-const QUOTE_LS = 'rr.quotes.v10';
+const QUOTE_LS = 'rr.quotes.v11';
 function quoteKey(a, abs) {
   let h = 5381;
   const s = String(abs || '').slice(0, 4000);
@@ -2901,10 +2904,11 @@ async function fetchQuotes(a) {
   const quotes = [];
   for (const q of data.quotes) {
     const blobs = [abs];
-    if (q?.source === 'fulltext' && q.sentence) blobs.push(q.sentence);
+    if (q?.sentence) blobs.push(q.sentence);
+    if (Array.isArray(q?.sentences)) blobs.push(...q.sentences);
     const en = exactQuote(q?.en, blobs);
     const zh = String(q?.zh || '').trim();
-    if (en && zh) quotes.push({ en, zh, role: '', source: q?.source || 'abstract', sentence: q?.sentence || '' });
+    if (en && zh) quotes.push({ en, zh, role: q?.role || '', source: q?.source || 'abstract', sentence: q?.sentence || '' });
   }
   if (!quotes.length) return { error: '没有从摘要里抽出可用的原句。' };
   const out = quotes.slice(0, 4);
@@ -2953,6 +2957,7 @@ function cardSpec(a, titleZh, quotes, target) {
     qr_note: '链接直达 ' + target.name + ' 全文',
     qr_sub: a.oa ? '开放获取' : '访问以机构订阅为准',
     corner_fill: '#111111',
+    labels: true,
   };
 }
 function shareChoice(strong, sub) {

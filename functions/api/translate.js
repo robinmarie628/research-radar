@@ -22,7 +22,7 @@ import {
 } from '../_lib/mt.js';
 import {
   QUOTE_SYSTEM, ABSTRACT_MAX, splitSentences, resolveQuotePicks, parseQuoteResponse,
-  interestScore,
+  selectQuotePool,
 } from '../_lib/quotes.js';
 import { openAccessPassages } from '../_lib/fulltext.js';
 
@@ -298,7 +298,7 @@ async function translateQuotes(request, env, body) {
   const { glossary, overrides } = await loadResources(request, env);
   const sections = body.sections && typeof body.sections === 'object' ? body.sections : null;
   const doi = String(body.doi || body.id || '');
-  const key = 'quotes/v10/' + (await sha256Hex(normTitle(abstract) + '|' + doi.toLowerCase())).slice(0, 32);
+  const key = 'quotes/v11/' + (await sha256Hex(normTitle(abstract) + '|' + doi.toLowerCase())).slice(0, 32);
   const hit = await cacheGet(request, key);
   if (hit?.quotes?.length) return json({ quotes: hit.quotes, cached: true });
 
@@ -331,34 +331,59 @@ async function translateQuotes(request, env, body) {
     picks = resolveQuotePicks(pool.join(' '), [], sections);
   }
 
-  const missing = picks.filter(p => !p.zh);
-  if (missing.length) {
+  const jobs = [];
+  for (const p of picks) {
+    const parts = p.pieces?.length ? p.pieces : [p];
+    for (const part of parts) if (!part.zh) jobs.push(part);
+  }
+  if (jobs.length) {
     try {
-      const masked = missing.map(p => maskDrugs(p.en));
+      const masked = jobs.map(p => maskDrugs(p.en));
       const raw = await runModel(
         env,
-        SELECTION_SYSTEM + '\nYou will receive a JSON array of excerpts. Reply with a JSON array of Simplified Chinese translations, same length and order, and nothing else. If an excerpt begins or ends with the ellipsis …, keep … at the same end of the Chinese line and translate only the words that are present.',
+        SELECTION_SYSTEM + '\nYou will receive a JSON array of excerpts. Reply with a JSON array of Simplified Chinese translations, same length and order, and nothing else. If an excerpt begins or ends with the ellipsis …, keep … at the same end of the Chinese line and translate only the words that are present. Do not add an ellipsis that was not in the excerpt.',
         JSON.stringify(masked.map(m => m.text)),
         2000,
       );
-      const parts = parseTranslationArray(raw, missing.length);
-      missing.forEach((p, j) => {
+      const parts = parseTranslationArray(raw, jobs.length);
+      jobs.forEach((p, j) => {
         p.zh = applyGlossary(p.en, restoreDrugs(parts[j], masked[j].drugs), glossary, overrides);
       });
     } catch (err) {
-      picks = picks.filter(p => p.zh);
+      for (const p of picks) {
+        if (p.pieces?.length) p.pieces = p.pieces.filter(part => part.zh);
+        if (p.pieces?.length) {
+          p.en = p.pieces.map(part => part.en).join(' … ');
+          p.zh = p.pieces.map(part => alignEllipsis(part.en, part.zh)).join(' … ');
+        }
+      }
+      picks = picks.filter(p => p.zh || (p.pieces && p.pieces.length));
       if (!picks.length) return fail(err);
+    }
+  }
+  for (const p of picks) {
+    if (p.pieces?.length) {
+      const ready = p.pieces.filter(part => part.en && part.zh);
+      p.pieces = ready;
+      p.en = ready.map(part => part.en).join(' … ');
+      p.zh = ready.map(part => alignEllipsis(part.en, part.zh)).join(' … ');
+    } else if (p.zh) {
+      p.zh = alignEllipsis(p.en, p.zh);
     }
   }
 
   const quotes = picks.filter(p => p.en && p.zh).slice(0, 4).map(p => {
     const sentence = p.sentence || '';
-    const fromFull = !!(passage && sentence && !abstract.includes(sentence.replace(/[.。]+$/, '')));
+    const sentences = p.pieces?.length
+      ? p.pieces.map(part => part.sentence).filter(Boolean)
+      : (sentence ? [sentence] : []);
+    const fromFull = sentences.some(s => passage && !abstract.includes(String(s).replace(/[.。]+$/, '').trim()));
     return {
-      role: '',
+      role: p.role || '',
       en: p.en,
-      zh: alignEllipsis(p.en, p.zh),
+      zh: p.zh,
       sentence,
+      sentences,
       source: fromFull ? 'fulltext' : 'abstract',
     };
   });
@@ -368,12 +393,7 @@ async function translateQuotes(request, env, body) {
 }
 
 function quotePool(text) {
-  const all = splitSentences(text);
-  if (all.length <= 36) return all;
-  const ranked = all.map(s => ({ s, sc: interestScore(s) })).sort((a, b) => b.sc - a.sc);
-  const keep = new Set(ranked.slice(0, 36).map(row => row.s));
-  for (const row of ranked) if (row.sc >= 8) keep.add(row.s);
-  return all.filter(s => keep.has(s)).slice(0, 42);
+  return selectQuotePool(text);
 }
 
 function alignEllipsis(en, zh) {
