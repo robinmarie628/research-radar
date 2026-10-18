@@ -8,7 +8,7 @@
 
 export const MT_MODEL = '@cf/qwen/qwen3-30b-a3b-fp8';
 export const TITLE_BATCH = 10;
-export const TITLE_ZH_DAYS = 30;
+export const TITLE_ZH_DAYS = 15;
 export const SELECTION_MAX = 1500;
 export const TITLE_MAX = 500;
 
@@ -179,11 +179,12 @@ export function settleTitleZh(en, zh, glossary, overrides) {
   return preserveTitleContrast(en, applyGlossary(en, zh, glossary, overrides));
 }
 
-/** Inclusive 15-calendar-day window ending today (UTC). 2026-10-18 → 2026-10-04. */
+/** Same lower bound as the journal pool: today minus TITLE_ZH_DAYS (UTC).
+ *  2026-10-18 with 15 days → 2026-10-03. A paper dated the day before is out. */
 export function titleZhCutoff(now = new Date()) {
   const d = new Date(now.getTime());
   d.setUTCHours(0, 0, 0, 0);
-  d.setUTCDate(d.getUTCDate() - (TITLE_ZH_DAYS - 1));
+  d.setUTCDate(d.getUTCDate() - TITLE_ZH_DAYS);
   return d.toISOString().slice(0, 10);
 }
 

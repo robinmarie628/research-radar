@@ -14,7 +14,7 @@ Writes:
   data/snapshot-journals.json   Europe PMC articles (classified)
   data/snapshot-builders.json   follow-builders X / blog / podcast items
 
-stdlib only.  Usage:  python build_snapshot.py [--days 30]
+stdlib only.  Usage:  python build_snapshot.py [--days 15]
 """
 import argparse
 import json
@@ -33,7 +33,8 @@ EPMC = "https://www.ebi.ac.uk/europepmc/webservices/rest/search"
 EPMC_PAGE = 100
 EPMC_CHUNK_PAGES = 15
 
-# 30-day pool. Among flagship + sub articles the target is 7:3
+# 15-day pool. firstPublicationDate older than today-minus-days is absent.
+# Among flagship + sub articles the target is 7:3
 # (FLAGSHIP_SHARE). Specialty journals are outside that ratio.
 # Every sub journal that published keeps one seat, then each domain is
 # filled to DOMAIN_FLOOR when the window has the papers. Further subs are
@@ -651,7 +652,7 @@ def build_builders():
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--days", type=int, default=30)
+    ap.add_argument("--days", type=int, default=15)
     a = ap.parse_args()
 
     print(f"[1/2] journals (last {a.days}d) ...")

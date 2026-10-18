@@ -274,7 +274,7 @@ def choose_eight(fresh, full, n=8, n_basic=4, n_clinical=4):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--n", type=int, default=8, help="papers per day")
-    ap.add_argument("--days", type=int, default=30, help="Europe PMC window")
+    ap.add_argument("--days", type=int, default=15, help="Europe PMC window")
     ap.add_argument("--dry-run", action="store_true",
                     help="build the prompt and print it, but do not call the model")
     a = ap.parse_args()

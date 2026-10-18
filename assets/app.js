@@ -11,7 +11,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.18.47';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.18.49';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -22,14 +22,15 @@ const FEED     = 'https://raw.githubusercontent.com/zarazhangrui/follow-builders
    部署好 Worker 后，把下面这个 URL 换成你自己的 *.workers.dev 地址
    （或绑定的自定义域名）。详见 research-radar/worker/README-deploy.md */
 const WORKER_URL = 'https://research-radar-trigger.robinmarie628.workers.dev';
-const DAYS     = 30;        // discovery window — abstracts lag 2–4 days, so never use 1
+const DAYS     = 15;        // discovery window — abstracts lag 2–4 days, so never use 1
 const MAXJ     = 100;       // Europe PMC page size (resultType=core). One page is not the pool.
 const CHUNKS   = 3;         // ISSN slices. Each slice is paged until every journal has its cap.
 const EPMC_PAGES = 15;      // 1500 core rows per slice — enough for the busiest third of the pool
-/* 30 天池。旗舰 + 子刊合计按 7:3（FLAGSHIP_SHARE）。专科刊不进这个比例。
+/* 15 天池。发表日早于「今天往前 15 天」的文章不进公开池，也不进快照。
+   旗舰 + 子刊合计按 7:3（FLAGSHIP_SHARE）。专科刊不进这个比例。
    每刊上限：旗舰 28、专科 6。子刊先保证领域保底（DOMAIN_FLOOR），
    保底之后再按影响因子轮流补到大约 30%。一个领域若窗口里不足 6 篇，就停在有的篇数。
-   全池大约 300–400（POOL_MAX）。 */
+   全池大约 300–400（POOL_MAX）。收藏例外：用户点过心的文章留在本机，不写回共享快照。 */
 const FLAGSHIP_CAP = 28;
 const SUB_CAP = 3;
 const SPECIALTY_CAP = 6;
@@ -50,7 +51,7 @@ const PICK_N   = 8;         // 今日精选 size
 const PICK_BASIC    = 4;    // …其中基础 / 分子医学
 const PICK_CLINICAL = 4;    // …其中临床研究
 const TTL      = 30 * 60e3; // cache freshness
-const LS_KEY   = 'rr.cache.v5';  // v4 treated Europe PMC isOpenAccess "N" as open access
+const LS_KEY   = 'rr.cache.v6';  // v5 still held the 30-day journal pool
 const SEEN_KEY = 'rr.seen.v1';
 const FAV_KEY  = 'rr.fav.v1';
 /* Crossref polite pool + NCBI identification. Browsers forbid a custom
@@ -416,8 +417,11 @@ function bumpUnread() {
 
 /* ---------------- favorites / 小红心 ----------------
    Local only. The key is the lowercased DOI when one exists, else the
-   article id, so a paper stays favorited after it leaves the 30-day pool.
-   A small snapshot keeps the 收藏 list readable in that case. */
+   article id. The shared 15-day pool and snapshot drop older papers.
+   A favorited article keeps its own payload here (title, abstract or
+   sections, citation fields, editorial notes, machine title) so 收藏,
+   the detail card, and the share card still render after it ages out.
+   That copy never goes back into the shipped snapshot. */
 function readFav() {
   try {
     const raw = JSON.parse(localStorage.getItem(FAV_KEY) || 'null');
@@ -448,14 +452,43 @@ function favAbstract(a) {
     .filter(Boolean)
     .join('\n\n');
 }
+function favSections(a) {
+  const sec = a?.sections;
+  if (!sec || typeof sec !== 'object') return null;
+  const out = {};
+  for (const k of ['objective', 'methods', 'results', 'conclusion', 'other']) {
+    const txt = String(sec[k] || '').trim();
+    if (txt) out[k] = txt.slice(0, 4000);
+  }
+  return Object.keys(out).length ? out : null;
+}
+function favDigest(a) {
+  const d = a?.digest;
+  if (!d || typeof d !== 'object') return null;
+  const out = {};
+  const titleZh = stripTitleMeta(d.titleZh || '');
+  if (titleZh) out.titleZh = titleZh;
+  if (d.topPick) out.topPick = true;
+  if (d.topReason) out.topReason = String(d.topReason);
+  for (const [k] of DIGEST_FIELDS) {
+    const txt = String(d[k] || '').trim();
+    if (txt) out[k] = txt;
+  }
+  return Object.keys(out).length ? out : null;
+}
 function favSnapshot(a) {
   const k = favKey(a);
+  const sections = favSections(a);
+  const digest = favDigest(a);
   return {
     id: a.id || k,
     doi: a.doi || (k.startsWith('10.') ? k : ''),
     title: a.title || '',
-    titleZh: stripTitleMeta((a.digest && a.digest.titleZh) || ''),
-    abstract: favAbstract(a).slice(0, 12000),
+    titleZh: (digest && digest.titleZh) || '',
+    mtZh: stripTitleMeta(a.mtZh || ''),
+    abstract: sections ? '' : favAbstract(a).slice(0, 12000),
+    sections,
+    structured: !!(a.structured && sections),
     journal: a.journal || '',
     domain: a.domain || '',
     studyKey: a.studyKey || 'other',
@@ -465,6 +498,7 @@ function favSnapshot(a) {
     year: a.year || '',
     date: a.date || '',
     pmid: a.pmid || '',
+    authors: a.authors || '',
     authorCite: Array.isArray(a.authorCite) ? a.authorCite.slice(0, 24) : [],
     volume: a.volume || '',
     issue: a.issue || '',
@@ -472,18 +506,61 @@ function favSnapshot(a) {
     oa: !!a.oa,
     issn: a.issn || '',
     platforms: Array.isArray(a.platforms) ? a.platforms.slice() : [],
+    keywords: Array.isArray(a.keywords) ? a.keywords.slice(0, 16) : [],
+    imp: a.imp || 0,
+    digest,
     pii: a.pii || '',
   };
 }
+function mergeFavSnap(prev, next) {
+  if (!prev) return next;
+  if (!next.abstract && prev.abstract) next.abstract = prev.abstract;
+  if (!next.sections && prev.sections) next.sections = prev.sections;
+  if (!next.structured && prev.structured && next.sections) next.structured = true;
+  if (!next.mtZh && prev.mtZh) next.mtZh = prev.mtZh;
+  if (!next.digest && prev.digest) next.digest = prev.digest;
+  if (!next.titleZh && prev.titleZh) next.titleZh = prev.titleZh;
+  if (!next.authors && prev.authors) next.authors = prev.authors;
+  if ((!next.authorCite || !next.authorCite.length) && prev.authorCite?.length) next.authorCite = prev.authorCite;
+  if (!next.pii && prev.pii) next.pii = prev.pii;
+  if (!next.keywords?.length && prev.keywords?.length) next.keywords = prev.keywords;
+  return next;
+}
+function refreshFavSnap(a) {
+  const k = favKey(a);
+  if (!k || !S.fav.order.includes(k)) return false;
+  const next = mergeFavSnap(S.fav.items[k], favSnapshot(a));
+  if (JSON.stringify(S.fav.items[k]) === JSON.stringify(next)) return false;
+  S.fav.items[k] = next;
+  return true;
+}
+function stashFavTitle(a) {
+  const k = favKey(a);
+  const snap = k && S.fav.items[k];
+  if (!snap || !a?.mtZh || snap.mtZh === a.mtZh) return;
+  snap.mtZh = a.mtZh;
+  writeFav();
+}
+function rememberFavPii(a) {
+  const k = favKey(a);
+  const snap = k && S.fav.items[k];
+  if (!snap || !a?.pii || snap.pii === a.pii) return;
+  snap.pii = a.pii;
+  writeFav();
+}
 function articleFromFavSnap(snap, key) {
   const doi = snap.doi || (String(key).startsWith('10.') ? key : '');
-  return {
+  const sections = snap.sections && typeof snap.sections === 'object' ? snap.sections : null;
+  const digest = snap.digest && typeof snap.digest === 'object'
+    ? snap.digest
+    : (snap.titleZh ? { titleZh: stripTitleMeta(snap.titleZh) } : null);
+  const article = {
     id: snap.id || key,
     doi,
     title: snap.title || '',
     abstract: snap.abstract || '',
-    sections: null,
-    structured: false,
+    sections,
+    structured: !!(snap.structured && sections),
     journal: snap.journal || '—',
     platforms: Array.isArray(snap.platforms) ? snap.platforms.slice() : [],
     domain: snap.domain || '',
@@ -494,16 +571,21 @@ function articleFromFavSnap(snap, key) {
     year: snap.year || '',
     date: snap.date || '',
     pmid: snap.pmid || '',
+    authors: snap.authors || '',
     authorCite: Array.isArray(snap.authorCite) ? snap.authorCite : [],
     volume: snap.volume || '',
     issue: snap.issue || '',
     pages: snap.pages || '',
     oa: !!snap.oa,
     issn: snap.issn || '',
-    keywords: [],
-    digest: snap.titleZh ? { titleZh: stripTitleMeta(snap.titleZh) } : null,
+    keywords: Array.isArray(snap.keywords) ? snap.keywords.slice() : [],
+    imp: snap.imp || 0,
+    digest,
+    mtZh: snap.mtZh || '',
     pii: snap.pii || undefined,
   };
+  if (!article.abstract && sections) article.abstract = favAbstract(article);
+  return article;
 }
 function articleIndex() {
   const map = new Map();
@@ -523,12 +605,8 @@ function favoriteArticles() {
   for (const k of S.fav.order) {
     const live = pool.get(k);
     if (live) {
-      const abs = favAbstract(live);
-      const snap = S.fav.items[k];
-      if (snap && abs && !snap.abstract) {
-        snap.abstract = abs.slice(0, 12000);
-        dirty = true;
-      }
+      if (!live.mtZh && S.fav.items[k]?.mtZh) live.mtZh = S.fav.items[k].mtZh;
+      if (refreshFavSnap(live)) dirty = true;
       out.push(live);
       continue;
     }
@@ -620,10 +698,21 @@ function epmcSlices(cfg) {
   for (let i = 0; i < rows.length; i += step) slices.push(rows.slice(i, i + step));
   return slices;
 }
+/** UTC date of today minus DAYS. 2026-10-18 and DAYS=15 → 2026-10-03. */
+function poolCutoff(now = new Date()) {
+  const d = new Date(now.getTime());
+  d.setUTCHours(0, 0, 0, 0);
+  d.setUTCDate(d.getUTCDate() - DAYS);
+  return d.toISOString().slice(0, 10);
+}
+function withinPool(items) {
+  const lo = poolCutoff();
+  return (items || []).filter(a => String(a?.date || '') >= lo);
+}
 function epmcWindow() {
   return {
     hi: iso(new Date()),
-    lo: iso(new Date(Date.now() - DAYS * 864e5)),
+    lo: poolCutoff(),
   };
 }
 /** Page one ISSN slice until every journal has its tier cap, or the cursor ends. */
@@ -985,12 +1074,16 @@ function loadResearch(force) {
 async function loadResearchNow(force) {
   const c = readCache();
   if (!force && c.jr && Date.now() - c.jr.at < TTL) {
-    S.jr = { ...S.jr, ...c.jr.data, loaded: true, fromCache: true };
-    applyDigest();
-    S.jr._sig = jrSignature();
-    renderResearch();
-    loadPII(S.jr.picks);
-    return;
+    const cached = c.jr.data || {};
+    const all = withinPool(cached.all);
+    if (all.length && all.length === (cached.all || []).length) {
+      S.jr = { ...S.jr, ...cached, all, loaded: true, fromCache: true };
+      applyDigest();
+      S.jr._sig = jrSignature();
+      renderResearch();
+      loadPII(S.jr.picks);
+      return;
+    }
   }
   try {
     const groups = await fetchEpmcPool(S.cfg);
@@ -1002,9 +1095,9 @@ async function loadResearchNow(force) {
         seen.add(k); raw.push(r);
       }
     }
-    const items = composePool(
+    const items = withinPool(composePool(
       raw.map(mapArticle).filter(Boolean).sort((a, b) => b.ts - a.ts)
-    );
+    ));
     const byKey = {};
     for (const it of items) {
       (byKey[it.domain] ||= []).push(it);
@@ -1021,14 +1114,15 @@ async function loadResearchNow(force) {
     console.warn('[research] live fetch failed:', e);
     if (!S.jr.loaded) {
       const snap = await trySnapshot('data/snapshot-journals.json');
-      if (snap?.items?.length) {
+      const snapItems = withinPool(snap?.items);
+      if (snapItems.length) {
         const byKey = {};
-        for (const it of snap.items) {
+        for (const it of snapItems) {
           (byKey[it.domain] ||= []).push(it);
           (byKey[it.basic ? 'basic' : 'clinical'] ||= []).push(it);
         }
-        S.jr = { all: snap.items, byKey, picks: curate(snap.items),
-                 updated: snap.updated, fetchedAt: snap.generatedAt, loaded: true, error: 'snapshot' };
+        S.jr = { all: snapItems, byKey, picks: curate(snapItems),
+                 updated: snapItems[0]?.date || snap.updated, fetchedAt: snap.generatedAt, loaded: true, error: 'snapshot' };
       } else {
         S.jr = { ...S.jr, loaded: true, error: e.message };
       }
@@ -1051,7 +1145,7 @@ async function loadResearchNow(force) {
 
 /* ---------------- 最近一周: Crossref online date + PubMed abstract --------
    Europe PMC FIRST_PDATE lags about a week, so the 7-day chip cannot read
-   the 30-day pool. Crossref `from-online-pub-date` is current; its abstracts
+   the 15-day pool. Crossref `from-online-pub-date` is current; its abstracts
    are often empty (NEJM). PubMed E-utilities already have those abstracts.
    Results live in S.week and the `week` cache slot (same 30 min TTL). A
    failure here never blocks the Europe PMC list. */
@@ -1381,8 +1475,12 @@ async function loadPII(items) {
   }
 
   $$('#researchCards .art').forEach(node => {
-    const a = S.jr.all.find(x => x.id === node.dataset.id);
-    if (a && a.pii) addFullTextLink(node, a);
+    const id = node.dataset.id;
+    const a = targets.find(x => x.id === id || favKey(x) === String(id || '').toLowerCase());
+    if (a && a.pii) {
+      addFullTextLink(node, a);
+      rememberFavPii(a);
+    }
   });
 }
 
@@ -2504,13 +2602,12 @@ function downloadFavoritesMarkdown() {
 }
 
 /* ---------------- 机翻标题 + 划词翻译 ----------------
-   The journal list is a 30-day pool. Machine titles cover that same window,
-   tagged 机翻 under the English title. 今日精选 is also translated when a
-   pick's date falls just outside the cutoff. An editorial titleZh replaces 机翻.
+   Machine titles cover the same 15-day pool as the journal list, tagged 机翻
+   under the English title. A favorited article keeps its translation after
+   it leaves that pool. An editorial titleZh replaces 机翻.
    normTitle / the cutoff match functions/_lib/mt.js. */
 const MT_LS = 'rr.mt.v1';
 const SEL_SS = 'rr.selzh.v1';
-const MT_DAYS = 30;
 const SEL_MAX = 1500;
 
 function normTitle(s) {
@@ -2525,36 +2622,28 @@ function normTitle(s) {
     .trim();
 }
 function mtCutoff() {
-  const d = new Date();
-  d.setUTCHours(0, 0, 0, 0);
-  d.setUTCDate(d.getUTCDate() - (MT_DAYS - 1));
-  return d.toISOString().slice(0, 10);
+  return poolCutoff();
 }
 function mtId(a) {
   return String(a?.doi || a?.id || '').trim().toLowerCase();
 }
 function mtFeatured(a) {
-  // An editorial Chinese title already replaces 机翻. A curated pick with no
-  // titleZh is still an ordinary paper and should be translated.
+  // An editorial Chinese title already replaces 机翻.
   return !!(a?.digest && String(a.digest.titleZh || '').trim());
 }
-function machineTitleWanted(a, cutoff, pickIds) {
-  if (!a?.title || !a.date) return false;
+function machineTitleWanted(a, cutoff, favIds) {
+  if (!a?.title) return false;
   if (mtFeatured(a)) return false;
-  if (String(a.date) >= cutoff) return true;
   const id = mtId(a);
-  return !!(id && pickIds && pickIds.has(id));
+  if (id && favIds && favIds.has(id)) return true;
+  if (!a.date) return false;
+  return String(a.date) >= cutoff;
 }
 function mtEligible(a) {
-  const pickIds = new Set();
-  for (const p of S.jr.picks || []) {
-    const id = mtId(p);
-    if (id) pickIds.add(id);
-  }
-  return machineTitleWanted(a, mtCutoff(), pickIds);
+  return machineTitleWanted(a, mtCutoff(), new Set(S.fav?.order || []));
 }
 function mtLists() {
-  return [S.jr.all, S.jr.picks, S.week && S.week.items];
+  return [favoriteArticles(), S.jr.picks, S.jr.all, S.week && S.week.items];
 }
 function findArticleById(id) {
   const key = String(id || '');
@@ -2633,6 +2722,7 @@ function applyCachedMt(a) {
   const zh = lookupMt(a);
   if (!zh) return false;
   a.mtZh = stripTitleMeta(zh);
+  stashFavTitle(a);
   return true;
 }
 function applyAllCachedMt() {
@@ -2682,7 +2772,7 @@ function queueMachineTitles() {
   if (queueMachineTitles.running) { queueMachineTitles.dirty = true; return; }
   const need = [];
   const seen = new Set();
-  for (const list of [S.jr.picks, S.jr.all, S.week && S.week.items]) {
+  for (const list of [favoriteArticles(), S.jr.picks, S.jr.all, S.week && S.week.items]) {
     for (const a of list || []) {
       if (!mtEligible(a) || a.mtZh) continue;
       const id = mtId(a);
@@ -2734,6 +2824,7 @@ function queueMachineTitles() {
                 if (mtId(other) !== id) continue;
                 other.mtZh = zh;
                 rememberMt(other, zh);
+                stashFavTitle(other);
               }
             }
           }
