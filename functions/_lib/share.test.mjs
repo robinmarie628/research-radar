@@ -12,7 +12,7 @@ import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import {
   splitSentences, findVerbatim, pickHeuristic, resolveQuotePicks, parseQuoteResponse,
-  isDenseMethods, isBoilerplate,
+  isDenseMethods, isBoilerplate, excerptQuote,
 } from './quotes.js';
 import { handleTranslate, __setMtResources } from '../api/translate.js';
 
@@ -210,6 +210,15 @@ test('GIMAP6-style abstract adds a mechanism excerpt and keeps each quote short'
     assert.ok(abstract.includes(quoteCore(p.en)), p.en);
     assert.ok(wordCountOk(p.en), p.en);
   }
+});
+
+test('a mechanism window keeps a trailing receptor phrase inside the word budget', () => {
+  const sentence = 'At wounds, where oxidative stress and NADP + are high, 5-oxo-eicosatetraenoic acid (5-oxoETE) production by DHRS7 rapidly alerts antimicrobial white blood cells through the G-protein-coupled receptor OXER1.';
+  const excerpt = excerptQuote(sentence, 'mechanism');
+  assert.match(excerpt, /receptor OXER1/);
+  assert.doesNotMatch(excerpt, /G-protein-coupled…$/);
+  assert.ok(sentence.includes(quoteCore(excerpt)), excerpt);
+  assert.ok(wordCountOk(excerpt), excerpt);
 });
 
 test('a trial without a mechanism stays at three excerpts', () => {

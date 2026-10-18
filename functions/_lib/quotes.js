@@ -421,7 +421,7 @@ function tidyEnd(chunk) {
 
 function focusExcerpt(body, role) {
   const key = role === 'mechanism'
-    ? /\b(mechanistically|cascade|mediated|pathway|signall?ing|signaling|redox|lipid[- ]uptake|lipid-influx|\bvia\b)/i
+    ? /\b(mechanistically|cascade|mediated|pathway|signall?ing|signaling|redox|lipid[- ]uptake|lipid-influx|via|receptor|G-protein|induces|hydrolase)/i
     : role === 'finding'
       ? /\b(causes|caused|reduced|increased|faster|improved|improv|significantly|resulted in|accelerated|associated)/i
       : role === 'background'
@@ -438,9 +438,34 @@ function focusExcerpt(body, role) {
     const at = tokens.findIndex(t => hit.index < t.end && hit.index + hit[0].length > t.start);
     if (at >= 0) anchor = at;
   }
-  const start = anchor < EXCERPT_WORDS ? 0 : Math.max(0, anchor - 8);
-  const end = Math.min(tokens.length, start + EXCERPT_WORDS);
+  const nearEnd = anchor >= tokens.length - 8;
+  let start = nearEnd
+    ? Math.max(0, tokens.length - EXCERPT_WORDS)
+    : (anchor < EXCERPT_WORDS ? 0 : Math.max(0, anchor - 8));
+  let end = Math.min(tokens.length, start + EXCERPT_WORDS);
+  const closed = closeDanglingTail(body, tokens, end);
+  if (closed > end) {
+    end = closed;
+    start = Math.max(0, end - EXCERPT_WORDS);
+  }
   return body.slice(tokens[start].start, tokens[end - 1].end).replace(/[,:;]\s*$/, '').trim();
+}
+
+/** If the window stops on a modifier or function word, keep the short noun phrase that finishes it. */
+function closeDanglingTail(body, tokens, end) {
+  if (end >= tokens.length) return end;
+  const last = body.slice(tokens[end - 1].start, tokens[end - 1].end).replace(/[.,:;]+$/, '');
+  const dangling = /^(?:through|via|of|to|for|in|by|with|from|into|the|a|an|and|or|that|which)$/i.test(last)
+    || /(?:coupled|mediated|induced|related)$/i.test(last);
+  if (!dangling) return end;
+  let stop = end;
+  const limit = Math.min(tokens.length, end + 6);
+  for (let i = end; i < limit; i++) {
+    stop = i + 1;
+    const raw = body.slice(tokens[i].start, tokens[i].end);
+    if (/[,:;]/.test(raw)) break;
+  }
+  return stop;
 }
 
 function markOmissions(src, chunk) {

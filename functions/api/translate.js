@@ -295,7 +295,7 @@ async function translateQuotes(request, env, body) {
 
   const { glossary, overrides } = await loadResources(request, env);
   const sections = body.sections && typeof body.sections === 'object' ? body.sections : null;
-  const key = 'quotes/v7/' + (await sha256Hex(normTitle(abstract))).slice(0, 32);
+  const key = 'quotes/v8/' + (await sha256Hex(normTitle(abstract))).slice(0, 32);
   const hit = await cacheGet(request, key);
   if (hit?.quotes?.length) return json({ quotes: hit.quotes, cached: true });
 
