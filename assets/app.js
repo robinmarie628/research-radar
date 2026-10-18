@@ -11,7 +11,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.18.43';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.18.44';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -1894,6 +1894,45 @@ function setJFilter(k) {
   sc.scrollTo({ top: Math.max(0, $('#researchChips').offsetTop - 96), behavior: 'smooth' });
 }
 
+/** A finger that travelled more than a few pixels was a pan, not a tap. */
+function cardGestureMoved(start, x, y) {
+  if (!start) return false;
+  const dx = x - start.x;
+  const dy = y - start.y;
+  return dx * dx + dy * dy > 64;
+}
+
+/**
+ * Vertical pan inside a clipped abstract. dy > 0 means the finger moved down.
+ * Returns true when this box consumed the gesture, so the page must not scroll
+ * and the card must not treat the pan as a tap that closes it.
+ */
+function abstractPan(el, dy) {
+  if (!el || !dy) return false;
+  const overflow = el.scrollHeight - el.clientHeight;
+  if (overflow <= 1) return false;
+  const atTop = el.scrollTop <= 0;
+  const atBottom = el.scrollTop >= overflow - 1;
+  if ((dy > 0 && atTop) || (dy < 0 && atBottom)) return false;
+  el.scrollTop -= dy;
+  return true;
+}
+
+function bindAbstractScroll(el) {
+  let y = 0;
+  el.addEventListener('touchstart', ev => {
+    const t = ev.touches && ev.touches[0];
+    y = t ? t.clientY : 0;
+  }, { passive: true });
+  el.addEventListener('touchmove', ev => {
+    const t = ev.touches && ev.touches[0];
+    if (!t) return;
+    const dy = t.clientY - y;
+    y = t.clientY;
+    if (abstractPan(el, dy)) ev.preventDefault();
+  }, { passive: false });
+}
+
 function articleCard(a, isPick, pickRank) {
   const c = el('article', 'card art');
   c.dataset.id = a.id;
@@ -1937,7 +1976,26 @@ function articleCard(a, isPick, pickRank) {
   }
 
   let body = null;
+  let press = null;
+  const pointOf = ev => (ev.touches && ev.touches[0]) || ev;
+  const armPress = ev => {
+    const t = pointOf(ev);
+    if (!t || t.clientX == null) return;
+    press = { x: t.clientX, y: t.clientY, moved: false };
+  };
+  const trackPress = ev => {
+    if (!press || press.moved) return;
+    const t = pointOf(ev);
+    if (!t || t.clientX == null) return;
+    if (cardGestureMoved(press, t.clientX, t.clientY)) press.moved = true;
+  };
+  c.addEventListener('pointerdown', armPress, { passive: true });
+  c.addEventListener('pointermove', trackPress, { passive: true });
+  c.addEventListener('touchstart', armPress, { passive: true });
+  c.addEventListener('touchmove', trackPress, { passive: true });
   c.addEventListener('click', ev => {
+    // A vertical pan on the abstract used to bubble as a click and fold the card.
+    if (press && press.moved) { press = null; return; }
     // 忽略链接和按钮 —— 否则点「查看英文摘要」会冒泡到这里，把整张卡片折叠掉
     if (ev.target.closest('a, button, input, select, textarea, #mtPop')) return;
     // A drag-selection is not a tap. Opening the card would move the text.
@@ -1999,12 +2057,14 @@ function buildArticleBody(a, card) {
       row.append(el('span', 'sec-lab', SEC_LABEL[k] || '其他'));
       const p = el('p', 'sec-txt');
       fillHighlighted(p, txt, searchQuery());
+      bindAbstractScroll(p);
       row.append(p);
       box.append(row);
     }
   } else if (a.abstract) {
     const p = el('p', 'art-abstract');
     fillHighlighted(p, a.abstract, searchQuery());
+    bindAbstractScroll(p);
     box.append(p);
   }
 
