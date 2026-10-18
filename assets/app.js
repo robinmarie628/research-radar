@@ -11,7 +11,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.17.19';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.18.25';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -155,6 +155,8 @@ const S = {
   seen: new Set(),
   fav: { order: [], items: {} },
   tab: 'research',
+  /* Machine-translated titles. Seed + localStorage, then /api/translate. */
+  mt: { seeded: false, byDoi: new Map(), byNorm: new Map(), local: new Map(), stop: '' },
 };
 
 const $  = (s, r = document) => r.querySelector(s);
@@ -386,6 +388,14 @@ function favSnapshot(a) {
     year: a.year || '',
     date: a.date || '',
     pmid: a.pmid || '',
+    authorCite: Array.isArray(a.authorCite) ? a.authorCite.slice(0, 24) : [],
+    volume: a.volume || '',
+    issue: a.issue || '',
+    pages: a.pages || '',
+    oa: !!a.oa,
+    issn: a.issn || '',
+    platforms: Array.isArray(a.platforms) ? a.platforms.slice() : [],
+    pii: a.pii || '',
   };
 }
 function articleFromFavSnap(snap, key) {
@@ -398,7 +408,7 @@ function articleFromFavSnap(snap, key) {
     sections: null,
     structured: false,
     journal: snap.journal || '—',
-    platforms: [],
+    platforms: Array.isArray(snap.platforms) ? snap.platforms.slice() : [],
     domain: snap.domain || '',
     basic: !!snap.basic,
     studyKey: snap.studyKey || 'other',
@@ -407,9 +417,15 @@ function articleFromFavSnap(snap, key) {
     year: snap.year || '',
     date: snap.date || '',
     pmid: snap.pmid || '',
+    authorCite: Array.isArray(snap.authorCite) ? snap.authorCite : [],
+    volume: snap.volume || '',
+    issue: snap.issue || '',
+    pages: snap.pages || '',
+    oa: !!snap.oa,
+    issn: snap.issn || '',
     keywords: [],
     digest: snap.titleZh ? { titleZh: snap.titleZh } : null,
-    pii: undefined,
+    pii: snap.pii || undefined,
   };
 }
 function articleIndex() {
@@ -521,6 +537,38 @@ function epmcURLs(issns) {
   return urls;
 }
 
+function asList(x) { return x == null ? [] : (Array.isArray(x) ? x : [x]); }
+function citeInitials(given) {
+  const s = String(given || '').replace(/\./g, '').trim();
+  if (!s) return '';
+  if (/^[A-Z]{1,4}$/.test(s)) return s;
+  return s.split(/[\s-]+/).filter(Boolean).map(p => p[0] || '').join('').toUpperCase();
+}
+function citePerson(family, given) {
+  const last = String(family || '').trim();
+  const ini = citeInitials(given);
+  if (last && ini) return last + ' ' + ini;
+  return last || ini;
+}
+function epmcAuthorCite(r) {
+  const names = [];
+  for (const a of asList(r?.authorList?.author)) {
+    const n = citePerson(a.lastName, a.initials || a.firstName);
+    if (n) names.push(n);
+    else if (a.fullName) names.push(String(a.fullName).replace(/\s+/g, ' ').trim());
+  }
+  if (names.length) return names;
+  return String(r?.authorString || '').split(/,\s*/).map(s => s.replace(/\.$/, '').trim()).filter(Boolean);
+}
+function crossrefAuthorCite(authors) {
+  const names = [];
+  for (const au of authors || []) {
+    const n = citePerson(au.family, au.given) || String(au.name || '').trim();
+    if (n) names.push(n);
+  }
+  return names;
+}
+
 function mapArticle(r) {
   const j = r.journalInfo?.journal || {};
   const issn = j.issn || j.essn || '';
@@ -553,6 +601,10 @@ function mapArticle(r) {
     ts: date ? Date.parse(date) : 0,
     year: r.pubYear || (date ? date.slice(0, 4) : ''),
     authors: cleanText(r.authorString || '').split(',')[0] || '',
+    authorCite: epmcAuthorCite(r),
+    volume: r.journalInfo?.volume || '',
+    issue: r.journalInfo?.issue || '',
+    pages: r.pageInfo || '',
     pmid: r.pmid || '',
     doi: r.doi || '',
     keywords: keywordList(r.keywordList),
@@ -744,8 +796,9 @@ function mapCrossrefWork(item, meta, lo, hi) {
   const date = crossrefDay(item);
   if (!title || !doi || !date || date < lo || date > hi) return null;
   const abstract = cleanText(item.abstract || '');
+  const authorCite = crossrefAuthorCite(item.author);
   const author0 = (item.author || [])[0] || {};
-  const authors = cleanText([author0.family, author0.given].filter(Boolean).join(' ') || author0.name || '');
+  const authors = authorCite[0] || cleanText([author0.family, author0.given].filter(Boolean).join(' ') || author0.name || '');
   const isBasic = !!(meta && meta.basic);
   const study = detectStudy(title, abstract, isBasic, []);
   return {
@@ -766,6 +819,10 @@ function mapCrossrefWork(item, meta, lo, hi) {
     ts: Date.parse(date) || 0,
     year: date.slice(0, 4),
     authors,
+    authorCite,
+    volume: item.volume || '',
+    issue: item.issue || '',
+    pages: item.page || '',
     pmid: '',
     doi,
     keywords: [],
@@ -1398,8 +1455,10 @@ function renderResearch() {
   const dlBtn = $('#downloadFavBtn');
   if (dlBtn) dlBtn.hidden = S.jFilter !== 'fav' || !!q;
 
+  applyAllCachedMt();
   if (S.jView === 'index') renderIndexTable($('#researchCards'), list);
   else renderArticleList($('#researchCards'), list, isPick);
+  queueMachineTitles();
 }
 
 function headLabel(n, isPick) {
@@ -1421,7 +1480,7 @@ function searchTokens(q) {
 function articleHaystack(a) {
   const d = a.digest || {};
   const parts = [
-    a.title, d.titleZh, a.abstract, a.journal, a.domain, a.studyZh,
+    a.title, d.titleZh, a.mtZh, a.abstract, a.journal, a.domain, a.studyZh,
     ...(a.keywords || []),
   ];
   if (a.sections) parts.push(...Object.values(a.sections));
@@ -1538,7 +1597,11 @@ function articleCard(a, isPick, pickRank) {
   const h3 = el('h3', 'art-title');
   fillHighlighted(h3, titleZh || a.title, searchQuery());
   titleWrap.append(h3);
-  top.append(caret, titleWrap, favButton(a));
+  const zhLine = machineTitleNode(a);
+  if (zhLine) titleWrap.append(zhLine);
+  const actions = el('div', 'art-actions');
+  actions.append(shareButton(a), favButton(a));
+  top.append(caret, titleWrap, actions);
 
   const badges = el('div', 'art-badges');
   badges.append(el('span', 'badge dom', a.domain));
@@ -1561,7 +1624,11 @@ function articleCard(a, isPick, pickRank) {
   let body = null;
   c.addEventListener('click', ev => {
     // 忽略链接和按钮 —— 否则点「查看英文摘要」会冒泡到这里，把整张卡片折叠掉
-    if (ev.target.closest('a, button, input, select, textarea')) return;
+    if (ev.target.closest('a, button, input, select, textarea, #mtPop')) return;
+    // A drag-selection is not a tap. Opening the card would move the text.
+    const sel = window.getSelection && window.getSelection();
+    if (sel && !sel.isCollapsed && String(sel).trim()) return;
+    hideMtPop();
     const open = c.classList.toggle('open');
     if (!open) { if (body) body.remove(); return; }
 
@@ -2061,6 +2128,676 @@ function downloadFavoritesMarkdown() {
   toast('已下载 ' + filename, 2800);
 }
 
+/* ---------------- 机翻标题 + 划词翻译 ----------------
+   Non-featured articles from the last 15 calendar days get a Chinese title
+   under the English one, tagged 机翻. 今日精选 already has an editorial
+   titleZh and is left alone. The 30-day pool (DAYS) is unchanged.
+   normTitle / the cutoff match functions/_lib/mt.js. */
+const MT_LS = 'rr.mt.v1';
+const SEL_SS = 'rr.selzh.v1';
+const MT_DAYS = 15;
+const SEL_MAX = 1500;
+
+function normTitle(s) {
+  return String(s || '')
+    .toLowerCase()
+    .replace(/&amp;/g, '&')
+    .replace(/[‐‑–—−]/g, '-')
+    .replace(/[‘’′]/g, "'")
+    .replace(/[“”]/g, '"')
+    .replace(/\s+/g, ' ')
+    .replace(/[.。\s]+$/g, '')
+    .trim();
+}
+function mtCutoff() {
+  const d = new Date();
+  d.setUTCHours(0, 0, 0, 0);
+  d.setUTCDate(d.getUTCDate() - (MT_DAYS - 1));
+  return d.toISOString().slice(0, 10);
+}
+function mtId(a) {
+  return String(a?.doi || a?.id || '').trim().toLowerCase();
+}
+function mtFeatured(a) {
+  if (a?.digest && String(a.digest.titleZh || '').trim()) return true;
+  const id = mtId(a);
+  if (!id) return false;
+  return (S.jr.picks || []).some(p => mtId(p) === id);
+}
+function mtEligible(a) {
+  if (!a?.title || !a.date) return false;
+  if (mtFeatured(a)) return false;
+  return String(a.date) >= mtCutoff();
+}
+function mtLists() {
+  return [S.jr.all, S.jr.picks, S.week && S.week.items];
+}
+function findArticleById(id) {
+  const key = String(id || '');
+  for (const list of mtLists()) {
+    const hit = (list || []).find(a => a.id === key || mtId(a) === key.toLowerCase());
+    if (hit) return hit;
+  }
+  return null;
+}
+function indexTitleSeed(data) {
+  S.mt.byDoi = new Map();
+  S.mt.byNorm = new Map();
+  for (const it of data?.items || []) {
+    const zh = String(it?.zh || '').trim();
+    if (!zh) continue;
+    const norm = normTitle(it.en || '');
+    const rec = { zh, norm };
+    if (it.doi) S.mt.byDoi.set(String(it.doi).toLowerCase(), rec);
+    if (norm) S.mt.byNorm.set(norm, rec);
+  }
+}
+function readLocalMt() {
+  S.mt.local = new Map();
+  try {
+    const raw = JSON.parse(localStorage.getItem(MT_LS) || '[]');
+    if (!Array.isArray(raw)) return;
+    for (const row of raw) {
+      if (!row?.zh) continue;
+      if (row.id) S.mt.local.set(String(row.id).toLowerCase(), row);
+      if (row.norm) S.mt.local.set('t:' + row.norm, row);
+    }
+  } catch { /* private mode */ }
+}
+function rememberMt(a, zh) {
+  const id = mtId(a);
+  const norm = normTitle(a.title);
+  const row = { id, norm, zh };
+  if (id) S.mt.local.set(id, row);
+  if (norm) S.mt.local.set('t:' + norm, row);
+  const list = [];
+  const seen = new Set();
+  for (const [k, v] of S.mt.local) {
+    if (String(k).startsWith('t:')) continue;
+    const key = v.id || v.norm;
+    if (!key || !v.zh || seen.has(key)) continue;
+    seen.add(key);
+    list.push({ id: v.id || '', norm: v.norm || '', zh: v.zh });
+  }
+  for (const [k, v] of S.mt.local) {
+    if (!String(k).startsWith('t:') || v.id || !v.norm || seen.has(v.norm)) continue;
+    seen.add(v.norm);
+    list.push({ id: '', norm: v.norm, zh: v.zh });
+  }
+  try { localStorage.setItem(MT_LS, JSON.stringify(list.slice(0, 400))); }
+  catch { /* quota */ }
+}
+function lookupMt(a) {
+  const id = mtId(a);
+  const norm = normTitle(a.title);
+  const doiHit = id && S.mt.byDoi.get(id);
+  if (doiHit && (!doiHit.norm || doiHit.norm === norm)) return doiHit.zh;
+  const normHit = norm && S.mt.byNorm.get(norm);
+  if (normHit) return normHit.zh;
+  const local = (id && S.mt.local.get(id)) || (norm && S.mt.local.get('t:' + norm));
+  if (local && local.zh && (!local.norm || local.norm === norm)) return local.zh;
+  return '';
+}
+function applyCachedMt(a) {
+  if (!mtEligible(a)) return false;
+  const zh = lookupMt(a);
+  if (!zh) return false;
+  a.mtZh = zh;
+  return true;
+}
+function applyAllCachedMt() {
+  for (const list of mtLists()) for (const a of list || []) applyCachedMt(a);
+}
+function machineTitleNode(a) {
+  if (!a?.mtZh || !mtEligible(a)) return null;
+  const p = el('p', 'art-zh');
+  const t = el('span', 'art-zh-txt');
+  fillHighlighted(t, a.mtZh, searchQuery());
+  p.append(t, el('span', 'art-zh-tag', '机翻'));
+  return p;
+}
+function patchMachineTitles() {
+  for (const card of document.querySelectorAll('#researchCards .card.art')) {
+    const a = findArticleById(card.dataset.id || '');
+    if (!a) continue;
+    let line = card.querySelector('.art-zh');
+    if (!a.mtZh || !mtEligible(a)) { if (line) line.remove(); continue; }
+    if (!line) {
+      line = machineTitleNode(a);
+      const h3 = card.querySelector('.art-title');
+      if (line && h3) h3.after(line);
+      continue;
+    }
+    const t = line.querySelector('.art-zh-txt');
+    if (t) fillHighlighted(t, a.mtZh, searchQuery());
+  }
+}
+async function loadTitleSeed() {
+  if (S.mt.seeded) return;
+  readLocalMt();
+  try {
+    const data = await fetchJSON('data/title-zh.json', 12000);
+    indexTitleSeed(data);
+  } catch (e) { console.warn('[mt] seed', e); }
+  S.mt.seeded = true;
+  if (!(S.jr.all && S.jr.all.length)) return;
+  if (document.querySelector('.card.art.open')) {
+    applyAllCachedMt();
+    patchMachineTitles();
+    queueMachineTitles();
+  } else renderResearch();
+}
+function queueMachineTitles() {
+  if (!S.mt.seeded || S.mt.stop) return;
+  if (queueMachineTitles.running) { queueMachineTitles.dirty = true; return; }
+  const need = [];
+  const seen = new Set();
+  for (const list of [S.jr.all, S.week && S.week.items]) {
+    for (const a of list || []) {
+      if (!mtEligible(a) || a.mtZh) continue;
+      const id = mtId(a);
+      if (!id || seen.has(id)) continue;
+      seen.add(id);
+      need.push(a);
+    }
+  }
+  if (!need.length) return;
+  queueMachineTitles.running = true;
+  queueMachineTitles.dirty = false;
+  (async () => {
+    let failed = false;
+    try {
+      for (let i = 0; i < need.length; i += 10) {
+        if (S.mt.stop) break;
+        const batch = need.slice(i, i + 10).filter(a => mtEligible(a) && !a.mtZh);
+        if (!batch.length) continue;
+        let res, data = {};
+        try {
+          res = await fetch('/api/translate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              mode: 'titles',
+              items: batch.map(a => ({ id: mtId(a), text: a.title })),
+            }),
+          });
+          data = await res.json().catch(() => ({}));
+        } catch (e) {
+          console.warn('[mt] titles', e);
+          failed = true;
+          break;
+        }
+        if (data.error === 'quota' || res.status === 429) S.mt.stop = 'quota';
+        if (data.error === 'ai_unconfigured' || res.status === 503) S.mt.stop = 'unconfigured';
+        for (const item of data.items || []) {
+          const zh = String(item?.zh || '').trim();
+          if (!zh) continue;
+          const id = String(item.id || '').toLowerCase();
+          for (const list of mtLists()) {
+            for (const other of list || []) {
+              if (mtId(other) !== id) continue;
+              other.mtZh = zh;
+              rememberMt(other, zh);
+            }
+          }
+        }
+        patchMachineTitles();
+        if (S.mt.stop) break;
+        if (!(data.items || []).length) { failed = true; break; }
+      }
+    } finally {
+      queueMachineTitles.running = false;
+      if (!failed && !S.mt.stop && queueMachineTitles.dirty) queueMachineTitles();
+    }
+  })();
+}
+
+let mtPopToken = 0;
+let mtPopText = '';
+function selCacheMap() {
+  if (selCacheMap.m) return selCacheMap.m;
+  const m = new Map();
+  try {
+    const arr = JSON.parse(sessionStorage.getItem(SEL_SS) || '[]');
+    if (Array.isArray(arr)) for (const row of arr) if (row && row[0] && row[1]) m.set(row[0], row[1]);
+  } catch { /* private mode */ }
+  selCacheMap.m = m;
+  return m;
+}
+function rememberSel(text, zh) {
+  const m = selCacheMap();
+  const key = text.toLowerCase();
+  m.delete(key);
+  m.set(key, zh);
+  const arr = [...m.entries()].slice(-40);
+  selCacheMap.m = new Map(arr);
+  try { sessionStorage.setItem(SEL_SS, JSON.stringify(arr)); } catch { /* quota */ }
+}
+function hideMtPop() {
+  mtPopToken++;
+  mtPopText = '';
+  const pop = $('#mtPop');
+  if (!pop) return;
+  pop.hidden = true;
+  pop.classList.remove('is-warn');
+  pop.replaceChildren();
+}
+function placeMtPop(rect) {
+  const pop = $('#mtPop');
+  if (!pop || pop.hidden || !rect) return;
+  const margin = 8;
+  const w = pop.offsetWidth || 220;
+  const h = pop.offsetHeight || 40;
+  const below = rect.top < window.innerHeight * 0.62;
+  let top = below ? rect.bottom + margin : rect.top - h - margin;
+  if (top < 8) top = rect.bottom + margin;
+  if (top + h > window.innerHeight - 8) top = Math.max(8, rect.top - h - margin);
+  let left = rect.left;
+  left = Math.max(8, Math.min(left, window.innerWidth - w - 8));
+  pop.style.top = Math.round(top) + 'px';
+  pop.style.left = Math.round(left) + 'px';
+}
+function fillMtPop(text, warn) {
+  const pop = $('#mtPop');
+  if (!pop) return;
+  pop.classList.toggle('is-warn', !!warn);
+  pop.replaceChildren(el('span', 'mt-pop-tag', '机翻'), el('span', 'mt-pop-txt', text));
+  pop.hidden = false;
+}
+function looksEnglish(text) {
+  const latin = (text.match(/[A-Za-z]/g) || []).length;
+  const cjk = (text.match(/[\u4e00-\u9fff]/g) || []).length;
+  return latin >= 2 && latin >= cjk;
+}
+function readMtSelection() {
+  const sel = window.getSelection && window.getSelection();
+  if (!sel || sel.isCollapsed || !sel.rangeCount) return null;
+  const text = String(sel).replace(/\s+/g, ' ').trim();
+  const node = sel.anchorNode;
+  const hostEl = node && (node.nodeType === 1 ? node : node.parentElement);
+  if (!hostEl || !hostEl.closest) return { dismiss: true };
+  if (hostEl.closest('#mtPop')) return null;
+  if (hostEl.closest('button, a, input, textarea, .sheet')) return { dismiss: true };
+  const host = hostEl.closest('.art-title, .art-zh-txt, .rawtitle-txt, .sec-txt, .art-abstract, .search-snip');
+  if (!host || text.length < 2 || (text.length <= SEL_MAX && !looksEnglish(text))) return { dismiss: true };
+  let rect = null;
+  try { rect = sel.getRangeAt(0).getBoundingClientRect(); } catch { rect = null; }
+  if (!rect || (!rect.width && !rect.height)) return null;
+  return { text, rect };
+}
+function scheduleMtPop() {
+  clearTimeout(scheduleMtPop.t);
+  scheduleMtPop.t = setTimeout(syncMtPop, 420);
+}
+async function syncMtPop() {
+  const cur = readMtSelection();
+  if (!cur) return;
+  if (cur.dismiss) { hideMtPop(); return; }
+  if (cur.text === mtPopText && $('#mtPop') && !$('#mtPop').hidden) {
+    placeMtPop(cur.rect);
+    return;
+  }
+  mtPopText = cur.text;
+  const token = ++mtPopToken;
+  const rect = cur.rect;
+  if (cur.text.length > SEL_MAX) {
+    fillMtPop('选中的文字太长了（最多 1500 字），请缩短后再试。', true);
+    placeMtPop(rect);
+    return;
+  }
+  const cached = selCacheMap().get(cur.text.toLowerCase());
+  if (cached) {
+    fillMtPop(cached, false);
+    placeMtPop(rect);
+    return;
+  }
+  fillMtPop('翻译中…', false);
+  placeMtPop(rect);
+  try {
+    const res = await fetch('/api/translate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mode: 'selection', text: cur.text }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (token !== mtPopToken) return;
+    if (data.error === 'quota' || res.status === 429) {
+      fillMtPop(data.message || '今天的免费翻译额度用完了，明天会恢复。', true);
+    } else if (data.error === 'too_long') {
+      fillMtPop(data.message || '选中的文字太长了（最多 1500 字），请缩短后再试。', true);
+    } else if (!res.ok || !data.zh) {
+      fillMtPop(data.message || '翻译失败，请再选一次试试。', true);
+    } else {
+      rememberSel(cur.text, data.zh);
+      fillMtPop(data.zh, false);
+    }
+    placeMtPop(rect);
+  } catch {
+    if (token !== mtPopToken) return;
+    fillMtPop('翻译失败，请再选一次试试。', true);
+    placeMtPop(rect);
+  }
+}
+
+/* ---------------- share: citation file + image card ---------------- */
+const JOURNAL_ZH = {
+  'Lancet': '《柳叶刀》',
+  'Lancet Oncol': '《柳叶刀·肿瘤学》',
+  'Lancet Neurol': '《柳叶刀·神经病学》',
+  'Lancet Infect Dis': '《柳叶刀·传染病》',
+  'Lancet Respir Med': '《柳叶刀·呼吸医学》',
+  'Lancet Diabetes Endo': '《柳叶刀·糖尿病与内分泌学》',
+  'Lancet Gastro Hepat': '《柳叶刀·胃肠病学和肝病学》',
+  'Lancet Haematol': '《柳叶刀·血液学》',
+  'Lancet Psychiatry': '《柳叶刀·精神病学》',
+  'Lancet Public Health': '《柳叶刀·公共卫生》',
+  'Lancet Glob Health': '《柳叶刀·全球健康》',
+  'Lancet Digit Health': '《柳叶刀·数字健康》',
+  'Lancet Child Adolesc': '《柳叶刀·儿童与青少年健康》',
+  'Lancet Rheumatol': '《柳叶刀·风湿病学》',
+  'Lancet HIV': '《柳叶刀·HIV》',
+  'Lancet Microbe': '《柳叶刀·微生物》',
+  'EClinicalMedicine': '《e临床医药》',
+  'Lancet Planet Health': '《柳叶刀·星球健康》',
+  'Lancet Healthy Longev': '《柳叶刀·健康长寿》',
+  'JACC': '《美国心脏病学会杂志》',
+  'JACC Interv': '《JACC 介入》',
+  'JACC Heart Fail': '《JACC 心力衰竭》',
+  'JACC Imaging': '《JACC 影像》',
+  'JACC Clin EP': '《JACC 临床电生理》',
+  'JACC Basic Transl': '《JACC 基础与转化》',
+  'JACC CardioOncol': '《JACC 心脏肿瘤》',
+  'JACC Adv': '《JACC 进展》',
+  'Circulation': '《循环》',
+  'Chest': '《胸》',
+  'Ophthalmology': '《眼科学》',
+  'Ophthalmol Retina': '《眼科学·视网膜》',
+  'Ophthalmol Glaucoma': '《眼科学·青光眼》',
+  'Ophthalmol Sci': '《眼科学·科学》',
+  'Am J Ophthalmol': '《美国眼科杂志》',
+  'Ann Oncol': '《肿瘤学年鉴》',
+  'J Hepatol': '《肝脏病学杂志》',
+  'Kidney Int': '《肾脏国际》',
+  'JAAD': '《美国皮肤病学会杂志》',
+  'Eur Urol': '《欧洲泌尿学》',
+  'J Vasc Surg': '《血管外科杂志》',
+  'Eur J Vasc Endovasc': '《欧洲血管与腔内血管外科杂志》',
+  'J Vasc Surg Venous': '《血管外科杂志·静脉与淋巴》',
+  'J Endovasc Ther': '《腔内治疗杂志》',
+  'Ann Vasc Surg': '《血管外科年鉴》',
+  'Semin Vasc Surg': '《血管外科研讨》',
+  'Vascular': '《血管》',
+  'Vasc Endovasc Surg': '《血管与腔内外科》',
+  'Cell': '《细胞》',
+  'Nature': '《自然》',
+  'Science': '《科学》',
+  'NEJM': '《新英格兰医学杂志》',
+  'Nat Genet': '《自然·遗传学》',
+  'Nat Immunol': '《自然·免疫学》',
+  'Cell Stem Cell': '《细胞·干细胞》',
+  'Sci Transl Med': '《科学·转化医学》',
+  'Sci Adv': '《科学进展》',
+  'Cell Rep': '《细胞报告》',
+  'Cell Host Microbe': '《细胞·宿主与微生物》',
+  'Cell Syst': '《细胞系统》',
+  'Nat Biomed Eng': '《自然·生物医学工程》',
+  'Nat Biotechnol': '《自然·生物技术》',
+  'Nat Neurosci': '《自然·神经科学》',
+  'Neuron': '《神经元》',
+};
+
+function shareButton(a) {
+  const b = el('button', 'share-btn');
+  b.type = 'button';
+  b.setAttribute('aria-label', '分享');
+  b.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 4.5v9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8.2 8.2L12 4.4l3.8 3.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 12.5V18a1.5 1.5 0 0 0 1.5 1.5h9A1.5 1.5 0 0 0 18 18v-5.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  b.addEventListener('click', ev => {
+    ev.preventDefault();
+    ev.stopPropagation();
+    openShareSheet(a);
+  });
+  return b;
+}
+
+function journalZhName(a) {
+  return JOURNAL_ZH[a?.journal] || JOURNAL_ZH[journalRow(a)?.short] || '';
+}
+function fileStem(a) {
+  return 'radar-' + String(a?.doi || a?.pmid || a?.id || 'article').replace(/[^\w.-]+/g, '_').slice(0, 80);
+}
+function downloadBlob(filename, blob) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
+function exactQuote(en, abstract) {
+  const abs = String(abstract || '').replace(/\s+/g, ' ').trim();
+  const needle = String(en || '').replace(/\s+/g, ' ').trim();
+  if (!needle || !abs.includes(needle)) return '';
+  return needle;
+}
+const QUOTE_LS = 'rr.quotes.v3';
+function quoteKey(a, abs) {
+  let h = 5381;
+  const s = String(abs || '').slice(0, 4000);
+  for (let i = 0; i < s.length; i++) h = ((h << 5) + h) ^ s.charCodeAt(i);
+  return (a?.id || a?.doi || '') + ':' + (h >>> 0).toString(16);
+}
+function readQuoteCache(key) {
+  try {
+    const arr = JSON.parse(localStorage.getItem(QUOTE_LS) || '[]');
+    const hit = Array.isArray(arr) ? arr.find(row => row && row.key === key) : null;
+    return hit?.quotes || null;
+  } catch { return null; }
+}
+function writeQuoteCache(key, quotes) {
+  try {
+    const prev = JSON.parse(localStorage.getItem(QUOTE_LS) || '[]');
+    const next = (Array.isArray(prev) ? prev : []).filter(row => row && row.key !== key);
+    next.push({ key, quotes });
+    localStorage.setItem(QUOTE_LS, JSON.stringify(next.slice(-80)));
+  } catch { /* private mode or quota */ }
+}
+async function fetchQuotes(a) {
+  const abs = favAbstract(a);
+  if (!abs) return { error: '这篇没有英文摘要，做不了摘句卡片。' };
+  const key = quoteKey(a, abs);
+  const cached = readQuoteCache(key);
+  if (cached?.length) return { quotes: cached };
+  let res;
+  try {
+    res = await fetch('/api/translate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mode: 'quotes', id: a.id || a.doi || '', abstract: abs.slice(0, 12000) }),
+    });
+  } catch {
+    return { error: '摘句翻译失败，请再试一次。' };
+  }
+  const data = await res.json().catch(() => ({}));
+  if (data.error === 'quota' || res.status === 429) {
+    return { error: data.message || '今天的免费翻译额度用完了，明天会恢复。' };
+  }
+  if (!res.ok || !Array.isArray(data.quotes)) {
+    return { error: data.message || '摘句翻译失败，请再试一次。' };
+  }
+  const quotes = [];
+  for (const q of data.quotes) {
+    const en = exactQuote(q?.en, abs);
+    const zh = String(q?.zh || '').trim();
+    if (en && zh) quotes.push({ en, zh });
+  }
+  if (!quotes.length) return { error: '没有从摘要里抽出可用的原句。' };
+  const out = quotes.slice(0, 3);
+  writeQuoteCache(key, out);
+  return { quotes: out };
+}
+async function ensureCardTitle(a) {
+  const editorial = a?.digest && String(a.digest.titleZh || '').trim();
+  if (editorial) return editorial;
+  const cached = a.mtZh || lookupMt(a);
+  if (cached) return cached;
+  const res = await fetch('/api/translate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ mode: 'titles', items: [{ id: a.id || a.doi || a.title, text: a.title }] }),
+  });
+  const data = await res.json().catch(() => ({}));
+  const zh = data.items && data.items[0] && data.items[0].zh;
+  if (zh) {
+    rememberMt(a, zh);
+    if (mtEligible(a)) { a.mtZh = zh; patchMachineTitles(); }
+    return zh;
+  }
+  if (data.error === 'quota' || res.status === 429) {
+    throw new Error(data.message || '今天的免费翻译额度用完了，明天会恢复。');
+  }
+  throw new Error(data.message || '标题翻译失败，请再试一次。');
+}
+function cardSpec(a, titleZh, quotes, target) {
+  const names = window.RRCite.authorList(a);
+  const jzh = journalZhName(a);
+  return {
+    title_zh: titleZh,
+    title_en: a.title || '',
+    quotes,
+    journal: a.journal || '',
+    journal_en: a.journal || '',
+    journal_zh: jzh,
+    date: String(a.date || '').slice(0, 10),
+    type: 'Article',
+    type_line: a.studyZh || '研究论文',
+    article_no: [a.volume ? 'Vol ' + a.volume : '', a.issue ? 'Issue ' + a.issue : '', a.pages || ''].filter(Boolean).join(', '),
+    doi: a.doi || '',
+    authors: window.RRCite.etAl(names),
+    url: target.url,
+    qr_note: '链接直达 ' + target.name + ' 全文',
+    qr_sub: a.oa ? '开放获取' : '访问以机构订阅为准',
+    corner_fill: '#111111',
+  };
+}
+function shareChoice(strong, sub) {
+  const b = el('button', 'share-choice');
+  b.type = 'button';
+  b.append(el('strong', '', strong), el('span', '', sub));
+  return b;
+}
+function openShareSheet(a) {
+  hideMtPop();
+  const sheet = $('#shareSheet');
+  const body = $('#shareBody');
+  const title = $('#shareTitle');
+  if (!sheet || !body || !title || !window.RRCite) return;
+  title.textContent = '分享';
+  body.replaceChildren();
+  const citeBtn = shareChoice('导出文献', '下载 RIS、BibTeX，或复制一条 Vancouver 引用');
+  const imgBtn = shareChoice('分享图片', '生成卡片，用系统分享发到微信、邮件或其他应用');
+  citeBtn.addEventListener('click', () => showCiteChoices(a));
+  imgBtn.addEventListener('click', () => showShareImage(a));
+  body.append(citeBtn, imgBtn);
+  sheet.hidden = false;
+}
+function showCiteChoices(a) {
+  const body = $('#shareBody');
+  const title = $('#shareTitle');
+  title.textContent = '导出文献';
+  body.replaceChildren();
+  const ris = shareChoice('下载 RIS', 'EndNote、Zotero、Mendeley');
+  const bib = shareChoice('下载 BibTeX', 'LaTeX 与多数文献库');
+  const van = shareChoice('复制 Vancouver 引用', '纯文本，可粘贴到邮件或微信');
+  ris.addEventListener('click', () => {
+    downloadBlob(fileStem(a) + '.ris', new Blob([window.RRCite.ris(a)], { type: 'application/x-research-info-systems' }));
+    toast('已下载 RIS');
+  });
+  bib.addEventListener('click', () => {
+    downloadBlob(fileStem(a) + '.bib', new Blob([window.RRCite.bibtex(a)], { type: 'application/x-bibtex' }));
+    toast('已下载 BibTeX');
+  });
+  van.addEventListener('click', async () => {
+    const text = window.RRCite.vancouver(a);
+    try {
+      await navigator.clipboard.writeText(text);
+      toast('引用已复制');
+    } catch {
+      downloadBlob(fileStem(a) + '.txt', new Blob([text], { type: 'text/plain;charset=utf-8' }));
+      toast('剪贴板不可用，已下载文本');
+    }
+  });
+  body.append(ris, bib, van);
+}
+let shareGen = 0;
+async function showShareImage(a) {
+  const gen = ++shareGen;
+  const body = $('#shareBody');
+  const title = $('#shareTitle');
+  title.textContent = '分享图片';
+  body.replaceChildren(el('p', 'share-status', '正在确认全文链接，并挑选三句原文…'));
+  try {
+    if (a.doi && !a.pii) {
+      if (a.pii === '') a.pii = undefined;
+      try { await loadPII([a]); } catch { /* DOI remains available */ }
+    }
+    if (gen !== shareGen) return;
+    const target = window.RRCite.shareTarget({
+      pii: a.pii,
+      platforms: articlePlatforms(a),
+      doi: a.doi,
+      pmid: a.pmid,
+    });
+    if (!target) throw new Error('这篇文章没有可分享的链接。');
+    const [titleZh, quoteRes] = await Promise.all([ensureCardTitle(a), fetchQuotes(a)]);
+    if (gen !== shareGen) return;
+    if (quoteRes.error) throw new Error(quoteRes.error);
+    body.replaceChildren(el('p', 'share-status', '正在排版…'));
+    const canvas = await window.RRCard.render(cardSpec(a, titleZh, quoteRes.quotes, target));
+    if (gen !== shareGen) return;
+    const blob = await new Promise((resolve, reject) => {
+      canvas.toBlob(b => (b ? resolve(b) : reject(new Error('图片生成失败'))), 'image/png');
+    });
+    const file = new File([blob], fileStem(a) + '.png', { type: 'image/png' });
+    paintShareResult(body, canvas, file, target.name);
+  } catch (err) {
+    if (gen !== shareGen) return;
+    body.replaceChildren(el('p', 'share-status is-warn', err.message || '图片生成失败，请再试一次。'));
+  }
+}
+function paintShareResult(body, canvas, file, platform) {
+  body.replaceChildren();
+  const img = document.createElement('img');
+  img.className = 'share-preview';
+  img.alt = '分享卡片';
+  img.src = canvas.toDataURL('image/png');
+  const note = el('p', 'share-note', '二维码指向 ' + platform + '。iPhone 上点「系统分享」，微信、邮件以及已安装且接收图片的应用会出现在系统面板里。微信内置浏览器通常不支持文件分享，请长按图片保存。');
+  const row = el('div', 'share-row');
+  const share = shareChoice('系统分享', '微信 / 邮件 / 其他应用');
+  const save = shareChoice('保存图片', '下载 PNG，或长按预览图');
+  share.addEventListener('click', async () => {
+    const payload = { files: [file], title: file.name };
+    if (navigator.canShare && navigator.canShare(payload)) {
+      try { await navigator.share(payload); return; }
+      catch (err) { if (err && err.name === 'AbortError') return; }
+    }
+    downloadBlob(file.name, file);
+    toast('这台浏览器不能直接分享文件，已改为下载');
+  });
+  save.addEventListener('click', () => {
+    downloadBlob(file.name, file);
+    toast('已下载图片');
+  });
+  row.append(share, save);
+  body.append(img, note, row);
+}
+function closeShareSheet() {
+  shareGen++;
+  const sheet = $('#shareSheet');
+  if (sheet) sheet.hidden = true;
+}
+
 /* ---------------- boot ---------------- */
 async function boot() {
   window.__rr = S;                 // debug/QA hook
@@ -2069,6 +2806,7 @@ async function boot() {
   S.seen = readSeen();
   S.fav = readFav();
   if (location.hash === '#fav') S.jFilter = 'fav';
+  const seedP = loadTitleSeed();
 
   const c = readCache();
   if (c.week?.data?.items?.length) {
@@ -2098,6 +2836,7 @@ async function boot() {
   loadWeek(false);
   await loadResearch(false);
   await loadDigest();                    // maps 创新/看点 onto S.jr.all, then re-renders
+  await seedP;                           // 机翻标题种子；不挡首屏，到了再补一行中文
   await loadBuilderDigest();             // 今日 AI 动态总览 + 每条动态的中文一句话
   if (S.tab === 'builders') await loadBuilders(false);
   stampFoot();
@@ -2123,8 +2862,30 @@ const downloadFavBtn = $('#downloadFavBtn');
 if (downloadFavBtn) downloadFavBtn.addEventListener('click', () => downloadFavoritesMarkdown());
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
+  hideMtPop();
+  closeShareSheet();
   closeGlossary();
 });
+const shareSheetEl = $('#shareSheet');
+if (shareSheetEl) shareSheetEl.addEventListener('click', e => {
+  if (e.target.closest('[data-close]')) closeShareSheet();
+});
+document.addEventListener('selectionchange', scheduleMtPop);
+document.addEventListener('pointerdown', e => {
+  const t = e.target;
+  if (!(t instanceof Element)) return;
+  if (t.closest('#mtPop, .art-title, .art-zh, .rawtitle-txt, .sec-txt, .art-abstract, .search-snip')) return;
+  hideMtPop();
+});
+const mtPop = $('#mtPop');
+if (mtPop) {
+  // Keep the popup up when the finger lands on it. iOS otherwise clears the
+  // selection and selectionchange would race the read.
+  mtPop.addEventListener('pointerdown', e => e.preventDefault());
+  mtPop.addEventListener('touchstart', e => e.preventDefault(), { passive: false });
+}
+const scrollArea = $('#scrollArea');
+if (scrollArea) scrollArea.addEventListener('scroll', () => hideMtPop(), { passive: true });
 window.addEventListener('hashchange', () => {
   const on = location.hash === '#fav';
   if (on && S.jFilter !== 'fav') setJFilter('fav');

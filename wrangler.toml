@@ -1,0 +1,16 @@
+# Cloudflare Pages project name is research-radar.
+# The public host is https://research-radar-f5j.pages.dev (the subdomain, not the project name).
+# Git integration reads this file on the branch it is deploying.
+# The `name` must match the Pages project or the AI binding is ignored.
+#
+# This is not the trigger Worker. That one lives in worker/wrangler.toml
+# and is deployed from the worker/ directory.
+name = "research-radar"
+compatibility_date = "2026-10-18"
+pages_build_output_dir = "./dist"
+
+# Workers AI. Pages Functions read it as env.AI.
+# No resource id: unlike KV or R2, the AI binding is just a name.
+# https://developers.cloudflare.com/pages/functions/bindings/#workers-ai
+[ai]
+binding = "AI"

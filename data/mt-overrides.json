@@ -1,0 +1,26 @@
+[
+  {
+    "en": "common iliac",
+    "zh": "髂总动脉",
+    "bad": [
+      { "from": "狭窄共同髂动脉", "to": "狭窄的髂总动脉" },
+      { "from": "共同髂动脉", "to": "髂总动脉" },
+      { "from": "共同髂", "to": "髂总动脉" }
+    ]
+  },
+  {
+    "en": "post-thrombotic syndrome",
+    "alts": ["post thrombotic syndrome"],
+    "zh": "血栓后综合征",
+    "bad": [
+      "深静脉血栓后综合征",
+      "深静脉血栓综合征",
+      "血栓后综合症"
+    ]
+  },
+  {
+    "en": "ticagrelor",
+    "zh": "ticagrelor",
+    "bad": ["替格瑞洛", "替卡格雷"]
+  }
+]
