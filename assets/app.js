@@ -11,7 +11,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.18.44';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.18.45';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -3276,8 +3276,32 @@ async function boot() {
   }, 2500);
 }
 
+/* ---------------- 正文字号 ----------------
+   Three steps. sm is today's size and the minimum. Only --read copy grows. */
+const TEXT_KEY = 'rr.text.v1';
+function textStepId(raw) {
+  return raw === 'md' || raw === 'lg' ? raw : 'sm';
+}
+function applyTextStep(raw) {
+  const id = textStepId(raw);
+  if (id === 'sm') document.documentElement.removeAttribute('data-text');
+  else document.documentElement.setAttribute('data-text', id);
+  try {
+    if (id === 'sm') localStorage.removeItem(TEXT_KEY);
+    else localStorage.setItem(TEXT_KEY, id);
+  } catch { /* private mode */ }
+  document.querySelectorAll('.type-size [data-step]').forEach(b => {
+    b.setAttribute('aria-pressed', b.dataset.step === id ? 'true' : 'false');
+  });
+  return id;
+}
+
 /* ---------------- wire up ---------------- */
 $$('.seg').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
+try { applyTextStep(localStorage.getItem(TEXT_KEY)); } catch { applyTextStep('sm'); }
+document.querySelectorAll('.type-size [data-step]').forEach(b => {
+  b.addEventListener('click', () => applyTextStep(b.dataset.step));
+});
 $('#refreshBtn').addEventListener('click', () => refresh(true));
 $('#regenBtn').addEventListener('click', triggerRegenerate);
 $('#glossSearch').addEventListener('input', e => renderGlossary(e.target.value));

@@ -566,6 +566,34 @@ test('a vertical pan scrolls the abstract and is not a tap that closes the card'
   assert.match(abs, /overscroll-behavior:contain/);
 });
 
+test('text size has three steps and the default is today\'s size', () => {
+  const src = readFileSync(new URL('../../assets/app.js', import.meta.url), 'utf8');
+  const start = src.indexOf('function textStepId');
+  const end = src.indexOf('function applyTextStep');
+  const { textStepId } = new Function(src.slice(start, end) + '\nreturn { textStepId };')();
+  assert.equal(textStepId('sm'), 'sm');
+  assert.equal(textStepId(null), 'sm');
+  assert.equal(textStepId('xl'), 'sm');
+  assert.equal(textStepId('md'), 'md');
+  assert.equal(textStepId('lg'), 'lg');
+
+  const css = readFileSync(new URL('../../assets/styles.css', import.meta.url), 'utf8');
+  assert.match(css, /html\{--read:1\}/);
+  assert.match(css, /html\[data-text="md"\]\{--read:1\.1\}/);
+  assert.match(css, /html\[data-text="lg"\]\{--read:1\.2\}/);
+  assert.match(css, /\.art-title\{[^}]*calc\(14px \* var\(--read\)\)/);
+  assert.match(css, /\.sec-txt\{[^}]*calc\(12\.5px \* var\(--read\)\)/);
+  const lab = css.slice(css.indexOf('.sec-lab{'), css.indexOf('.sec-txt{'));
+  assert.match(lab, /font-size:10px/);
+  assert.doesNotMatch(lab, /var\(--read\)/);
+  const chip = css.slice(css.indexOf('.chip{'), css.indexOf('.chip .cnt'));
+  assert.match(chip, /font-size:12\.5px/);
+  assert.doesNotMatch(chip, /var\(--read\)/);
+  const seg = css.slice(css.indexOf('.seg{'), css.indexOf('.seg.is-active'));
+  assert.match(seg, /font-size:14px/);
+  assert.doesNotMatch(seg, /var\(--read\)/);
+});
+
 test('RIS, BibTeX, and Vancouver use the metadata we have', () => {
   const ris = cite.ris(sample);
   assert.match(ris, /^TY {2}- JOUR/m);

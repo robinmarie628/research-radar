@@ -14,6 +14,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="Radar for Meds" />
 <link rel="stylesheet" href="assets/styles.css" />
+<script>
+try{var t=localStorage.getItem('rr.text.v1');if(t==='md'||t==='lg')document.documentElement.setAttribute('data-text',t);}catch(e){}
+</script>
 </head>
 <body>
 
@@ -27,6 +30,11 @@
         <h1 id="brandTitle">Radar for Meds</h1>
         <p id="brandSub">科研雷达 · 顶刊速递</p>
       </div>
+    </div>
+    <div class="type-size" role="group" aria-label="正文字号">
+      <button type="button" data-step="sm" aria-pressed="true" aria-label="标准字号" title="标准字号">A</button>
+      <button type="button" data-step="md" aria-pressed="false" aria-label="中等字号" title="中等字号">A</button>
+      <button type="button" data-step="lg" aria-pressed="false" aria-label="较大字号" title="较大字号">A</button>
     </div>
     <button class="icon-btn" id="refreshBtn" type="button" aria-label="刷新数据" title="刷新数据">
       <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true">
