@@ -11,7 +11,7 @@ function wordCountOk(en) {
   const parts = piecesOf(en);
   return parts.length > 0 && parts.every(part => {
     const n = part.split(/\s+/).filter(Boolean).length;
-    return n >= 1 && n <= 25;
+    return n >= 1 && n <= 48;
   });
 }
 import { readFileSync } from 'node:fs';
@@ -21,7 +21,7 @@ import {
   isDenseMethods, isBoilerplate, excerptQuote,
 } from './quotes.js';
 import { handleTranslate, __setMtResources } from '../api/translate.js';
-import { extractPassages } from './fulltext.js';
+import { extractPassages, extractHtmlPassages } from './fulltext.js';
 
 const require = createRequire(import.meta.url);
 const cite = require('../../assets/cite.js');
@@ -111,28 +111,29 @@ test('registration, funding, ethics, and copyright lines are never quoted', () =
   assert.equal(forced.some(p => /fewer interval cancers/.test(p.en)), true);
 });
 
-test('a dull mortality sentence loses to a result that breaks the usual assumption', () => {
-  const bg = 'Controlling hyperlipidemia has reduced but not eliminated atherosclerotic disease as a major cause of death.';
-  const finding = 'Loss of GIMAP6 caused inflammatory vasculopathy and accelerated atherosclerosis in the absence of hyperlipidemia.';
-  const cascade = 'GIMAP6 loss precipitates a mitochondrial ROS-PPARγ-CD36 lipid-influx cascade that lowers the threshold for foam-cell formation.';
-  const meaning = 'GIMAP6 restrains lethal vascular disease independently of systemic hyperlipidemia.';
-  const methods = 'Mice were examined and randomly assigned across 12 cages with a hazard ratio of 0.80 (95% CI 0.70-0.90; p<0.001) in the modified full analysis set.';
-  const reg = 'The study is registered on ClinicalTrials.gov (NCT03377036).';
-  const picks = resolveQuotePicks([bg, methods, finding, cascade, reg, meaning].join(' '), []);
-  const blob = picks.map(p => p.en).join(' ');
-  assert.match(picks[0].en, /not eliminated/);
-  assert.doesNotMatch(picks[0].en, /major cause of death/);
-  const found = picks.find(p => p.role === 'finding');
-  assert.match(found.en, /in the absence of hyperlipidemia/);
-  assert.match(found.en, /lipid-influx cascade|CD36/);
-  assert.doesNotMatch(blob, /independently of|major cause of death|NCT|95% CI/);
+test('the gold card keeps the paradox, the contrast, and the broader sentence', () => {
+  const abstract = 'Controlling hyperlipidemia has reduced but not eliminated atherosclerotic cardiovascular disease as a major cause of human mortality. Thus, GIMAP6 is a crucial safeguard for vascular integrity independently of systemic hyperlipidemia.';
+  const paradox = 'Despite advances in lipid-lowering therapy, atherosclerotic cardiovascular disease (ASCVD) remains a leading cause of death worldwide, with many events occurring in individuals with normal blood lipid or low-density lipoprotein (LDL) levels due to non-lipid vascular risk factors.';
+  const reframe = 'Thus, GIMAP6 functions as a distinct cardiovascular disease determinant that protects the endothelial structural integrity and controls the threshold for macrophage response to lipid, rather than systemic lipid levels themselves.';
+  const broad = 'More broadly, GIMAP6 reveals how immune-regulatory failure can couple endothelial dysfunction, foam-cell formation, and inflammation into a self-reinforcing cascade that culminates in lethal ischemic cardiovascular disease.';
+  const aim = 'We investigated the efficacy and safety of GIMAP6 loss in mice fed a standard diet.';
+  const picks = resolveQuotePicks([abstract, aim, paradox, reframe, broad].join(' '), []);
+  assert.equal(picks.length, 3);
+  assert.equal(picks.map(p => p.role).join(','), 'background,finding,significance');
+  assert.match(picks[0].en, /^…with many events occurring/);
+  assert.match(picks[0].en, /non-lipid vascular risk factors/);
+  assert.match(picks[1].en, /^Thus, GIMAP6 functions as a distinct/);
+  assert.match(picks[1].en, /rather than systemic lipid levels themselves/);
+  assert.match(picks[2].en, /^More broadly, GIMAP6 reveals/);
+  assert.match(picks[2].en, /self-reinforcing cascade/);
+  assert.equal(picks.some(p => p.role === 'studied' || /We investigated/.test(p.en)), false);
   for (const p of picks) {
     assert.ok(wordCountOk(p.en), p.en);
     assert.equal(p.en.includes('...'), false);
   }
 });
 
-test('textbook background and a support-the-use conclusion are not the hooks', () => {
+test('a trial card skips the aim sentence and prefers a worded result over the confidence interval', () => {
   const bg = 'In hereditary angioedema, oral on-demand treatments that provide rapid relief remain scant.';
   const aim = 'We investigated the efficacy and safety of deucrictibant for on-demand treatment of attacks.';
   const census = 'The primary efficacy analysis included 88 participants with paired treated attacks.';
@@ -142,11 +143,11 @@ test('textbook background and a support-the-use conclusion are not the hooks', (
   const picks = resolveQuotePicks([bg, aim, census, gap, short, meaning].join(' '), []);
   const blob = picks.map(p => p.en).join(' ');
   assert.match(picks.find(p => p.role === 'background').en, /remain scant/);
-  assert.match(picks.find(p => p.role === 'studied').en, /We investigated/);
-  assert.match(picks.find(p => p.role === 'finding').en, /more than 12 h/);
+  assert.match(picks.find(p => p.role === 'finding').en, /faster times to symptom relief/);
   assert.match(picks.find(p => p.role === 'significance').en, /first orally administered/);
-  assert.doesNotMatch(blob, /generally well tolerated|These results support the use|primary efficacy analysis/);
-  assert.equal(picks.length, 4);
+  assert.doesNotMatch(blob, /We investigated|95% CI|primary efficacy analysis/);
+  assert.equal(picks.some(p => p.role === 'studied'), false);
+  assert.ok(picks.length >= 3 && picks.length <= 4);
   for (const p of picks) assert.ok(wordCountOk(p.en), p.en);
 });
 
@@ -181,6 +182,14 @@ test('omission marks are a single ellipsis character', () => {
   assert.equal(excerpt.includes('...'), false);
   assert.match(excerpt, /in the absence of hyperlipidemia/);
   assert.ok(wordCountOk(excerpt), excerpt);
+});
+
+test('publisher HTML keeps Introduction and Discussion and drops the reference list', () => {
+  const html = `<article><h2>Introduction</h2><p>Despite advances in therapy, many events still occur in people with normal risk markers because the usual explanation is incomplete and leaves a clinical paradox unresolved for the reader.</p><h2>Methods</h2><p>Participants were enrolled at twelve hospitals and followed with a protocol that is not a quotation.</p><h2>Discussion</h2><p>Thus, the gene functions as a distinct determinant of the disease rather than a marker of the exposure itself in this cohort of adults.</p><h2>References</h2><p>Smith et al. reported something else entirely in another journal last year.</p></article>`;
+  const text = extractHtmlPassages(html);
+  assert.match(text, /clinical paradox unresolved/);
+  assert.match(text, /rather than a marker/);
+  assert.doesNotMatch(text, /Participants were enrolled|Smith et al/);
 });
 
 test('open-access full text keeps Results and Discussion only', () => {
@@ -262,8 +271,8 @@ test('an open-access flag is true only for Y or a Creative Commons license', () 
   const src = readFileSync(new URL('../../assets/app.js', import.meta.url), 'utf8');
   const start = src.indexOf('function isOpenAccessFlag');
   const end = src.indexOf('async function publisherRecord');
-  const { isOpenAccessFlag, licenseIsOpen, reliableVolume, reliablePages } = new Function(
-    src.slice(start, end) + '\nreturn { isOpenAccessFlag, licenseIsOpen, reliableVolume, reliablePages };',
+  const { isOpenAccessFlag, licenseIsOpen, licenseName, publishedOnline, reliableVolume, reliablePages } = new Function(
+    src.slice(start, end) + '\nreturn { isOpenAccessFlag, licenseIsOpen, licenseName, publishedOnline, reliableVolume, reliablePages };',
   )();
   assert.equal(isOpenAccessFlag('Y'), true);
   assert.equal(isOpenAccessFlag('N'), false);
@@ -271,6 +280,14 @@ test('an open-access flag is true only for Y or a Creative Commons license', () 
   assert.equal(isOpenAccessFlag(true), true);
   assert.equal(licenseIsOpen([{ URL: 'http://creativecommons.org/licenses/by-nc/4.0/' }]), true);
   assert.equal(licenseIsOpen([{ URL: 'https://doi.org/10.1136/bmj-2026-100739' }]), false);
+  assert.equal(licenseName([{ URL: 'http://creativecommons.org/licenses/by-nc-nd/4.0/' }]), 'CC BY-NC-ND 4.0');
+  assert.equal(licenseName([{ URL: 'https://creativecommons.org/licenses/by/4.0' }]), 'CC BY 4.0');
+  assert.equal(publishedOnline({ 'published-online': { 'date-parts': [[2026, 10, 7]] } }), true);
+  assert.equal(publishedOnline({
+    'published-print': { 'date-parts': [[2026, 10]] },
+    created: { 'date-parts': [[2026, 10, 8]] },
+  }), true);
+  assert.equal(publishedOnline({ 'published-print': { 'date-parts': [[2026, 10, 15]] } }), false);
   assert.equal(reliableVolume('395', '395'), '395');
   assert.equal(reliableVolume('395', '380'), '');
   assert.equal(reliableVolume('395'), '395');
@@ -281,49 +298,53 @@ test('an open-access flag is true only for Y or a Creative Commons license', () 
   assert.equal(reliablePages('S0140-6736(26)01296-1'), '');
 });
 
-test('a weaker model hint does not replace the paper\'s main result', () => {
-  const bg = 'Controlling hyperlipidemia has reduced but not eliminated atherosclerotic disease as a major cause of death.';
-  const finding = 'Loss of GIMAP6 caused inflammatory vasculopathy and accelerated atherosclerosis in the absence of hyperlipidemia.';
+test('a weaker model hint does not replace the contrast sentence', () => {
+  const reframe = 'Thus, GIMAP6 functions as a distinct cardiovascular disease determinant that protects the endothelial structural integrity and controls the threshold for macrophage response to lipid, rather than systemic lipid levels themselves.';
   const human = 'Human hypomorphic GIMAP6 variants, including the V65I allele, are associated with altered monocyte redox balance and early ASCVD.';
-  const sentences = [bg, finding, human];
-  const picks = resolveQuotePicks(sentences.join(' '), [
-    { i: 2, role: 'finding', zh: '不该当主结果' },
+  const broad = 'More broadly, GIMAP6 reveals how immune-regulatory failure can couple endothelial dysfunction, foam-cell formation, and inflammation into a self-reinforcing cascade that culminates in lethal ischemic cardiovascular disease.';
+  const picks = resolveQuotePicks([human, reframe, broad].join(' '), [
+    { i: 0, role: 'finding', zh: '不该当主结果' },
   ]);
-  assert.match(picks.find(p => p.role === 'finding').en, /in the absence of hyperlipidemia/);
+  assert.match(picks.find(p => p.role === 'finding').en, /rather than systemic lipid levels themselves/);
   assert.equal(picks.some(p => /不该当主结果/.test(p.zh)), false);
 });
 
-test('the finding pairs the main result with the younger-age result, and the implication is separate', () => {
+test('the main result and the beyond-cancer sentence are different quotes', () => {
   const lower = 'After adjustment for confounders, quadrivalent human papillomavirus vaccination was associated with lower odds of all included adverse pregnancy outcomes.';
   const ages = 'Risk reduction was generally more pronounced among women vaccinated at younger ages.';
   const again = 'Quadrivalent human papillomavirus vaccination before pregnancy was associated with a lower risk of adverse pregnancy outcomes, particularly among women vaccinated at earlier ages, extending benefits of human papillomavirus vaccination beyond cancer prevention.';
-  const picks = resolveQuotePicks([lower, ages, again].join(' '), []);
+  const aim = 'To evaluate the association between quadrivalent human papillomavirus vaccination before pregnancy and subsequent risk of adverse pregnancy outcomes.';
+  const picks = resolveQuotePicks([aim, lower, ages, again].join(' '), []);
   const found = picks.find(p => p.role === 'finding');
   assert.match(found.en, /lower odds of all included adverse pregnancy outcomes/);
-  assert.match(found.en, /younger ages|more pronounced/);
-  assert.doesNotMatch(found.en, /beyond cancer/);
-  const ageLines = picks.filter(p => /younger ages|earlier ages|more pronounced|particularly among/i.test(p.en));
-  assert.equal(ageLines.length, 1);
+  assert.doesNotMatch(found.en, /beyond cancer|younger ages/);
   assert.match(picks.find(p => p.role === 'significance').en, /beyond cancer prevention/);
+  assert.equal(picks.some(p => /To evaluate/.test(p.en)), false);
+  const ageLines = picks.filter(p => /younger ages|earlier ages|more pronounced/i.test(p.en));
+  assert.ok(ageLines.length <= 1);
   for (const p of picks) assert.ok(wordCountOk(p.en), p.en);
 });
 
-test('a trial card keeps one worded efficacy line ahead of adverse events', () => {
+test('a trial card keeps the worded benefit and can add a striking adverse event beside it', () => {
   const agonist = 'Retatrutide is an agonist of GIP, GLP-1, and glucagon receptors, and is currently under investigation for the treatment of obesity and type 2 diabetes.';
   const weight = 'For the treatment regimen estimand, the mean percentage change from baseline in bodyweight at week 80 was -18.8% with retatrutide 12 mg and -5.1% with placebo.';
   const gi = 'Gastrointestinal adverse events were more common in the retatrutide groups than in the placebo group.';
   const hypo = 'Hypotension and dysesthesia were more frequent with retatrutide than with placebo.';
   const efficacy = 'Treatment with retatrutide resulted in substantial improvements in bodyweight and was associated with improvements in glycaemic control in participants with obesity and type 2 diabetes, with a safety profile generally consistent with other molecules with GLP-1 receptor agonism.';
-  const picks = resolveQuotePicks([agonist, weight, gi, hypo, efficacy].join(' '), [
+  const hedged = 'These results show that retatrutide might be effective for the treatment of obesity.';
+  const picks = resolveQuotePicks([agonist, weight, gi, hypo, efficacy, hedged].join(' '), [
     { i: 2, zh: '不良反应' },
     { i: 3, zh: '低血压' },
   ]);
   const found = picks.find(p => p.role === 'finding');
   assert.match(found.en, /substantial improvements in bodyweight/);
   assert.match(found.en, /glycaemic control/);
-  assert.match(found.en, /[Hh]ypotension|dysesthesia/);
   assert.match(picks.find(p => p.role === 'background').en, /currently under investigation/);
-  assert.equal(picks.filter(p => /bodyweight/i.test(p.en)).length, 1);
+  assert.equal(picks.filter(p => /substantial improvements in bodyweight/i.test(p.en)).length, 1);
+  assert.equal(picks.some(p => /might be effective/.test(p.en)), false);
+  const adverse = picks.find(p => p.role === 'secondary');
+  assert.match(adverse.en, /Hypotension and dysesthesia were more frequent/);
+  assert.doesNotMatch(adverse.en, /\[5%\]|12 mg group/);
   for (const p of picks) assert.ok(wordCountOk(p.en), p.en);
 });
 

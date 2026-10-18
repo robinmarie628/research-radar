@@ -501,7 +501,7 @@
       const q = quotes[i];
       const qx = M + 34 * S;
       const qw = W - qx - M;
-      const lab = spec.labels !== false ? ROLE_LABEL[q.role] : '';
+      const lab = spec.labels === true ? ROLE_LABEL[q.role] : '';
       if (lab) {
         paint(qx, y, lab, serif(12, true), NAVY, {
           role: 'qlab', quote: i, minFont: px(12),
@@ -589,7 +589,7 @@
       : (spec.journal || spec.journal_en || '');
     const srcLines = [
       journalLine,
-      [spec.date, spec.article_no].filter(Boolean).join(' · '),
+      [spec.date, spec.published_online ? '(Published online)' : '', spec.article_no].filter(Boolean).join(' · '),
       spec.doi ? 'DOI: ' + spec.doi : '',
       spec.authors || '',
     ].filter(Boolean);

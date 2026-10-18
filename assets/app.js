@@ -11,7 +11,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.18.37';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.18.38';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -675,11 +675,27 @@ function isOpenAccessFlag(v) {
   const s = String(v == null ? '' : v).trim().toUpperCase();
   return s === 'Y' || s === 'TRUE' || s === '1';
 }
-function licenseIsOpen(license) {
-  const blob = Array.isArray(license)
+function licenseBlob(license) {
+  return Array.isArray(license)
     ? license.map(x => String((x && (x.URL || x.url)) || x || '')).join(' ')
     : String(license || '');
-  return /creativecommons\.org\/licenses\/(?:by|cc0)\b/i.test(blob);
+}
+function licenseIsOpen(license) {
+  return /creativecommons\.org\/licenses\/(?:by|cc0)\b/i.test(licenseBlob(license));
+}
+/** "CC BY-NC-ND 4.0" from a Creative Commons license URL. */
+function licenseName(license) {
+  const m = licenseBlob(license).match(/creativecommons\.org\/licenses\/(by(?:-[a-z]{2,3}){0,3}|cc0)\/(\d+(?:\.\d+)?)/i);
+  if (!m) return '';
+  if (m[1].toLowerCase() === 'cc0') return 'CC0 ' + m[2];
+  return 'CC ' + m[1].toUpperCase() + ' ' + m[2];
+}
+/** Online-first when Crossref records a published-online date, or a day-level created date against a month-only print date. */
+function publishedOnline(msg) {
+  if (msg?.['published-online']?.['date-parts']?.[0]?.length) return true;
+  const print = (msg?.['published-print'] || msg?.issued || {})['date-parts']?.[0] || [];
+  const created = msg?.created?.['date-parts']?.[0] || [];
+  return print.length > 0 && print.length < 3 && created.length >= 3;
 }
 /** Keep a volume only when the sources agree and it looks like a journal volume. */
 function reliableVolume(current, other) {
@@ -704,10 +720,14 @@ async function publisherRecord(a) {
     const res = await fetch(CROSSREF + '/' + encodeURIComponent(doi));
     if (!res.ok) return null;
     const msg = (await res.json())?.message || {};
+    const licensed = Array.isArray(msg.license) ? msg.license.length > 0 : !!msg.license;
     const pub = {
-      oa: licenseIsOpen(msg.license) || isOpenAccessFlag(a?.oa),
+      oa: licenseIsOpen(msg.license) || (!licensed && isOpenAccessFlag(a?.oa)),
       volume: msg.volume || '',
       pages: msg.page || '',
+      issue: msg.issue || '',
+      licenseLabel: licenseName(msg.license),
+      publishedOnline: publishedOnline(msg),
     };
     if (a) a._pub = pub;
     return pub;
@@ -2850,7 +2870,7 @@ function exactQuote(en, blobs) {
   }
   return needle;
 }
-const QUOTE_LS = 'rr.quotes.v12';
+const QUOTE_LS = 'rr.quotes.v13';
 function quoteKey(a, abs) {
   let h = 5381;
   const s = String(abs || '').slice(0, 4000);
@@ -2949,15 +2969,16 @@ function cardSpec(a, titleZh, quotes, target) {
     journal_zh: jzh,
     date: String(a.date || '').slice(0, 10),
     type: 'Article',
-    type_line: a.studyZh || '研究论文',
-    article_no: [a.volume ? 'Vol ' + a.volume : '', a.issue ? 'Issue ' + a.issue : '', a.pages || ''].filter(Boolean).join(', '),
+    type_line: '研究论文',
+    article_no: [a.volume ? 'Vol ' + a.volume : '', a.issue ? 'Issue ' + a.issue : '', a.pages ? String(a.pages).replace(/(\d)-(\d)/g, '$1–$2') : ''].filter(Boolean).join(', '),
     doi: a.doi || '',
     authors: window.RRCite.etAl(names),
     url: target.url,
     qr_note: '链接直达 ' + target.name + ' 全文',
-    qr_sub: a.oa ? '开放获取' : '访问以机构订阅为准',
+    qr_sub: a.oa ? (a.licenseLabel ? '开放获取（' + a.licenseLabel + '）' : '开放获取') : '访问以机构订阅为准',
+    published_online: !!a.publishedOnline,
     corner_fill: '#111111',
-    labels: true,
+    labels: false,
   };
 }
 function shareChoice(strong, sub) {
@@ -3035,9 +3056,12 @@ async function showShareImage(a) {
     if (pub) {
       a.oa = pub.oa;
       a.volume = reliableVolume(a.volume, pub.volume);
+      if (pub.issue) a.issue = String(pub.issue);
       const have = reliablePages(a.pages);
       const next = reliablePages(pub.pages);
       a.pages = have && next && have !== next ? '' : (have || next);
+      a.licenseLabel = pub.licenseLabel || '';
+      a.publishedOnline = !!pub.publishedOnline;
     }
     body.replaceChildren(el('p', 'share-status', '正在排版…'));
     const canvas = await window.RRCard.render(cardSpec(a, titleZh, quoteRes.quotes, target));

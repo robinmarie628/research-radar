@@ -1,44 +1,49 @@
 /**
- * Four share-card blocks, always in this order:
- * background, what was studied, the finding, the implication.
- * The finding block is the main result plus, when the paper has one,
- * a secondary excerpt joined by " … ".
- * English is always a contiguous excerpt of one source sentence.
+ * Share-card quotes in Robin's order:
+ * a clinical paradox, the finding restated as a contrast, then the broader significance.
+ * A fourth quote is added only for a striking secondary finding.
+ * Each quote is a full or nearly full sentence from the abstract or the open-access full text.
  */
 
 export const ABSTRACT_MAX = 14000;
-export const QUOTE_MIN = 4;
+export const QUOTE_MIN = 3;
 export const QUOTE_MAX = 4;
+export const EXCERPT_WORDS = 48;
 
-export const QUOTE_ROLES = ['background', 'studied', 'finding', 'secondary', 'significance'];
+export const QUOTE_ROLES = ['background', 'finding', 'significance', 'secondary'];
 
-export const QUOTE_SYSTEM = `You choose four quotations for a Chinese physician. The card always has four blocks, in this order.
-You will receive a numbered list of sentences from the abstract, and from the Results or Discussion when the full text is open access. The number in brackets is the index.
-1. background — the problem or question. Prefer a sharp gap ("oral treatments remain scant", "has not eliminated"). Do not pick "X is a leading cause of death" when a sharper gap sentence exists.
-2. studied — what was studied: the aim, design, population, or intervention, in one sentence. Not a census and not a confidence-interval dump.
-3. finding — the MAIN result in its true direction, in words (weight loss, glycaemic control, faster relief, lower odds, the headline discovery). Not an adverse-event sentence and not a confidence-interval dump when a worded result exists.
-4. secondary — one striking secondary finding: an unexpected subgroup, a safety signal, a mechanism, or an odd phenomenon. It must not repeat the main result. Omit this role only if the paper has no such sentence.
-5. significance — what the result means: the implication, the first-in-class consequence, or the benefit beyond the disease that was already known.
-No two roles may make the same point. Do not return only adverse events for a treatment that worked, or only benefits when the main result was null or harmful.
-Never choose trial registration, an NCT number, funding, ethics, copyright, or a methods sentence that is only eligibility and sample size.
-Do not stitch clauses together. Do not shorten the sentence yourself.
+export const QUOTE_SYSTEM = `You choose quotations for a Chinese physician. The card has three sentences, in this order. Add a fourth only when the paper has a striking secondary finding that the three sentences do not already say.
+You will receive a numbered list of sentences from the abstract and, when the full text is open access, from the Introduction and Discussion. The number in brackets is the index. Prefer a Discussion sentence over an abstract sentence when both make the same point.
+The gold standard is these three sentences from a Cell paper, in this order:
+1. "…with many events occurring in individuals with normal blood lipid or low-density lipoprotein (LDL) levels due to non-lipid vascular risk factors."
+2. "Thus, GIMAP6 functions as a distinct cardiovascular disease determinant that protects the endothelial structural integrity and controls the threshold for macrophage response to lipid, rather than systemic lipid levels themselves."
+3. "More broadly, GIMAP6 reveals how immune-regulatory failure can couple endothelial dysfunction, foam-cell formation, and inflammation into a self-reinforcing cascade that culminates in lethal ischemic cardiovascular disease."
+Match that shape. A leading … is allowed when the sentence opens with a generic clause. Do not cut a sentence down to a fragment. About 20 to 40 words is the right length.
+1. background — the problem as a clinical paradox or a sharp gap. Prefer "normal LDL", "not eliminated", "remain scant", "unexpectedly", "paradoxically", "in contrast". Do not pick "To evaluate…", "X is a leading cause of death" with nothing after it, or a bare objective.
+2. finding — the main result restated as a contrast: "rather than", "distinct", "independent of", "in the absence of". For a trial, the overall benefit in words. Not an adverse-event sentence and not a confidence-interval dump when a worded result exists.
+3. significance — the big-picture sentence, ideally opening "More broadly" or carrying "beyond" / "first". Not "These results show that X might be effective."
+4. secondary — one striking extra finding (an unexpected safety signal or a subgroup). Omit it when the three sentences already contain that point. Do not add a fourth just to fill the card.
+Never choose "We aimed to assess the efficacy and safety…", "We investigated the efficacy and safety…", "Nationwide, population based matched case-control study.", "Safety was assessed…", trial registration, an NCT number, funding, ethics, or copyright.
+Do not stitch clauses from different sentences. Do not shorten a sentence that is already about 20 to 40 words. Keep "Thus," and "More broadly,".
 Return JSON only, no markdown:
-{"quotes":[{"role":"background","i":0,"zh":"..."},{"role":"studied","i":1,"zh":"..."},{"role":"finding","i":4,"zh":"..."},{"role":"secondary","i":6,"zh":"..."},{"role":"significance","i":8,"zh":"..."}]}
+{"quotes":[{"role":"background","i":0,"zh":"..."},{"role":"finding","i":4,"zh":"..."},{"role":"significance","i":8,"zh":"..."}]}
 Rules:
 1. i must be an index from the list. Do not invent, merge, or rewrite a sentence.
-2. zh is a Simplified Chinese translation of that exact sentence.
+2. zh is a Simplified Chinese translation of that exact sentence. If you would drop a lead-in clause, still translate the full sentence; the server trims.
 3. Keep drug names, gene and protein names, trial names, and acronyms in English.
 4. Drug names may appear as placeholders like [D1]. Copy every placeholder into zh unchanged.
 5. Translate faithfully. Do not add or omit facts.`;
 
 const ABBREV = /(?:et al|Figs?|vs|Dr|Mr|Mrs|Ms|Prof|e\.g|i\.e|U\.S|No|Vol|Jr|Sr|St|approx|ca|al)$/i;
 const HINT = /patient|risk|mortality|death|outcome|significant|associat|treatment|therapy|reduc|increas|improv|therefore|thus|we found|demonstrat|suggest|benefit|hazard|survival|disease|failure|conclus|trial|effect|among|compared/i;
-const FINDING = /therefore|thus|conclus|we found|these findings|in summary|suggest|demonstrat|indicates that/i;
-const INTERP = /^(interpretation\b|these (?:results|findings|data|observations)\b|our results\b|our findings\b|we conclude\b|in conclusion\b|taken together\b|collectively\b|thus\b|therefore\b)/i;
-const INTERP_BODY = /\b(these findings|these results support|these data support|support the use of|may address an unmet|our results suggest|we conclude|indicates that|adds substantial evidence|remains investigational|requires .{0,48}validation)\b/i;
-const PROBLEM = /\b(not eliminated|unknown|unclear|poorly understood|little is known|remains (?:unclear|unknown|elusive)|despite|the gap|have been limited|remain(?:s|ed)? (?:scant|limited|elusive))\b/i;
-const CENSUS = /\b(were assessed for eligibility|were randomly allocated|were male|were female|median age|included \d+ participants|of these,? \d+)\b/i;
 const RESULT = /\b(detected|reduced|increased|improved|fewer|more likely|associated|caused|accelerated|response rate|survival|mortality|showed|enabled|avoided|no increase|non-inferior|deaths? occurred|adverse events occurred)\b/i;
+const CONTRAST = /\b(despite|in the absence of|independently of|even (?:in|among|without)|unexpected(?:ly)?|surpris(?:e|ing|ingly)|contrary to|paradox|rather than|whereas|in contrast|without hyperlipidemia|not only|beyond)\b/i;
+const SAFETY = /\b(adverse events?|discontinu|hypotension|dysesthesia|severe or serious)\b/i;
+const SUBGROUP = /\b(more pronounced|particularly among|younger ages|earlier ages|only among|subgroup)\b/i;
+const STOP = new Set(['with', 'that', 'this', 'from', 'were', 'was', 'have', 'been', 'into', 'than', 'then', 'them', 'they', 'their', 'which', 'while', 'after', 'before', 'between', 'among', 'within', 'without', 'other', 'more', 'most', 'such', 'only', 'also', 'both', 'each', 'over', 'under', 'about']);
+const METHODS_LEAD = /^(between \d|women aged|the median age|patients were|participants were|we randomly|randomly allocated|eligible |inclusion |exclusion |methods\b|this (?:study|trial) (?:is|was) registered)/i;
+const CENSUS = /\b(were assessed for eligibility|were randomly allocated|were male|were female|median age|included \d+ participants|of these,? \d+)\b/i;
+const FORMULA_LEAD = /^(?:here,\s+we\s+(?:report|show|found|find|demonstrate|identified|identify)\s+that|in this study,?(?:\s+we(?:\s+\w+){0,5})?|we\s+(?:report|show|found|find|demonstrate|identified|identify)\s+that),?\s+/i;
 
 function isDesign(s) {
   return /^(?:this (?:single-arm|randomised|randomized|multicentre|multicenter|phase|open-label|study|trial)|[A-Za-z0-9-]{2,} is a )\b/i.test(s)
@@ -49,8 +54,6 @@ function isDesign(s) {
     || /\bsecondary outcome was\b/i.test(s)
     || /\bas (?:primary|secondary) outcomes?\b/i.test(s);
 }
-const METHODS_LEAD = /^(between \d|women aged|the median age|patients were|participants were|we randomly|randomly allocated|eligible |inclusion |exclusion |methods\b|this (?:study|trial) (?:is|was) registered)/i;
-export const PREFER_LEN = 220;
 
 /** Registration, funding, ethics, accrual status, and copyright lines. */
 export function isBoilerplate(s) {
@@ -79,21 +82,6 @@ export function isDenseMethods(s) {
   if (methods && digitCount >= 6) return true;
   if (digitCount >= 14) return true;
   return false;
-}
-
-function sentenceQuality(s) {
-  let q = 0;
-  if (isBoilerplate(s)) return -20;
-  if (s.length <= PREFER_LEN) q += 3;
-  else if (s.length > 280) q -= 3;
-  if (isDenseMethods(s)) q -= 6;
-  else if (isDesign(s) || METHODS_LEAD.test(s)) q -= 4;
-  if (INTERP.test(s)) q += 8;
-  else if (INTERP_BODY.test(s)) q += 6;
-  if (RESULT.test(s) && !isDenseMethods(s)) q += 3;
-  if (HINT.test(s)) q += 2;
-  if (FINDING.test(s)) q += 2;
-  return q;
 }
 
 export function normSpace(s) {
@@ -133,52 +121,8 @@ export function findVerbatim(candidate, sentences) {
   return '';
 }
 
-export function pickHeuristic(sentences, n = 3) {
-  const ranked = sentences
-    .map((s, i) => ({ s, i, sc: interestScore(s) }))
-    .filter(row => row.sc > -40)
-    .sort((a, b) => b.sc - a.sc || a.i - b.i);
-  const picked = [];
-  for (const row of ranked) {
-    if (picked.length >= n) break;
-    if (picked.some(p => redundant(p.s, row.s))) continue;
-    picked.push(row);
-  }
-  if (picked.length < Math.min(n, ranked.length)) {
-    for (const row of ranked) {
-      if (picked.length >= n) break;
-      if (picked.some(p => p.i === row.i)) continue;
-      picked.push(row);
-    }
-  }
-  return picked.sort((a, b) => a.i - b.i).slice(0, n).map(p => p.s);
-}
-
-function sentenceFrom(q, sentences) {
-  const i = Number(q?.i);
-  if (Number.isInteger(i) && i >= 0 && i < sentences.length) return sentences[i];
-  return findVerbatim(q?.en, sentences);
-}
-
-const DULL = /\b(major cause of|leading cause of|remain(?:s|ed)? scant|currently under investigation|we (?:aimed|investigated|sought) to|we investigated|was generally well tolerated|these results support the use|these results show that|might be effective for the treatment|generally consistent with other|may address an unmet need|provided faster times to symptom relief|support the use of|should be considered for)\b/i;
-const CONTRAST = /\b(despite|in the absence of|independently of|even (?:in|among|without)|did not|failed to|unexpected(?:ly)?|surpris(?:e|ing|ingly)|contrary to|paradox|rather than|whereas|without hyperlipidemia|no longer|not only|beyond)\b/i;
-const NOVEL = /\b(we identify|we report that|previously un(?:recognized|known)|novel|first orally|orphan|unanticipated)\b/i;
-const CLASS_IDEA = /\b((?:dual|triple) agonist|agonist of|receptor antagonist|receptor agonist)\b/i;
-const SUBGROUP = /\b(more pronounced|particularly among|younger ages|earlier ages|only among|subgroup)\b/i;
-const SAFETY = /\b(adverse events?|discontinu|hypotension|dysesthesia|severe or serious)\b/i;
-const STOP = new Set(['with', 'that', 'this', 'from', 'were', 'was', 'were', 'have', 'been', 'into', 'than', 'then', 'them', 'they', 'their', 'which', 'while', 'after', 'before', 'between', 'among', 'within', 'without', 'other', 'more', 'most', 'such', 'only', 'also', 'both', 'each', 'over', 'under', 'about']);
-
-function strikingGap(s) {
-  return /\bmore than \d+/i.test(s) && /\b(faster|slower|median times?|compared with|than placebo)\b/i.test(s);
-}
-
-function memorableMechanism(s) {
-  if (!isMechanism(s)) return false;
-  return /\b(receptor|cascade|hydrolase|mediated|lipid-influx|lipid[- ]uptake|OXER|CD36|phosphorylat|G-protein)\b/i.test(s);
-}
-
-function safetyNote(s) {
-  return SAFETY.test(s) && !/\b(safety was assessed|safety analyses included)\b/i.test(s);
+function wordCount(s) {
+  return normSpace(s).split(/\s+/).filter(Boolean).length;
 }
 
 function contentWords(s) {
@@ -209,275 +153,41 @@ function normClaim(s) {
     .replace(/\bglycaemic\b/g, 'glycemic');
 }
 
-/** The same factual claim, not merely the same disease or drug. */
 function claimSame(a, b) {
   if (!a || !b) return false;
   const A = normClaim(a);
   const B = normClaim(b);
   const both = (re) => re.test(A) && re.test(B);
-  if (both(/\bagegradient\b/)) return true;
+  if (both(/\bagegradient\b/) || both(/\bsubgroupmark\b/)) return true;
   if (both(/\briskdown\b/) && both(/\bpregout\b/)) return true;
   if (both(/\bnotvia\b/) && both(/\bhyperlipidemia\b/)) return true;
   if (both(/\bbodyweight\b/) && both(/\b(improv|reduction|percentage|placebo)\b/)) return true;
   if (both(/\bsymptom relief\b/) && both(/\b(faster|placebo)\b/)) return true;
+  if (both(/\brather than\b/) && both(/\blipid\b/)) return true;
+  if (both(/\bmore broadly\b/)) return true;
   return false;
 }
 
-/** True when two lines would tell the reader the same fact. Shared drug or gene names do not count. */
+/** True when two lines would tell the reader the same fact. */
 export function samePoint(a, b) {
   if (!a || !b) return false;
   if (redundant(a, b)) return true;
   return claimSame(a, b);
 }
 
-/** A question or an aim may share the paper's topic words without repeating a result. */
-function overlapsShown(text, shown, role) {
-  const topical = role === 'background' && /^(?:to (?:evaluate|determine|assess|investigate|compare|examine)|whether|how )\b/i.test(text)
-    || role === 'studied' && /\b(?:we investigated|we aimed to|we sought to|we demonstrate that)\b/i.test(text);
-  return shown.some(t => claimSame(t, text) || (!topical && redundant(t, text)));
-}
-
-function splitClauses(src) {
-  const parts = [];
-  let depth = 0;
-  let start = 0;
-  for (let i = 0; i < src.length; i++) {
-    const c = src[i];
-    if (c === '(') depth++;
-    else if (c === ')' && depth) depth--;
-    else if ((c === ',' || c === ';') && depth === 0 && src[i + 1] === ' ') {
-      parts.push(src.slice(start, i).trim());
-      start = i + 2;
-    }
-  }
-  const tail = src.slice(start).trim();
-  if (tail) parts.push(tail);
-  return parts.filter(Boolean);
-}
-
-/** A contiguous clause that does not repeat a point already chosen. */
-function distinctClause(sentence, kept) {
-  const src = normSpace(sentence).replace(/[.。]+\s*$/, '');
-  const segs = splitClauses(src);
-  if (segs.length < 2) return '';
-  const cands = [];
-  for (let i = 0; i < segs.length; i++) {
-    for (let j = i; j < segs.length; j++) {
-      const chunk = segs.slice(i, j + 1).join(', ').replace(/[,:;]\s*$/, '').trim();
-      const n = wordCount(chunk);
-      if (n < 8 || n > EXCERPT_WORDS) continue;
-      if (!src.includes(chunk)) continue;
-      if (chunk === src) continue;
-      if (kept.some(k => samePoint(chunk, k))) continue;
-      if (interestScore(chunk) < 6) continue;
-      cands.push(chunk);
-    }
-  }
-  if (!cands.length) return '';
-  const tight = cands.filter(c => !cands.some(o => o !== c && c.includes(o)));
-  const pool = tight.length ? tight : cands;
-  pool.sort((a, b) => interestScore(b) - interestScore(a) || wordCount(a) - wordCount(b));
-  return pool[0];
-}
-
-function safetyOnly(s) {
-  return safetyNote(s) && !/\b(improv|body\s?weight|glycaem|glycemic|relief|lower odds|lower risk|efficac|non-inferior)\b/i.test(s);
-}
-
-/**
- * How well a sentence states the paper's overall result.
- * Trials: worded primary efficacy, not an adverse-event line and not a CI dump.
- * Basic papers: the headline discovery.
- */
-export function headlineScore(s) {
-  if (!s || isBoilerplate(s) || isDesign(s) || isRunIn(s) || METHODS_LEAD.test(s)) return -80;
-  if (safetyOnly(s)) return -40;
-  if (/\bwe (?:aimed|investigated|sought) to\b/i.test(s)) return -30;
-  const concrete = /\b(substantial(?:ly)? improvements?|lower odds of all|in the absence of|we identify|we report that)\b/i.test(s);
-  if (DULL.test(s) && !concrete && !strikingGap(s)) return -8;
-  let q = 0;
-  if (/\bsubstantial(?:ly)? improvements?\b/i.test(s) && /\b(body\s?weight|glycaem|glycemic|weight)\b/i.test(s)) q += 30;
-  if (/\blower odds of all\b/i.test(s) || /\bassociated with lower odds of all\b/i.test(s)) q += 28;
-  if (/\b(did not (?:reduce|improve|differ)|no significant (?:difference|benefit)|no between[- ]group difference|failed to)\b/i.test(s)) q += 26;
-  if (strikingGap(s) || (/\bsignificantly faster\b/i.test(s) && /\b(placebo|than)\b/i.test(s))) q += 24;
-  if (/\bwe (?:identify|report that)\b/i.test(s)) q += 22;
-  if (/\b(in the absence of|independently of)\b/i.test(s) && /\bhyperlipid/i.test(s)) q += 18;
-  if (/\bnon-inferior\b/i.test(s) && !isClutteredResult(s)) q += 16;
-  if (!numberHeavy(s) && !isClutteredResult(s) && statesEffect(s)) q += 8;
-  if (numberHeavy(s) && !strikingGap(s) && !concrete) q -= 16;
-  if (isClutteredResult(s) && !strikingGap(s) && !concrete) q -= 12;
-  return q;
-}
-
-/** Higher means a clinician is more likely to open the paper. */
-export function interestScore(s) {
-  if (!s || isBoilerplate(s)) return -80;
-  if (isRunIn(s) || CENSUS.test(s)) return -70;
-  if (isDesign(s) || METHODS_LEAD.test(s)) return -60;
-  let q = 0;
-  const contrast = CONTRAST.test(s) || strikingGap(s);
-  const mechanism = memorableMechanism(s);
-  const novel = NOVEL.test(s) || CLASS_IDEA.test(s);
-  const safety = safetyNote(s);
-  const subgroup = SUBGROUP.test(s);
-  const dull = DULL.test(s);
-  const punch = contrast || mechanism || safety;
-  if (isDenseMethods(s) && !punch) q -= 35;
-  if (contrast) q += 16;
-  if (mechanism) q += 14;
-  if (novel && !/\bwe (?:investigated|aimed|sought)\b/i.test(s)) q += 11;
-  if (safety) q += 12;
-  if (subgroup) q += 10;
-  if (/\b(?:deficient|knockout|knock-out)\b/i.test(s)) q += 8;
-  if (statesEffect(s) && !numberHeavy(s) && !dull) q += 6;
-  if (/\bwe (?:investigated|aimed|sought)\b/i.test(s) && !punch) q -= 22;
-  if (/\bdied\b/i.test(s) && /\bunrelated\b/i.test(s)) q -= 10;
-  if (dull && !punch && !novel && !subgroup && !/\bfirst orally\b/i.test(s)) q -= 18;
-  else if (dull && !/\bfirst orally\b/i.test(s)) q -= 6;
-  if (numberHeavy(s) && !punch) q -= 10;
-  if (/\bprimary (?:end ?point|outcome|efficacy analysis)\b/i.test(s) && !contrast) q -= 8;
-  if (/\bmay be the most effective\b/i.test(s)) q -= 12;
-  if (s.length > 520) q -= 3;
-  return q;
-}
-
-function isImplication(s) {
-  return INTERP.test(s) || INTERP_BODY.test(s) || /^(interpretation|conclusions?|implications?)\b/i.test(s);
-}
-
-function isMechanism(s) {
-  if (!s || isBoilerplate(s) || isImplication(s) || isDesign(s) || METHODS_LEAD.test(s) || PROBLEM.test(s)) return false;
-  if (/\bwe (investigated|aimed|sought|evaluated|assessed)\b/i.test(s)) return false;
-  if (/\bmechanistically\b/i.test(s)) return true;
-  if (/\b(cascade|pathway|signall?ing|redox|\bROS\b|lipid[- ]uptake|lipid-influx|phosphorylat)\b/i.test(s)) return true;
-  if (/\b(?:\w+-)?mediated\s+(?:lipid\s+)?(?:uptake|influx|inflammation|activation|signall?ing|signaling|transport|adhesion)\b/i.test(s)) return true;
-  if (/\bmediated\b/i.test(s) && /\b(uptake|influx|cascade|pathway|redox)\b/i.test(s)) return true;
-  if (/\bvia\b/i.test(s) && /\b(signall?ing|pathway|receptor|cascade|kinase|redox)\b/i.test(s)) return true;
-  if (/\bby (increasing|inducing|activating|inhibiting|blocking|promoting|suppressing|reducing)\b/i.test(s)) return true;
-  if (/\bthrough (?:the |a )?[A-Za-z0-9].{0,48}\b(receptor|pathway|kinase|channel)\b/i.test(s)) return true;
+function isStiff(s) {
+  const t = normSpace(s);
+  if (/^(?:to (?:evaluate|determine|assess|investigate|compare|examine)\b)/i.test(t)) return true;
+  if (/^we (?:aimed|sought) to\b/i.test(t)) return true;
+  if (/^in this study, we aimed to\b/i.test(t)) return true;
+  if (/^we investigated the (?:efficacy|safety|association)\b/i.test(t)) return true;
+  if (/\bmight be effective for the treatment\b/i.test(t)) return true;
+  if (/\bthese results show that\b/i.test(t) && /\bmight be effective\b/i.test(t)) return true;
+  if (/^(?:nationwide, population[- ]based|this (?:was|is) a ).{0,90}\b(?:case-control|cohort|cross-sectional) study\.?$/i.test(t)) return true;
+  if (/^safety (?:was assessed|analyses included)\b/i.test(t)) return true;
+  if (/^patients and members of the public were not involved\b/i.test(t)) return true;
+  if (/^we acknowledge several limitations\b/i.test(t)) return true;
   return false;
-}
-
-function numberHeavy(s) {
-  const text = String(s || '');
-  const digits = (text.match(/\d/g) || []).length;
-  const pct = (text.match(/%/g) || []).length;
-  return isClutteredResult(s) || digits >= 8 || pct >= 3;
-}
-
-function wordedResult(s) {
-  return !!s && statesEffect(s) && !numberHeavy(s) && !isMechanism(s) && !isRunIn(s)
-    && !isBoilerplate(s) && !isDesign(s) && !isImplication(s);
-}
-
-function classifySentence(s) {
-  if (!s || isBoilerplate(s) || isDesign(s) || METHODS_LEAD.test(s)) return '';
-  if (isImplication(s)) return 'significance';
-  if (isMechanism(s)) return 'mechanism';
-  if (/^(background|objectives?|aims?)\b/i.test(s)) return 'background';
-  if (/^(results?|findings?)\b/i.test(s)) return 'finding';
-  if (PROBLEM.test(s)) return 'background';
-  if (RESULT.test(s) || /\b(we (?:found|find|show|report|demonstrate|identify)|showed that|significantly (?:faster|slower|higher|lower|greater|reduced|increased|improved))\b/i.test(s)) return 'finding';
-  if (FINDING.test(s)) return 'significance';
-  return '';
-}
-
-/** Which structured section contains this sentence, when the sections disagree. */
-function sectionRole(s, sections) {
-  if (!sections || typeof sections !== 'object') return '';
-  const n = normSpace(s);
-  if (!n) return '';
-  const rows = [
-    ['background', sections.objective || sections.background || ''],
-    ['finding', sections.results || sections.findings || ''],
-    ['significance', sections.conclusion || sections.interpretation || ''],
-  ];
-  const hits = rows.filter(([, blob]) => blob && normSpace(blob).includes(n));
-  return hits.length === 1 ? hits[0][0] : '';
-}
-
-function assignRole(q, cand, sections) {
-  const explicit = QUOTE_ROLES.includes(q?.role) ? q.role : '';
-  if (isMechanism(cand) && !isImplication(cand) && explicit !== 'background' && explicit !== 'significance') return 'mechanism';
-  const fromSection = sectionRole(cand, sections);
-  let role = explicit || fromSection || classifySentence(cand);
-  if (!role) role = classifySentence(cand);
-  if (isImplication(cand) && role !== 'significance') role = 'significance';
-  if (PROBLEM.test(cand) && !isImplication(cand) && role === 'significance') role = 'background';
-  if (role === 'significance' && wordedResult(cand)) role = 'finding';
-  if (role === 'finding' && isMechanism(cand)) role = 'mechanism';
-  if (role === 'mechanism' && !isMechanism(cand)) role = classifySentence(cand);
-  return role;
-}
-
-function scoreRole(s, role) {
-  if (isBoilerplate(s)) return -50;
-  let q = 0;
-  if (s.length <= 320) q += 2;
-  else if (s.length > 480) q -= 2;
-  if (isDesign(s) || METHODS_LEAD.test(s)) q -= 8;
-  if (CENSUS.test(s)) q -= 8;
-  if (role === 'background') {
-    if (PROBLEM.test(s)) q += 8;
-    if (/^(background|objectives?|aims?)\b/i.test(s)) q += 8;
-    if (isImplication(s)) q -= 12;
-    if (/\bwe (investigated|aimed|sought|evaluated)\b/i.test(s)) q += 1;
-    if (isDenseMethods(s)) q -= 6;
-  } else if (role === 'finding') {
-    if (/^(results?|findings?)\b/i.test(s)) q += 8;
-    if (RESULT.test(s) || /\b(we found|we show|we report|showed that)\b/i.test(s)) q += 6;
-    if (/\b(significantly|compared with|than placebo|than usual|faster|slower|greater|lower risk|higher rate)\b/i.test(s)) q += 5;
-    if (/\b(primary (?:end ?point|efficacy|outcome)|symptom relief|percentage change)\b/i.test(s)) q += 4;
-    if (statesEffect(s) && !isClutteredResult(s)) q += 4;
-    if (isClutteredResult(s)) q -= 4;
-    if (isRunIn(s)) q -= 8;
-    if (/\b(not eliminated|despite|unknown|unclear)\b/i.test(s)) q -= 5;
-    if (INTERP.test(s)) q -= 3;
-    if (isDenseMethods(s) && !RESULT.test(s)) q -= 8;
-  } else if (role === 'mechanism') {
-    if (!isMechanism(s)) return -40;
-    if (/\bmechanistically\b/i.test(s)) q += 8;
-    if (/\b(cascade|pathway|signall?ing|lipid[- ]uptake|lipid-influx|redox)\b/i.test(s)) q += 6;
-    if (/\bmediated\b/i.test(s)) q += 4;
-    if (numberHeavy(s)) q -= 4;
-    if (isImplication(s)) q -= 12;
-  } else {
-    if (isImplication(s) || /^(interpretation|conclusions?|implications?)\b/i.test(s)) q += 10;
-    if (FINDING.test(s)) q += 4;
-    if (PROBLEM.test(s) && !isImplication(s)) q -= 6;
-    if (isDenseMethods(s)) q -= 6;
-    if (isMechanism(s)) q -= 4;
-  }
-  return q;
-}
-
-function sectionText(sections, role) {
-  if (!sections || typeof sections !== 'object') return '';
-  if (role === 'background') return sections.objective || sections.background || '';
-  if (role === 'finding') return sections.results || sections.findings || '';
-  return sections.conclusion || sections.interpretation || '';
-}
-
-/** Sentences that belong to a role. Structured sections win when they exist. */
-function candidatesFor(role, sentences, sections) {
-  const blob = normSpace(sectionText(sections, role));
-  if (blob) {
-    const fromSection = sentences.filter(s => blob.includes(normSpace(s)) && !isBoilerplate(s));
-    if (fromSection.length) return fromSection;
-  }
-  const tagged = sentences.filter(s => classifySentence(s) === role);
-  return tagged.length ? tagged : sentences.filter(s => !isBoilerplate(s));
-}
-
-function statesEffect(s) {
-  return RESULT.test(s)
-    || /\b(we (?:found|find|show|report|demonstrate|identify)|showed that|resulted in|improv)\b/i.test(s)
-    || /\b(significantly|than placebo|compared with placebo|than usual|faster|slower|reduced|increased|fewer|symptom relief|lower risk|higher rate|percentage change|treatment difference)\b/i.test(s);
-}
-
-/** Confidence intervals and p-values, not the result itself. */
-function isClutteredResult(s) {
-  return /95\s*%|\bCIs?\b|confidence interval|\bp\s*[<=>]|\bp\s*</i.test(s);
 }
 
 function isRunIn(s) {
@@ -485,171 +195,146 @@ function isRunIn(s) {
     || /\b(completed the (?:study|trial)(?: drug)?|were screened|were randomly assigned|randomly assigned to|were enrolled)\b/i.test(s);
 }
 
-function plainResult(s) {
-  return statesEffect(s) && !isClutteredResult(s) && !isRunIn(s) && !isBoilerplate(s) && !isDesign(s);
+function isClutteredResult(s) {
+  return /95\s*%|\bCIs?\b|confidence interval|\bp\s*[<=>]|\bp\s*</i.test(s);
 }
 
-function highest(pool, role) {
-  let best = '';
-  let bestSc = -1e9;
-  for (const s of pool) {
-    const sc = scoreRole(s, role);
-    if (sc > bestSc) { bestSc = sc; best = s; }
-  }
-  if (!best) return '';
-  if (role === 'mechanism') return bestSc > 0 ? best : '';
-  if (bestSc > -5 || (role === 'finding' && statesEffect(best) && !isRunIn(best))) return best;
-  return '';
+function numberHeavy(s) {
+  const text = String(s || '');
+  const digits = (text.match(/\d/g) || []).length;
+  const pct = (text.match(/%/g) || []).length;
+  return isClutteredResult(s) || digits >= 10 || pct >= 3;
 }
 
-function bestFor(role, sentences, sections, used) {
-  if (role === 'mechanism') {
-    return highest(sentences.filter(s => !used.has(s) && isMechanism(s)), 'mechanism');
+function safetyNote(s) {
+  return SAFETY.test(s) && !/\b(safety was assessed|safety analyses included)\b/i.test(s);
+}
+
+function safetyOnly(s) {
+  return safetyNote(s) && !/\b(improv|body\s?weight|glycaem|glycemic|relief|lower odds|lower risk|efficac|non-inferior|rather than)\b/i.test(s);
+}
+
+function strikingGap(s) {
+  return /\bmore than \d+/i.test(s) && /\b(faster|slower|median times?|compared with|than placebo)\b/i.test(s);
+}
+
+function usableSentence(s) {
+  return !!s && !isBoilerplate(s) && !isRunIn(s) && !CENSUS.test(s) && !isStiff(s);
+}
+
+/** Higher means a clinician is more likely to stop on the sentence. */
+export function interestScore(s) {
+  if (!s || isBoilerplate(s) || isStiff(s)) return -80;
+  if (isRunIn(s) || CENSUS.test(s)) return -70;
+  if (isDesign(s) || METHODS_LEAD.test(s)) return -60;
+  let q = 0;
+  if (isDenseMethods(s) && !CONTRAST.test(s) && !safetyNote(s)) q -= 35;
+  if (CONTRAST.test(s) || strikingGap(s)) q += 16;
+  if (/\b(thus|more broadly|rather than|unexpectedly|paradoxically|in contrast)\b/i.test(s)) q += 8;
+  if (HINT.test(s)) q += 2;
+  if (RESULT.test(s) && !isDenseMethods(s)) q += 3;
+  if (numberHeavy(s) && !strikingGap(s)) q -= 10;
+  if (s.length > 520) q -= 3;
+  return q;
+}
+
+export function pickHeuristic(sentences, n = 3) {
+  const ranked = sentences
+    .map((s, i) => ({ s, i, sc: interestScore(s) }))
+    .filter(row => row.sc > -40)
+    .sort((a, b) => b.sc - a.sc || a.i - b.i);
+  const picked = [];
+  for (const row of ranked) {
+    if (picked.length >= n) break;
+    if (picked.some(p => redundant(p.s, row.s))) continue;
+    picked.push(row);
   }
-  const pool = candidatesFor(role, sentences, sections).filter(s => !used.has(s) && !isBoilerplate(s) && !isMechanism(s));
-  let rows = pool;
-  if (role === 'finding') {
-    const worded = sentences.filter(s => !used.has(s) && wordedResult(s));
-    if (worded.length) {
-      const blob = normSpace(sectionText(sections, 'finding'));
-      const inResults = blob ? worded.filter(s => blob.includes(normSpace(s))) : [];
-      rows = inResults.length ? inResults : worded;
-    } else {
-      const effects = pool.filter(s => statesEffect(s) && !isRunIn(s));
-      if (effects.length) rows = effects;
+  if (picked.length < Math.min(n, ranked.length)) {
+    for (const row of ranked) {
+      if (picked.length >= n) break;
+      if (picked.some(p => p.i === row.i)) continue;
+      picked.push(row);
     }
   }
-  const hasWorded = role === 'finding' && rows.some(s => wordedResult(s) || (plainResult(s) && !numberHeavy(s)));
-  const filtered = [];
-  for (const s of rows) {
-    if (role !== 'finding' && role !== 'mechanism' && isDenseMethods(s) && pool.some(o => !isDenseMethods(o))) continue;
-    if (role === 'finding' && hasWorded && (numberHeavy(s) || isClutteredResult(s))) continue;
-    if (role === 'finding' && isRunIn(s) && rows.some(o => statesEffect(o) && !isRunIn(o))) continue;
-    filtered.push(s);
-  }
-  const best = highest(filtered.length ? filtered : rows, role);
-  if (best) return best;
-  if (role === 'mechanism') return '';
-  return sentences.find(s => !used.has(s) && !isBoilerplate(s) && !isDenseMethods(s) && !isDesign(s) && !isMechanism(s)) || '';
+  return picked.sort((a, b) => a.i - b.i).slice(0, n).map(p => p.s);
 }
 
-export const EXCERPT_WORDS = 25;
-
-const LEAD_IN = /^(?:here,\s+we\s+(?:report|show|found|find|demonstrate|identified|identify)\s+that|in this study,?(?:\s+we(?:\s+\w+){0,3})?|we\s+(?:report|show|found|find|demonstrate|identified|identify)\s+that|mechanistically|notably|importantly|thus|therefore|hence|collectively|taken together|in conclusion),?\s+/i;
-
-function wordCount(s) {
-  return normSpace(s).split(/\s+/).filter(Boolean).length;
+function sentenceFrom(q, sentences) {
+  const i = Number(q?.i);
+  if (Number.isInteger(i) && i >= 0 && i < sentences.length) return sentences[i];
+  return findVerbatim(q?.en, sentences);
 }
 
-/** A contiguous slice of `sentence`. Omissions are marked with …. */
-export function excerptQuote(sentence, role, focus) {
-  const src = normSpace(sentence).replace(/[.。]+\s*$/, '');
-  if (!src) return '';
-  const hint = normSpace(focus || '').replace(/[.。]+\s*$/, '');
-  if (hint && src.includes(hint) && wordCount(hint) >= 8 && wordCount(hint) <= EXCERPT_WORDS) {
-    return markOmissions(src, hint);
-  }
-  let body = src;
-  const lead = body.match(LEAD_IN);
-  if (lead && lead[0].length < body.length - 12) body = body.slice(lead[0].length);
-  const framed = body.match(/^these results support the use of .+? as (?:potentially )?(?:the )?/i);
-  if (framed && framed[0].length < body.length - 24) body = body.slice(framed[0].length);
-  if (role === 'background') {
-    const at = body.search(/\s+as a (?:major|leading) cause of\b/i);
-    if (at >= 20 && wordCount(body.slice(0, at)) >= 8) body = body.slice(0, at).trim();
-  }
-  if (role === 'finding') {
-    const gap = body.match(/\b(?:causes|caused)(?:\s+\S+){2,14}?\s+in the absence of hyperlipid\w*/i);
-    if (gap && wordCount(gap[0]) >= 8 && wordCount(gap[0]) <= EXCERPT_WORDS) body = gap[0];
-  }
-  if (role === 'significance') {
-    const at = body.search(/\s+(?:independently of|in the absence of)\b/i);
-    const head = at > 0 ? body.slice(0, at).trim() : '';
-    if (at >= 24 && wordCount(head) >= 8 && wordCount(head) <= EXCERPT_WORDS) body = head;
-  }
-  body = body.replace(/\s*\((?:[^()]|\([^()]*\))*(?:95\s*%|\bCIs?\b|\bp\s*[<=>]|\bp\s*<|\bSE\b|\bIQR\b)[^)]*\)\s*$/i, '').trim();
-  const colon = body.indexOf(': ');
-  if (colon >= 24) {
-    const head = body.slice(0, colon).trim();
-    if (wordCount(head) >= 8 && wordCount(head) <= EXCERPT_WORDS) body = head;
-  }
-  const parenRe = /\s+\(([^)]{0,500})\)/g;
-  let paren;
-  while ((paren = parenRe.exec(body))) {
-    const inner = paren[1];
-    const stat = /%|\bCI\b|\bp\s*[<=>]/.test(inner) || (inner.match(/\d/g) || []).length >= 2;
-    if (!stat) continue;
-    const after = body.slice(paren.index + paren[0].length);
-    if (/\bmore than \d+/i.test(after)) continue;
-    const head = body.slice(0, paren.index).trim().replace(/[,:;]\s*$/, '');
-    const headWords = wordCount(head);
-    const headHasPoint = headWords >= 8 && headWords <= EXCERPT_WORDS
-      && /\b(placebo|dysesthesia|hypotension|discontinuation|more than \d+)/i.test(head);
-    if (headHasPoint) { body = head; break; }
-    if (/\bplacebo\b/i.test(after)) continue;
-    if (headWords >= 8 && headWords <= EXCERPT_WORDS) body = head;
-    break;
-  }
-  const cuts = [
-    /,\s+respectively\b/i,
-    /,\s+with a safety profile\b/i,
-    /,\s+culminating\b/i,
-    /,\s+and may address\b/i,
-  ];
-  for (const re of cuts) {
-    const at = body.search(re);
-    if (at >= 24) body = body.slice(0, at).trim();
-  }
-  if (role === 'finding') {
-    const gap = body.match(/\bsignificantly faster\b[\s\S]*?\bmore than \d+\s*h\b/i);
-    if (gap && wordCount(gap[0]) >= 8 && wordCount(gap[0]) <= EXCERPT_WORDS && body.includes(gap[0])) body = gap[0];
-  }
-  body = body.replace(/[,:;]\s*$/, '').trim();
-  let chunk = body;
-  if (wordCount(chunk) > EXCERPT_WORDS) chunk = focusExcerpt(body, role);
-  chunk = tidyEnd(chunk);
-  const opened = tidyStart(chunk);
-  if (opened && src.includes(opened) && wordCount(opened) >= 8) chunk = opened;
-  if (!chunk || !src.includes(chunk)) return normSpace(sentence);
-  const marked = markOmissions(src, chunk);
-  if (marked === src) return normSpace(sentence);
-  return marked;
+function paradoxClause(src) {
+  const at = src.search(/,\s+with many events occurring\b/i);
+  if (at < 0) return '';
+  const clause = src.slice(at).replace(/^,\s+/, '').replace(/[.。]+\s*$/, '').trim();
+  if (wordCount(clause) < 12 || wordCount(clause) > EXCERPT_WORDS) return '';
+  return src.includes(clause) ? clause : '';
+}
+
+function breadthClause(src) {
+  const at = src.search(/\b(?:extending benefits|extend(?:s|ing)? the benefits|far beyond|benefits of \w+ vaccination beyond)\b/i);
+  if (at < 12) return '';
+  let clause = src.slice(at).replace(/[.。]+\s*$/, '').trim();
+  clause = clause.replace(/^(?:and|or)\s+/i, '');
+  if (wordCount(clause) < 8 || wordCount(clause) > EXCERPT_WORDS) return '';
+  return src.includes(clause) ? clause : '';
+}
+
+function markOmissions(src, chunk) {
+  const at = src.indexOf(chunk);
+  if (at < 0) return src;
+  const lead = at > 0;
+  const trail = at + chunk.length < src.replace(/[.。]+\s*$/, '').length && at + chunk.length < src.length;
+  let out = chunk.replace(/^[,:;]\s*/, '').replace(/[,:;]\s*$/, '');
+  if (!out || !src.includes(out)) return src;
+  if (lead) out = '…' + out;
+  if (trail && at + chunk.length < src.replace(/[.。]+\s*$/, '').length) out += '…';
+  const core = out.replace(/…/g, '').trim();
+  if (!src.includes(core)) return src;
+  return out;
+}
+
+function finishExcerpt(src, chunk) {
+  const bare = src.replace(/[.。]+\s*$/, '');
+  const core = chunk.replace(/[,:;]\s*$/, '').trim();
+  if (!core || !bare.includes(core)) return normSpace(src);
+  const at = bare.indexOf(core);
+  const ends = at + core.length >= bare.length;
+  let out = markOmissions(bare, core);
+  if (ends && /[.。]/.test(src) && !out.endsWith('…')) out += src.match(/[.。]/)[0];
+  return out;
 }
 
 function tidyStart(chunk) {
   let out = String(chunk || '').trim().replace(/^(?:and|or|but)\s+/i, '');
   const broken = out.match(/^[^,]{0,48}\),\s*/);
   if (broken) out = out.slice(broken[0].length);
-  out = out.replace(/^(?:which|that)\s+/i, '');
   return out.trim();
 }
 
 function tidyEnd(chunk) {
-  const dangling = /\s+(?:and|or|but|that|which|who|whose|including|with|of|to|for|in|by|via|than|as|from|into|about|induces|causing|independently|respectively)\s*$/i;
-  let out = String(chunk || '').replace(/\s+\d+\s*[-–]\s*\d+$/, '').replace(/[,:;]\s*$/, '').trim();
-  while (dangling.test(out) && wordCount(out) > 8) out = out.replace(dangling, '').replace(/[,:;]\s*$/, '').trim();
+  const dangling = /\s+(?:and|or|but|that|which|who|whose|including|with|of|to|for|in|by|via|than|as|from|into|about)\s*$/i;
+  let out = String(chunk || '').replace(/[,:;]\s*$/, '').trim();
+  while (dangling.test(out) && wordCount(out) > 12) out = out.replace(dangling, '').replace(/[,:;]\s*$/, '').trim();
   return out;
 }
 
-const INTEREST_ANCHOR = /\b(in the absence of|independently of|despite|even (?:in|among)|did not|failed to|more than \d+|adverse event|discontinu|hypotension|dysesthesia|more pronounced|beyond|receptor|cascade|mediated|hydrolase|lipid-influx|lipid uptake|we identify|we report that|quench|first orally|than placebo|placebo group|G-protein|substantial improvements|glycaemic|glycemic|body\s?weight|lower odds|symptom relief)\b/i;
-
-function focusExcerpt(body, role) {
-  const key = role === 'mechanism' || role === 'secondary'
-    ? /\b(mechanistically|cascade|mediated|pathway|signall?ing|signaling|redox|lipid[- ]uptake|lipid-influx|via|receptor|G-protein|induces|hydrolase|adverse event|hypotension|dysesthesia|more pronounced|younger|deficient)/i
-    : role === 'finding'
-      ? /\b(causes|caused|reduced|increased|faster|improved|improv|significantly|resulted in|accelerated|associated|lower odds|we identify|we report that|in the absence of)/i
-      : role === 'background'
-        ? /\b(not eliminated|remain|remains|scant|unknown|unclear|despite|limited|little is known)/i
-        : role === 'studied'
-          ? /\b(we aimed|we investigated|to evaluate|to assess|to compare|case-control|cohort|phase\s+[0-9]|in mice|zebrafish|singleton|adults with|efficacy and safety)/i
-          : role === 'significance'
-            ? /\b(safeguard|support|effective|suggest|reveal|restrain|should be|beyond|first orally|unmet)/i
-            : INTEREST_ANCHOR;
+function focusWindow(body, role) {
+  const key = role === 'finding'
+    ? /\b(rather than|in the absence of|independently of|substantial(?:ly)? improvements|lower odds|we identify|significantly faster|reduced risk|distinct)\b/i
+    : role === 'significance'
+      ? /\b(more broadly|beyond|first orally|reveals how)\b/i
+      : role === 'secondary'
+        ? /\b(hypotension|dysesthesia|more pronounced|younger|only adverse event)\b/i
+        : /\b(despite|paradox|not eliminated|remain(?:s|ed)? (?:scant|limited)|non-lipid|unexpectedly|in contrast)\b/i;
   const tokens = [];
   const re = /\S+/g;
   let m;
   while ((m = re.exec(body))) tokens.push({ start: m.index, end: m.index + m[0].length });
-  if (tokens.length <= EXCERPT_WORDS) return body.trim();
+  const budget = Math.min(EXCERPT_WORDS, 40);
+  if (tokens.length <= budget) return body.trim();
   let anchor = 0;
   const flags = new RegExp(key.source, key.flags.includes('g') ? key.flags : key.flags + 'g');
   let hit;
@@ -658,239 +343,162 @@ function focusExcerpt(body, role) {
     if (at > anchor) anchor = at;
   }
   const nearEnd = anchor >= tokens.length - 8;
-  let start = nearEnd
-    ? Math.max(0, tokens.length - EXCERPT_WORDS)
-    : (anchor < EXCERPT_WORDS ? 0 : Math.max(0, anchor - 8));
-  let end = Math.min(tokens.length, start + EXCERPT_WORDS);
-  const closed = closeDanglingTail(body, tokens, end);
-  if (closed > end) {
-    const shifted = Math.max(0, closed - EXCERPT_WORDS);
-    if (shifted <= anchor) {
-      end = closed;
-      start = shifted;
+  const start = nearEnd ? Math.max(0, tokens.length - budget) : (anchor < budget ? 0 : Math.max(0, anchor - 12));
+  const end = Math.min(tokens.length, start + budget);
+  return tidyEnd(tidyStart(body.slice(tokens[start].start, tokens[end - 1].end)));
+}
+
+/** A contiguous slice of one sentence. A full sentence under the cap is kept. */
+export function excerptQuote(sentence, role, focus) {
+  const src = normSpace(sentence);
+  const bare = src.replace(/[.。]+\s*$/, '');
+  if (!bare) return '';
+  const hinted = normSpace(focus || '').replace(/[.。]+\s*$/, '');
+  if (hinted && bare.includes(hinted) && wordCount(hinted) >= 8 && wordCount(hinted) <= EXCERPT_WORDS) {
+    return finishExcerpt(src, hinted);
+  }
+  if (role === 'background') {
+    const clause = paradoxClause(bare);
+    if (clause) return finishExcerpt(src, clause);
+  }
+  if (role === 'secondary') {
+    const at = bare.search(/\s+\([^)]*(?:\d|%|\bCI\b)[^)]*\)/);
+    if (at >= 24) {
+      const head = bare.slice(0, at).replace(/[,:;]\s*$/, '').trim();
+      if (wordCount(head) >= 8 && wordCount(head) <= EXCERPT_WORDS && bare.includes(head)) return finishExcerpt(src, head);
     }
   }
-  return body.slice(tokens[start].start, tokens[end - 1].end).replace(/[,:;]\s*$/, '').trim();
+  let body = bare;
+  const lead = body.match(FORMULA_LEAD);
+  if (lead && wordCount(body.slice(lead[0].length)) >= 8) body = body.slice(lead[0].length).trim();
+  if (wordCount(body) > EXCERPT_WORDS) body = focusWindow(body, role);
+  body = tidyEnd(tidyStart(body));
+  if (!body || !bare.includes(body)) return src;
+  return finishExcerpt(src, body);
 }
 
-/** If the window stops on a modifier or function word, keep the short noun phrase that finishes it. */
-function closeDanglingTail(body, tokens, end) {
-  if (end >= tokens.length) return end;
-  const last = body.slice(tokens[end - 1].start, tokens[end - 1].end).replace(/[.,:;]+$/, '');
-  const dangling = /^(?:through|via|of|to|for|in|by|with|from|into|the|a|an|and|or|that|which)$/i.test(last)
-    || /(?:coupled|mediated|induced|related)$/i.test(last);
-  if (!dangling) return end;
-  let stop = end;
-  const limit = Math.min(tokens.length, end + 6);
-  for (let i = end; i < limit; i++) {
-    stop = i + 1;
-    const raw = body.slice(tokens[i].start, tokens[i].end);
-    if (/[,:;]/.test(raw)) break;
-  }
-  return stop;
-}
-
-function markOmissions(src, chunk) {
-  const at = src.indexOf(chunk);
-  if (at < 0) return src;
-  const lead = at > 0;
-  const trail = at + chunk.length < src.length;
-  let out = chunk.replace(/^[,:;]\s*/, '').replace(/[,:;]\s*$/, '');
-  if (!out || !src.includes(out)) return src;
-  if (lead) out = '…' + out;
-  if (trail) out += '…';
-  const core = out.replace(/…/g, '').trim();
-  if (!src.includes(core)) return src;
-  return out;
-}
-
-function sameWords(excerpt, sentence) {
-  const core = normSpace(excerpt).replace(/…/g, '').replace(/[.。]+$/, '').trim();
-  const full = normSpace(sentence).replace(/[.。]+$/, '').trim();
-  return core === full;
-}
-
-function tagsOf(s) {
-  const out = [];
-  if (CONTRAST.test(s) || strikingGap(s)) out.push('contrast');
-  if ((NOVEL.test(s) || CLASS_IDEA.test(s)) && !/\bwe (?:investigated|aimed|sought)\b/i.test(s)) out.push('novel');
-  if (memorableMechanism(s)) out.push('mechanism');
-  if (safetyNote(s)) out.push('safety');
-  if (SUBGROUP.test(s)) out.push('subgroup');
-  return out;
-}
-
-function methodsPenalty(s, sections) {
-  const blob = normSpace(sections?.methods || '');
-  if (!blob || !blob.includes(normSpace(s))) return 0;
-  if (strikingGap(s) || memorableMechanism(s) || safetyNote(s)) return 0;
-  return 12;
-}
-
-function usableSentence(s) {
-  return !!s && !isBoilerplate(s) && !isRunIn(s) && !CENSUS.test(s);
-}
-
-function roleFloor(role) {
-  if (role === 'secondary' || role === 'studied' || role === 'finding') return 8;
-  return 6;
-}
-
-/** The experimental subject, when the paper states it inside a longer result. */
-function setupSpan(sentence) {
-  const src = normSpace(sentence).replace(/[.。]+\s*$/, '');
-  const patterns = [
-    /\bloss of(?:\s+\S+){2,18}?\s+in mice\b/i,
-  ];
-  for (const re of patterns) {
-    const hit = src.match(re);
-    if (!hit) continue;
-    const chunk = hit[0].trim();
-    if (wordCount(chunk) < 8 || wordCount(chunk) > EXCERPT_WORDS) continue;
-    if (!src.includes(chunk)) continue;
-    return chunk;
-  }
-  return '';
+function overlapsShown(text, shown) {
+  return shown.some(t => samePoint(t, text));
 }
 
 function backgroundScore(s) {
   if (!usableSentence(s) || isDenseMethods(s)) return -40;
-  if (isImplication(s) || safetyOnly(s)) return -16;
-  if (/\b(safety was assessed|safety analyses included|effect modification by\b.{0,80}\bwas assessed|primary endpoint was)\b/i.test(s)) return -40;
+  if (safetyOnly(s)) return -20;
   let q = 0;
-  const sharp = /\b(not eliminated|despite|unknown|unclear|poorly understood|little is known|have been limited|remain(?:s|ed)? (?:limited|elusive|scant|unknown)|no effective|unmet need|currently under investigation)\b/i.test(s);
-  const generic = /\b(leading cause of|major cause of (?:death|mortality|human))\b/i.test(s);
-  const question = /^(?:to (?:evaluate|determine|assess|investigate|compare|examine)|whether|how )\b/i.test(s);
-  if (sharp) q += 18;
-  if (question) q += 16;
-  if (/\b(harness oxidative|attract white blood|wound sites)\b/i.test(s)) q += 16;
-  if (/\b(repair capacity|adaptive redox)\b/i.test(s)) q += 8;
-  if (PROBLEM.test(s)) q += 6;
-  if (generic && !sharp) q -= 18;
-  if (/\bwe (?:aimed|sought) to\b/i.test(s) || /\bwe investigated\b/i.test(s)) q -= 12;
-  if (/\b(quench(?:es|ed)?|we identify|we demonstrate|we find that|(?:deficient|knockout|knock-out))\b/i.test(s)) q -= 16;
-  if (/\b(case-control study|phase\s+[0-9]|randomi[sz]ed|was assessed)\b/i.test(s) && !sharp && !question) q -= 20;
-  if (headlineScore(s) >= 18) q -= 14;
+  if (/\b(with many events occurring|normal blood lipid)\b/i.test(s)) q += 48;
+  if (/\bnon-lipid\b/i.test(s)) q += 14;
+  if (/\bwhereas\b/i.test(s) && /\b(unexplored|unknown|unclear|remains)\b/i.test(s)) q += 30;
+  if (/\bcannot be solely explained\b/i.test(s)) q += 18;
+  if (/\bharness oxidative\b/i.test(s)) q += 12;
+  if (/\bparadoxicall?y\b/i.test(s)) q += 28;
+  if (/\b(not eliminated|remain(?:s|ed)? (?:scant|limited|elusive)|incompletely understood|preventive measures remain limited|no effective|currently under investigation|little is known|poorly understood)\b/i.test(s)) q += 18;
+  if (/\b(despite|unexpectedly|in contrast)\b/i.test(s)) q += 8;
+  if (/\b(leading cause of|major cause of)\b/i.test(s) && !/\b(not eliminated|with many events|remain(?:s|ed)? (?:scant|limited)|despite)\b/i.test(s)) q -= 16;
+  if (/\b(rather than|more broadly|first orally|we identify)\b/i.test(s)) q -= 18;
+  if (/^thus,/i.test(s) && !/\b(with many events|normal blood lipid|despite)\b/i.test(s)) q -= 12;
+  if (/\bwe (?:found|identify|demonstrate)\b/i.test(s)) q -= 10;
   return q;
 }
 
-function studiedScore(s) {
-  if (!usableSentence(s)) return -40;
-  if (/\b(safety was assessed|safety analyses included|effect modification by\b.{0,80}\bwas assessed|primary endpoint was|eligible participants had)\b/i.test(s)) return -40;
-  if (/\bthese vascular abnormalities cause\b/i.test(s)) return -24;
-  if (/\b(?:deficient|knockout|knock-out)\b/i.test(s)) return -24;
-  if (/\b(beyond|extending benefits|first orally|might be effective)\b/i.test(s)) return -18;
-  if (isImplication(s) || safetyOnly(s)) return -16;
-  const setup = setupSpan(s);
-  if (headlineScore(s) >= 20 && !setup) return -10;
+function findingScore(s) {
+  if (!usableSentence(s) || isDesign(s) || METHODS_LEAD.test(s)) return -40;
+  if (safetyOnly(s)) return -40;
+  if (/\bmore broadly\b/i.test(s)) return -12;
   let q = 0;
-  if (/\bwe (?:aimed|sought) to\b/i.test(s) || /\bwe investigated\b/i.test(s) || /\bwe demonstrate that\b/i.test(s)) q += 24;
-  if (setup) q += 18;
-  if (/\bto (?:evaluate|determine|assess|compare|investigate) the\b/i.test(s)) q += 8;
-  if (/\b(phase\s+[0-9]|randomi[sz]ed|placebo-controlled|case-control|cohort|crossover|in mice|zebrafish|human cells)\b/i.test(s)) q += 10;
-  if (/\b(nationwide|population[- ]based|singleton births|adults with|participants with)\b/i.test(s)) q += 6;
-  if (isDenseMethods(s)) q -= 16;
-  if (numberHeavy(s) && q < 20) q -= 6;
-  return q;
-}
-
-function secondaryScore(s) {
-  if (!usableSentence(s)) return -40;
-  if (/\bwe (?:aimed|investigated|sought) to\b/i.test(s) || /\bwe investigated\b/i.test(s)) return -20;
-  const striking = safetyNote(s) || SUBGROUP.test(s) || memorableMechanism(s) || /\b(?:deficient|knockout|knock-out)\b/i.test(s);
-  if (isDenseMethods(s) && !striking) return -40;
-  let q = interestScore(s);
-  if (safetyNote(s)) q += 8;
-  if (/\b(only adverse event|hypotension|dysesthesia)\b/i.test(s)) q += 14;
-  if (/\b(?:deficient|knockout|knock-out)\b/i.test(s)) q += 12;
-  if (SUBGROUP.test(s)) q += 8;
-  if (SUBGROUP.test(s) && !/\bbeyond\b/i.test(s)) q += 10;
-  if (memorableMechanism(s)) q += 6;
-  if (/\bcascade\b/i.test(s)) q += 10;
-  if (/\b(human \w+ variants?|V65I|early ASCVD)\b/i.test(s) && !/\bcascade\b/i.test(s)) q -= 12;
-  if (/\b(beyond|extending benefits|first orally|might be effective|these results (?:show|support))\b/i.test(s)) q -= 18;
-  if (/\bno treatment-related adverse events were assessed as severe\b/i.test(s)) q -= 10;
-  if (headlineScore(s) >= 22 && !safetyNote(s) && !SUBGROUP.test(s) && !/\b(?:deficient|knockout)\b/i.test(s)) q -= 16;
-  if (isImplication(s) && !memorableMechanism(s) && !safetyNote(s)) q -= 8;
-  if (numberHeavy(s) && !/\b(hypotension|dysesthesia|only adverse event)\b/i.test(s)) q -= 8;
+  if (/^thus,/i.test(s) && /\b(rather than|distinct|independent)\b/i.test(s)) q += 34;
+  if (/\brather than\b/i.test(s)) q += 22;
+  if (/\bdistinct\b/i.test(s) && /\b(determinant|pathway|mechanism)\b/i.test(s)) q += 16;
+  if (/\b(independently of|independent of)\b/i.test(s)) q += 16;
+  if (/\bin the absence of\b/i.test(s)) q += 18;
+  if (/\bsubstantial(?:ly)? improvements?\b/i.test(s) && /\b(body\s?weight|glycaem|glycemic|weight)\b/i.test(s)) q += 28;
+  if (/\blower odds of all\b/i.test(s)) q += 26;
+  if (/\bwe identify\b/i.test(s)) q += 22;
+  if (/\b(significantly faster|faster times to symptom relief)\b/i.test(s) && /\b(placebo|than)\b/i.test(s)) q += 16;
+  if (/\breduced risk\b/i.test(s) && /\bwe found\b/i.test(s)) q += 14;
+  if (/\b(improved|reduced|fewer|increased)\b/i.test(s) && /\b(survival|mortality|risk|events|cancers?)\b/i.test(s)) q += 12;
+  if (isClutteredResult(s)) q -= 22;
+  if (numberHeavy(s) && !/\bsubstantial(?:ly)? improvements?\b/i.test(s)) q -= 8;
+  if (/\b(more broadly|first orally|beyond cancer)\b/i.test(s)) q -= 12;
   return q;
 }
 
 function significanceScore(s) {
   if (!usableSentence(s) || isDenseMethods(s)) return -40;
-  if (/\bwe (?:aimed|sought) to\b/i.test(s) || /\bwe investigated\b/i.test(s)) return -18;
-  if (/\b(safety was assessed|safety analyses included)\b/i.test(s)) return -30;
+  if (safetyOnly(s)) return -16;
   let q = 0;
-  if (isImplication(s)) q += 14;
-  if (/\b(beyond|first orally|safeguard|unmet need|implications?)\b/i.test(s)) q += 12;
-  if (/\b(might be effective|may address|suggest that|our data reveal)\b/i.test(s)) q += 6;
-  if (/\b(human \w+ variants?|V65I|early ASCVD)\b/i.test(s)) q += 8;
-  if (DULL.test(s) && !/\b(first orally|beyond|safeguard)\b/i.test(s)) q -= 6;
-  if (headlineScore(s) >= 24 && !/\b(beyond|first orally|safeguard)\b/i.test(s)) q -= 12;
-  if (safetyOnly(s)) q -= 8;
-  if (SUBGROUP.test(s) && !/\bbeyond\b/i.test(s)) q -= 8;
+  if (/^more broadly\b/i.test(s)) q += 40;
+  else if (/\bmore broadly\b/i.test(s)) q += 28;
+  if (/\b(beyond cancer|far beyond|first orally|reveals how)\b/i.test(s)) q += 22;
+  if (/\bbeyond\b/i.test(s)) q += 8;
+  if (/^(?:thus|therefore|collectively|taken together)\b/i.test(s) && !/\brather than\b/i.test(s)) q += 6;
+  if (/\b(should change|implications?|suggest that)\b/i.test(s)) q += 8;
+  if (/\b(might be effective|may address an unmet)\b/i.test(s) && !/\b(first orally|beyond|more broadly)\b/i.test(s)) q -= 24;
+  if (findingScore(s) >= 30 && !/\b(more broadly|beyond|first orally|reveals how)\b/i.test(s)) q -= 18;
   return q;
 }
 
-function sectionBoost(s, sections, role) {
-  if (!sections || typeof sections !== 'object') return 0;
-  const n = normSpace(s);
-  const has = (blob) => !!(blob && normSpace(blob).includes(n));
-  if (role === 'background' && has(sections.objective || sections.background)) return 8;
-  if (role === 'background' && has(sections.methods)) return -8;
-  if (role === 'studied' && has(sections.methods)) return 6;
-  if (role === 'finding' && has(sections.results || sections.findings)) return 4;
-  if (role === 'significance' && has(sections.conclusion || sections.interpretation)) return 8;
-  return 0;
+function secondaryScore(s) {
+  if (!usableSentence(s)) return -40;
+  const striking = safetyNote(s) || (SUBGROUP.test(s) && !/\bbeyond\b/i.test(s));
+  if (!striking) return -40;
+  if (isDenseMethods(s) && !/\b(hypotension|dysesthesia|only adverse event)\b/i.test(s)) return -30;
+  let q = 8;
+  if (/\b(hypotension|dysesthesia|only adverse event)\b/i.test(s)) q += 18;
+  if (SUBGROUP.test(s)) q += 16;
+  if (numberHeavy(s)) {
+    const at = String(s).search(/\s+\([^)]*(?:\d|%)/);
+    const head = at >= 24 ? String(s).slice(0, at) : '';
+    if (!/\b(hypotension|dysesthesia|only adverse event)\b/i.test(head)) q -= 24;
+  }
+  if (findingScore(s) >= 24) q -= 20;
+  return q;
 }
 
-function roleScore(s, role, sections) {
-  let q;
-  if (role === 'background') q = backgroundScore(s);
-  else if (role === 'studied') q = studiedScore(s);
-  else if (role === 'finding') q = headlineScore(s);
-  else if (role === 'secondary') q = secondaryScore(s);
-  else q = significanceScore(s);
-  if (q <= -30) return q;
-  return q + sectionBoost(s, sections, role);
+function roleScore(s, role) {
+  if (role === 'background') return backgroundScore(s);
+  if (role === 'finding') return findingScore(s);
+  if (role === 'secondary') return secondaryScore(s);
+  return significanceScore(s);
+}
+
+function roleFloor(role) {
+  if (role === 'secondary') return 18;
+  return 8;
 }
 
 function hintSentence(modelQuotes, sentences, role) {
   const q = (modelQuotes || []).find(m => m && m.role === role);
   if (!q) return '';
   const s = sentenceFrom(q, sentences);
-  return s && !isBoilerplate(s) ? s : '';
+  return s && !isBoilerplate(s) && !isStiff(s) ? s : '';
 }
 
 function clauseFor(sentence, shown, role) {
-  if (role === 'studied') {
-    const setup = setupSpan(sentence);
-    if (setup && !overlapsShown(setup, shown, role)) return setup;
-  }
+  const bare = normSpace(sentence).replace(/[.。]+\s*$/, '');
   if (role === 'background') {
-    const src = normSpace(sentence).replace(/[.。]+\s*$/, '');
-    const at = src.search(/\s+as a (?:major|leading) cause of\b/i);
-    if (at >= 20) {
-      const head = src.slice(0, at).trim();
-      if (wordCount(head) >= 8 && wordCount(head) <= EXCERPT_WORDS && !overlapsShown(head, shown, role)) return head;
-    }
+    const clause = paradoxClause(bare);
+    if (clause && !overlapsShown(clause, shown)) return clause;
   }
-  if (!overlapsShown(sentence, shown, role)) return '';
-  return distinctClause(sentence, shown) || '';
+  if (role === 'significance') {
+    const clause = breadthClause(bare);
+    if (clause && overlapsShown(sentence, shown) && !overlapsShown(clause, shown)) return clause;
+  }
+  if (!overlapsShown(sentence, shown)) return '';
+  return '';
 }
 
 function candidateExcerpt(sentence, role, shown) {
   const focus = clauseFor(sentence, shown, role);
-  if (overlapsShown(sentence, shown, role) && !focus) return null;
+  if (overlapsShown(sentence, shown) && !focus) return null;
   const excerpt = excerptQuote(sentence, role, focus);
-  if (!excerpt || overlapsShown(excerpt, shown, role)) return null;
-  return { sentence, excerpt, focus };
+  if (!excerpt || overlapsShown(excerpt, shown)) return null;
+  return { sentence, excerpt };
 }
 
-function pickRole(sentences, role, shown, hint, sections) {
+function pickRole(sentences, role, shown, hint) {
   const floor = roleFloor(role);
   const ranked = sentences
-    .map(s => ({ s, sc: roleScore(s, role, sections) }))
+    .map(s => ({ s, sc: roleScore(s, role) }))
     .filter(row => row.sc >= floor)
     .sort((a, b) => b.sc - a.sc || a.s.length - b.s.length);
   if (hint && ranked.length) {
@@ -901,28 +509,18 @@ function pickRole(sentences, role, shown, hint, sections) {
   for (const row of ranked) {
     if (seen.has(row.s)) continue;
     seen.add(row.s);
-    if (role === 'background' && /\b(?:leading|major) cause of\b/i.test(row.s) && !/\bnot eliminated\b/i.test(row.s)) {
-      const sharper = ranked.some(o => o.s !== row.s && o.sc >= 8 && /\b(not eliminated|remain(?:s|ed)? (?:limited|scant)|despite|unknown|currently under investigation)\b/i.test(o.s));
-      if (sharper) continue;
-    }
     const got = candidateExcerpt(row.s, role, shown);
     if (got) return got;
   }
   return null;
 }
 
-function joinExcerpts(main, extra) {
-  if (!extra) return main;
-  const left = String(main || '').replace(/(?:\s*…)+\s*$/, '').trim();
-  const right = String(extra || '').replace(/^\s*(?:…\s*)+/, '').trim();
-  if (!left || !right || samePoint(left, right)) return main;
-  return left + ' … ' + right;
+function sameWords(excerpt, sentence) {
+  const core = normSpace(excerpt).replace(/…/g, '').replace(/[.。]+$/, '').trim();
+  const full = normSpace(sentence).replace(/[.。]+$/, '').trim();
+  return core === full;
 }
 
-/**
- * Background, what was studied, the finding (main result plus one secondary
- * excerpt when the paper has one), then the implication.
- */
 function modelZhFor(modelQuotes, sentences, sentence, role) {
   const rows = modelQuotes || [];
   const exact = rows.find(q => q && q.role === role && sentenceFrom(q, sentences) === sentence);
@@ -930,38 +528,40 @@ function modelZhFor(modelQuotes, sentences, sentence, role) {
   return loose ? normSpace(loose.zh || '') : '';
 }
 
-/**
- * Keep the sentences each role needs when a long open-access text is capped.
- */
+/** Keep the sentences each role needs when a long open-access text is capped. */
 export function selectQuotePool(text) {
-  const all = splitSentences(text).filter(s => !isBoilerplate(s));
-  if (all.length <= 36) return all;
+  const all = splitSentences(text).filter(s => !isBoilerplate(s) && !isStiff(s));
+  if (all.length <= 70) return all;
   const keep = new Set();
-  for (const role of ['background', 'studied', 'finding', 'secondary', 'significance']) {
+  for (const role of QUOTE_ROLES) {
     const ranked = all
       .map(s => ({ s, sc: roleScore(s, role) }))
       .sort((a, b) => b.sc - a.sc);
     let n = 0;
     for (const row of ranked) {
-      if (row.sc < roleFloor(role) || n >= 3) break;
+      if (row.sc < roleFloor(role) || n >= 4) break;
       keep.add(row.s);
       n++;
     }
   }
   const ranked = all.map(s => ({ s, sc: interestScore(s) })).sort((a, b) => b.sc - a.sc);
   for (const row of ranked) {
-    if (keep.size >= 40) break;
-    if (row.sc >= 8 || keep.size < 28) keep.add(row.s);
+    if (keep.size >= 48) break;
+    if (row.sc >= 8 || keep.size < 24) keep.add(row.s);
   }
-  return all.filter(s => keep.has(s)).slice(0, 42);
+  return all.filter(s => keep.has(s)).slice(0, 56);
 }
 
-export function resolveQuotePicks(text, modelQuotes, sections) {
+/**
+ * Paradox, then the finding as a contrast, then the broader significance.
+ * A fourth block is returned only for a striking secondary finding.
+ */
+export function resolveQuotePicks(text, modelQuotes) {
   const sentences = splitSentences(text).filter(s => !isBoilerplate(s));
   const indexed = splitSentences(text);
   const shown = [];
   const take = (role) => {
-    const got = pickRole(sentences, role, shown, hintSentence(modelQuotes, indexed, role), sections);
+    const got = pickRole(sentences, role, shown, hintSentence(modelQuotes, indexed, role));
     if (!got) return null;
     shown.push(got.excerpt);
     const zh = modelZhFor(modelQuotes, indexed, got.sentence, role);
@@ -973,29 +573,10 @@ export function resolveQuotePicks(text, modelQuotes, sections) {
     };
   };
   const finding = take('finding');
-  const secondary = pickRole(sentences, 'secondary', shown, hintSentence(modelQuotes, indexed, 'secondary'), sections);
-  let findingBlock = finding;
-  if (finding && secondary) {
-    const joined = joinExcerpts(finding.en, secondary.excerpt);
-    if (joined !== finding.en && joined.includes(' … ')) {
-      const [left, right] = joined.split(' … ');
-      shown.push(right);
-      findingBlock = {
-        role: 'finding',
-        en: joined,
-        zh: '',
-        sentence: finding.sentence,
-        pieces: [
-          { en: left, sentence: finding.sentence, zh: finding.zh && sameWords(left, finding.sentence) ? finding.zh : '' },
-          { en: right, sentence: secondary.sentence, zh: '' },
-        ],
-      };
-    }
-  }
-  const background = take('background');
-  const studied = take('studied');
   const significance = take('significance');
-  return [background, studied, findingBlock, significance].filter(Boolean);
+  const background = take('background');
+  const secondary = take('secondary');
+  return [background, finding, secondary, significance].filter(Boolean);
 }
 
 export function parseQuoteResponse(raw) {
