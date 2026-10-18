@@ -103,7 +103,7 @@ export function splitSentences(text) {
     const next = t[i + 1] || '';
     if (next && next !== ' ') continue;
     const rest = t.slice(i + 1).trimStart();
-    if (rest && !/^[\p{Lu}“"‘'(\[]/u.test(rest)) continue;
+    if (rest && !sentenceBoundary(rest)) continue;
     const s = buf.trim();
     if (s.length >= 24 && /[A-Za-z\u4e00-\u9fff]/.test(s)) out.push(s);
     buf = '';
@@ -112,6 +112,15 @@ export function splitSentences(text) {
   const tail = buf.trim();
   if (tail.length >= 24 && /[A-Za-z\u4e00-\u9fff]/.test(tail)) out.push(tail);
   return out;
+}
+
+/** A new sentence may start with a capital or with a mixed-case name such as dFBNs. */
+function sentenceBoundary(rest) {
+  if (!rest) return true;
+  if (/^[\p{Lu}“"‘'(\[]/u.test(rest)) return true;
+  const tok = rest.match(/^[\p{L}][\p{L}\p{N}-]*/u);
+  if (!tok) return false;
+  return /\p{Lu}/u.test(tok[0].slice(1));
 }
 
 export function findVerbatim(candidate, sentences) {
@@ -297,7 +306,7 @@ function markOmissions(src, chunk) {
 }
 
 function finishExcerpt(src, chunk) {
-  const bare = src.replace(/[.。]+\s*$/, '');
+  const bare = src.replace(/[.。]+\s*$/, '').trim();
   const core = chunk.replace(/[,:;]\s*$/, '').trim();
   if (!core || !bare.includes(core)) return normSpace(src);
   const at = bare.indexOf(core);
@@ -351,7 +360,7 @@ function focusWindow(body, role) {
 /** A contiguous slice of one sentence. A full sentence under the cap is kept. */
 export function excerptQuote(sentence, role, focus) {
   const src = normSpace(sentence);
-  const bare = src.replace(/[.。]+\s*$/, '');
+  const bare = src.replace(/[.。]+\s*$/, '').trim();
   if (!bare) return '';
   const hinted = normSpace(focus || '').replace(/[.。]+\s*$/, '');
   if (hinted && bare.includes(hinted) && wordCount(hinted) >= 8 && wordCount(hinted) <= EXCERPT_WORDS) {
@@ -466,6 +475,78 @@ function roleFloor(role) {
   return 8;
 }
 
+const RESULT_LINE = /\b(associated|differed|compared with|no evidence|did not identify|reduced|increased|improved|fewer|lower odds|faster|resulted in|similar in efficacy|non-inferior|significantly greater)\b/i;
+const MEANING_LINE = /\b(should be considered|clinicians should|shared decision|suggest that|these findings|this finding supports|these results establish|in conclusion|together, these results)\b/i;
+
+/** Ordinary result and conclusion lines, used only when the gold scores all miss. */
+function plainScore(s, index = 0, total = 1) {
+  if (!usableSentence(s) || isDesign(s) || METHODS_LEAD.test(s) || isRunIn(s)) return -40;
+  if (/\b(primary|secondary) (?:outcomes?|end ?points?) (?:was|were)\b/i.test(s)) return -20;
+  if (isDenseMethods(s) && !CONTRAST.test(s)) return -30;
+  let q = 0;
+  if (RESULT_LINE.test(s)) q += 8;
+  if (MEANING_LINE.test(s)) q += 8;
+  if (/^we (?:introduce|identify|demonstrate|benchmark)\b/i.test(s)) q += 6;
+  if (CONTRAST.test(s) && !numberHeavy(s)) q += 4;
+  if (index === 0) q += 4;
+  if (total > 1 && index >= total - 2) q += 4;
+  if (numberHeavy(s)) q -= 6;
+  if (/\b(meta-regression|eligibility criteria|were identified through|were analysed using|were analyzed using|were harmonised|were harmonized|we conducted a)\b/i.test(s)) q -= 12;
+  return q;
+}
+
+function packPlain(role, sentence, indexed, modelQuotes) {
+  if (!sentence) return null;
+  const excerpt = excerptQuote(sentence, role);
+  if (!excerpt) return null;
+  const zh = modelZhFor(modelQuotes, indexed, sentence, role);
+  return {
+    role,
+    en: excerpt,
+    zh: zh && sameWords(excerpt, sentence) ? zh : '',
+    sentence,
+  };
+}
+
+/**
+ * When no sentence clears the gold floor, still quote a worded result and a conclusion.
+ * Methods, confidence-interval dumps, and "To compare…" aims stay out.
+ */
+function plainFallback(sentences, indexed, modelQuotes) {
+  const total = sentences.length;
+  const ranked = sentences
+    .map((s, index) => ({ s, sc: plainScore(s, index, total) }))
+    .filter(row => row.sc >= 4)
+    .sort((a, b) => b.sc - a.sc || a.s.length - b.s.length);
+  const findingLike = (s) => RESULT_LINE.test(s) && !numberHeavy(s);
+  const meaningLike = (s) => MEANING_LINE.test(s);
+  const shown = [];
+  const take = (pred) => {
+    const row = ranked.find(r => pred(r.s) && !shown.some(t => samePoint(t, r.s)));
+    if (!row) return '';
+    shown.push(row.s);
+    return row.s;
+  };
+  const finding = take(s => findingLike(s) && !meaningLike(s) && !/\bno evidence\b/i.test(s))
+    || take(s => /^we (?:introduce|identify)\b/i.test(s))
+    || take(s => findingLike(s) && !meaningLike(s))
+    || take(s => !meaningLike(s) && !/^we\b/i.test(s))
+    || take(() => true);
+  const extra = take(s => findingLike(s) && !meaningLike(s) && !/^we\b/i.test(s));
+  const significance = take(s => meaningLike(s));
+  const background = take(s => !findingLike(s) && !meaningLike(s));
+  const secondRole = extra && (safetyNote(extra) || SUBGROUP.test(extra)) ? 'secondary' : 'finding';
+  const picks = [
+    packPlain('background', background, indexed, modelQuotes),
+    packPlain('finding', finding, indexed, modelQuotes),
+    packPlain(secondRole, extra, indexed, modelQuotes),
+    packPlain('significance', significance, indexed, modelQuotes),
+  ].filter(Boolean);
+  if (picks.length) return picks;
+  const rescued = pickHeuristic(sentences, 3);
+  return rescued.map((sentence, i) => packPlain(i === 0 ? 'background' : i === rescued.length - 1 ? 'significance' : 'finding', sentence, indexed, modelQuotes)).filter(Boolean);
+}
+
 function hintSentence(modelQuotes, sentences, role) {
   const q = (modelQuotes || []).find(m => m && m.role === role);
   if (!q) return '';
@@ -576,7 +657,57 @@ export function resolveQuotePicks(text, modelQuotes) {
   const significance = take('significance');
   const background = take('background');
   const secondary = take('secondary');
-  return [background, finding, secondary, significance].filter(Boolean);
+  let picked = [background, finding, secondary, significance].filter(Boolean);
+  if (!picked.length) picked = plainFallback(sentences, indexed, modelQuotes);
+  return topUpQuotes(picked, sentences, indexed, modelQuotes);
+}
+
+function arrangeQuotes(picks) {
+  const rank = { background: 0, finding: 1, secondary: 2, significance: 3 };
+  return picks.slice().sort((a, b) => (rank[a.role] ?? 1) - (rank[b.role] ?? 1));
+}
+
+/** When the gold roles leave the card short, add other complete sentences up to three. */
+function topUpQuotes(picked, sentences, indexed, modelQuotes) {
+  const coreCount = () => picked.filter(p => p.role !== 'secondary').length;
+  if (coreCount() >= QUOTE_MIN) return arrangeQuotes(picked);
+  const shown = picked.map(p => p.en);
+  const used = new Set(picked.map(p => p.sentence));
+  const have = new Set(picked.map(p => p.role));
+  const ranked = sentences
+    .filter(s => !used.has(s) && usableSentence(s) && !isDesign(s) && !METHODS_LEAD.test(s) && !isDenseMethods(s))
+    .filter(s => !/\bwe conducted a\b/i.test(s))
+    .map(s => {
+      let sc = Math.max(interestScore(s), plainScore(s), backgroundScore(s), findingScore(s), significanceScore(s));
+      if (wordCount(s) > EXCERPT_WORDS) sc -= 24;
+      if (/\b(induces|disrupts|causally linked|causes)\b/i.test(s)) sc += 8;
+      return { s, sc };
+    })
+    .filter(row => row.sc > -20)
+    .sort((a, b) => b.sc - a.sc || b.s.length - a.s.length);
+  for (const row of ranked) {
+    if (coreCount() >= QUOTE_MIN) break;
+    if (have.has('finding') && /\bwhereas\b/i.test(row.s) && ranked.some(r => !used.has(r.s) && !/\bwhereas\b/i.test(r.s))) continue;
+    let role = 'finding';
+    if (!have.has('background') && backgroundScore(row.s) >= Math.max(findingScore(row.s), significanceScore(row.s))) role = 'background';
+    else if (!have.has('finding') && findingScore(row.s) >= significanceScore(row.s)) role = 'finding';
+    else if (!have.has('significance')) role = 'significance';
+    else if (!have.has('finding')) role = 'finding';
+    else role = 'background';
+    const got = candidateExcerpt(row.s, role, shown);
+    if (!got) continue;
+    shown.push(got.excerpt);
+    used.add(row.s);
+    have.add(role);
+    const zh = modelZhFor(modelQuotes, indexed, got.sentence, role);
+    picked.push({
+      role,
+      en: got.excerpt,
+      zh: zh && sameWords(got.excerpt, got.sentence) ? zh : '',
+      sentence: got.sentence,
+    });
+  }
+  return arrangeQuotes(picked);
 }
 
 export function parseQuoteResponse(raw) {

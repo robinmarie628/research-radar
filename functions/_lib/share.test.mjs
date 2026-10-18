@@ -22,11 +22,19 @@ import {
 } from './quotes.js';
 import { handleTranslate, __setMtResources } from '../api/translate.js';
 import { extractPassages, extractHtmlPassages } from './fulltext.js';
+import { isTranslatedZh } from './mt.js';
 
 const require = createRequire(import.meta.url);
 const cite = require('../../assets/cite.js');
 
 const ABSTRACT = 'Patients with heart failure had a higher risk of readmission. Methods included a cohort of 400 adults followed for two years. Thus, early review of volume status reduced mortality compared with usual care. A further sentence about laboratory methods is not the point of the paper.';
+
+test('a lowercase acronym still starts a new sentence', () => {
+  const parts = splitSentences('Replay of SWA induces sleep. dFBNs generate SWA throughout the cycle despite antagonism with dopaminergic neurons.');
+  assert.equal(parts.length, 2);
+  assert.match(parts[0], /induces sleep/);
+  assert.match(parts[1], /^dFBNs generate/);
+});
 
 test('sentences keep abbreviations and decimals together', () => {
   const parts = splitSentences('Smith et al. reported a risk of 0.05. The trial then stopped early.');
@@ -162,7 +170,8 @@ test('a model pick of a census sentence is replaced by the surprising line', () 
   const blob = picks.map(p => p.en).join(' ');
   assert.match(blob, /more than 12 h|significantly faster/);
   assert.match(picks.find(p => p.role === 'background').en, /remain scant/);
-  assert.doesNotMatch(blob, /These results support the use/);
+  assert.match(blob, /significantly faster/);
+  assert.doesNotMatch(blob, /95% CI/);
   assert.equal(picks.some(p => /不该用背景/.test(p.zh)), false);
 });
 
@@ -267,6 +276,48 @@ test('a trial-design subtitle is removed and a scientific subtitle stays', () =>
   assert.equal(trimDesignSubtitle(review), 'Vitamin D and fracture risk');
 });
 
+test('the share card keeps a delayed-treatment subtitle that would otherwise wrap past two lines', () => {
+  const src = readFileSync(new URL('../../assets/share-card.js', import.meta.url), 'utf8');
+  const start = src.indexOf('function contrastTitleTail');
+  const end = src.indexOf('function textInk');
+  const { chooseTitleZh } = new Function(src.slice(start, end) + '\nreturn { chooseTitleZh };')();
+  const amd = '美国常规临床实践中新生血管性年龄相关性黄斑变性的管理：延迟治疗启动的影响';
+  assert.equal(chooseTitleZh(amd, 3, 2), amd);
+  assert.match(chooseTitleZh(amd, 4, 2), /延迟治疗/);
+  const design = '中国多药耐药热带念珠菌的区域扩展和适应性进化：一项回顾性多中心基因组研究';
+  assert.equal(chooseTitleZh(design, 3, 2), '中国多药耐药热带念珠菌的区域扩展和适应性进化');
+  assert.equal(chooseTitleZh(amd, 2, 1), amd);
+});
+
+test('the client puts a dropped delayed-treatment clause back onto a cached title', () => {
+  const src = readFileSync(new URL('../../assets/app.js', import.meta.url), 'utf8');
+  const start = src.indexOf('function stripTitleStop');
+  const end = src.indexOf('/* ---------------- abstract section headings');
+  const { preserveTitleContrast } = new Function(src.slice(start, end) + '\nreturn { preserveTitleContrast };')();
+  const en = 'Management of Neovascular Age-Related Macular Degeneration in Routine US Clinical Practice: Impact of Delayed Treatment Initiation.';
+  const short = '美国常规临床实践中新生血管性年龄相关性黄斑变性的管理';
+  const full = '美国常规临床实践中新生血管性年龄相关性黄斑变性的管理：延迟治疗启动的影响';
+  assert.equal(preserveTitleContrast(en, short), full);
+  assert.equal(preserveTitleContrast(en, full), full);
+  assert.equal(
+    preserveTitleContrast('Initial sepsis care: early versus late treatment initiation', '脓毒症治疗'),
+    '脓毒症治疗：早期与晚期开始治疗',
+  );
+});
+
+test('the share-card title drops a trailing Chinese full stop', () => {
+  const src = readFileSync(new URL('../../assets/app.js', import.meta.url), 'utf8');
+  const start = src.indexOf('function stripTitleStop');
+  const end = src.indexOf('function stripTitleMeta');
+  const { stripTitleStop, stripTitleMeta } = new Function(
+    src.slice(start, end) + src.slice(end, src.indexOf('/* ---------------- abstract section headings')) + '\nreturn { stripTitleStop, stripTitleMeta };',
+  )();
+  const eye = '非动脉性前部缺血性视神经病变中的前层高反射线。';
+  assert.equal(stripTitleStop(eye), '非动脉性前部缺血性视神经病变中的前层高反射线');
+  assert.equal(stripTitleMeta(eye), '非动脉性前部缺血性视神经病变中的前层高反射线');
+  assert.equal(stripTitleMeta('前层高反射线（ASCVD）。'), '前层高反射线（ASCVD）');
+});
+
 test('an open-access flag is true only for Y or a Creative Commons license', () => {
   const src = readFileSync(new URL('../../assets/app.js', import.meta.url), 'utf8');
   const start = src.indexOf('function isOpenAccessFlag');
@@ -346,6 +397,127 @@ test('a trial card keeps the worded benefit and can add a striking adverse event
   assert.match(adverse.en, /Hypotension and dysesthesia were more frequent/);
   assert.doesNotMatch(adverse.en, /\[5%\]|12 mg group/);
   for (const p of picks) assert.ok(wordCountOk(p.en), p.en);
+});
+
+test('the sleep-pressure abstract yields three separate sentences', () => {
+  const abs = [
+    'Changes in oscillatory neural dynamics reflect—but may not necessarily determine—transitions between sleep stages and variations in sleep pressure.',
+    'Here we show that sleep-control neurons innervating the dorsal fan-shaped body of Drosophila (dFBNs) produce slow-wave activity (SWA) that is causally linked to sleep.',
+    'The oscillations rely on interhemispheric competition of two half-centers connected by inhibitory glutamatergic synapses.',
+    'dFBN-restricted interference with glutamate release disrupts SWA and baseline as well as rebound sleep, whereas the optogenetic replay of SWA induces sleep.',
+    'dFBNs generate SWA throughout the sleep-wake cycle (despite mutual antagonism with arousing dopaminergic neurons) and adjust its power to sleep need via sleep history-dependent increases in excitability and homeostatic synaptic depression.',
+    'The oscillatory format permits a continuous encoding of sleep pressure but requires mechanisms that convert the amplitude-modulated signal into binary sleep-wake states.',
+  ].join(' ');
+  const picks = resolveQuotePicks(abs, []);
+  assert.equal(picks.length, 3);
+  const blob = picks.map(p => p.en).join('\n');
+  assert.match(blob, /optogenetic replay of SWA induces sleep/);
+  assert.match(blob, /despite mutual antagonism/);
+  assert.equal(picks.some(p => /replay of SWA induces sleep\.\s+dFBNs/.test(p.en)), false);
+  for (const p of picks) {
+    assert.equal((p.en.match(/\. /g) || []).length <= 1, true, p.en);
+    assert.ok(wordCountOk(p.en), p.en);
+  }
+});
+
+test('a short abstract with no gold-style sentence still returns quotes', () => {
+  const abstract = 'Methods We conducted a prospective cohort study. Results Antidepressant treatment was associated with QTc prolongation and early major adverse cardiovascular events. Conclusions Clinicians should monitor electrocardiograms when initiating treatment.';
+  const picks = resolveQuotePicks(abstract, []);
+  assert.ok(picks.length >= 2 && picks.length <= 4);
+  assert.match(picks.map(p => p.en).join(' '), /associated with QTc prolongation/);
+  assert.match(picks.map(p => p.en).join(' '), /Clinicians should monitor electrocardiograms/);
+  assert.equal(picks.some(p => /We conducted a prospective cohort study/.test(p.en)), false);
+  for (const p of picks) {
+    for (const core of piecesOf(p.en)) assert.ok(abstract.includes(core), p.en);
+    assert.ok(wordCountOk(p.en), p.en);
+  }
+});
+
+test('a structured QTc abstract is quoted from the worded result, not the aim or the interval', () => {
+  const aim = 'To compare the effect of specific antidepressants with placebo on heart rate corrected QT interval (QTc) during the first eight weeks of treatment for major depressive disorder in adults, and to investigate whether antidepressant use is associated with early major cardiovascular adverse events (MACE).';
+  const method = 'The primary outcome was changes in QTc Fridericia (QTcF) associated with specific antidepressants and placebo after taking into account modifiable and non-modifiable risk factors.';
+  const interval = 'Compared with placebo, escitalopram and amitriptyline were associated with increased QTc intervals (8.7 milliseconds (ms), 95% credibility interval (CrI) 1.6 to 15.8, and 5.3 ms, 0.8 to 9.8, respectively).';
+  const differed = 'The effect of specific antidepressants on QTc interval differed between adults with depression.';
+  const mace = 'No evidence associated antidepressant use with early MACE and non-suicidal sudden death.';
+  const decision = 'To support shared decision making and taking into account the trade-off between benefits and harms, individual modifiable and non-modifiable risk factors should be considered when choosing antidepressants.';
+  const abstract = [aim, method, interval, differed, mace, decision].join(' ');
+  const picks = resolveQuotePicks(abstract, []);
+  const blob = picks.map(p => p.en).join(' ');
+  assert.match(blob, /QTc interval differed between adults with depression/);
+  assert.match(blob, /No evidence associated antidepressant use with early MACE/);
+  assert.match(blob, /should be considered when choosing antidepressants/);
+  assert.doesNotMatch(blob, /To compare the effect|95% credibility|primary outcome was/);
+  for (const p of picks) for (const core of piecesOf(p.en)) assert.ok(abstract.includes(core), p.en);
+});
+
+test('an echoed English sentence is not a Chinese translation', () => {
+  const en = 'To support shared decision making and taking into account the trade-off between benefits and harms, individual modifiable and non-modifiable risk factors should be considered when choosing antidepressants.';
+  assert.equal(isTranslatedZh(en, en), false);
+  assert.equal(isTranslatedZh(en, '为了支持共同决策并权衡益处与危害，选择抗抑郁药时应考虑个体可改变和不可改变的风险因素。'), true);
+  assert.equal(isTranslatedZh('The effect differed.', '特定抗抑郁药对QTc间期的影响在抑郁症成人中有所不同。'), true);
+});
+
+test('quotes mode translates a line again when the model copies the English', async () => {
+  __setMtResources({ glossary: [], overrides: [] });
+  const finding = 'The effect of specific antidepressants on QTc interval differed between adults with depression.';
+  const meaning = 'To support shared decision making and taking into account the trade-off between benefits and harms, individual modifiable and non-modifiable risk factors should be considered when choosing antidepressants.';
+  const abstract = finding + ' ' + meaning;
+  let calls = 0;
+  const env = {
+    AI: {
+      async run(_model, payload) {
+        calls++;
+        const user = payload.messages[1].content.replace(/^\/no_think\n/, '');
+        if (user.includes('[0]')) {
+          return { response: JSON.stringify({ quotes: [
+            { role: 'finding', i: 0, zh: '特定抗抑郁药对QTc间期的影响在抑郁症成人中有所不同。' },
+            { role: 'significance', i: 1, zh: meaning },
+          ] }) };
+        }
+        const arr = JSON.parse(user);
+        if (calls === 2) return { response: JSON.stringify(arr) };
+        return { response: JSON.stringify(arr.map(() => '为了支持共同决策并权衡益处与危害，选择抗抑郁药时应考虑个体可改变和不可改变的风险因素。')) };
+      },
+    },
+  };
+  const res = await handleTranslate(new Request('https://research-radar-f5j.pages.dev/api/translate', {
+    method: 'POST',
+    headers: { Origin: 'https://research-radar-f5j.pages.dev', 'Content-Type': 'application/json' },
+    body: JSON.stringify({ mode: 'quotes', doi: '10.1/test', id: 'qtc', abstract }),
+  }), env);
+  assert.equal(res.status, 200);
+  const data = await res.json();
+  const line = data.quotes.find(q => /shared decision/.test(q.en));
+  assert.ok(line);
+  assert.match(line.zh, /共同决策/);
+  assert.equal(line.zh.includes('shared decision'), false);
+  assert.ok(calls >= 3);
+});
+
+test('quotes mode translates a plain abstract instead of returning 502', async () => {
+  __setMtResources({ glossary: [], overrides: [] });
+  const abstract = 'Methods We conducted a prospective cohort study. Results Antidepressant treatment was associated with QTc prolongation and early major adverse cardiovascular events. Conclusions Clinicians should monitor electrocardiograms when initiating treatment.';
+  const env = {
+    AI: {
+      async run(_model, payload) {
+        const user = payload.messages[1].content.replace(/^\/no_think\n/, '');
+        if (user.includes('[0]')) return { response: '{"quotes":[]}' };
+        const arr = JSON.parse(user);
+        return { response: JSON.stringify(arr.map(() => '译文：抗抑郁治疗与QTc延长及早期主要心血管不良事件相关，开始治疗时应监测心电图。')) };
+      },
+    },
+  };
+  const res = await handleTranslate(new Request('https://research-radar-f5j.pages.dev/api/translate', {
+    method: 'POST',
+    headers: { Origin: 'https://research-radar-f5j.pages.dev', 'Content-Type': 'application/json' },
+    body: JSON.stringify({ mode: 'quotes', doi: '10.1/test', id: 'test', abstract }),
+  }), env);
+  assert.equal(res.status, 200);
+  const data = await res.json();
+  assert.ok(data.quotes.length >= 2);
+  assert.match(data.quotes.map(q => q.en).join(' '), /associated with QTc prolongation/);
+  assert.match(data.quotes.map(q => q.zh).join(' '), /译文：/);
+  assert.equal(data.quotes.every(q => q.en && q.zh), true);
 });
 
 const sample = {

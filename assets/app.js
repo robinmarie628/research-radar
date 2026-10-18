@@ -11,7 +11,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.18.38';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.18.43';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -129,10 +129,16 @@ const STUDY = [
 const STUDY_BY_KEY = Object.fromEntries(STUDY.map(s => [s.key, s]));
 const STUDY_OTHER = { key:'other', zh:'研究论文', rank:3 };
 const STUDY_LABELS = new Set(STUDY.map(s => s.zh).concat([STUDY_OTHER.zh]));
+/** Chinese titles do not take a closing full stop. Same rule as stripTitleStop in mt.js. */
+function stripTitleStop(text) {
+  const s = String(text || '').trim();
+  if (!/[\u4e00-\u9fff]/.test(s)) return s;
+  return s.replace(/(?:\s*[.。])+\s*$/g, '').trim();
+}
 /** Drop a trailing （journal，domain，study type） left by the old digest prompt.
  *  Parentheses that belong to the translation, such as （ASCVD）, stay. */
 function stripTitleMeta(text) {
-  const s = String(text || '').trim();
+  let s = stripTitleStop(text);
   const m = s.match(/(?:（|\()([^（）()]*)[，,]([^（）()]*)[，,]([^（）()]*)(?:）|\))\s*$/);
   if (!m) return s;
   const journal = m[1].trim();
@@ -140,8 +146,44 @@ function stripTitleMeta(text) {
   const kind = m[3].trim();
   const journalOk = /^[A-Za-z0-9][A-Za-z0-9 .:&/+-]{0,48}$/.test(journal);
   const domainOk = /^[\u4e00-\u9fff]{2,8}(?:与[\u4e00-\u9fff]{1,6})?$/.test(domain);
-  if (journalOk && domainOk && STUDY_LABELS.has(kind)) return s.slice(0, m.index).trim();
+  if (journalOk && domainOk && STUDY_LABELS.has(kind)) return stripTitleStop(s.slice(0, m.index));
   return s;
+}
+/**
+ * Same rule as preserveTitleContrast in functions/_lib/mt.js.
+ * A shortened colon clause must keep delayed / prompt / early / late initiation.
+ */
+function preserveTitleContrast(en, zh) {
+  const TITLE_TIMING = [
+    { re: /\bdelayed\b/i, zh: ['延迟', '推迟', '延后'], gloss: '延迟' },
+    { re: /\bprompt\b/i, zh: ['及时', '即刻'], gloss: '及时' },
+    { re: /\bearly(?![- ]onset)\b/i, zh: ['早期', '提早', '提前'], gloss: '早期' },
+    { re: /\blate\b/i, zh: ['晚期'], gloss: '晚期' },
+    { re: /\bimmediate\b/i, zh: ['立即', '即刻', '及时'], gloss: '立即' },
+  ];
+  const out = stripTitleStop(zh);
+  if (!out || !/[\u4e00-\u9fff]/.test(out)) return out;
+  const src = String(en || '').replace(/\s+/g, ' ').trim();
+  const cut = src.search(/[：:]/);
+  if (cut < 2) return out;
+  const tail = src.slice(cut + 1).trim().replace(/[.。\s]+$/g, '');
+  const hits = TITLE_TIMING.filter(t => t.re.test(tail));
+  if (!hits.length || !/\b(treatment|therapy|initiation|initiating)\b/i.test(tail)) return out;
+  const initiation = /\binitiat/i.test(tail);
+  const treatment = /\b(treatment|therapy)\b/i.test(tail);
+  let core = '';
+  if (hits.length === 1 && hits[0].gloss === '延迟' && treatment && initiation) core = '延迟治疗启动';
+  else if (hits.length === 1 && treatment && initiation) core = hits[0].gloss + '开始治疗';
+  else if (treatment && initiation) core = hits.map(h => h.gloss).join('与') + '开始治疗';
+  else if (initiation) core = hits.map(h => h.gloss).join('与') + '启动';
+  else if (treatment) core = hits.map(h => h.gloss).join('与') + '治疗';
+  else core = hits.map(h => h.gloss).join('与');
+  const gloss = /^\s*impact\s+of\s+/i.test(tail) ? core + '的影响' : core;
+  const idx = Math.max(out.lastIndexOf('：'), out.lastIndexOf(':'));
+  const scope = idx >= 0 ? out.slice(idx + 1) : out;
+  if (hits.every(h => h.zh.some(w => scope.includes(w)))) return out;
+  if (idx >= 0) return stripTitleStop(out.slice(0, idx) + '：' + gloss);
+  return stripTitleStop(out + '：' + gloss);
 }
 
 /* ---------------- abstract section headings ----------------
@@ -2502,13 +2544,19 @@ function rememberMt(a, zh) {
 function lookupMt(a) {
   const id = mtId(a);
   const norm = normTitle(a.title);
+  let zh = '';
   const doiHit = id && S.mt.byDoi.get(id);
-  if (doiHit && (!doiHit.norm || doiHit.norm === norm)) return stripTitleMeta(doiHit.zh);
-  const normHit = norm && S.mt.byNorm.get(norm);
-  if (normHit) return stripTitleMeta(normHit.zh);
-  const local = (id && S.mt.local.get(id)) || (norm && S.mt.local.get('t:' + norm));
-  if (local && local.zh && (!local.norm || local.norm === norm)) return stripTitleMeta(local.zh);
-  return '';
+  if (doiHit && (!doiHit.norm || doiHit.norm === norm)) zh = doiHit.zh;
+  else {
+    const normHit = norm && S.mt.byNorm.get(norm);
+    if (normHit) zh = normHit.zh;
+    else {
+      const local = (id && S.mt.local.get(id)) || (norm && S.mt.local.get('t:' + norm));
+      if (local && local.zh && (!local.norm || local.norm === norm)) zh = local.zh;
+    }
+  }
+  if (!zh) return '';
+  return preserveTitleContrast(a.title, stripTitleMeta(zh));
 }
 function applyCachedMt(a) {
   if (!mtEligible(a)) return false;
@@ -2607,9 +2655,10 @@ function queueMachineTitles() {
           const items = (data.items || []).filter(item => item && item.zh);
           if (!res.ok || !items.length) continue;
           for (const item of items) {
-            const zh = stripTitleMeta(item.zh);
-            if (!zh) continue;
             const id = String(item.id || '').toLowerCase();
+            const src = batch.find(a => mtId(a) === id);
+            const zh = preserveTitleContrast((src && src.title) || '', stripTitleMeta(item.zh));
+            if (!zh) continue;
             for (const list of mtLists()) {
               for (const other of list || []) {
                 if (mtId(other) !== id) continue;
@@ -2859,6 +2908,14 @@ function downloadBlob(filename, blob) {
   link.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1500);
 }
+/** Chinese slot must contain Han text. An echo of the English sentence is not a translation. */
+function quoteZhOk(zh) {
+  const z = String(zh || '').trim();
+  const han = (z.match(/[\u4e00-\u9fff]/g) || []).length;
+  if (han < 2) return false;
+  const latin = (z.match(/[A-Za-z]/g) || []).length;
+  return !(latin > 24 && latin > han * 3);
+}
 function exactQuote(en, blobs) {
   const needle = String(en || '').replace(/\s+/g, ' ').trim();
   if (!needle) return '';
@@ -2870,7 +2927,7 @@ function exactQuote(en, blobs) {
   }
   return needle;
 }
-const QUOTE_LS = 'rr.quotes.v13';
+const QUOTE_LS = 'rr.quotes.v15';
 function quoteKey(a, abs) {
   let h = 5381;
   const s = String(abs || '').slice(0, 4000);
@@ -2928,7 +2985,7 @@ async function fetchQuotes(a) {
     if (Array.isArray(q?.sentences)) blobs.push(...q.sentences);
     const en = exactQuote(q?.en, blobs);
     const zh = String(q?.zh || '').trim();
-    if (en && zh) quotes.push({ en, zh, role: q?.role || '', source: q?.source || 'abstract', sentence: q?.sentence || '' });
+    if (en && zh && quoteZhOk(zh)) quotes.push({ en, zh, role: q?.role || '', source: q?.source || 'abstract', sentence: q?.sentence || '' });
   }
   if (!quotes.length) return { error: '没有从摘要里抽出可用的原句。' };
   const out = quotes.slice(0, 4);
@@ -2946,7 +3003,7 @@ async function ensureCardTitle(a) {
     body: JSON.stringify({ mode: 'titles', items: [{ id: a.id || a.doi || a.title, text: a.title }] }),
   });
   const data = await res.json().catch(() => ({}));
-  const zh = stripTitleMeta(data.items && data.items[0] && data.items[0].zh);
+  const zh = preserveTitleContrast(a.title, stripTitleMeta(data.items && data.items[0] && data.items[0].zh));
   if (zh) {
     rememberMt(a, zh);
     if (mtEligible(a)) { a.mtZh = zh; patchMachineTitles(); }

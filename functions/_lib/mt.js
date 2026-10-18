@@ -17,7 +17,7 @@ export const TITLE_SYSTEM = `You are a professional medical translator for a Chi
 Rules:
 1. Keep drug names, gene/protein names, trial and study names, registries, organizations and acronyms in English exactly as written (e.g. niraparib, KDM5A, NECTIN4, LINK-HF2, SIERRA, KDIGO, EGFR, ECMO, PCI, MASH, CAR T, HIV-1, HCV).
 2. Use standard Chinese medical terminology: phase 1/2/3 -> Ⅰ期/Ⅱ期/Ⅲ期 (phase IIIb -> Ⅲb期), unresectable -> 不可切除, locally advanced -> 局部晚期, cohort study -> 队列研究, randomised controlled trial -> 随机对照试验, meta-analysis -> Meta分析, first-in-human -> 首次人体, open-label -> 开放标签, single-arm -> 单臂, multicentre -> 多中心, relapsed or refractory -> 复发或难治性, propensity-matched -> 倾向性评分匹配.
-3. Translate faithfully and completely; do not add, omit or explain anything. Keep the colon structure of the title.
+3. Translate faithfully and completely; do not add, omit or explain anything. Keep the colon structure of the title, including the clause after the colon. Never drop a contrast in that clause (delayed, prompt, early, late, or immediate treatment or initiation): delayed treatment initiation → 延迟治疗启动, prompt → 及时, early → 早期, late → 晚期.
 4. Drug names have been replaced by placeholders like [D1], [D2]. Copy every placeholder into the translation exactly once, unchanged, in the grammatically right position. Any other drug names (INN names such as pembrolizumab, osimertinib, trastuzumab deruxtecan, tirzepatide, semaglutide; names ending in -mab, -nib, -parib, -vir, -cept, -tide, -stat) must stay in English exactly as written. Never replace them with a Chinese drug name, and never drop them.
 5. Do not add any qualifier, population or detail that is not in the English title (no extra disease subtype, organ or study design that the title does not state). Keep anatomy exact (iliac = 髂, femoral = 股).
 6. Common terms: mpox = 猴痘 (not smallpox), fenestrated = 开窗, post hoc analysis = 事后分析, multinational = 多国, neuronal ensembles = 神经元集群.
@@ -53,6 +53,11 @@ export const DEFAULT_OVERRIDES = [
     zh: 'ticagrelor',
     bad: ['替格瑞洛', '替卡格雷'],
   },
+  {
+    en: 'Management of Neovascular Age-Related Macular Degeneration in Routine US Clinical Practice: Impact of Delayed Treatment Initiation',
+    zh: '美国常规临床实践中新生血管性年龄相关性黄斑变性的管理：延迟治疗启动的影响',
+    exact: true,
+  },
 ];
 
 /** INN stems. Longer stems are listed for readability; matching is endsWith. */
@@ -84,6 +89,94 @@ export function normTitle(s) {
     .replace(/\s+/g, ' ')
     .replace(/[.。\s]+$/g, '')
     .trim();
+}
+
+/** Chinese titles do not take a closing full stop. Quotes keep theirs. */
+export function stripTitleStop(text) {
+  const s = String(text || '').trim();
+  if (!/[\u4e00-\u9fff]/.test(s)) return s;
+  return s.replace(/(?:\s*[.。])+\s*$/g, '').trim();
+}
+
+/**
+ * Timing words that must survive when a model shortens the clause after a colon.
+ * `zh` are acceptable renderings; `gloss` is the word used to rebuild a dropped clause.
+ */
+const TITLE_TIMING = [
+  { re: /\bdelayed\b/i, zh: ['延迟', '推迟', '延后'], gloss: '延迟' },
+  { re: /\bprompt\b/i, zh: ['及时', '即刻'], gloss: '及时' },
+  { re: /\bearly(?![- ]onset)\b/i, zh: ['早期', '提早', '提前'], gloss: '早期' },
+  { re: /\blate\b/i, zh: ['晚期'], gloss: '晚期' },
+  { re: /\bimmediate\b/i, zh: ['立即', '即刻', '及时'], gloss: '立即' },
+];
+
+function titleColonTail(en) {
+  const s = String(en || '').replace(/\s+/g, ' ').trim();
+  const idx = s.search(/[：:]/);
+  if (idx < 2) return '';
+  return s.slice(idx + 1).trim().replace(/[.。\s]+$/g, '');
+}
+
+function timingHits(tail) {
+  return TITLE_TIMING.filter(t => t.re.test(tail));
+}
+
+function timingCovered(text, hit) {
+  return hit.zh.some(w => String(text || '').includes(w));
+}
+
+/** Chinese for a dropped "delayed / prompt / early / late initiation" clause. */
+export function contrastGloss(tail) {
+  const src = String(tail || '').trim();
+  const hits = timingHits(src);
+  if (!hits.length) return '';
+  if (!/\b(treatment|therapy|initiation|initiating)\b/i.test(src)) return '';
+  const initiation = /\binitiat/i.test(src);
+  const treatment = /\b(treatment|therapy)\b/i.test(src);
+  let core = '';
+  if (hits.length === 1 && hits[0].gloss === '延迟' && treatment && initiation) core = '延迟治疗启动';
+  else if (hits.length === 1 && treatment && initiation) core = hits[0].gloss + '开始治疗';
+  else if (treatment && initiation) core = hits.map(h => h.gloss).join('与') + '开始治疗';
+  else if (initiation) core = hits.map(h => h.gloss).join('与') + '启动';
+  else if (treatment) core = hits.map(h => h.gloss).join('与') + '治疗';
+  else core = hits.map(h => h.gloss).join('与');
+  return /^\s*impact\s+of\s+/i.test(src) ? core + '的影响' : core;
+}
+
+/**
+ * Put a shortened colon clause back. A translation that already says 延迟 / 及时 /
+ * 早期 / 晚期 in that clause is left as the model wrote it.
+ */
+export function preserveTitleContrast(en, zh) {
+  const out = stripTitleStop(zh);
+  if (!out || !/[\u4e00-\u9fff]/.test(out)) return out;
+  const tail = titleColonTail(en);
+  const gloss = contrastGloss(tail);
+  if (!gloss) return out;
+  const hits = timingHits(tail);
+  const idx = Math.max(out.lastIndexOf('：'), out.lastIndexOf(':'));
+  const scope = idx >= 0 ? out.slice(idx + 1) : out;
+  if (hits.every(h => timingCovered(scope, h))) return out;
+  if (idx >= 0) return stripTitleStop(out.slice(0, idx) + '：' + gloss);
+  return stripTitleStop(out + '：' + gloss);
+}
+
+/** Whole-title glossary hit. Used when a known paper must not keep a shortened cache entry. */
+export function exactTitleZh(en, overrides = DEFAULT_OVERRIDES) {
+  const key = normTitle(en);
+  if (!key) return '';
+  for (const o of overrides || []) {
+    if (!o || !o.exact || !o.zh) continue;
+    const phrases = [o.en, ...(o.alts || [])].filter(Boolean);
+    if (phrases.some(p => normTitle(p) === key)) return stripTitleStop(o.zh);
+  }
+  return '';
+}
+
+export function settleTitleZh(en, zh, glossary, overrides) {
+  const exact = exactTitleZh(en, overrides);
+  if (exact) return exact;
+  return preserveTitleContrast(en, applyGlossary(en, zh, glossary, overrides));
 }
 
 /** Inclusive 15-calendar-day window ending today (UTC). 2026-10-18 → 2026-10-04. */
@@ -211,6 +304,24 @@ export function extractAiText(result) {
     return msg.content.map(p => (typeof p === 'string' ? p : p?.text || '')).join('');
   }
   return '';
+}
+
+/**
+ * A share-card line counts as Chinese only when it is actually translated.
+ * An echo of the English sentence, or a Latin paragraph with no Han characters, does not.
+ */
+export function isTranslatedZh(en, zh) {
+  const z = String(zh || '').replace(/\s+/g, ' ').trim();
+  if (!z) return false;
+  const han = (z.match(/[\u4e00-\u9fff]/g) || []).length;
+  if (han < 2) return false;
+  const latin = (z.match(/[A-Za-z]/g) || []).length;
+  if (latin > 24 && latin > han * 3) return false;
+  const fold = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]+/g, '');
+  const src = fold(en);
+  const out = fold(z);
+  if (src && out && (out === src || (src.includes(out) && out.length > 40))) return false;
+  return true;
 }
 
 export function parseTranslationArray(raw, n) {

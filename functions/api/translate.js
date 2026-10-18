@@ -17,8 +17,8 @@
 import {
   MT_MODEL, TITLE_SYSTEM, SELECTION_SYSTEM, TITLE_BATCH, DEFAULT_OVERRIDES,
   SELECTION_MAX, TITLE_MAX,
-  maskDrugs, restoreDrugs, applyGlossary, parseTranslationArray,
-  extractAiText, isQuotaError, normTitle, sha256Hex,
+  maskDrugs, restoreDrugs, applyGlossary, parseTranslationArray, isTranslatedZh, stripTitleStop,
+  extractAiText, isQuotaError, normTitle, sha256Hex, settleTitleZh,
 } from '../_lib/mt.js';
 import {
   QUOTE_SYSTEM, ABSTRACT_MAX, splitSentences, resolveQuotePicks, parseQuoteResponse,
@@ -217,8 +217,11 @@ async function translateTitles(request, env, body) {
   for (let i = 0; i < clean.length; i++) {
     const key = 'title/' + (await sha256Hex(normTitle(clean[i].text))).slice(0, 32);
     const hit = await cacheGet(request, key);
-    if (hit?.zh) out[i] = { id: clean[i].id, zh: hit.zh, cached: true };
-    else pending.push(i);
+    if (hit?.zh) {
+      const zh = settleTitleZh(clean[i].text, hit.zh, glossary, overrides);
+      out[i] = { id: clean[i].id, zh, cached: zh === stripTitleStop(hit.zh) };
+      if (zh !== stripTitleStop(hit.zh)) await cachePut(request, key, { zh });
+    } else pending.push(i);
   }
   if (!pending.length) return json({ items: out });
 
@@ -244,7 +247,7 @@ async function translateTitles(request, env, body) {
 
   for (let j = 0; j < pending.length; j++) {
     const i = pending[j];
-    const zh = applyGlossary(
+    const zh = settleTitleZh(
       clean[i].text,
       restoreDrugs(parts[j], masked[j].drugs),
       glossary,
@@ -298,7 +301,7 @@ async function translateQuotes(request, env, body) {
   const { glossary, overrides } = await loadResources(request, env);
   const sections = body.sections && typeof body.sections === 'object' ? body.sections : null;
   const doi = String(body.doi || body.id || '');
-  const key = 'quotes/v13/' + (await sha256Hex(normTitle(abstract) + '|' + doi.toLowerCase())).slice(0, 32);
+  const key = 'quotes/v15/' + (await sha256Hex(normTitle(abstract) + '|' + doi.toLowerCase())).slice(0, 32);
   const hit = await cacheGet(request, key);
   if (hit?.quotes?.length) return json({ quotes: hit.quotes, cached: true });
 
@@ -323,6 +326,7 @@ async function translateQuotes(request, env, body) {
       if (en && zh) {
         zh = applyGlossary(en, restoreDrugs(zh, maskDrugs(en).drugs), glossary, overrides);
       }
+      if (!isTranslatedZh(en, zh)) zh = '';
       return { i: q.i, role: q.role, en: q.en, zh };
     });
     picks = resolveQuotePicks(pool.join(' '), restored, sections);
@@ -331,36 +335,50 @@ async function translateQuotes(request, env, body) {
     picks = resolveQuotePicks(pool.join(' '), [], sections);
   }
 
-  const jobs = [];
   for (const p of picks) {
     const parts = p.pieces?.length ? p.pieces : [p];
-    for (const part of parts) if (!part.zh) jobs.push(part);
+    for (const part of parts) if (!isTranslatedZh(part.en, part.zh)) part.zh = '';
   }
-  if (jobs.length) {
+  const missingZh = () => {
+    const jobs = [];
+    for (const p of picks) {
+      const parts = p.pieces?.length ? p.pieces : [p];
+      for (const part of parts) if (!isTranslatedZh(part.en, part.zh)) jobs.push(part);
+    }
+    return jobs;
+  };
+  let translateErr = null;
+  for (let attempt = 0; attempt < 2 && missingZh().length; attempt++) {
+    const jobs = missingZh();
     try {
       const masked = jobs.map(p => maskDrugs(p.en));
       const raw = await runModel(
         env,
-        SELECTION_SYSTEM + '\nYou will receive a JSON array of excerpts. Reply with a JSON array of Simplified Chinese translations, same length and order, and nothing else. If an excerpt begins or ends with the ellipsis …, keep … at the same end of the Chinese line and translate only the words that are present. Do not add an ellipsis that was not in the excerpt.',
+        SELECTION_SYSTEM + '\nYou will receive a JSON array of excerpts. Reply with a JSON array of Simplified Chinese translations, same length and order, and nothing else. If an excerpt begins or ends with the ellipsis …, keep … at the same end of the Chinese line and translate only the words that are present. Do not add an ellipsis that was not in the excerpt. Never copy an English sentence into the answer.',
         JSON.stringify(masked.map(m => m.text)),
         2000,
       );
       const parts = parseTranslationArray(raw, jobs.length);
       jobs.forEach((p, j) => {
-        p.zh = applyGlossary(p.en, restoreDrugs(parts[j], masked[j].drugs), glossary, overrides);
+        const zh = applyGlossary(p.en, restoreDrugs(parts[j], masked[j].drugs), glossary, overrides);
+        if (isTranslatedZh(p.en, zh)) p.zh = zh;
       });
     } catch (err) {
-      for (const p of picks) {
-        if (p.pieces?.length) p.pieces = p.pieces.filter(part => part.zh);
-        if (p.pieces?.length) {
-          p.en = p.pieces.map(part => part.en).join(' … ');
-          p.zh = p.pieces.map(part => alignEllipsis(part.en, part.zh)).join(' … ');
-        }
-      }
-      picks = picks.filter(p => p.zh || (p.pieces && p.pieces.length));
-      if (!picks.length) return fail(err);
+      translateErr = err;
+      if (err?.code === 'quota' || isQuotaError(err) || err?.code === 'ai_unconfigured') return fail(err);
     }
   }
+  picks = picks.filter(p => {
+    if (p.pieces?.length) {
+      p.pieces = p.pieces.filter(part => isTranslatedZh(part.en, part.zh));
+      if (!p.pieces.length) return false;
+      p.en = p.pieces.map(part => part.en).join(' … ');
+      p.zh = p.pieces.map(part => alignEllipsis(part.en, part.zh)).join(' … ');
+      return true;
+    }
+    return isTranslatedZh(p.en, p.zh);
+  });
+  if (!picks.length) return fail(translateErr || Object.assign(new Error('untranslated'), { code: 'ai_failed' }));
   for (const p of picks) {
     if (p.pieces?.length) {
       const ready = p.pieces.filter(part => part.en && part.zh);
