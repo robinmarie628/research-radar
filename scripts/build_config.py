@@ -83,6 +83,9 @@ POOL = {
     "0028-0836": ("基础医学",   True,  "Nature",              50.5),
     "0036-8075": ("基础医学",   True,  "Science",             44.7),
     "0028-4793": ("综合医学",   False, "NEJM",                96.2),  # 临床，但列在 CNS 段
+    # eISSN 1756-1833. Not Elsevier, so platforms stay []. JIF 93.6 matches
+    # the same vintage as NEJM / Lancet in this table.
+    "0959-8138": ("综合医学",   False, "BMJ",                 93.6),
     "1061-4036": ("基础医学",   True,  "Nat Genet",           31.7),
     "1529-2908": ("基础医学",   True,  "Nat Immunol",         27.7),
     "1934-5909": ("基础医学",   True,  "Cell Stem Cell",      19.8),
@@ -202,18 +205,36 @@ def get(url, tries=4, timeout=45):
     raise RuntimeError(f"{url[:80]} -> {last}")
 
 
+def journal_ids(raw):
+    """Europe PMC lite `journalIssn` is a ';'-separated list, sometimes with a trailing blank."""
+    return [p.strip() for p in re.split(r"[;,]", str(raw or "")) if p.strip()]
+
+
 def probe(issn, lo, hi):
-    """Return (hit_count, journal_title)."""
+    """Return (hit_count, journal_title, essn).
+
+    Lite results omit journalInfo. The electronic ISSN, when Europe PMC knows
+    one, is the other value in journalIssn. Callers store it so a record can
+    be joined on whichever of issn / essn the full record carries.
+    """
     q = f'ISSN:"{issn}" AND SRC:MED AND FIRST_PDATE:[{lo} TO {hi}]'
     u = EPMC + "?" + urllib.parse.urlencode(
         {"query": q, "format": "json", "pageSize": 1})
     d = get(u)
     hits = d.get("hitCount", 0)
-    title = ""
+    title, essn = "", ""
     res = d.get("resultList", {}).get("result", [])
     if res:
-        title = (res[0].get("journalInfo", {}).get("journal", {}) or {}).get("title", "")
-    return hits, title
+        row = res[0]
+        j = (row.get("journalInfo") or {}).get("journal") or {}
+        title = j.get("title") or row.get("journalTitle") or ""
+        essn = (j.get("essn") or "").strip()
+        if not essn:
+            for cand in journal_ids(row.get("journalIssn")):
+                if cand != issn:
+                    essn = cand
+                    break
+    return hits, title, essn
 
 
 def sample_headings(issn, lo, hi, n=6):
@@ -250,7 +271,7 @@ def main():
 
     for issn, (domain, basic, short, imp) in POOL.items():
         try:
-            hits, title = probe(issn, lo90, hi)
+            hits, title, essn = probe(issn, lo90, hi)
         except Exception as e:  # noqa: BLE001
             print(f"  ERR  {issn} {short:<22} {e}")
             bad.append((issn, short, "network"))
@@ -264,9 +285,12 @@ def main():
 
         # basic flag must agree with the doc's name-fragment rule
         by_name = any(f in title for f in BASIC_FRAGMENTS) or basic
-        cfg.append({"issn": issn, "title": title or short, "short": short,
-                    "domain": domain, "basic": bool(by_name), "if": imp, "n90": hits,
-                    "platforms": resolve_platforms(issn, previous.get(issn))})
+        row = {"issn": issn, "title": title or short, "short": short,
+               "domain": domain, "basic": bool(by_name), "if": imp, "n90": hits,
+               "platforms": resolve_platforms(issn, previous.get(issn))}
+        if essn and essn != issn:
+            row["essn"] = essn
+        cfg.append(row)
 
         if a.sample:
             hs, pts = sample_headings(issn, lo30, hi)

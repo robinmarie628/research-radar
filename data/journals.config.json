@@ -641,6 +641,17 @@
     "platforms": []
   },
   {
+    "issn": "0959-8138",
+    "essn": "1756-1833",
+    "title": "BMJ",
+    "short": "BMJ",
+    "domain": "综合医学",
+    "basic": false,
+    "if": 93.6,
+    "n90": 568,
+    "platforms": []
+  },
+  {
     "issn": "1061-4036",
     "title": "Nat Genet",
     "short": "Nat Genet",

@@ -27,6 +27,11 @@ import urllib.request
 from datetime import date, timedelta
 
 EPMC = "https://www.ebi.ac.uk/europepmc/webservices/rest/search"
+# Three ISSN slices, each walked with cursorMark until every journal in the
+# slice has `cap` abstracts or the result set ends. A single page of 100
+# sorted by date lets Science / Sci Adv / Cell Reports fill the page.
+EPMC_PAGE = 100
+EPMC_CHUNK_PAGES = 15
 FEED = "https://raw.githubusercontent.com/zarazhangrui/follow-builders/main/"
 UA = "research-radar/1.0 (mailto:robinmarie628@users.noreply.github.com)"
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -284,42 +289,120 @@ def keyword_list(raw):
     return out
 
 
-def build_journals(days, cap_per_journal=8):
-    """Query Europe PMC in chunks, merge, then cap per journal.
+def index_journals(cfg):
+    """Map both print ISSN and eISSN onto the config row."""
+    by = {}
+    for c in cfg:
+        for key in (c.get("issn"), c.get("essn")):
+            if key:
+                by[key] = c
+    return by
 
-    A single query lets one high-volume journal crowd out every other title,
-    so we split the ISSN list and rebalance.
+
+def record_issns(record):
+    """ISSNs Europe PMC may put on a core record or a lite journalIssn string."""
+    j = ((record.get("journalInfo") or {}).get("journal") or {})
+    found = []
+    for key in (j.get("issn"), j.get("essn")):
+        if key and key not in found:
+            found.append(key)
+    for part in re.split(r"[;,]", str(record.get("journalIssn") or "")):
+        part = part.strip()
+        if part and part not in found:
+            found.append(part)
+    return found, j
+
+
+def match_journal(record, by_issn):
+    """Config row for whichever of issn / essn this record actually carries."""
+    ids, j = record_issns(record)
+    for key in ids:
+        hit = by_issn.get(key)
+        if hit:
+            return hit, j
+    return {}, j
+
+
+def fetch_journal_chunk(chunk, by_issn, lo, hi, cap):
+    """Page one ISSN slice until each journal has `cap` articles, or the cursor ends.
+
+    Returns the kept core records (already capped per configured journal).
+    """
+    issns = []
+    for c in chunk:
+        for key in (c.get("issn"), c.get("essn")):
+            if key and key not in issns:
+                issns.append(key)
+    if not issns:
+        return []
+    q = ("(" + " OR ".join(f'ISSN:"{i}"' for i in issns) + ")"
+         + f" AND SRC:MED AND HAS_ABSTRACT:Y AND FIRST_PDATE:[{lo} TO {hi}]")
+    counts = {c["issn"]: 0 for c in chunk if c.get("issn")}
+    cursor, kept, seen = "*", [], set()
+    pages = 0
+    for _ in range(EPMC_CHUNK_PAGES):
+        pages += 1
+        url = EPMC + "?" + urllib.parse.urlencode(
+            {"query": q, "format": "json", "pageSize": str(EPMC_PAGE),
+             "resultType": "core", "sort": "P_PDATE_D desc", "cursorMark": cursor})
+        data = get(url)
+        rows = data.get("resultList", {}).get("result", []) or []
+        if not rows:
+            break
+        for r in rows:
+            meta, _j = match_journal(r, by_issn)
+            key = (r.get("doi") or r.get("id") or r.get("pmid") or "").lower()
+            if not meta or not key or key in seen:
+                continue
+            issn = meta.get("issn") or ""
+            if counts.get(issn, 0) >= cap:
+                continue
+            seen.add(key)
+            counts[issn] = counts.get(issn, 0) + 1
+            kept.append(r)
+        if counts and all(counts.get(c.get("issn"), 0) >= cap for c in chunk):
+            break
+        nxt = data.get("nextCursorMark")
+        if not nxt or nxt == cursor:
+            break
+        cursor = nxt
+        time.sleep(0.35)
+    print(f"      chunk {len(chunk)} journals, {pages} page(s), kept {len(kept)}")
+    return kept
+
+
+def build_journals(days, cap_per_journal=8):
+    """Query Europe PMC in ISSN slices, paging each slice so every journal is represented.
+
+    A single page of 100 sorted by date lets a high-volume title (Science,
+    Science Advances, Cell Reports) fill the page. Each slice is walked with
+    cursorMark until every journal in it has `cap_per_journal` abstracts, or
+    the result set ends. Print ISSN and eISSN both join to the config row.
     """
     cfg = json.load(open(os.path.join(DATA, "journals.config.json"), encoding="utf-8"))
-    by_issn = {c["issn"]: c for c in cfg}
+    by_issn = index_journals(cfg)
 
     hi = date.today().isoformat()
     lo = (date.today() - timedelta(days=days)).isoformat()
 
-    step = (len(cfg) + 2) // 3
+    step = max(1, (len(cfg) + 2) // 3)
     chunks = [cfg[i:i + step] for i in range(0, len(cfg), step)]
 
     merged, seen = [], set()
     for ch in chunks:
-        issn_q = " OR ".join(f'ISSN:"{c["issn"]}"' for c in ch)
-        q = f"({issn_q}) AND SRC:MED AND HAS_ABSTRACT:Y AND FIRST_PDATE:[{lo} TO {hi}]"
-        url = EPMC + "?" + urllib.parse.urlencode(
-            {"query": q, "format": "json", "pageSize": "100",
-             "resultType": "core", "sort": "P_PDATE_D desc"})
-        for r in get(url).get("resultList", {}).get("result", []):
+        for r in fetch_journal_chunk(ch, by_issn, lo, hi, cap_per_journal):
             key = (r.get("doi") or r.get("id") or r.get("pmid") or "").lower()
             if not key or key in seen:
                 continue
             seen.add(key)
             merged.append(r)
-        time.sleep(0.4)
+        time.sleep(0.35)
 
     cands = []
     for r in merged:
-        ji = r.get("journalInfo", {}) or {}
-        j = ji.get("journal", {}) or {}
-        issn = j.get("issn") or j.get("essn") or ""
-        meta = by_issn.get(issn, {})
+        meta, j = match_journal(r, by_issn)
+        ids, _j = record_issns(r)
+        issn = ids[0] if ids else ""
         title = clean(r.get("title"))
         if not title:
             continue
@@ -416,6 +499,9 @@ def main():
     print(f"      临床 {sum(1 for x in jr['items'] if not x['basic'])} / 基础 {sum(1 for x in jr['items'] if x['basic'])}"
           f"  | 结构化摘要 {sum(1 for x in jr['items'] if x['structured'])}")
     print(f"      今日精选 {len(jr['picks'])} 篇 (基础 {sum(1 for p in jr['picks'] if p['basic'])})")
+    focus = ("NEJM", "BMJ", "Nature")
+    got = Counter(x["journal"] for x in jr["items"])
+    print("      重点: " + ", ".join(f"{name} {got.get(name, 0)}" for name in focus))
 
     print("[2/2] builders ...")
     try:

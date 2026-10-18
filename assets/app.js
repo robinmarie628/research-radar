@@ -11,7 +11,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.18.25';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.18.26';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -23,14 +23,15 @@ const FEED     = 'https://raw.githubusercontent.com/zarazhangrui/follow-builders
    （或绑定的自定义域名）。详见 research-radar/worker/README-deploy.md */
 const WORKER_URL = 'https://research-radar-trigger.robinmarie628.workers.dev';
 const DAYS     = 30;        // discovery window — abstracts lag 2–4 days, so never use 1
-const MAXJ     = 100;       // Europe PMC cap per request with resultType=core
-const CHUNKS   = 3;         // split the ISSN list so one journal can't flood the pool
+const MAXJ     = 100;       // Europe PMC page size (resultType=core). One page is not the pool.
+const CHUNKS   = 3;         // ISSN slices. Each slice is paged until every journal has its cap.
+const EPMC_PAGES = 15;      // 1500 core rows per slice — enough for the busiest third of the pool
 const CAP_PER_JOURNAL = 8;
 const PICK_N   = 8;         // 今日精选 size
 const PICK_BASIC    = 4;    // …其中基础 / 分子医学
 const PICK_CLINICAL = 4;    // …其中临床研究
 const TTL      = 30 * 60e3; // cache freshness
-const LS_KEY   = 'rr.cache.v2';
+const LS_KEY   = 'rr.cache.v3';  // v2 pools were built from a single page per slice and omitted NEJM / Nature
 const SEEN_KEY = 'rr.seen.v1';
 const FAV_KEY  = 'rr.fav.v1';
 /* Crossref polite pool + NCBI identification. Browsers forbid a custom
@@ -520,21 +521,87 @@ function syncFavHash() {
 }
 
 /* ---------------- Europe PMC ---------------- */
-function epmcURLs(issns) {
-  const hi = iso(new Date());
-  const lo = iso(new Date(Date.now() - DAYS * 864e5));
-  const step = Math.ceil(issns.length / CHUNKS);
-  const urls = [];
-  for (let i = 0; i < issns.length; i += step) {
-    const slice = issns.slice(i, i + step);
-    const q = `(${slice.map(x => `ISSN:"${x}"`).join(' OR ')}) AND SRC:MED `
-            + `AND HAS_ABSTRACT:Y AND FIRST_PDATE:[${lo} TO ${hi}]`;
-    urls.push(EPMC + '?' + new URLSearchParams({
-      query: q, format: 'json', pageSize: String(MAXJ),
-      resultType: 'core', sort: 'P_PDATE_D desc',
-    }).toString());
+function cfgByIssn(value) {
+  if (!value || !S.cfg?.length) return null;
+  return S.cfg.find(c => c.issn === value || c.essn === value) || null;
+}
+/** Config row for a Europe PMC record, whether the hit is filed under issn or essn. */
+function metaForEpmc(r) {
+  const j = r?.journalInfo?.journal || {};
+  const fromJournal = cfgByIssn(j.issn) || cfgByIssn(j.essn);
+  if (fromJournal) return fromJournal;
+  const parts = String(r?.journalIssn || '').split(/[;,]/).map(s => s.trim()).filter(Boolean);
+  for (const part of parts) {
+    const hit = cfgByIssn(part);
+    if (hit) return hit;
   }
-  return urls;
+  return null;
+}
+function epmcSlices(cfg) {
+  const rows = (cfg || []).filter(c => c && c.issn);
+  const step = Math.max(1, Math.ceil(rows.length / CHUNKS));
+  const slices = [];
+  for (let i = 0; i < rows.length; i += step) slices.push(rows.slice(i, i + step));
+  return slices;
+}
+function epmcWindow() {
+  return {
+    hi: iso(new Date()),
+    lo: iso(new Date(Date.now() - DAYS * 864e5)),
+  };
+}
+/** Page one ISSN slice until every journal in it has CAP_PER_JOURNAL hits, or the cursor ends. */
+async function fetchEpmcChunk(slice) {
+  const { lo, hi } = epmcWindow();
+  const issns = [];
+  for (const m of slice) {
+    for (const id of [m.issn, m.essn]) {
+      if (id && !issns.includes(id)) issns.push(id);
+    }
+  }
+  const q = `(${issns.map(x => `ISSN:"${x}"`).join(' OR ')}) AND SRC:MED `
+          + `AND HAS_ABSTRACT:Y AND FIRST_PDATE:[${lo} TO ${hi}]`;
+  const out = [];
+  const seen = new Set();
+  const counts = {};
+  let cursor = '*';
+  for (let page = 0; page < EPMC_PAGES; page++) {
+    const url = EPMC + '?' + new URLSearchParams({
+      query: q, format: 'json', pageSize: String(MAXJ),
+      resultType: 'core', sort: 'P_PDATE_D desc', cursorMark: cursor,
+    });
+    const d = await fetchJSONRetry(url, 3, 35000);
+    const rows = d?.resultList?.result || [];
+    if (!rows.length) break;
+    for (const r of rows) {
+      const meta = metaForEpmc(r);
+      const key = String(r.doi || r.id || r.pmid || '').toLowerCase();
+      if (!meta || !key || seen.has(key)) continue;
+      const bucket = meta.issn;
+      if ((counts[bucket] || 0) >= CAP_PER_JOURNAL) continue;
+      seen.add(key);
+      counts[bucket] = (counts[bucket] || 0) + 1;
+      out.push(r);
+    }
+    if (slice.every(m => (counts[m.issn] || 0) >= CAP_PER_JOURNAL)) break;
+    const next = d.nextCursorMark;
+    if (!next || next === cursor) break;
+    cursor = next;
+    await sleep(200);
+  }
+  return out;
+}
+async function fetchEpmcPool(cfg) {
+  const slices = epmcSlices(cfg);
+  const parts = await Promise.all(slices.map(async slice => {
+    try { return await fetchEpmcChunk(slice); }
+    catch (e) {
+      console.warn('[epmc]', e.message || e);
+      return null;
+    }
+  }));
+  if (!parts.length || parts.every(p => p == null)) throw new Error('Europe PMC 暂时不可用');
+  return parts.filter(Boolean);
 }
 
 function asList(x) { return x == null ? [] : (Array.isArray(x) ? x : [x]); }
@@ -571,8 +638,8 @@ function crossrefAuthorCite(authors) {
 
 function mapArticle(r) {
   const j = r.journalInfo?.journal || {};
-  const issn = j.issn || j.essn || '';
-  const meta = S.cfg.find(c => c.issn === issn) || null;
+  const meta = metaForEpmc(r);
+  const issn = meta?.issn || j.issn || j.essn || '';
   const title = cleanText(r.title);
   if (!title) return null;
 
@@ -668,7 +735,14 @@ function jrSignature() {
   return S.jr.all.map(x => x.id).join('|') + '#' + S.jr.picks.map(x => x.id).join('|');
 }
 
-async function loadResearch(force) {
+function loadResearch(force) {
+  // The boot timer revalidates 2.5s later. Join an in-flight fair fetch
+  // instead of paging Europe PMC a second time.
+  if (loadResearch.flight) return loadResearch.flight;
+  loadResearch.flight = loadResearchNow(force).finally(() => { loadResearch.flight = null; });
+  return loadResearch.flight;
+}
+async function loadResearchNow(force) {
   const c = readCache();
   if (!force && c.jr && Date.now() - c.jr.at < TTL) {
     S.jr = { ...S.jr, ...c.jr.data, loaded: true, fromCache: true };
@@ -679,12 +753,10 @@ async function loadResearch(force) {
     return;
   }
   try {
-    const raws = await Promise.all(
-      epmcURLs(S.cfg.map(x => x.issn)).map(u => fetchJSONRetry(u, 3, 35000))
-    );
+    const groups = await fetchEpmcPool(S.cfg);
     const seen = new Set(), raw = [];
-    for (const d of raws) {
-      for (const r of (d.resultList?.result || [])) {
+    for (const group of groups) {
+      for (const r of group) {
         const k = String(r.doi || r.id || r.pmid || '').toLowerCase();
         if (!k || seen.has(k)) continue;
         seen.add(k); raw.push(r);
@@ -923,16 +995,24 @@ async function fetchWeekArticles() {
   let attempts = 0;
   let failures = 0;
   await mapPool(S.cfg.filter(m => m && m.issn), 3, async (meta) => {
-    attempts++;
-    try {
-      const works = await crossrefJournalWorks(meta.issn, lo, hi);
-      for (const w of works) {
-        const art = mapCrossrefWork(w, meta, lo, hi);
-        if (art) found.push(art);
+    const ids = [meta.issn, meta.essn].filter((id, i, all) => id && all.indexOf(id) === i);
+    for (const issn of ids) {
+      attempts++;
+      try {
+        const works = await crossrefJournalWorks(issn, lo, hi);
+        for (const w of works) {
+          const art = mapCrossrefWork(w, meta, lo, hi);
+          if (art) found.push(art);
+        }
+        // Print ISSN is enough when it returns the week's articles. BMJ's
+        // print ISSN is empty at Crossref; the electronic ISSN is the one
+        // that actually lists the issue, so keep going only when this one
+        // came back empty.
+        if (works.length) break;
+      } catch (e) {
+        failures++;
+        console.warn('[crossref]', issn, e.message || e);
       }
-    } catch (e) {
-      failures++;
-      console.warn('[crossref]', meta.issn, e.message || e);
     }
   });
   const byDoi = new Map();
@@ -1068,7 +1148,7 @@ async function loadPII(items) {
 function journalRow(a) {
   if (!a || !S.cfg?.length) return null;
   if (a.issn) {
-    const byIssn = S.cfg.find(c => c.issn === a.issn);
+    const byIssn = cfgByIssn(a.issn);
     if (byIssn) return byIssn;
   }
   if (!a.journal) return null;
@@ -2532,6 +2612,7 @@ const JOURNAL_ZH = {
   'Nature': '《自然》',
   'Science': '《科学》',
   'NEJM': '《新英格兰医学杂志》',
+  'BMJ': '《英国医学杂志》',
   'Nat Genet': '《自然·遗传学》',
   'Nat Immunol': '《自然·免疫学》',
   'Cell Stem Cell': '《细胞·干细胞》',
