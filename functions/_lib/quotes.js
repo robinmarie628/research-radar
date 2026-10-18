@@ -893,9 +893,9 @@ function pickRole(sentences, role, shown, hint, sections) {
     .map(s => ({ s, sc: roleScore(s, role, sections) }))
     .filter(row => row.sc >= floor)
     .sort((a, b) => b.sc - a.sc || a.s.length - b.s.length);
-  if (hint) {
+  if (hint && ranked.length) {
     const hinted = ranked.find(row => row.s === hint);
-    if (hinted && hinted.sc >= floor) ranked.unshift(hinted);
+    if (hinted && hinted.sc + 2 >= ranked[0].sc) ranked.unshift(hinted);
   }
   const seen = new Set();
   for (const row of ranked) {

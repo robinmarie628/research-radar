@@ -11,7 +11,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.18.36';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.18.37';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -2850,7 +2850,7 @@ function exactQuote(en, blobs) {
   }
   return needle;
 }
-const QUOTE_LS = 'rr.quotes.v11';
+const QUOTE_LS = 'rr.quotes.v12';
 function quoteKey(a, abs) {
   let h = 5381;
   const s = String(abs || '').slice(0, 4000);

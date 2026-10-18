@@ -281,6 +281,18 @@ test('an open-access flag is true only for Y or a Creative Commons license', () 
   assert.equal(reliablePages('S0140-6736(26)01296-1'), '');
 });
 
+test('a weaker model hint does not replace the paper\'s main result', () => {
+  const bg = 'Controlling hyperlipidemia has reduced but not eliminated atherosclerotic disease as a major cause of death.';
+  const finding = 'Loss of GIMAP6 caused inflammatory vasculopathy and accelerated atherosclerosis in the absence of hyperlipidemia.';
+  const human = 'Human hypomorphic GIMAP6 variants, including the V65I allele, are associated with altered monocyte redox balance and early ASCVD.';
+  const sentences = [bg, finding, human];
+  const picks = resolveQuotePicks(sentences.join(' '), [
+    { i: 2, role: 'finding', zh: '不该当主结果' },
+  ]);
+  assert.match(picks.find(p => p.role === 'finding').en, /in the absence of hyperlipidemia/);
+  assert.equal(picks.some(p => /不该当主结果/.test(p.zh)), false);
+});
+
 test('the finding pairs the main result with the younger-age result, and the implication is separate', () => {
   const lower = 'After adjustment for confounders, quadrivalent human papillomavirus vaccination was associated with lower odds of all included adverse pregnancy outcomes.';
   const ages = 'Risk reduction was generally more pronounced among women vaccinated at younger ages.';
