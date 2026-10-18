@@ -11,7 +11,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.18.25';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.18.38';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -23,14 +23,34 @@ const FEED     = 'https://raw.githubusercontent.com/zarazhangrui/follow-builders
    （或绑定的自定义域名）。详见 research-radar/worker/README-deploy.md */
 const WORKER_URL = 'https://research-radar-trigger.robinmarie628.workers.dev';
 const DAYS     = 30;        // discovery window — abstracts lag 2–4 days, so never use 1
-const MAXJ     = 100;       // Europe PMC cap per request with resultType=core
-const CHUNKS   = 3;         // split the ISSN list so one journal can't flood the pool
-const CAP_PER_JOURNAL = 8;
+const MAXJ     = 100;       // Europe PMC page size (resultType=core). One page is not the pool.
+const CHUNKS   = 3;         // ISSN slices. Each slice is paged until every journal has its cap.
+const EPMC_PAGES = 15;      // 1500 core rows per slice — enough for the busiest third of the pool
+/* 30 天池。旗舰 + 子刊合计按 7:3（FLAGSHIP_SHARE）。专科刊不进这个比例。
+   每刊上限：旗舰 28、专科 6。子刊先保证领域保底（DOMAIN_FLOOR），
+   保底之后再按影响因子轮流补到大约 30%。一个领域若窗口里不足 6 篇，就停在有的篇数。
+   全池大约 300–400（POOL_MAX）。 */
+const FLAGSHIP_CAP = 28;
+const SUB_CAP = 3;
+const SPECIALTY_CAP = 6;
+const FLAGSHIP_SHARE = 0.7;
+const DOMAIN_FLOOR = 6;
+const POOL_MAX = 400;
+function journalCap(meta) {
+  // Subs may be fetched up to the domain floor. The 7:3 budget, not this
+  // ceiling, is what leaves a typical companion journal at one or two papers.
+  if (meta?.tier === 'flagship') return FLAGSHIP_CAP;
+  if (meta?.tier === 'sub') return Math.max(SUB_CAP, DOMAIN_FLOOR);
+  return SPECIALTY_CAP;
+}
+function articleTier(a) {
+  return a?.tier === 'flagship' || a?.tier === 'sub' ? a.tier : 'specialty';
+}
 const PICK_N   = 8;         // 今日精选 size
 const PICK_BASIC    = 4;    // …其中基础 / 分子医学
 const PICK_CLINICAL = 4;    // …其中临床研究
 const TTL      = 30 * 60e3; // cache freshness
-const LS_KEY   = 'rr.cache.v2';
+const LS_KEY   = 'rr.cache.v5';  // v4 treated Europe PMC isOpenAccess "N" as open access
 const SEEN_KEY = 'rr.seen.v1';
 const FAV_KEY  = 'rr.fav.v1';
 /* Crossref polite pool + NCBI identification. Browsers forbid a custom
@@ -108,6 +128,21 @@ const STUDY = [
 ];
 const STUDY_BY_KEY = Object.fromEntries(STUDY.map(s => [s.key, s]));
 const STUDY_OTHER = { key:'other', zh:'研究论文', rank:3 };
+const STUDY_LABELS = new Set(STUDY.map(s => s.zh).concat([STUDY_OTHER.zh]));
+/** Drop a trailing （journal，domain，study type） left by the old digest prompt.
+ *  Parentheses that belong to the translation, such as （ASCVD）, stay. */
+function stripTitleMeta(text) {
+  const s = String(text || '').trim();
+  const m = s.match(/(?:（|\()([^（）()]*)[，,]([^（）()]*)[，,]([^（）()]*)(?:）|\))\s*$/);
+  if (!m) return s;
+  const journal = m[1].trim();
+  const domain = m[2].trim();
+  const kind = m[3].trim();
+  const journalOk = /^[A-Za-z0-9][A-Za-z0-9 .:&/+-]{0,48}$/.test(journal);
+  const domainOk = /^[\u4e00-\u9fff]{2,8}(?:与[\u4e00-\u9fff]{1,6})?$/.test(domain);
+  if (journalOk && domainOk && STUDY_LABELS.has(kind)) return s.slice(0, m.index).trim();
+  return s;
+}
 
 /* ---------------- abstract section headings ----------------
    Europe PMC returns real structure: <h4>Background</h4>…<h4>Results</h4>…
@@ -358,7 +393,7 @@ function favKey(a) {
   return String(a?.doi || a?.id || '').trim().toLowerCase();
 }
 function favTitle(a) {
-  const zh = (a?.digest && a.digest.titleZh) || a?.titleZh || '';
+  const zh = stripTitleMeta((a?.digest && a.digest.titleZh) || a?.titleZh || '');
   return String(zh || a?.title || '未命名').trim();
 }
 function favAbstract(a) {
@@ -377,7 +412,7 @@ function favSnapshot(a) {
     id: a.id || k,
     doi: a.doi || (k.startsWith('10.') ? k : ''),
     title: a.title || '',
-    titleZh: (a.digest && a.digest.titleZh) || '',
+    titleZh: stripTitleMeta((a.digest && a.digest.titleZh) || ''),
     abstract: favAbstract(a).slice(0, 12000),
     journal: a.journal || '',
     domain: a.domain || '',
@@ -424,7 +459,7 @@ function articleFromFavSnap(snap, key) {
     oa: !!snap.oa,
     issn: snap.issn || '',
     keywords: [],
-    digest: snap.titleZh ? { titleZh: snap.titleZh } : null,
+    digest: snap.titleZh ? { titleZh: stripTitleMeta(snap.titleZh) } : null,
     pii: snap.pii || undefined,
   };
 }
@@ -520,21 +555,87 @@ function syncFavHash() {
 }
 
 /* ---------------- Europe PMC ---------------- */
-function epmcURLs(issns) {
-  const hi = iso(new Date());
-  const lo = iso(new Date(Date.now() - DAYS * 864e5));
-  const step = Math.ceil(issns.length / CHUNKS);
-  const urls = [];
-  for (let i = 0; i < issns.length; i += step) {
-    const slice = issns.slice(i, i + step);
-    const q = `(${slice.map(x => `ISSN:"${x}"`).join(' OR ')}) AND SRC:MED `
-            + `AND HAS_ABSTRACT:Y AND FIRST_PDATE:[${lo} TO ${hi}]`;
-    urls.push(EPMC + '?' + new URLSearchParams({
-      query: q, format: 'json', pageSize: String(MAXJ),
-      resultType: 'core', sort: 'P_PDATE_D desc',
-    }).toString());
+function cfgByIssn(value) {
+  if (!value || !S.cfg?.length) return null;
+  return S.cfg.find(c => c.issn === value || c.essn === value) || null;
+}
+/** Config row for a Europe PMC record, whether the hit is filed under issn or essn. */
+function metaForEpmc(r) {
+  const j = r?.journalInfo?.journal || {};
+  const fromJournal = cfgByIssn(j.issn) || cfgByIssn(j.essn);
+  if (fromJournal) return fromJournal;
+  const parts = String(r?.journalIssn || '').split(/[;,]/).map(s => s.trim()).filter(Boolean);
+  for (const part of parts) {
+    const hit = cfgByIssn(part);
+    if (hit) return hit;
   }
-  return urls;
+  return null;
+}
+function epmcSlices(cfg) {
+  const rows = (cfg || []).filter(c => c && c.issn);
+  const step = Math.max(1, Math.ceil(rows.length / CHUNKS));
+  const slices = [];
+  for (let i = 0; i < rows.length; i += step) slices.push(rows.slice(i, i + step));
+  return slices;
+}
+function epmcWindow() {
+  return {
+    hi: iso(new Date()),
+    lo: iso(new Date(Date.now() - DAYS * 864e5)),
+  };
+}
+/** Page one ISSN slice until every journal has its tier cap, or the cursor ends. */
+async function fetchEpmcChunk(slice) {
+  const { lo, hi } = epmcWindow();
+  const issns = [];
+  for (const m of slice) {
+    for (const id of [m.issn, m.essn]) {
+      if (id && !issns.includes(id)) issns.push(id);
+    }
+  }
+  const q = `(${issns.map(x => `ISSN:"${x}"`).join(' OR ')}) AND SRC:MED `
+          + `AND HAS_ABSTRACT:Y AND FIRST_PDATE:[${lo} TO ${hi}]`;
+  const out = [];
+  const seen = new Set();
+  const counts = {};
+  let cursor = '*';
+  for (let page = 0; page < EPMC_PAGES; page++) {
+    const url = EPMC + '?' + new URLSearchParams({
+      query: q, format: 'json', pageSize: String(MAXJ),
+      resultType: 'core', sort: 'P_PDATE_D desc', cursorMark: cursor,
+    });
+    const d = await fetchJSONRetry(url, 3, 35000);
+    const rows = d?.resultList?.result || [];
+    if (!rows.length) break;
+    for (const r of rows) {
+      const meta = metaForEpmc(r);
+      const key = String(r.doi || r.id || r.pmid || '').toLowerCase();
+      if (!meta || !key || seen.has(key)) continue;
+      const bucket = meta.issn;
+      if ((counts[bucket] || 0) >= journalCap(meta)) continue;
+      seen.add(key);
+      counts[bucket] = (counts[bucket] || 0) + 1;
+      out.push(r);
+    }
+    if (slice.every(m => (counts[m.issn] || 0) >= journalCap(m))) break;
+    const next = d.nextCursorMark;
+    if (!next || next === cursor) break;
+    cursor = next;
+    await sleep(200);
+  }
+  return out;
+}
+async function fetchEpmcPool(cfg) {
+  const slices = epmcSlices(cfg);
+  const parts = await Promise.all(slices.map(async slice => {
+    try { return await fetchEpmcChunk(slice); }
+    catch (e) {
+      console.warn('[epmc]', e.message || e);
+      return null;
+    }
+  }));
+  if (!parts.length || parts.every(p => p == null)) throw new Error('Europe PMC 暂时不可用');
+  return parts.filter(Boolean);
 }
 
 function asList(x) { return x == null ? [] : (Array.isArray(x) ? x : [x]); }
@@ -569,10 +670,76 @@ function crossrefAuthorCite(authors) {
   return names;
 }
 
+function isOpenAccessFlag(v) {
+  if (v === true || v === 1) return true;
+  const s = String(v == null ? '' : v).trim().toUpperCase();
+  return s === 'Y' || s === 'TRUE' || s === '1';
+}
+function licenseBlob(license) {
+  return Array.isArray(license)
+    ? license.map(x => String((x && (x.URL || x.url)) || x || '')).join(' ')
+    : String(license || '');
+}
+function licenseIsOpen(license) {
+  return /creativecommons\.org\/licenses\/(?:by|cc0)\b/i.test(licenseBlob(license));
+}
+/** "CC BY-NC-ND 4.0" from a Creative Commons license URL. */
+function licenseName(license) {
+  const m = licenseBlob(license).match(/creativecommons\.org\/licenses\/(by(?:-[a-z]{2,3}){0,3}|cc0)\/(\d+(?:\.\d+)?)/i);
+  if (!m) return '';
+  if (m[1].toLowerCase() === 'cc0') return 'CC0 ' + m[2];
+  return 'CC ' + m[1].toUpperCase() + ' ' + m[2];
+}
+/** Online-first when Crossref records a published-online date, or a day-level created date against a month-only print date. */
+function publishedOnline(msg) {
+  if (msg?.['published-online']?.['date-parts']?.[0]?.length) return true;
+  const print = (msg?.['published-print'] || msg?.issued || {})['date-parts']?.[0] || [];
+  const created = msg?.created?.['date-parts']?.[0] || [];
+  return print.length > 0 && print.length < 3 && created.length >= 3;
+}
+/** Keep a volume only when the sources agree and it looks like a journal volume. */
+function reliableVolume(current, other) {
+  const ok = v => /^\d{1,4}[A-Za-z]?$/.test(String(v || '').trim());
+  const c = String(current || '').trim();
+  if (arguments.length < 2) return ok(c) ? c : '';
+  const o = String(other || '').trim();
+  if (c && o && c !== o) return '';
+  const v = c || o;
+  return ok(v) ? v : '';
+}
+/** Page labels such as 1455-1472 or e100739. A DOI or PII is not a page range. */
+function reliablePages(p) {
+  const s = String(p || '').trim().replace(/\s+/g, '');
+  return /^(?:e\d+|\d+(?:[–—-]\d+)?(?:\.e\d+)?)$/i.test(s) ? s : '';
+}
+async function publisherRecord(a) {
+  if (a && a._pub) return a._pub;
+  const doi = String(a?.doi || '').trim();
+  if (!/^10\.\d{4,}\//.test(doi)) return null;
+  try {
+    const res = await fetch(CROSSREF + '/' + encodeURIComponent(doi));
+    if (!res.ok) return null;
+    const msg = (await res.json())?.message || {};
+    const licensed = Array.isArray(msg.license) ? msg.license.length > 0 : !!msg.license;
+    const pub = {
+      oa: licenseIsOpen(msg.license) || (!licensed && isOpenAccessFlag(a?.oa)),
+      volume: msg.volume || '',
+      pages: msg.page || '',
+      issue: msg.issue || '',
+      licenseLabel: licenseName(msg.license),
+      publishedOnline: publishedOnline(msg),
+    };
+    if (a) a._pub = pub;
+    return pub;
+  } catch {
+    return null;
+  }
+}
+
 function mapArticle(r) {
   const j = r.journalInfo?.journal || {};
-  const issn = j.issn || j.essn || '';
-  const meta = S.cfg.find(c => c.issn === issn) || null;
+  const meta = metaForEpmc(r);
+  const issn = meta?.issn || j.issn || j.essn || '';
   const title = cleanText(r.title);
   if (!title) return null;
 
@@ -593,6 +760,7 @@ function mapArticle(r) {
     issn: meta?.issn || issn,
     platforms: Array.isArray(meta?.platforms) ? meta.platforms.slice() : [],
     domain: meta?.domain || '综合医学',
+    tier: meta?.tier || 'specialty',
     imp: meta?.if ?? 0,
     basic: isBasic,
     studyKey: study.key, studyZh: study.zh, studyRank: study.rank,
@@ -602,28 +770,112 @@ function mapArticle(r) {
     year: r.pubYear || (date ? date.slice(0, 4) : ''),
     authors: cleanText(r.authorString || '').split(',')[0] || '',
     authorCite: epmcAuthorCite(r),
-    volume: r.journalInfo?.volume || '',
+    volume: reliableVolume(r.journalInfo?.volume),
     issue: r.journalInfo?.issue || '',
-    pages: r.pageInfo || '',
+    pages: reliablePages(r.pageInfo),
     pmid: r.pmid || '',
     doi: r.doi || '',
     keywords: keywordList(r.keywordList),
-    oa: !!r.isOpenAccess,
+    oa: isOpenAccessFlag(r.isOpenAccess) || licenseIsOpen(r.license),
     pii: undefined,
   };
 }
 
-function balanceByJournal(items) {
-  const per = {};
-  return items.filter(a => (per[a.journal] = (per[a.journal] || 0) + 1) <= CAP_PER_JOURNAL);
+function composePool(items) {
+  const ordered = [...items].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  const per = {}, capped = [];
+  for (const a of ordered) {
+    if ((per[a.journal] || 0) >= journalCap({ tier: articleTier(a) })) continue;
+    per[a.journal] = (per[a.journal] || 0) + 1;
+    capped.push(a);
+  }
+  const flagship = capped.filter(a => articleTier(a) === 'flagship');
+  const subs = capped.filter(a => articleTier(a) === 'sub');
+  const specialty = capped.filter(a => articleTier(a) === 'specialty');
+  const kept = flagship.concat(specialty);
+  const keptIds = new Set(kept.map(a => a.id));
+  const seenSub = new Set();
+  for (const a of subs) {
+    if (seenSub.has(a.journal)) continue;
+    seenSub.add(a.journal);
+    kept.push(a);
+    keptIds.add(a.id);
+  }
+  const domainCount = domain => kept.filter(a => a.domain === domain).length;
+  const domains = [];
+  const seenD = new Set();
+  for (const a of capped) {
+    const d = a.domain || '综合医学';
+    if (!seenD.has(d)) { seenD.add(d); domains.push(d); }
+  }
+  for (const domain of domains) {
+    let need = DOMAIN_FLOOR - domainCount(domain);
+    if (need <= 0) continue;
+    const extra = capped.filter(a => a.domain === domain && !keptIds.has(a.id))
+      .sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    for (const a of extra) {
+      if (need <= 0) break;
+      kept.push(a);
+      keptIds.add(a.id);
+      need--;
+    }
+  }
+  const targetSub = flagship.length
+    ? Math.round(flagship.length * (1 - FLAGSHIP_SHARE) / FLAGSHIP_SHARE)
+    : subs.length;
+  const currentSub = kept.filter(a => articleTier(a) === 'sub').length;
+  let budget = Math.max(0, targetSub - currentSub);
+  const groups = new Map();
+  for (const a of subs) {
+    if (keptIds.has(a.id)) continue;
+    if (!groups.has(a.journal)) groups.set(a.journal, []);
+    groups.get(a.journal).push(a);
+  }
+  const order = [...groups.keys()].sort((a, b) => (groups.get(b)[0].imp || 0) - (groups.get(a)[0].imp || 0));
+  const perSub = {};
+  for (const a of kept) {
+    if (articleTier(a) === 'sub') perSub[a.journal] = (perSub[a.journal] || 0) + 1;
+  }
+  let added = 0;
+  while (added < budget) {
+    let moved = false;
+    for (const j of order) {
+      if (added >= budget) break;
+      if ((perSub[j] || 0) >= SUB_CAP) continue;
+      const g = groups.get(j);
+      if (g.length) {
+        const a = g.shift();
+        kept.push(a);
+        keptIds.add(a.id);
+        perSub[j] = (perSub[j] || 0) + 1;
+        added++;
+        moved = true;
+      }
+    }
+    if (!moved) break;
+  }
+  if (kept.length > POOL_MAX) {
+    const drop = new Set();
+    const liveCount = domain => kept.filter(a => !drop.has(a.id) && a.domain === domain).length;
+    const extras = kept.filter(a => articleTier(a) === 'specialty')
+      .sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+    for (const a of extras) {
+      if (kept.length - drop.size <= POOL_MAX) break;
+      if (liveCount(a.domain) <= DOMAIN_FLOOR) continue;
+      drop.add(a.id);
+    }
+    kept.splice(0, kept.length, ...kept.filter(a => !drop.has(a.id)));
+  }
+  kept.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  return kept;
 }
 
 /** 今日精选：8 篇 = 4 篇临床 + 4 篇基础/分子医学。
- *  · 基础名额一刊一篇 —— 否则一本刊（如 Cell）能占满，出现两篇几乎雷同的论文
- *  · 临床名额优先覆盖不同领域
- *  · 某一边候选不足时，用另一边补足总数 */
+ *  先拿旗舰（基础一刊一篇；临床先一刊一篇，再允许第二篇），
+ *  旗舰不够再用专科，最后才是子刊。 */
 function curate(items, n = PICK_N) {
-  const rank = a => a.studyRank * 1000 + (a.imp || 0) + (a.structured ? 40 : 0);
+  const rank = a => (articleTier(a) === 'flagship' ? 2 : articleTier(a) === 'specialty' ? 1 : 0) * 100000
+    + a.studyRank * 1000 + (a.imp || 0) + (a.structured ? 40 : 0);
   const pool = [...items].sort((a, b) => rank(b) - rank(a));
   const picked = [], perJ = {}, perD = {};
   const cnt = basic => picked.filter(p => !!p.basic === basic).length;
@@ -635,12 +887,26 @@ function curate(items, n = PICK_N) {
     perD[it.domain] = (perD[it.domain] || 0) + 1;
     return true;
   };
-  // 1) 基础 / 分子医学：目标 4 篇，一刊一篇
+  // 1) 基础旗舰，一刊一篇
+  for (const it of pool) {
+    if (cnt(true) >= PICK_BASIC) break;
+    if (it.basic && articleTier(it) === 'flagship') add(it, 1);
+  }
+  // 2) 临床旗舰，先一刊一篇，再允许第二篇
+  for (const it of pool) {
+    if (cnt(false) >= PICK_CLINICAL) break;
+    if (!it.basic && articleTier(it) === 'flagship') add(it, 1);
+  }
+  for (const it of pool) {
+    if (cnt(false) >= PICK_CLINICAL) break;
+    if (!it.basic && articleTier(it) === 'flagship') add(it, 2);
+  }
+  // 3) 基础其余名额，一刊一篇（专科先于子刊，因为 pool 已按层级排过）
   for (const it of pool) {
     if (cnt(true) >= PICK_BASIC) break;
     if (it.basic) add(it, 1);
   }
-  // 2) 临床研究：目标 4 篇，优先覆盖不同领域
+  // 4) 临床其余名额，优先不同领域
   for (const it of pool) {
     if (cnt(false) >= PICK_CLINICAL) break;
     if (!it.basic && !perD[it.domain]) add(it, 2);
@@ -668,7 +934,13 @@ function jrSignature() {
   return S.jr.all.map(x => x.id).join('|') + '#' + S.jr.picks.map(x => x.id).join('|');
 }
 
-async function loadResearch(force) {
+let jrLiveAt = 0;
+function loadResearch(force) {
+  if (loadResearch.flight) return loadResearch.flight;
+  loadResearch.flight = loadResearchNow(force).finally(() => { loadResearch.flight = null; });
+  return loadResearch.flight;
+}
+async function loadResearchNow(force) {
   const c = readCache();
   if (!force && c.jr && Date.now() - c.jr.at < TTL) {
     S.jr = { ...S.jr, ...c.jr.data, loaded: true, fromCache: true };
@@ -679,18 +951,16 @@ async function loadResearch(force) {
     return;
   }
   try {
-    const raws = await Promise.all(
-      epmcURLs(S.cfg.map(x => x.issn)).map(u => fetchJSONRetry(u, 3, 35000))
-    );
+    const groups = await fetchEpmcPool(S.cfg);
     const seen = new Set(), raw = [];
-    for (const d of raws) {
-      for (const r of (d.resultList?.result || [])) {
+    for (const group of groups) {
+      for (const r of group) {
         const k = String(r.doi || r.id || r.pmid || '').toLowerCase();
         if (!k || seen.has(k)) continue;
         seen.add(k); raw.push(r);
       }
     }
-    const items = balanceByJournal(
+    const items = composePool(
       raw.map(mapArticle).filter(Boolean).sort((a, b) => b.ts - a.ts)
     );
     const byKey = {};
@@ -704,6 +974,7 @@ async function loadResearch(force) {
       fetchedAt: new Date().toISOString(),       // 数据实际拉取时间（≠ 最新文章发表日；Europe PMC 索引有 1-2 天延迟，发表日会滞后）
       loaded: true, error: null,
     };
+    jrLiveAt = Date.now();
   } catch (e) {
     console.warn('[research] live fetch failed:', e);
     if (!S.jr.loaded) {
@@ -811,6 +1082,7 @@ function mapCrossrefWork(item, meta, lo, hi) {
     issn: meta?.issn || '',
     platforms: Array.isArray(meta?.platforms) ? meta.platforms.slice() : [],
     domain: meta?.domain || '综合医学',
+    tier: meta?.tier || 'specialty',
     imp: meta?.if ?? 0,
     basic: isBasic,
     studyKey: study.key, studyZh: study.zh, studyRank: study.rank,
@@ -820,13 +1092,13 @@ function mapCrossrefWork(item, meta, lo, hi) {
     year: date.slice(0, 4),
     authors,
     authorCite,
-    volume: item.volume || '',
+    volume: reliableVolume(item.volume),
     issue: item.issue || '',
-    pages: item.page || '',
+    pages: reliablePages(item.page),
     pmid: '',
     doi,
     keywords: [],
-    oa: false,
+    oa: licenseIsOpen(item.license),
     pii: undefined,
   };
 }
@@ -923,16 +1195,24 @@ async function fetchWeekArticles() {
   let attempts = 0;
   let failures = 0;
   await mapPool(S.cfg.filter(m => m && m.issn), 3, async (meta) => {
-    attempts++;
-    try {
-      const works = await crossrefJournalWorks(meta.issn, lo, hi);
-      for (const w of works) {
-        const art = mapCrossrefWork(w, meta, lo, hi);
-        if (art) found.push(art);
+    const ids = [meta.issn, meta.essn].filter((id, i, all) => id && all.indexOf(id) === i);
+    for (const issn of ids) {
+      attempts++;
+      try {
+        const works = await crossrefJournalWorks(issn, lo, hi);
+        for (const w of works) {
+          const art = mapCrossrefWork(w, meta, lo, hi);
+          if (art) found.push(art);
+        }
+        // Print ISSN is enough when it returns the week's articles. BMJ's
+        // print ISSN is empty at Crossref; the electronic ISSN is the one
+        // that actually lists the issue, so keep going only when this one
+        // came back empty.
+        if (works.length) break;
+      } catch (e) {
+        failures++;
+        console.warn('[crossref]', issn, e.message || e);
       }
-    } catch (e) {
-      failures++;
-      console.warn('[crossref]', meta.issn, e.message || e);
     }
   });
   const byDoi = new Map();
@@ -1068,7 +1348,7 @@ async function loadPII(items) {
 function journalRow(a) {
   if (!a || !S.cfg?.length) return null;
   if (a.issn) {
-    const byIssn = S.cfg.find(c => c.issn === a.issn);
+    const byIssn = cfgByIssn(a.issn);
     if (byIssn) return byIssn;
   }
   if (!a.journal) return null;
@@ -1186,6 +1466,9 @@ async function loadDigest() {
   const d = await trySnapshot('data/digest.json');
   if (!d || !Array.isArray(d.items) || !d.items.length) return;
   await loadSnapArticles();
+  for (const it of d.items) {
+    if (it && it.titleZh) it.titleZh = stripTitleMeta(it.titleZh);
+  }
   S.digest = {
     date: d.date || null,
     items: d.items,
@@ -1198,7 +1481,7 @@ async function loadDigest() {
 }
 
 /** Snapshot articles, keyed by DOI. Used when a digest pick has fallen out of
- *  the live Europe PMC pool (that pool keeps only 8 papers per journal). */
+ *  the live Europe PMC pool. */
 async function loadSnapArticles() {
   if (S.snapByDoi) return S.snapByDoi;
   const snap = await trySnapshot('data/snapshot-journals.json');
@@ -1228,27 +1511,15 @@ async function loadBuilderDigest() {
 
 function applyDigest() {
   if (!S.digest.loaded || !S.jr.all) return;
-  const ageDays = S.digest.date ? (Date.now() - Date.parse(S.digest.date)) / 864e5 : 999;
-  if (ageDays > 5) {                              // stale — live curation, still 4+4
-    S.jr.picks = composeEight(curate(S.jr.all), S.jr.all);
-    return;
-  }
-  // A digest DOI missing from the live pool used to be dropped (`if (a) picked.push`).
-  // Nature / Nat Immunol in the 2026-10-17 digest fell out of the 8-per-journal cap,
-  // so 今日精选 showed 6. Resolve every digest row, from the live article, else the
-  // snapshot, else the digest record itself, then top up to 4 clinical + 4 basic.
+  // Notes still attach when a pooled paper is in the digest. The shortlist
+  // itself is the flagship-first curation, not the digest's DOI order.
   const byDoi = new Map(S.jr.all.map(a => [String(a.doi || '').toLowerCase(), a]));
-  const preferred = [];
-  for (const d of S.digest.items) {
+  for (const d of S.digest.items || []) {
     const doi = String(d.doi || '').toLowerCase();
-    let a = doi ? byDoi.get(doi) : null;
+    const a = doi ? byDoi.get(doi) : null;
     if (a) a.digest = d;
-    else a = articleFromDigest(d);
-    if (!a) continue;
-    ensureInAll(a);
-    preferred.push(a);
   }
-  S.jr.picks = composeEight(preferred, S.jr.all);
+  S.jr.picks = curate(S.jr.all);
 }
 
 function articleFromDigest(d) {
@@ -1267,6 +1538,7 @@ function articleFromDigest(d) {
     issn: meta?.issn || '',
     platforms: Array.isArray(d.platforms) ? d.platforms : (meta?.platforms || []),
     domain: d.domain || meta?.domain || '综合医学',
+    tier: meta?.tier || 'specialty',
     imp: meta?.if ?? 0,
     basic: d.basic != null ? !!d.basic : !!meta?.basic,
     studyKey: d.studyKey || 'other',
@@ -1315,7 +1587,8 @@ function composeEight(preferred, pool) {
     if (a.basic && nb < PICK_BASIC && take(a)) nb++;
     else if (!a.basic && nc < PICK_CLINICAL && take(a)) nc++;
   }
-  const rank = a => (a.studyRank || 0) * 1000 + (a.imp || 0);
+  const rank = a => (articleTier(a) === 'flagship' ? 2 : articleTier(a) === 'specialty' ? 1 : 0) * 100000
+    + (a.studyRank || 0) * 1000 + (a.imp || 0);
   const rest = [...(pool || [])].sort((a, b) => rank(b) - rank(a));
   const fill = (basic, need) => {
     for (const cap of [basic ? 1 : 2, 99]) {
@@ -1593,7 +1866,7 @@ function articleCard(a, isPick, pickRank) {
   if (isPick && isTop) titleWrap.append(el('span', 'pick-ribbon', '⭐ 今日首选'));
   else if (isPick) titleWrap.append(el('span', 'pick-num', 'NO.' + pickRank));
   // 有中文标题就用中文（英文原标题收进下方的「英文原标题与摘要」折叠块）
-  const titleZh = (a.digest && a.digest.titleZh) || '';
+  const titleZh = stripTitleMeta((a.digest && a.digest.titleZh) || '');
   const h3 = el('h3', 'art-title');
   fillHighlighted(h3, titleZh || a.title, searchQuery());
   titleWrap.append(h3);
@@ -2159,10 +2432,9 @@ function mtId(a) {
   return String(a?.doi || a?.id || '').trim().toLowerCase();
 }
 function mtFeatured(a) {
-  if (a?.digest && String(a.digest.titleZh || '').trim()) return true;
-  const id = mtId(a);
-  if (!id) return false;
-  return (S.jr.picks || []).some(p => mtId(p) === id);
+  // An editorial Chinese title already replaces 机翻. A curated pick with no
+  // titleZh is still an ordinary recent paper and should be translated.
+  return !!(a?.digest && String(a.digest.titleZh || '').trim());
 }
 function mtEligible(a) {
   if (!a?.title || !a.date) return false;
@@ -2231,18 +2503,18 @@ function lookupMt(a) {
   const id = mtId(a);
   const norm = normTitle(a.title);
   const doiHit = id && S.mt.byDoi.get(id);
-  if (doiHit && (!doiHit.norm || doiHit.norm === norm)) return doiHit.zh;
+  if (doiHit && (!doiHit.norm || doiHit.norm === norm)) return stripTitleMeta(doiHit.zh);
   const normHit = norm && S.mt.byNorm.get(norm);
-  if (normHit) return normHit.zh;
+  if (normHit) return stripTitleMeta(normHit.zh);
   const local = (id && S.mt.local.get(id)) || (norm && S.mt.local.get('t:' + norm));
-  if (local && local.zh && (!local.norm || local.norm === norm)) return local.zh;
+  if (local && local.zh && (!local.norm || local.norm === norm)) return stripTitleMeta(local.zh);
   return '';
 }
 function applyCachedMt(a) {
   if (!mtEligible(a)) return false;
   const zh = lookupMt(a);
   if (!zh) return false;
-  a.mtZh = zh;
+  a.mtZh = stripTitleMeta(zh);
   return true;
 }
 function applyAllCachedMt() {
@@ -2252,7 +2524,7 @@ function machineTitleNode(a) {
   if (!a?.mtZh || !mtEligible(a)) return null;
   const p = el('p', 'art-zh');
   const t = el('span', 'art-zh-txt');
-  fillHighlighted(t, a.mtZh, searchQuery());
+  fillHighlighted(t, stripTitleMeta(a.mtZh), searchQuery());
   p.append(t, el('span', 'art-zh-tag', '机翻'));
   return p;
 }
@@ -2269,7 +2541,7 @@ function patchMachineTitles() {
       continue;
     }
     const t = line.querySelector('.art-zh-txt');
-    if (t) fillHighlighted(t, a.mtZh, searchQuery());
+    if (t) fillHighlighted(t, stripTitleMeta(a.mtZh), searchQuery());
   }
 }
 async function loadTitleSeed() {
@@ -2304,6 +2576,7 @@ function queueMachineTitles() {
   if (!need.length) return;
   queueMachineTitles.running = true;
   queueMachineTitles.dirty = false;
+  queueMachineTitles.passes = (queueMachineTitles.passes || 0) + 1;
   (async () => {
     let failed = false;
     try {
@@ -2311,43 +2584,49 @@ function queueMachineTitles() {
         if (S.mt.stop) break;
         const batch = need.slice(i, i + 10).filter(a => mtEligible(a) && !a.mtZh);
         if (!batch.length) continue;
-        let res, data = {};
-        try {
-          res = await fetch('/api/translate', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              mode: 'titles',
-              items: batch.map(a => ({ id: mtId(a), text: a.title })),
-            }),
-          });
-          data = await res.json().catch(() => ({}));
-        } catch (e) {
-          console.warn('[mt] titles', e);
-          failed = true;
-          break;
-        }
-        if (data.error === 'quota' || res.status === 429) S.mt.stop = 'quota';
-        if (data.error === 'ai_unconfigured' || res.status === 503) S.mt.stop = 'unconfigured';
-        for (const item of data.items || []) {
-          const zh = String(item?.zh || '').trim();
-          if (!zh) continue;
-          const id = String(item.id || '').toLowerCase();
-          for (const list of mtLists()) {
-            for (const other of list || []) {
-              if (mtId(other) !== id) continue;
-              other.mtZh = zh;
-              rememberMt(other, zh);
+        let applied = false;
+        for (let attempt = 0; attempt < 2 && !applied && !S.mt.stop; attempt++) {
+          if (attempt) await sleep(500 * attempt);
+          let res, data = {};
+          try {
+            res = await fetch('/api/translate', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                mode: 'titles',
+                items: batch.map(a => ({ id: mtId(a), text: a.title })),
+              }),
+            });
+            data = await res.json().catch(() => ({}));
+          } catch (e) {
+            console.warn('[mt] titles', e);
+            continue;
+          }
+          if (data.error === 'quota' || res.status === 429) { S.mt.stop = 'quota'; break; }
+          if (data.error === 'ai_unconfigured' || res.status === 503) { S.mt.stop = 'unconfigured'; break; }
+          const items = (data.items || []).filter(item => item && item.zh);
+          if (!res.ok || !items.length) continue;
+          for (const item of items) {
+            const zh = stripTitleMeta(item.zh);
+            if (!zh) continue;
+            const id = String(item.id || '').toLowerCase();
+            for (const list of mtLists()) {
+              for (const other of list || []) {
+                if (mtId(other) !== id) continue;
+                other.mtZh = zh;
+                rememberMt(other, zh);
+              }
             }
           }
+          applied = true;
+          patchMachineTitles();
         }
-        patchMachineTitles();
-        if (S.mt.stop) break;
-        if (!(data.items || []).length) { failed = true; break; }
+        if (!applied && !S.mt.stop) failed = true;
       }
     } finally {
       queueMachineTitles.running = false;
-      if (!failed && !S.mt.stop && queueMachineTitles.dirty) queueMachineTitles();
+      const again = queueMachineTitles.dirty || failed;
+      if (!S.mt.stop && again && queueMachineTitles.passes < 3) queueMachineTitles();
     }
   })();
 }
@@ -2512,9 +2791,13 @@ const JOURNAL_ZH = {
   'Chest': '《胸》',
   'Ophthalmology': '《眼科学》',
   'Ophthalmol Retina': '《眼科学·视网膜》',
-  'Ophthalmol Glaucoma': '《眼科学·青光眼》',
-  'Ophthalmol Sci': '《眼科学·科学》',
   'Am J Ophthalmol': '《美国眼科杂志》',
+  'JAMA Ophthalmol': '《美国医学会眼科杂志》',
+  'Br J Ophthalmol': '《英国眼科杂志》',
+  'Prog Retin Eye Res': '《视网膜与眼研究进展》',
+  'IOVS': '《眼科研究与视觉科学》',
+  'Surv Ophthalmol': '《眼科学综述》',
+  'Eye': '《眼》',
   'Ann Oncol': '《肿瘤学年鉴》',
   'J Hepatol': '《肝脏病学杂志》',
   'Kidney Int': '《肾脏国际》',
@@ -2532,6 +2815,7 @@ const JOURNAL_ZH = {
   'Nature': '《自然》',
   'Science': '《科学》',
   'NEJM': '《新英格兰医学杂志》',
+  'BMJ': '《英国医学杂志》',
   'Nat Genet': '《自然·遗传学》',
   'Nat Immunol': '《自然·免疫学》',
   'Cell Stem Cell': '《细胞·干细胞》',
@@ -2575,13 +2859,18 @@ function downloadBlob(filename, blob) {
   link.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1500);
 }
-function exactQuote(en, abstract) {
-  const abs = String(abstract || '').replace(/\s+/g, ' ').trim();
+function exactQuote(en, blobs) {
   const needle = String(en || '').replace(/\s+/g, ' ').trim();
-  if (!needle || !abs.includes(needle)) return '';
+  if (!needle) return '';
+  const hay = (Array.isArray(blobs) ? blobs : [blobs]).map(b => String(b || '').replace(/\s+/g, ' ')).join('\n');
+  const parts = needle.split(' … ');
+  for (const part of parts) {
+    const core = part.replace(/…/g, '').replace(/\s+/g, ' ').trim();
+    if (!core || !hay.includes(core)) return '';
+  }
   return needle;
 }
-const QUOTE_LS = 'rr.quotes.v3';
+const QUOTE_LS = 'rr.quotes.v13';
 function quoteKey(a, abs) {
   let h = 5381;
   const s = String(abs || '').slice(0, 4000);
@@ -2614,7 +2903,13 @@ async function fetchQuotes(a) {
     res = await fetch('/api/translate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mode: 'quotes', id: a.id || a.doi || '', abstract: abs.slice(0, 12000) }),
+      body: JSON.stringify({
+        mode: 'quotes',
+        id: a.id || a.doi || '',
+        doi: a.doi || '',
+        abstract: abs.slice(0, 12000),
+        sections: a.sections || undefined,
+      }),
     });
   } catch {
     return { error: '摘句翻译失败，请再试一次。' };
@@ -2628,19 +2923,22 @@ async function fetchQuotes(a) {
   }
   const quotes = [];
   for (const q of data.quotes) {
-    const en = exactQuote(q?.en, abs);
+    const blobs = [abs];
+    if (q?.sentence) blobs.push(q.sentence);
+    if (Array.isArray(q?.sentences)) blobs.push(...q.sentences);
+    const en = exactQuote(q?.en, blobs);
     const zh = String(q?.zh || '').trim();
-    if (en && zh) quotes.push({ en, zh });
+    if (en && zh) quotes.push({ en, zh, role: q?.role || '', source: q?.source || 'abstract', sentence: q?.sentence || '' });
   }
   if (!quotes.length) return { error: '没有从摘要里抽出可用的原句。' };
-  const out = quotes.slice(0, 3);
+  const out = quotes.slice(0, 4);
   writeQuoteCache(key, out);
   return { quotes: out };
 }
 async function ensureCardTitle(a) {
-  const editorial = a?.digest && String(a.digest.titleZh || '').trim();
+  const editorial = stripTitleMeta(a?.digest && a.digest.titleZh);
   if (editorial) return editorial;
-  const cached = a.mtZh || lookupMt(a);
+  const cached = stripTitleMeta(a.mtZh || lookupMt(a));
   if (cached) return cached;
   const res = await fetch('/api/translate', {
     method: 'POST',
@@ -2648,7 +2946,7 @@ async function ensureCardTitle(a) {
     body: JSON.stringify({ mode: 'titles', items: [{ id: a.id || a.doi || a.title, text: a.title }] }),
   });
   const data = await res.json().catch(() => ({}));
-  const zh = data.items && data.items[0] && data.items[0].zh;
+  const zh = stripTitleMeta(data.items && data.items[0] && data.items[0].zh);
   if (zh) {
     rememberMt(a, zh);
     if (mtEligible(a)) { a.mtZh = zh; patchMachineTitles(); }
@@ -2671,14 +2969,16 @@ function cardSpec(a, titleZh, quotes, target) {
     journal_zh: jzh,
     date: String(a.date || '').slice(0, 10),
     type: 'Article',
-    type_line: a.studyZh || '研究论文',
-    article_no: [a.volume ? 'Vol ' + a.volume : '', a.issue ? 'Issue ' + a.issue : '', a.pages || ''].filter(Boolean).join(', '),
+    type_line: '研究论文',
+    article_no: [a.volume ? 'Vol ' + a.volume : '', a.issue ? 'Issue ' + a.issue : '', a.pages ? String(a.pages).replace(/(\d)-(\d)/g, '$1–$2') : ''].filter(Boolean).join(', '),
     doi: a.doi || '',
     authors: window.RRCite.etAl(names),
     url: target.url,
     qr_note: '链接直达 ' + target.name + ' 全文',
-    qr_sub: a.oa ? '开放获取' : '访问以机构订阅为准',
+    qr_sub: a.oa ? (a.licenseLabel ? '开放获取（' + a.licenseLabel + '）' : '开放获取') : '访问以机构订阅为准',
+    published_online: !!a.publishedOnline,
     corner_fill: '#111111',
+    labels: false,
   };
 }
 function shareChoice(strong, sub) {
@@ -2736,7 +3036,7 @@ async function showShareImage(a) {
   const body = $('#shareBody');
   const title = $('#shareTitle');
   title.textContent = '分享图片';
-  body.replaceChildren(el('p', 'share-status', '正在确认全文链接，并挑选三句原文…'));
+  body.replaceChildren(el('p', 'share-status', '正在确认全文链接，并挑选值得读的原文…'));
   try {
     if (a.doi && !a.pii) {
       if (a.pii === '') a.pii = undefined;
@@ -2750,9 +3050,19 @@ async function showShareImage(a) {
       pmid: a.pmid,
     });
     if (!target) throw new Error('这篇文章没有可分享的链接。');
-    const [titleZh, quoteRes] = await Promise.all([ensureCardTitle(a), fetchQuotes(a)]);
+    const [titleZh, quoteRes, pub] = await Promise.all([ensureCardTitle(a), fetchQuotes(a), publisherRecord(a)]);
     if (gen !== shareGen) return;
     if (quoteRes.error) throw new Error(quoteRes.error);
+    if (pub) {
+      a.oa = pub.oa;
+      a.volume = reliableVolume(a.volume, pub.volume);
+      if (pub.issue) a.issue = String(pub.issue);
+      const have = reliablePages(a.pages);
+      const next = reliablePages(pub.pages);
+      a.pages = have && next && have !== next ? '' : (have || next);
+      a.licenseLabel = pub.licenseLabel || '';
+      a.publishedOnline = !!pub.publishedOnline;
+    }
     body.replaceChildren(el('p', 'share-status', '正在排版…'));
     const canvas = await window.RRCard.render(cardSpec(a, titleZh, quoteRes.quotes, target));
     if (gen !== shareGen) return;
@@ -2842,7 +3152,11 @@ async function boot() {
   stampFoot();
 
   setTimeout(() => { if (!S.ai.loaded) loadBuilders(false); }, 1200);
-  setTimeout(() => { loadResearch(true); loadBuilders(true); }, 2500);
+  setTimeout(() => {
+    // The first load already paged Europe PMC. Don't page it again immediately.
+    if (Date.now() - jrLiveAt < 2 * 60e3) loadBuilders(true);
+    else { loadResearch(true); loadBuilders(true); }
+  }, 2500);
 }
 
 /* ---------------- wire up ---------------- */

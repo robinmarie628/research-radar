@@ -10,7 +10,7 @@
  *
  * mode "titles"    — up to 10 titles, qwen3 system prompt, JSON array back
  * mode "selection" — one highlighted span, short medical prompt
- * mode "quotes"    — 3 verbatim abstract sentences plus Chinese, for the share card
+ * mode "quotes"    — 3 or 4 verbatim excerpts plus Chinese, for the share card
  * Drug names are masked as [D1]… before the model call and restored after.
  * Results are cached in the Cache API keyed by the English text.
  */
@@ -22,7 +22,9 @@ import {
 } from '../_lib/mt.js';
 import {
   QUOTE_SYSTEM, ABSTRACT_MAX, splitSentences, resolveQuotePicks, parseQuoteResponse,
+  selectQuotePool,
 } from '../_lib/quotes.js';
+import { openAccessPassages } from '../_lib/fulltext.js';
 
 const CACHE_PREFIX = 'v1';
 
@@ -294,53 +296,112 @@ async function translateQuotes(request, env, body) {
   }
 
   const { glossary, overrides } = await loadResources(request, env);
-  const key = 'quotes/v3/' + (await sha256Hex(normTitle(abstract))).slice(0, 32);
+  const sections = body.sections && typeof body.sections === 'object' ? body.sections : null;
+  const doi = String(body.doi || body.id || '');
+  const key = 'quotes/v13/' + (await sha256Hex(normTitle(abstract) + '|' + doi.toLowerCase())).slice(0, 32);
   const hit = await cacheGet(request, key);
   if (hit?.quotes?.length) return json({ quotes: hit.quotes, cached: true });
 
+  let passage = '';
+  let oaStatus = 'none';
+  if (/^10\.\d{4,}\//.test(doi)) {
+    const oa = await openAccessPassages(doi);
+    oaStatus = oa.status;
+    passage = oa.text || '';
+  }
+  const corpus = passage ? abstract + '\n' + passage : abstract;
+  const pool = quotePool(corpus);
+
   let picks = [];
   try {
-    const listing = sentences.map((s, i) => '[' + i + '] ' + maskDrugs(s).text).join('\n');
+    const listing = pool.map((s, i) => '[' + i + '] ' + maskDrugs(s).text).join('\n');
     const raw = await runModel(env, QUOTE_SYSTEM, listing, 2000);
     const restored = parseQuoteResponse(raw).map(q => {
       const i = Number(q.i);
-      const en = Number.isInteger(i) && sentences[i] ? sentences[i] : '';
+      const en = Number.isInteger(i) && pool[i] ? pool[i] : '';
       let zh = q.zh || '';
       if (en && zh) {
         zh = applyGlossary(en, restoreDrugs(zh, maskDrugs(en).drugs), glossary, overrides);
       }
-      return { i: q.i, en: q.en, zh };
+      return { i: q.i, role: q.role, en: q.en, zh };
     });
-    picks = resolveQuotePicks(abstract, restored);
+    picks = resolveQuotePicks(pool.join(' '), restored, sections);
   } catch (err) {
     if (err?.code === 'quota' || isQuotaError(err) || err?.code === 'ai_unconfigured') return fail(err);
-    picks = resolveQuotePicks(abstract, []);
+    picks = resolveQuotePicks(pool.join(' '), [], sections);
   }
 
-  const missing = picks.filter(p => !p.zh);
-  if (missing.length) {
+  const jobs = [];
+  for (const p of picks) {
+    const parts = p.pieces?.length ? p.pieces : [p];
+    for (const part of parts) if (!part.zh) jobs.push(part);
+  }
+  if (jobs.length) {
     try {
-      const masked = missing.map(p => maskDrugs(p.en));
+      const masked = jobs.map(p => maskDrugs(p.en));
       const raw = await runModel(
         env,
-        SELECTION_SYSTEM + '\nYou will receive a JSON array of sentences. Reply with a JSON array of Simplified Chinese translations, same length and order, and nothing else.',
+        SELECTION_SYSTEM + '\nYou will receive a JSON array of excerpts. Reply with a JSON array of Simplified Chinese translations, same length and order, and nothing else. If an excerpt begins or ends with the ellipsis …, keep … at the same end of the Chinese line and translate only the words that are present. Do not add an ellipsis that was not in the excerpt.',
         JSON.stringify(masked.map(m => m.text)),
         2000,
       );
-      const parts = parseTranslationArray(raw, missing.length);
-      missing.forEach((p, j) => {
+      const parts = parseTranslationArray(raw, jobs.length);
+      jobs.forEach((p, j) => {
         p.zh = applyGlossary(p.en, restoreDrugs(parts[j], masked[j].drugs), glossary, overrides);
       });
     } catch (err) {
-      picks = picks.filter(p => p.zh);
+      for (const p of picks) {
+        if (p.pieces?.length) p.pieces = p.pieces.filter(part => part.zh);
+        if (p.pieces?.length) {
+          p.en = p.pieces.map(part => part.en).join(' … ');
+          p.zh = p.pieces.map(part => alignEllipsis(part.en, part.zh)).join(' … ');
+        }
+      }
+      picks = picks.filter(p => p.zh || (p.pieces && p.pieces.length));
       if (!picks.length) return fail(err);
     }
   }
+  for (const p of picks) {
+    if (p.pieces?.length) {
+      const ready = p.pieces.filter(part => part.en && part.zh);
+      p.pieces = ready;
+      p.en = ready.map(part => part.en).join(' … ');
+      p.zh = ready.map(part => alignEllipsis(part.en, part.zh)).join(' … ');
+    } else if (p.zh) {
+      p.zh = alignEllipsis(p.en, p.zh);
+    }
+  }
 
-  const quotes = picks.filter(p => p.en && p.zh).slice(0, 3).map(p => ({ en: p.en, zh: p.zh }));
+  const quotes = picks.filter(p => p.en && p.zh).slice(0, 4).map(p => {
+    const sentence = p.sentence || '';
+    const sentences = p.pieces?.length
+      ? p.pieces.map(part => part.sentence).filter(Boolean)
+      : (sentence ? [sentence] : []);
+    const fromFull = sentences.some(s => passage && !abstract.includes(String(s).replace(/[.。]+$/, '').trim()));
+    return {
+      role: p.role || '',
+      en: p.en,
+      zh: p.zh,
+      sentence,
+      sentences,
+      source: fromFull ? 'fulltext' : 'abstract',
+    };
+  });
   if (!quotes.length) return json({ error: 'ai_failed', message: '摘句翻译失败，请再试一次。' }, 502);
-  await cachePut(request, key, { quotes });
-  return json({ quotes, cached: false });
+  if (oaStatus !== 'error') await cachePut(request, key, { quotes });
+  return json({ quotes, cached: false, source: passage ? 'fulltext' : 'abstract' });
+}
+
+function quotePool(text) {
+  return selectQuotePool(text);
+}
+
+function alignEllipsis(en, zh) {
+  let z = String(zh || '').trim().replace(/\.{3,}/g, '…');
+  z = z.replace(/^…+/, '').replace(/…+$/, '').trim();
+  if (String(en || '').startsWith('…')) z = '…' + z;
+  if (String(en || '').endsWith('…')) z += '…';
+  return z;
 }
 
 export function onRequest(context) {

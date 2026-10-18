@@ -1,8 +1,9 @@
 /* Share card. Ports make_card.py: 1080-wide navy newspaper on cream,
    corners filled #111111 (opaque; WeChat paints transparent corners white).
    Font sizes and line heights are the GIMAP6 reference and never shrink.
-   Three quotations stay when they fit in 1920px. Otherwise the card uses two
-   and ends at the content, with the reference gap above the bottom bar. */
+   Every quotation is drawn, including a mechanism line when the abstract
+   states one. The card grows with the text. Line spacing stays at or above
+   the reference. */
 (function () {
   const S = 1.8;
   const W = Math.round(600 * S);
@@ -108,6 +109,32 @@
       L[L.length - 2] = L[L.length - 2].slice(0, -2);
     }
     return L.filter(line => line.trim());
+  }
+
+  /** Design tail after a colon: a trial, or an observational / review design. */
+  function isDesignSubtitle(tail) {
+    const t = String(tail || '').replace(/\s+/g, ' ').trim().replace(/\.+$/, '');
+    if (!t || !/\b(trial|study|review|meta-analysis|meta analysis)\b/i.test(t)) return false;
+    if (/\b(?:three|two|several|multiple)\s+trials\b/i.test(t)) return false;
+    const markers = t.match(/\b(phase\s+[0-9ivx]+|multicentre|multicenter|randomi[sz]ed|double-blind|placebo-controlled|open-label|crossover|non-inferiority|parallel-group|single-blind|active-controlled|case-control|case control|cohort|cross-sectional|cross sectional|population-based|population based|nationwide|register-based|registry-based|systematic review|meta-analysis|meta analysis|observational)\b/ig) || [];
+    if (markers.length >= 2) return true;
+    if (/^(a|an)\s+(phase\s+[0-9ivx]+|multicentre|multicenter|double-blind|placebo-controlled|open-label|crossover|nationwide|population|prospective|retrospective|cohort|cross-sectional|systematic)\b/i.test(t)) return true;
+    const words = t.split(/\s+/).filter(Boolean).length;
+    if (words > 18) return false;
+    if (/\b(case-control|case control|cross-sectional|cross sectional|systematic review|meta-analysis|meta analysis)\b/i.test(t)) return true;
+    if (/\b(nationwide|population[- ]based|register-based|registry-based)\b/i.test(t) && /\b(study|cohort|trial|review)\b/i.test(t)) return true;
+    if (/\b(prospective|retrospective|observational)\s+cohort\b/i.test(t)) return true;
+    return false;
+  }
+
+  function trimDesignSubtitle(title) {
+    const s = String(title || '').replace(/\s+/g, ' ').trim();
+    const idx = s.search(/[：:]/);
+    if (idx < 12) return s;
+    const head = s.slice(0, idx).trim();
+    const tail = s.slice(idx + 1).trim();
+    if (!head || !isDesignSubtitle(tail)) return s;
+    return head;
   }
 
   function cwrap(ctx, text, font, width) {
@@ -230,7 +257,7 @@
     const mark = a.role === 'mark' ? a : (b.role === 'mark' ? b : null);
     const other = mark === a ? b : (mark === b ? a : null);
     if (!mark || !other) return false;
-    return other.role === 'qen' && other.quote === mark.quote;
+    return (other.role === 'qen' || other.role === 'qlab') && other.quote === mark.quote;
   }
 
   function forbiddenOverlaps(blocks) {
@@ -468,22 +495,56 @@
     y += G.label_h * S;
     y += markPad;
 
+    const ROLE_LABEL = { background: '背景', studied: '研究', finding: '发现', significance: '启示' };
     const quotes = spec.quotes || [];
     for (let i = 0; i < quotes.length; i++) {
       const q = quotes[i];
+      const qx = M + 34 * S;
+      const qw = W - qx - M;
+      const lab = spec.labels === true ? ROLE_LABEL[q.role] : '';
+      if (lab) {
+        paint(qx, y, lab, serif(12, true), NAVY, {
+          role: 'qlab', quote: i, minFont: px(12),
+        });
+        y += 16 * S;
+      }
       const markFont = play(64, 700);
       const markY = y - 14 * S + markDrop;
       paint(M - 2 * S, markY, '“', markFont, NAVY, {
         role: 'mark', quote: i, minFont: px(64),
       });
-      const qx = M + 34 * S;
-      const qw = W - qx - M;
       const qen = source(17, true);
+      const qEllipsis = serif(17, false);
       const qenAdv = G.en_lh * S;
       wrap(ctx, q.en || '', qen, qw).forEach((line, li) => {
-        paint(qx, y, line, qen, INK, {
+        const box = textInk(ctx, line, qx, y, qen, 'top');
+        note(box, {
           role: 'qen', run: 'qen-' + i, quote: i, minAdvance: qenAdv, minFont: px(17), line: li,
+          y0: y, fontPx: fontPxOf(qen),
         });
+        if (draw) {
+          ctx.textBaseline = 'top';
+          ctx.fillStyle = INK;
+          if (!line.includes('…')) {
+            ctx.font = qen;
+            ctx.fillText(line, qx, y);
+          } else {
+            let cx = qx;
+            const parts = line.split('…');
+            parts.forEach((part, pi) => {
+              if (part) {
+                ctx.font = qen;
+                ctx.fillText(part, cx, y);
+                cx += ctx.measureText(part).width;
+              }
+              if (pi < parts.length - 1) {
+                ctx.font = qEllipsis;
+                ctx.fillText('…', cx, y);
+                cx += ctx.measureText('…').width;
+              }
+            });
+          }
+        }
         y += qenAdv;
       });
       y += G.en_gap * S;
@@ -528,7 +589,7 @@
       : (spec.journal || spec.journal_en || '');
     const srcLines = [
       journalLine,
-      [spec.date, spec.article_no].filter(Boolean).join(' · '),
+      [spec.date, spec.published_online ? '(Published online)' : '', spec.article_no].filter(Boolean).join(' · '),
       spec.doi ? 'DOI: ' + spec.doi : '',
       spec.authors || '',
     ].filter(Boolean);
@@ -567,22 +628,11 @@
 
   function fitSpec(ctx, spec, G, markPad, markDrop) {
     const title_zh = fitTitleZh(ctx, spec.title_zh || '');
-    let quotes = (spec.quotes || []).filter(q => q && (q.en || q.zh)).slice(0, 3);
-    const pack = (qs) => Object.assign({}, spec, { title_zh, quotes: qs });
-    const full = pack(quotes);
-    const rawHeight = layout(ctx, full, G, false, 0, markPad, markDrop).height;
-    let next = full;
-    let dropped = false;
-    if (rawHeight > MAX_H && quotes.length > 2) {
-      dropped = true;
-      let drop = 0;
-      for (let i = 1; i < quotes.length; i++) {
-        if ((quotes[i].en || '').length >= (quotes[drop].en || '').length) drop = i;
-      }
-      quotes = quotes.filter((_, i) => i !== drop);
-      next = pack(quotes);
-    }
-    return { spec: next, rawHeight, dropped };
+    const title_en = trimDesignSubtitle(spec.title_en || '');
+    const quotes = (spec.quotes || []).filter(q => q && (q.en || q.zh)).slice(0, 4);
+    const next = Object.assign({}, spec, { title_zh, title_en, quotes });
+    const rawHeight = layout(ctx, next, G, false, 0, markPad, markDrop).height;
+    return { spec: next, rawHeight, dropped: false };
   }
 
   function probeContext() {
