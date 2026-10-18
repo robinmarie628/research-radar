@@ -735,9 +735,8 @@ function jrSignature() {
   return S.jr.all.map(x => x.id).join('|') + '#' + S.jr.picks.map(x => x.id).join('|');
 }
 
+let jrLiveAt = 0;
 function loadResearch(force) {
-  // The boot timer revalidates 2.5s later. Join an in-flight fair fetch
-  // instead of paging Europe PMC a second time.
   if (loadResearch.flight) return loadResearch.flight;
   loadResearch.flight = loadResearchNow(force).finally(() => { loadResearch.flight = null; });
   return loadResearch.flight;
@@ -776,6 +775,7 @@ async function loadResearchNow(force) {
       fetchedAt: new Date().toISOString(),       // 数据实际拉取时间（≠ 最新文章发表日；Europe PMC 索引有 1-2 天延迟，发表日会滞后）
       loaded: true, error: null,
     };
+    jrLiveAt = Date.now();
   } catch (e) {
     console.warn('[research] live fetch failed:', e);
     if (!S.jr.loaded) {
@@ -2923,7 +2923,11 @@ async function boot() {
   stampFoot();
 
   setTimeout(() => { if (!S.ai.loaded) loadBuilders(false); }, 1200);
-  setTimeout(() => { loadResearch(true); loadBuilders(true); }, 2500);
+  setTimeout(() => {
+    // The first load already paged Europe PMC. Don't page it again immediately.
+    if (Date.now() - jrLiveAt < 2 * 60e3) loadBuilders(true);
+    else { loadResearch(true); loadBuilders(true); }
+  }, 2500);
 }
 
 /* ---------------- wire up ---------------- */
