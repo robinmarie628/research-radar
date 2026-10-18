@@ -1,10 +1,11 @@
-# Cloudflare Pages project: research-radar-f5j (https://research-radar-f5j.pages.dev).
-# Git integration builds this file with the branch it is deploying.
-# Preview deployments of a branch that contains this file get the AI binding.
+# Cloudflare Pages project name is research-radar.
+# The public host is https://research-radar-f5j.pages.dev (the subdomain, not the project name).
+# Git integration reads this file on the branch it is deploying.
+# The `name` must match the Pages project or the AI binding is ignored.
 #
 # This is not the trigger Worker. That one lives in worker/wrangler.toml
 # and is deployed from the worker/ directory.
-name = "research-radar-f5j"
+name = "research-radar"
 compatibility_date = "2026-10-18"
 pages_build_output_dir = "./dist"
 

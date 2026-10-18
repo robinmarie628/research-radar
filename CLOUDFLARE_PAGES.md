@@ -44,7 +44,7 @@ A preview deploy of a branch that contains that file should receive the binding.
 If a deploy's `POST /api/translate` still returns `503` with `error: "ai_unconfigured"`,
 add the binding by hand and redeploy:
 
-1. Workers & Pages → **research-radar-f5j** → **Settings** → **Bindings** → **Add** → **Workers AI**.
+1. Workers & Pages → **research-radar** (host `research-radar-f5j.pages.dev`) → **Settings** → **Bindings** → **Add** → **Workers AI**.
 2. Variable name: **`AI`** (exact).
 3. Add it for **both Production and Preview**.
 4. Retry the deployment.
