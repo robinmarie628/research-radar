@@ -22,5 +22,10 @@
     "en": "ticagrelor",
     "zh": "ticagrelor",
     "bad": ["替格瑞洛", "替卡格雷"]
+  },
+  {
+    "en": "Management of Neovascular Age-Related Macular Degeneration in Routine US Clinical Practice: Impact of Delayed Treatment Initiation",
+    "zh": "美国常规临床实践中新生血管性年龄相关性黄斑变性的管理：延迟治疗启动的影响",
+    "exact": true
   }
 ]

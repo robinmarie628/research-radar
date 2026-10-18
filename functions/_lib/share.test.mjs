@@ -276,6 +276,35 @@ test('a trial-design subtitle is removed and a scientific subtitle stays', () =>
   assert.equal(trimDesignSubtitle(review), 'Vitamin D and fracture risk');
 });
 
+test('the share card keeps a delayed-treatment subtitle that would otherwise wrap past two lines', () => {
+  const src = readFileSync(new URL('../../assets/share-card.js', import.meta.url), 'utf8');
+  const start = src.indexOf('function contrastTitleTail');
+  const end = src.indexOf('function textInk');
+  const { chooseTitleZh } = new Function(src.slice(start, end) + '\nreturn { chooseTitleZh };')();
+  const amd = '美国常规临床实践中新生血管性年龄相关性黄斑变性的管理：延迟治疗启动的影响';
+  assert.equal(chooseTitleZh(amd, 3, 2), amd);
+  assert.match(chooseTitleZh(amd, 4, 2), /延迟治疗/);
+  const design = '中国多药耐药热带念珠菌的区域扩展和适应性进化：一项回顾性多中心基因组研究';
+  assert.equal(chooseTitleZh(design, 3, 2), '中国多药耐药热带念珠菌的区域扩展和适应性进化');
+  assert.equal(chooseTitleZh(amd, 2, 1), amd);
+});
+
+test('the client puts a dropped delayed-treatment clause back onto a cached title', () => {
+  const src = readFileSync(new URL('../../assets/app.js', import.meta.url), 'utf8');
+  const start = src.indexOf('function stripTitleStop');
+  const end = src.indexOf('/* ---------------- abstract section headings');
+  const { preserveTitleContrast } = new Function(src.slice(start, end) + '\nreturn { preserveTitleContrast };')();
+  const en = 'Management of Neovascular Age-Related Macular Degeneration in Routine US Clinical Practice: Impact of Delayed Treatment Initiation.';
+  const short = '美国常规临床实践中新生血管性年龄相关性黄斑变性的管理';
+  const full = '美国常规临床实践中新生血管性年龄相关性黄斑变性的管理：延迟治疗启动的影响';
+  assert.equal(preserveTitleContrast(en, short), full);
+  assert.equal(preserveTitleContrast(en, full), full);
+  assert.equal(
+    preserveTitleContrast('Initial sepsis care: early versus late treatment initiation', '脓毒症治疗'),
+    '脓毒症治疗：早期与晚期开始治疗',
+  );
+});
+
 test('the share-card title drops a trailing Chinese full stop', () => {
   const src = readFileSync(new URL('../../assets/app.js', import.meta.url), 'utf8');
   const start = src.indexOf('function stripTitleStop');

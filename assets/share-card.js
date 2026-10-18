@@ -146,18 +146,33 @@
     return wrap(ctx, head, font, width).concat(tail ? wrap(ctx, tail, font, width) : []);
   }
 
+  /** A colon clause that states delayed / prompt / early / late treatment must stay visible. */
+  function contrastTitleTail(tail) {
+    return /延迟|推迟|延后|提早|提前|早期|晚期|及时|即刻|立即/.test(String(tail || ''));
+  }
+
+  function chooseTitleZh(full, fullLineCount, headLineCount) {
+    const title = String(full || '');
+    if (!(fullLineCount > 2)) return title;
+    const m = title.match(/[：:]/);
+    if (!m || m.index < 8) return title;
+    const head = title.slice(0, m.index).trim();
+    const tail = title.slice(m.index + 1).trim();
+    if (contrastTitleTail(tail)) return title;
+    if (!headLineCount || headLineCount >= fullLineCount) return title;
+    return head;
+  }
+
   function fitTitleZh(ctx, title) {
     const font = serif(30, true);
     const width = W - 2 * M;
     const full = String(title || '');
     const lines = cwrap(ctx, full, font, width);
-    if (lines.length <= 2) return full;
     const m = full.match(/[：:]/);
-    if (!m || m.index < 8) return full;
-    const head = full.slice(0, m.index).trim();
-    const headLines = wrap(ctx, head, font, width);
-    if (!headLines.length || headLines.length >= lines.length) return full;
-    return head;
+    const headLines = m && m.index >= 8
+      ? wrap(ctx, full.slice(0, m.index).trim(), font, width).length
+      : lines.length;
+    return chooseTitleZh(full, lines.length, headLines);
   }
 
   function textInk(ctx, text, x, y, font, baseline) {

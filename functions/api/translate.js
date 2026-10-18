@@ -18,7 +18,7 @@ import {
   MT_MODEL, TITLE_SYSTEM, SELECTION_SYSTEM, TITLE_BATCH, DEFAULT_OVERRIDES,
   SELECTION_MAX, TITLE_MAX,
   maskDrugs, restoreDrugs, applyGlossary, parseTranslationArray, isTranslatedZh, stripTitleStop,
-  extractAiText, isQuotaError, normTitle, sha256Hex,
+  extractAiText, isQuotaError, normTitle, sha256Hex, settleTitleZh,
 } from '../_lib/mt.js';
 import {
   QUOTE_SYSTEM, ABSTRACT_MAX, splitSentences, resolveQuotePicks, parseQuoteResponse,
@@ -217,8 +217,11 @@ async function translateTitles(request, env, body) {
   for (let i = 0; i < clean.length; i++) {
     const key = 'title/' + (await sha256Hex(normTitle(clean[i].text))).slice(0, 32);
     const hit = await cacheGet(request, key);
-    if (hit?.zh) out[i] = { id: clean[i].id, zh: stripTitleStop(hit.zh), cached: true };
-    else pending.push(i);
+    if (hit?.zh) {
+      const zh = settleTitleZh(clean[i].text, hit.zh, glossary, overrides);
+      out[i] = { id: clean[i].id, zh, cached: zh === stripTitleStop(hit.zh) };
+      if (zh !== stripTitleStop(hit.zh)) await cachePut(request, key, { zh });
+    } else pending.push(i);
   }
   if (!pending.length) return json({ items: out });
 
@@ -244,12 +247,12 @@ async function translateTitles(request, env, body) {
 
   for (let j = 0; j < pending.length; j++) {
     const i = pending[j];
-    const zh = stripTitleStop(applyGlossary(
+    const zh = settleTitleZh(
       clean[i].text,
       restoreDrugs(parts[j], masked[j].drugs),
       glossary,
       overrides,
-    ));
+    );
     out[i] = { id: clean[i].id, zh, cached: false };
     const key = 'title/' + (await sha256Hex(normTitle(clean[i].text))).slice(0, 32);
     await cachePut(request, key, { zh });
