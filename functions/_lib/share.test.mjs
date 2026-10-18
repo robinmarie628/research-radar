@@ -29,6 +29,13 @@ const cite = require('../../assets/cite.js');
 
 const ABSTRACT = 'Patients with heart failure had a higher risk of readmission. Methods included a cohort of 400 adults followed for two years. Thus, early review of volume status reduced mortality compared with usual care. A further sentence about laboratory methods is not the point of the paper.';
 
+test('a lowercase acronym still starts a new sentence', () => {
+  const parts = splitSentences('Replay of SWA induces sleep. dFBNs generate SWA throughout the cycle despite antagonism with dopaminergic neurons.');
+  assert.equal(parts.length, 2);
+  assert.match(parts[0], /induces sleep/);
+  assert.match(parts[1], /^dFBNs generate/);
+});
+
 test('sentences keep abbreviations and decimals together', () => {
   const parts = splitSentences('Smith et al. reported a risk of 0.05. The trial then stopped early.');
   assert.equal(parts.length, 2);
@@ -163,7 +170,8 @@ test('a model pick of a census sentence is replaced by the surprising line', () 
   const blob = picks.map(p => p.en).join(' ');
   assert.match(blob, /more than 12 h|significantly faster/);
   assert.match(picks.find(p => p.role === 'background').en, /remain scant/);
-  assert.doesNotMatch(blob, /These results support the use/);
+  assert.match(blob, /significantly faster/);
+  assert.doesNotMatch(blob, /95% CI/);
   assert.equal(picks.some(p => /不该用背景/.test(p.zh)), false);
 });
 
@@ -347,6 +355,27 @@ test('a trial card keeps the worded benefit and can add a striking adverse event
   assert.match(adverse.en, /Hypotension and dysesthesia were more frequent/);
   assert.doesNotMatch(adverse.en, /\[5%\]|12 mg group/);
   for (const p of picks) assert.ok(wordCountOk(p.en), p.en);
+});
+
+test('the sleep-pressure abstract yields three separate sentences', () => {
+  const abs = [
+    'Changes in oscillatory neural dynamics reflect—but may not necessarily determine—transitions between sleep stages and variations in sleep pressure.',
+    'Here we show that sleep-control neurons innervating the dorsal fan-shaped body of Drosophila (dFBNs) produce slow-wave activity (SWA) that is causally linked to sleep.',
+    'The oscillations rely on interhemispheric competition of two half-centers connected by inhibitory glutamatergic synapses.',
+    'dFBN-restricted interference with glutamate release disrupts SWA and baseline as well as rebound sleep, whereas the optogenetic replay of SWA induces sleep.',
+    'dFBNs generate SWA throughout the sleep-wake cycle (despite mutual antagonism with arousing dopaminergic neurons) and adjust its power to sleep need via sleep history-dependent increases in excitability and homeostatic synaptic depression.',
+    'The oscillatory format permits a continuous encoding of sleep pressure but requires mechanisms that convert the amplitude-modulated signal into binary sleep-wake states.',
+  ].join(' ');
+  const picks = resolveQuotePicks(abs, []);
+  assert.equal(picks.length, 3);
+  const blob = picks.map(p => p.en).join('\n');
+  assert.match(blob, /optogenetic replay of SWA induces sleep/);
+  assert.match(blob, /despite mutual antagonism/);
+  assert.equal(picks.some(p => /replay of SWA induces sleep\.\s+dFBNs/.test(p.en)), false);
+  for (const p of picks) {
+    assert.equal((p.en.match(/\. /g) || []).length <= 1, true, p.en);
+    assert.ok(wordCountOk(p.en), p.en);
+  }
 });
 
 test('a short abstract with no gold-style sentence still returns quotes', () => {
