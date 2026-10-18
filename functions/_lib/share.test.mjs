@@ -122,6 +122,35 @@ test('structured abstract sections supply the three roles', () => {
   assert.equal(picks[2].en, meaning);
 });
 
+test('a conclusion that mentions an unmet need is not the background quote', () => {
+  const bg = 'In hereditary angioedema, oral on-demand treatments that provide rapid relief remain scant.';
+  const aim = 'We investigated the efficacy and safety of deucrictibant for on-demand treatment of attacks.';
+  const census = 'The primary efficacy analysis included 88 participants with paired treated attacks.';
+  const finding = 'Onset of symptom relief occurred significantly faster with deucrictibant than placebo.';
+  const short = 'Oral deucrictibant provided faster times to symptom relief than placebo and was generally well tolerated.';
+  const meaning = 'These results support the use of deucrictibant as potentially the first oral antagonist and may address an unmet need for convenient treatment.';
+  const abstract = [bg, aim, census, finding, short, meaning].join(' ');
+  const sections = {
+    objective: bg + ' ' + aim,
+    results: census + ' ' + finding,
+    conclusion: short + ' ' + meaning,
+  };
+  const forced = resolveQuotePicks(abstract, [
+    { role: 'background', i: 5, zh: '意义句被误标成背景' },
+    { role: 'finding', i: 2, zh: '人数统计' },
+    { role: 'significance', i: 4, zh: '较短结论' },
+  ], sections);
+  assert.deepEqual(forced.map(p => p.role), ['background', 'finding', 'significance']);
+  assert.equal(forced[0].en, bg);
+  assert.equal(forced[1].en, finding);
+  assert.equal(forced[2].en, meaning);
+  assert.match(forced[2].zh, /意义/);
+  const heuristic = resolveQuotePicks(abstract, [], sections);
+  assert.equal(heuristic[0].en, bg);
+  assert.equal(heuristic[1].en, finding);
+  assert.equal(heuristic[2].en, meaning);
+});
+
 test('quote JSON parser reads indexes', () => {
   const parsed = parseQuoteResponse('```json\n{"quotes":[{"i":1,"zh":"甲"}]}\n```');
   assert.deepEqual(parsed, [{ i: 1, role: '', en: '', zh: '甲' }]);

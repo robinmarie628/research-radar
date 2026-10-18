@@ -16,6 +16,7 @@ Return one sentence for each role, in this order:
 3. significance — what that result means: the interpretation, implication, or conclusion.
 Never choose a sentence about trial registration, an NCT number, ClinicalTrials.gov, funding, ethics approval, accrual or follow-up status, or copyright.
 Do not pick a methods sentence (eligibility, randomisation, sample size, statistics) for any role when another sentence exists.
+Background is the problem or gap that existed before the study (a treatment remains scant, a disease is not eliminated, something is still unknown). A sentence that starts with "These results", "These findings", or "Thus", or that says the results support a use, is significance even when it mentions an unmet need.
 Prefer a sentence under 280 characters. Do not stitch clauses together.
 Return JSON only, no markdown:
 {"quotes":[{"role":"background","i":0,"zh":"..."},{"role":"finding","i":1,"zh":"..."},{"role":"significance","i":2,"zh":"..."}]}
@@ -30,8 +31,10 @@ Rules:
 const ABBREV = /(?:et al|Figs?|vs|Dr|Mr|Mrs|Ms|Prof|e\.g|i\.e|U\.S|No|Vol|Jr|Sr|St|approx|ca|al)$/i;
 const HINT = /patient|risk|mortality|death|outcome|significant|associat|treatment|therapy|reduc|increas|improv|therefore|thus|we found|demonstrat|suggest|benefit|hazard|survival|disease|failure|conclus|trial|effect|among|compared/i;
 const FINDING = /therefore|thus|conclus|we found|these findings|in summary|suggest|demonstrat|indicates that/i;
-const INTERP = /^(interpretation\b|these findings\b|our results\b|our findings\b|we conclude\b|in conclusion\b|taken together\b|collectively\b)/i;
-const INTERP_BODY = /\b(these findings|our results suggest|we conclude|indicates that|adds substantial evidence|remains investigational|requires .{0,48}validation)\b/i;
+const INTERP = /^(interpretation\b|these (?:results|findings|data|observations)\b|our results\b|our findings\b|we conclude\b|in conclusion\b|taken together\b|collectively\b|thus\b|therefore\b)/i;
+const INTERP_BODY = /\b(these findings|these results support|these data support|support the use of|may address an unmet|our results suggest|we conclude|indicates that|adds substantial evidence|remains investigational|requires .{0,48}validation)\b/i;
+const PROBLEM = /\b(not eliminated|unknown|unclear|poorly understood|little is known|remains (?:unclear|unknown|elusive)|despite|the gap|have been limited|remain(?:s|ed)? (?:scant|limited|elusive))\b/i;
+const CENSUS = /\b(were assessed for eligibility|were randomly allocated|were male|were female|median age|included \d+ participants|of these,? \d+)\b/i;
 const RESULT = /\b(detected|reduced|increased|improved|fewer|more likely|associated|caused|accelerated|response rate|survival|mortality|showed|enabled|avoided|no increase|non-inferior|deaths? occurred|adverse events occurred)\b/i;
 
 function isDesign(s) {
@@ -177,15 +180,42 @@ function sentenceFrom(q, sentences) {
   return findVerbatim(q?.en, sentences);
 }
 
+function isImplication(s) {
+  return INTERP.test(s) || INTERP_BODY.test(s) || /^(interpretation|conclusions?|implications?)\b/i.test(s);
+}
+
 function classifySentence(s) {
   if (!s || isBoilerplate(s) || isDesign(s) || METHODS_LEAD.test(s)) return '';
-  if (INTERP.test(s) || INTERP_BODY.test(s) || /^(interpretation|conclusions?|implications?)\b/i.test(s)) return 'significance';
+  if (isImplication(s)) return 'significance';
   if (/^(background|objectives?|aims?)\b/i.test(s)) return 'background';
   if (/^(results?|findings?)\b/i.test(s)) return 'finding';
-  if (/\b(not eliminated|unknown|unclear|poorly understood|little is known|remains (?:unclear|unknown|elusive)|despite|unmet|the gap|have been limited)\b/i.test(s)) return 'background';
-  if (RESULT.test(s) || /\b(we found|we show|we report|showed that)\b/i.test(s)) return 'finding';
+  if (PROBLEM.test(s)) return 'background';
+  if (RESULT.test(s) || /\b(we found|we show|we report|showed that|significantly (?:faster|slower|higher|lower|greater|reduced|increased|improved))\b/i.test(s)) return 'finding';
   if (FINDING.test(s)) return 'significance';
   return '';
+}
+
+/** Which structured section contains this sentence, when the sections disagree. */
+function sectionRole(s, sections) {
+  if (!sections || typeof sections !== 'object') return '';
+  const n = normSpace(s);
+  if (!n) return '';
+  const rows = [
+    ['background', sections.objective || sections.background || ''],
+    ['finding', sections.results || sections.findings || ''],
+    ['significance', sections.conclusion || sections.interpretation || ''],
+  ];
+  const hits = rows.filter(([, blob]) => blob && normSpace(blob).includes(n));
+  return hits.length === 1 ? hits[0][0] : '';
+}
+
+function assignRole(q, cand, sections) {
+  const explicit = QUOTE_ROLES.includes(q?.role) ? q.role : '';
+  const fromSection = sectionRole(cand, sections);
+  let role = fromSection || explicit || classifySentence(cand);
+  if (isImplication(cand) && role === 'background') role = 'significance';
+  if (PROBLEM.test(cand) && !isImplication(cand) && role === 'significance') role = 'background';
+  return role;
 }
 
 function scoreRole(s, role) {
@@ -194,12 +224,12 @@ function scoreRole(s, role) {
   if (s.length <= 320) q += 2;
   else if (s.length > 480) q -= 2;
   if (isDesign(s) || METHODS_LEAD.test(s)) q -= 8;
-  const census = /\b(were assessed for eligibility|were randomly allocated|were male|were female|median age|included \d+ participants|of these,? \d+)\b/i.test(s);
-  if (census) q -= 8;
+  if (CENSUS.test(s)) q -= 8;
   if (role === 'background') {
-    if (/\b(not eliminated|unknown|unclear|poorly understood|little is known|despite|unmet|the gap)\b/i.test(s)) q += 8;
+    if (PROBLEM.test(s)) q += 8;
     if (/^(background|objectives?|aims?)\b/i.test(s)) q += 8;
-    if (INTERP.test(s) || /^thus\b/i.test(s)) q -= 4;
+    if (isImplication(s)) q -= 12;
+    if (/\bwe (investigated|aimed|sought|evaluated)\b/i.test(s)) q += 1;
     if (isDenseMethods(s)) q -= 6;
   } else if (role === 'finding') {
     if (/^(results?|findings?)\b/i.test(s)) q += 8;
@@ -210,8 +240,9 @@ function scoreRole(s, role) {
     if (INTERP.test(s)) q -= 3;
     if (isDenseMethods(s) && !RESULT.test(s)) q -= 8;
   } else {
-    if (INTERP.test(s) || /^(interpretation|conclusions?|implications?)\b/i.test(s)) q += 10;
-    if (INTERP_BODY.test(s) || FINDING.test(s)) q += 6;
+    if (isImplication(s) || /^(interpretation|conclusions?|implications?)\b/i.test(s)) q += 10;
+    if (FINDING.test(s)) q += 4;
+    if (PROBLEM.test(s) && !isImplication(s)) q -= 6;
     if (isDenseMethods(s)) q -= 6;
   }
   return q;
@@ -264,9 +295,16 @@ export function resolveQuotePicks(abstract, modelQuotes, sections) {
     const cand = sentenceFrom(q, sentences);
     if (!cand || used.has(cand) || isBoilerplate(cand)) continue;
     if (isDenseMethods(cand) && sentences.some(s => !isDenseMethods(s) && !isBoilerplate(s))) continue;
-    const explicit = QUOTE_ROLES.includes(q?.role) ? q.role : '';
-    const role = explicit || classifySentence(cand);
+    const role = assignRole(q, cand, sections);
     if (!role || chosen[role]) continue;
+    if (role === 'finding' && CENSUS.test(cand)) {
+      const better = candidatesFor('finding', sentences, sections).some(s => s !== cand && /\b(significantly|than placebo|faster|reduced|improved|symptom relief)\b/i.test(s));
+      if (better) continue;
+    }
+    if (role === 'background' && /\bwe (investigated|aimed|sought)\b/i.test(cand)) {
+      const better = candidatesFor('background', sentences, sections).some(s => PROBLEM.test(s));
+      if (better) continue;
+    }
     chosen[role] = { role, en: cand, zh: normSpace(q?.zh || '') };
     used.add(cand);
   }

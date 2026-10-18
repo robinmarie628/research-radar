@@ -295,7 +295,7 @@ async function translateQuotes(request, env, body) {
 
   const { glossary, overrides } = await loadResources(request, env);
   const sections = body.sections && typeof body.sections === 'object' ? body.sections : null;
-  const key = 'quotes/v4/' + (await sha256Hex(normTitle(abstract))).slice(0, 32);
+  const key = 'quotes/v5/' + (await sha256Hex(normTitle(abstract))).slice(0, 32);
   const hit = await cacheGet(request, key);
   if (hit?.quotes?.length) return json({ quotes: hit.quotes, cached: true });
 
@@ -310,7 +310,7 @@ async function translateQuotes(request, env, body) {
       if (en && zh) {
         zh = applyGlossary(en, restoreDrugs(zh, maskDrugs(en).drugs), glossary, overrides);
       }
-      return { i: q.i, en: q.en, zh };
+      return { i: q.i, role: q.role, en: q.en, zh };
     });
     picks = resolveQuotePicks(abstract, restored, sections);
   } catch (err) {
