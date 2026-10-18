@@ -18,7 +18,7 @@
 try{
   var t=localStorage.getItem('rr.text.v1');
   var n=t==='md'?110:t==='lg'?120:parseInt(t,10);
-  if(n>100&&n<=120)document.documentElement.style.setProperty('--read',(n/100).toFixed(2));
+  if(n>100&&n<=150)document.documentElement.style.setProperty('--read',(n/100).toFixed(2));
   if(localStorage.getItem('rr.bold.v1')==='1')document.documentElement.setAttribute('data-bold','');
 }catch(e){}
 </script>
@@ -50,7 +50,7 @@ try{
     </div>
     <div class="type-pop" id="typePop" hidden role="group" aria-label="正文字号">
       <span class="type-a" aria-hidden="true">A</span>
-      <input id="typeRange" type="range" min="100" max="120" step="1" value="100" aria-label="正文字号，100% 到 120%" aria-valuemin="100" aria-valuemax="120" aria-valuenow="100" aria-valuetext="100%">
+      <input id="typeRange" type="range" min="100" max="150" step="1" value="100" aria-label="正文字号，100% 到 150%" aria-valuemin="100" aria-valuemax="150" aria-valuenow="100" aria-valuetext="100%">
       <span class="type-a type-a-lg" aria-hidden="true">A</span>
       <output id="typeOut" for="typeRange">100%</output>
     </div>

@@ -325,15 +325,9 @@
 }
 
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-/* Readable copy only. 100% is today's size; the slider stops at 120%. */
+/* Readable copy only. 100% is today's size; the slider stops at 150%. */
 html{--read:1}
-html[data-bold] .art-title,
-html[data-bold] .who .nm,
-html[data-bold] .gl .gl-en,
-html[data-bold] .gl .gl-zh,
-html[data-bold] .share-choice strong,
-html[data-bold] .aisum-headline,
-html[data-bold] .rawtitle-txt{font-weight:800}
+/* One step up from regular text. Titles that are already 700/800 stay put. */
 html[data-bold] .search-snip,
 html[data-bold] .art-zh,
 html[data-bold] .sec-txt,
@@ -347,7 +341,8 @@ html[data-bold] .share-status,
 html[data-bold] .share-note,
 html[data-bold] .aisum-list li,
 html[data-bold] .mt-pop,
-html[data-bold] .mt-pop-txt{font-weight:700}
+html[data-bold] .mt-pop-txt{font-weight:600}
+html[data-bold] .en-why .en-txt{font-weight:700}
 
 /* `.sheet` sets display:flex, which beats the UA `[hidden]` rule — force it. */
 [hidden]{display:none!important}

@@ -11,7 +11,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.18.46';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.18.47';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -3277,7 +3277,7 @@ async function boot() {
 }
 
 /* ---------------- 正文字号 / 加粗 ----------------
-   Slider is 100–120% of today's size. 100% is the minimum and the default.
+   Slider is 100–150% of today's size. 100% is the minimum and the default.
    Only --read copy grows. Badges, chips, tabs, and the share-card image stay put.
    rr.text.v1 stores the percent (legacy md = 110, lg = 120). rr.bold.v1 is "1" when bold. */
 const TEXT_KEY = 'rr.text.v1';
@@ -3287,7 +3287,7 @@ function textPercent(raw) {
   if (raw === 'lg') return 120;
   const n = Number.parseInt(raw, 10);
   if (!Number.isFinite(n) || n < 100) return 100;
-  if (n > 120) return 120;
+  if (n > 150) return 150;
   return n;
 }
 function boldOn(raw) {

@@ -566,7 +566,7 @@ test('a vertical pan scrolls the abstract and is not a tap that closes the card'
   assert.match(abs, /overscroll-behavior:contain/);
 });
 
-test('text size slider stays between 100 and 120 and bold is off by default', () => {
+test('text size slider stays between 100 and 150 and bold is a light step', () => {
   const src = readFileSync(new URL('../../assets/app.js', import.meta.url), 'utf8');
   const start = src.indexOf('function textPercent');
   const end = src.indexOf('function applyTextSize');
@@ -577,13 +577,15 @@ test('text size slider stays between 100 and 120 and bold is off by default', ()
   assert.equal(textPercent('md'), 110);
   assert.equal(textPercent('lg'), 120);
   assert.equal(textPercent('115'), 115);
-  assert.equal(textPercent('140'), 120);
+  assert.equal(textPercent('140'), 140);
+  assert.equal(textPercent('150'), 150);
+  assert.equal(textPercent('180'), 150);
   assert.equal(boldOn(null), false);
   assert.equal(boldOn('0'), false);
   assert.equal(boldOn('1'), true);
 
   const html = readFileSync(new URL('../../index.html', import.meta.url), 'utf8');
-  assert.match(html, /id="typeRange"[^>]*min="100"[^>]*max="120"/);
+  assert.match(html, /id="typeRange"[^>]*min="100"[^>]*max="150"/);
   assert.match(html, /id="boldBtn"/);
   assert.match(html, /rr\.bold\.v1/);
   assert.doesNotMatch(html, /data-step="md"/);
@@ -594,8 +596,10 @@ test('text size slider stays between 100 and 120 and bold is off by default', ()
   assert.match(css, /\.art-title\{[^}]*calc\(14px \* var\(--read\)\)/);
   assert.match(css, /\.sec-txt\{[^}]*calc\(12\.5px \* var\(--read\)\)/);
   const bold = css.slice(css.indexOf('html[data-bold]'), css.indexOf('html,body{height:100%}'));
-  assert.match(bold, /\.art-title/);
   assert.match(bold, /\.sec-txt/);
+  assert.match(bold, /font-weight:600/);
+  assert.doesNotMatch(bold, /font-weight:800/);
+  assert.doesNotMatch(bold, /\.art-title/);
   assert.doesNotMatch(bold, /\.sec-lab/);
   assert.doesNotMatch(bold, /\.chip/);
   assert.doesNotMatch(bold, /\.seg/);
