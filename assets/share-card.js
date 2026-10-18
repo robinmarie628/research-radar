@@ -1,7 +1,8 @@
 /* Share card. Ports make_card.py: 1080-wide navy newspaper on cream,
    corners filled #111111 (opaque; WeChat paints transparent corners white).
    Font sizes and line heights are the GIMAP6 reference and never shrink.
-   A long paper loses a subtitle or a quotation, or the card grows, instead. */
+   Three quotations stay when they fit in 1920px. Otherwise the card uses two
+   and ends at the content, with the reference gap above the bottom bar. */
 (function () {
   const S = 1.8;
   const W = Math.round(600 * S);
@@ -572,7 +573,7 @@
     const rawHeight = layout(ctx, full, G, false, 0, markPad, markDrop).height;
     let next = full;
     let dropped = false;
-    if (rawHeight > TARGET_H + 2 && quotes.length > 2) {
+    if (rawHeight > MAX_H && quotes.length > 2) {
       dropped = true;
       let drop = 0;
       for (let i = 1; i < quotes.length; i++) {
@@ -598,11 +599,9 @@
     let markPad = 0;
     let markDrop = 0;
     let fit = fitSpec(probe, spec || {}, G, markPad, markDrop);
-    let slack = 0;
+    const slack = 0;
     let laid = null;
     for (let i = 0; i < 20; i++) {
-      const contentH = layout(probe, fit.spec, G, false, 0, markPad, markDrop).height;
-      slack = contentH < TARGET_H ? TARGET_H - contentH : 0;
       laid = layout(probe, fit.spec, G, false, slack, markPad, markDrop);
       const hits = forbiddenOverlaps(laid.blocks);
       if (!hits.length) break;

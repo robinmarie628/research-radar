@@ -9,7 +9,9 @@ export const ABSTRACT_MAX = 14000;
 export const QUOTE_SYSTEM = `You choose quotations from one medical abstract for a Chinese physician.
 You will receive a numbered list of sentences. The number in brackets is the index.
 Pick the 3 sentences that are the most clinically meaningful and the most likely to start a discussion.
-Prefer findings and conclusions. Skip methods sentences that are full of numbers, sample sizes, and confidence intervals.
+Prefer, in this order: an interpretation or conclusion (sentences that start with Interpretation, These findings, Our results suggest, or that state what the result means), then a key finding in plain language.
+A plain-language finding is better than a sentence dense with confidence intervals, sample sizes, or p values.
+Never choose a sentence about trial registration, an NCT number, ClinicalTrials.gov, funding, ethics approval, accrual or follow-up status, or copyright, if any other sentence exists.
 Prefer a sentence under 220 characters. Do not stitch clauses together to make one shorter.
 Return JSON only, no markdown: {"quotes":[{"i":0,"zh":"..."},{"i":1,"zh":"..."},{"i":2,"zh":"..."}]}
 Rules:
@@ -22,9 +24,36 @@ Rules:
 
 const ABBREV = /(?:et al|Figs?|vs|Dr|Mr|Mrs|Ms|Prof|e\.g|i\.e|U\.S|No|Vol|Jr|Sr|St|approx|ca|al)$/i;
 const HINT = /patient|risk|mortality|death|outcome|significant|associat|treatment|therapy|reduc|increas|improv|therefore|thus|we found|demonstrat|suggest|benefit|hazard|survival|disease|failure|conclus|trial|effect|among|compared/i;
-const FINDING = /therefore|thus|conclus|we found|these findings|in summary|suggest|demonstrat/i;
+const FINDING = /therefore|thus|conclus|we found|these findings|in summary|suggest|demonstrat|indicates that/i;
+const INTERP = /^(interpretation\b|these findings\b|our results\b|our findings\b|we conclude\b|in conclusion\b|taken together\b|collectively\b)/i;
+const INTERP_BODY = /\b(these findings|our results suggest|we conclude|indicates that|adds substantial evidence|remains investigational|requires .{0,48}validation)\b/i;
+const RESULT = /\b(detected|reduced|increased|fewer|more likely|associated|response rate|survival|mortality|showed|enabled|avoided|no increase|non-inferior|deaths? occurred|adverse events occurred)\b/i;
+
+function isDesign(s) {
+  return /^(?:this (?:single-arm|randomised|randomized|multicentre|multicenter|phase|open-label|study|trial)|[A-Za-z0-9-]{2,} is a )\b/i.test(s)
+    || /\b(randomly allocated|randomly assigned|was conducted|were identified by|was analysed in|was analyzed in|safety was assessed|protocol-permitted|eligible patients were|we aimed to|was defined as)\b/i.test(s)
+    || /\b(?:primary|secondary) endpoints? (?:of|was the|were the)\b/i.test(s)
+    || /\bprespecified secondary\b/i.test(s)
+    || /\bsecondary outcome was\b/i.test(s);
+}
 const METHODS_LEAD = /^(between \d|women aged|the median age|patients were|participants were|we randomly|randomly allocated|eligible |inclusion |exclusion |methods\b|this (?:study|trial) (?:is|was) registered)/i;
 export const PREFER_LEN = 220;
+
+/** Registration, funding, ethics, accrual status, and copyright lines. */
+export function isBoilerplate(s) {
+  const t = String(s || '');
+  if (/\bNCT\s*\d{5,}\b/i.test(t)) return true;
+  if (/clinicaltrials\.gov/i.test(t)) return true;
+  if (/\b(is|was|were|been)\s+registered\b/i.test(t)) return true;
+  if (/\btrial registration\b/i.test(t)) return true;
+  if (/\b(funded by|funding was|sources? of funding|financial support|was supported by|supported by (?:a |the )?(?:grant|fund)|grants? from)\b/i.test(t)) return true;
+  if (/\b(ethics committees?|ethical approval|ethics approval|institutional review board|\bIRB\b|informed consent was)\b/i.test(t)) return true;
+  if (/\b(closed to accrual|open to accrual|closed to enrolment|closed to enrollment|accrual is|accrual was)\b/i.test(t)) return true;
+  if (/\bfollow-?up is (?:ongoing|continuing|complete|completed)\b/i.test(t)) return true;
+  if (/\b(copyright|all rights reserved)\b/i.test(t) || /©/.test(t)) return true;
+  if (/supplementary materials/i.test(t)) return true;
+  return false;
+}
 
 /** Methods prose packed with counts and confidence intervals. */
 export function isDenseMethods(s) {
@@ -41,10 +70,14 @@ export function isDenseMethods(s) {
 
 function sentenceQuality(s) {
   let q = 0;
+  if (isBoilerplate(s)) return -20;
   if (s.length <= PREFER_LEN) q += 3;
   else if (s.length > 280) q -= 3;
   if (isDenseMethods(s)) q -= 6;
-  else if (METHODS_LEAD.test(s)) q -= 2;
+  else if (isDesign(s) || METHODS_LEAD.test(s)) q -= 4;
+  if (INTERP.test(s)) q += 8;
+  else if (INTERP_BODY.test(s)) q += 6;
+  if (RESULT.test(s) && !isDenseMethods(s)) q += 3;
   if (HINT.test(s)) q += 2;
   if (FINDING.test(s)) q += 2;
   return q;
@@ -90,40 +123,46 @@ export function findVerbatim(candidate, sentences) {
 export function pickHeuristic(sentences, n = 3) {
   const rows = sentences.map((s, i) => {
     let sc = 0;
+    if (isBoilerplate(s)) sc -= 20;
     if (HINT.test(s)) sc += 4;
+    if (INTERP.test(s)) sc += 8;
+    else if (INTERP_BODY.test(s)) sc += 6;
     if (FINDING.test(s)) sc += 3;
+    if (RESULT.test(s) && !isDenseMethods(s)) sc += 3;
     const len = s.length;
     if (len <= PREFER_LEN && len >= 60) sc += 4;
     else if (len <= PREFER_LEN) sc += 2;
     else if (len <= 280) sc -= 1;
     else sc -= 4;
     if (isDenseMethods(s)) sc -= 8;
-    else if (METHODS_LEAD.test(s)) sc -= 5;
+    if (isDesign(s) || METHODS_LEAD.test(s)) sc -= 6;
     if (sentences.length > 1) sc += (i / (sentences.length - 1)) * 2;
     return { s, i, sc, len };
   }).sort((a, b) => b.sc - a.sc || a.len - b.len);
 
+  const plain = (row) => !isBoilerplate(row.s) && !isDenseMethods(row.s) && !isDesign(row.s);
   const passes = [
-    (row) => row.len <= PREFER_LEN && !isDenseMethods(row.s),
-    (row) => !isDenseMethods(row.s),
+    (row) => plain(row) && row.len <= 320 && (INTERP.test(row.s) || INTERP_BODY.test(row.s) || FINDING.test(row.s)),
+    (row) => plain(row) && row.len <= PREFER_LEN && (RESULT.test(row.s) || HINT.test(row.s)),
+    (row) => plain(row) && row.len <= PREFER_LEN,
+    (row) => !isBoilerplate(row.s) && !isDesign(row.s) && (RESULT.test(row.s) || FINDING.test(row.s)),
+    (row) => !isBoilerplate(row.s) && !isDesign(row.s),
     () => true,
   ];
   const picked = [];
-  const take = (ok, gap) => {
+  const take = (ok) => {
     for (const row of rows) {
       if (picked.length >= n) return;
       if (!ok(row)) continue;
       if (picked.some(p => p.i === row.i)) continue;
-      if (gap && sentences.length >= n + 2 && picked.some(p => Math.abs(p.i - row.i) < gap)) continue;
       picked.push(row);
     }
   };
-  for (const ok of passes.slice(0, 2)) {
-    take(ok, 2);
-    take(ok, 0);
+  for (const ok of passes.slice(0, 5)) {
+    take(ok);
     if (picked.length >= n) break;
   }
-  if (!picked.length) take(passes[2], 0);
+  if (!picked.length) take(passes[5]);
   return picked.sort((a, b) => a.i - b.i).slice(0, n).map(p => p.s);
 }
 
@@ -154,8 +193,9 @@ export function resolveQuotePicks(abstract, modelQuotes) {
       out.push({ en, zh: '' });
     }
   }
-  if (sentences.some(s => !isDenseMethods(s))) {
-    const kept = out.filter(p => !isDenseMethods(p.en));
+  const spare = sentences.some(s => !isBoilerplate(s) && !isDenseMethods(s));
+  if (spare || sentences.some(s => !isBoilerplate(s))) {
+    const kept = out.filter(p => !isBoilerplate(p.en) && !(spare && isDenseMethods(p.en)));
     out.length = 0;
     for (const p of kept) out.push(p);
     const taken = new Set(out.map(p => p.en));

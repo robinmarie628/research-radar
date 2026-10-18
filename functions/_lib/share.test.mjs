@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import {
   splitSentences, findVerbatim, pickHeuristic, resolveQuotePicks, parseQuoteResponse,
-  isDenseMethods,
+  isDenseMethods, isBoilerplate,
 } from './quotes.js';
 import { handleTranslate, __setMtResources } from '../api/translate.js';
 
@@ -65,6 +65,31 @@ test('a long methods pick is replaced by a shorter finding', () => {
   assert.equal(picks.some(p => /不该用这句方法学/.test(p.zh)), false);
   assert.equal(picks.some(p => p.en === finding), true);
   for (const p of picks) assert.ok(abstract.includes(p.en));
+});
+
+test('registration, funding, ethics, and copyright lines are never quoted', () => {
+  const interp = 'These findings suggest that tomosynthesis screening avoids about a quarter of invasive interval cancers.';
+  const second = 'Our results suggest the trial adds evidence for tomosynthesis in breast cancer screening programmes.';
+  const plain = 'Women screened with tomosynthesis had fewer interval cancers than women screened with digital mammography.';
+  const reg = 'The study is registered on ClinicalTrials.gov (NCT03377036) and is closed to accrual but follow-up is ongoing.';
+  const fund = 'This trial was funded by the German Cancer Aid and the authors report no other support.';
+  const ethics = 'The ethics committee approved the protocol and written informed consent was obtained from every participant.';
+  const copy = 'Copyright 2026 the authors, all rights reserved, and reuse requires permission from the publisher.';
+  for (const s of [reg, fund, ethics, copy]) assert.equal(isBoilerplate(s), true, s);
+  assert.equal(isBoilerplate(interp), false);
+  assert.equal(isBoilerplate('Median follow-up was 24 months in both groups.'), false);
+  const abstract = [plain, reg, fund, ethics, copy, interp, second].join(' ');
+  const picked = pickHeuristic(splitSentences(abstract), 3);
+  assert.equal(picked.length, 3);
+  for (const s of picked) assert.equal(isBoilerplate(s), false, s);
+  assert.equal(picked.includes(interp), true);
+  assert.equal(picked.includes(second), true);
+  const sentences = splitSentences(abstract);
+  const forced = resolveQuotePicks(abstract, [
+    { i: sentences.findIndex(s => /NCT03377036/.test(s)), zh: '注册信息' },
+  ]);
+  assert.equal(forced.some(p => /NCT|注册信息|funded by|ethics committee|Copyright/.test(p.en + p.zh)), false);
+  assert.equal(forced.some(p => p.en === interp), true);
 });
 
 test('quote JSON parser reads indexes', () => {
