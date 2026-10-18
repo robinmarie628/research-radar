@@ -11,7 +11,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.18.26';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.18.27';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -26,12 +26,31 @@ const DAYS     = 30;        // discovery window — abstracts lag 2–4 days, so
 const MAXJ     = 100;       // Europe PMC page size (resultType=core). One page is not the pool.
 const CHUNKS   = 3;         // ISSN slices. Each slice is paged until every journal has its cap.
 const EPMC_PAGES = 15;      // 1500 core rows per slice — enough for the busiest third of the pool
-const CAP_PER_JOURNAL = 8;
+/* 30 天池。旗舰 + 子刊合计按 7:3（FLAGSHIP_SHARE）。专科刊不进这个比例。
+   每刊上限：旗舰 28、专科 6。子刊先保证领域保底（DOMAIN_FLOOR），
+   保底之后再按影响因子轮流补到大约 30%。一个领域若窗口里不足 6 篇，就停在有的篇数。
+   全池大约 300–400（POOL_MAX）。 */
+const FLAGSHIP_CAP = 28;
+const SUB_CAP = 3;
+const SPECIALTY_CAP = 6;
+const FLAGSHIP_SHARE = 0.7;
+const DOMAIN_FLOOR = 6;
+const POOL_MAX = 400;
+function journalCap(meta) {
+  // Subs may be fetched up to the domain floor. The 7:3 budget, not this
+  // ceiling, is what leaves a typical companion journal at one or two papers.
+  if (meta?.tier === 'flagship') return FLAGSHIP_CAP;
+  if (meta?.tier === 'sub') return Math.max(SUB_CAP, DOMAIN_FLOOR);
+  return SPECIALTY_CAP;
+}
+function articleTier(a) {
+  return a?.tier === 'flagship' || a?.tier === 'sub' ? a.tier : 'specialty';
+}
 const PICK_N   = 8;         // 今日精选 size
 const PICK_BASIC    = 4;    // …其中基础 / 分子医学
 const PICK_CLINICAL = 4;    // …其中临床研究
 const TTL      = 30 * 60e3; // cache freshness
-const LS_KEY   = 'rr.cache.v3';  // v2 pools were built from a single page per slice and omitted NEJM / Nature
+const LS_KEY   = 'rr.cache.v4';  // v3 pools used one cap of 8 for every journal
 const SEEN_KEY = 'rr.seen.v1';
 const FAV_KEY  = 'rr.fav.v1';
 /* Crossref polite pool + NCBI identification. Browsers forbid a custom
@@ -550,7 +569,7 @@ function epmcWindow() {
     lo: iso(new Date(Date.now() - DAYS * 864e5)),
   };
 }
-/** Page one ISSN slice until every journal in it has CAP_PER_JOURNAL hits, or the cursor ends. */
+/** Page one ISSN slice until every journal has its tier cap, or the cursor ends. */
 async function fetchEpmcChunk(slice) {
   const { lo, hi } = epmcWindow();
   const issns = [];
@@ -578,12 +597,12 @@ async function fetchEpmcChunk(slice) {
       const key = String(r.doi || r.id || r.pmid || '').toLowerCase();
       if (!meta || !key || seen.has(key)) continue;
       const bucket = meta.issn;
-      if ((counts[bucket] || 0) >= CAP_PER_JOURNAL) continue;
+      if ((counts[bucket] || 0) >= journalCap(meta)) continue;
       seen.add(key);
       counts[bucket] = (counts[bucket] || 0) + 1;
       out.push(r);
     }
-    if (slice.every(m => (counts[m.issn] || 0) >= CAP_PER_JOURNAL)) break;
+    if (slice.every(m => (counts[m.issn] || 0) >= journalCap(m))) break;
     const next = d.nextCursorMark;
     if (!next || next === cursor) break;
     cursor = next;
@@ -660,6 +679,7 @@ function mapArticle(r) {
     issn: meta?.issn || issn,
     platforms: Array.isArray(meta?.platforms) ? meta.platforms.slice() : [],
     domain: meta?.domain || '综合医学',
+    tier: meta?.tier || 'specialty',
     imp: meta?.if ?? 0,
     basic: isBasic,
     studyKey: study.key, studyZh: study.zh, studyRank: study.rank,
@@ -680,17 +700,101 @@ function mapArticle(r) {
   };
 }
 
-function balanceByJournal(items) {
-  const per = {};
-  return items.filter(a => (per[a.journal] = (per[a.journal] || 0) + 1) <= CAP_PER_JOURNAL);
+function composePool(items) {
+  const ordered = [...items].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  const per = {}, capped = [];
+  for (const a of ordered) {
+    if ((per[a.journal] || 0) >= journalCap({ tier: articleTier(a) })) continue;
+    per[a.journal] = (per[a.journal] || 0) + 1;
+    capped.push(a);
+  }
+  const flagship = capped.filter(a => articleTier(a) === 'flagship');
+  const subs = capped.filter(a => articleTier(a) === 'sub');
+  const specialty = capped.filter(a => articleTier(a) === 'specialty');
+  const kept = flagship.concat(specialty);
+  const keptIds = new Set(kept.map(a => a.id));
+  const seenSub = new Set();
+  for (const a of subs) {
+    if (seenSub.has(a.journal)) continue;
+    seenSub.add(a.journal);
+    kept.push(a);
+    keptIds.add(a.id);
+  }
+  const domainCount = domain => kept.filter(a => a.domain === domain).length;
+  const domains = [];
+  const seenD = new Set();
+  for (const a of capped) {
+    const d = a.domain || '综合医学';
+    if (!seenD.has(d)) { seenD.add(d); domains.push(d); }
+  }
+  for (const domain of domains) {
+    let need = DOMAIN_FLOOR - domainCount(domain);
+    if (need <= 0) continue;
+    const extra = capped.filter(a => a.domain === domain && !keptIds.has(a.id))
+      .sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    for (const a of extra) {
+      if (need <= 0) break;
+      kept.push(a);
+      keptIds.add(a.id);
+      need--;
+    }
+  }
+  const targetSub = flagship.length
+    ? Math.round(flagship.length * (1 - FLAGSHIP_SHARE) / FLAGSHIP_SHARE)
+    : subs.length;
+  const currentSub = kept.filter(a => articleTier(a) === 'sub').length;
+  let budget = Math.max(0, targetSub - currentSub);
+  const groups = new Map();
+  for (const a of subs) {
+    if (keptIds.has(a.id)) continue;
+    if (!groups.has(a.journal)) groups.set(a.journal, []);
+    groups.get(a.journal).push(a);
+  }
+  const order = [...groups.keys()].sort((a, b) => (groups.get(b)[0].imp || 0) - (groups.get(a)[0].imp || 0));
+  const perSub = {};
+  for (const a of kept) {
+    if (articleTier(a) === 'sub') perSub[a.journal] = (perSub[a.journal] || 0) + 1;
+  }
+  let added = 0;
+  while (added < budget) {
+    let moved = false;
+    for (const j of order) {
+      if (added >= budget) break;
+      if ((perSub[j] || 0) >= SUB_CAP) continue;
+      const g = groups.get(j);
+      if (g.length) {
+        const a = g.shift();
+        kept.push(a);
+        keptIds.add(a.id);
+        perSub[j] = (perSub[j] || 0) + 1;
+        added++;
+        moved = true;
+      }
+    }
+    if (!moved) break;
+  }
+  if (kept.length > POOL_MAX) {
+    const drop = new Set();
+    const liveCount = domain => kept.filter(a => !drop.has(a.id) && a.domain === domain).length;
+    const extras = kept.filter(a => articleTier(a) === 'specialty')
+      .sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+    for (const a of extras) {
+      if (kept.length - drop.size <= POOL_MAX) break;
+      if (liveCount(a.domain) <= DOMAIN_FLOOR) continue;
+      drop.add(a.id);
+    }
+    kept.splice(0, kept.length, ...kept.filter(a => !drop.has(a.id)));
+  }
+  kept.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  return kept;
 }
 
 /** 今日精选：8 篇 = 4 篇临床 + 4 篇基础/分子医学。
- *  · 基础名额一刊一篇 —— 否则一本刊（如 Cell）能占满，出现两篇几乎雷同的论文
- *  · 临床名额优先覆盖不同领域
- *  · 某一边候选不足时，用另一边补足总数 */
+ *  先拿旗舰（基础一刊一篇；临床先一刊一篇，再允许第二篇），
+ *  旗舰不够再用专科，最后才是子刊。 */
 function curate(items, n = PICK_N) {
-  const rank = a => a.studyRank * 1000 + (a.imp || 0) + (a.structured ? 40 : 0);
+  const rank = a => (articleTier(a) === 'flagship' ? 2 : articleTier(a) === 'specialty' ? 1 : 0) * 100000
+    + a.studyRank * 1000 + (a.imp || 0) + (a.structured ? 40 : 0);
   const pool = [...items].sort((a, b) => rank(b) - rank(a));
   const picked = [], perJ = {}, perD = {};
   const cnt = basic => picked.filter(p => !!p.basic === basic).length;
@@ -702,12 +806,26 @@ function curate(items, n = PICK_N) {
     perD[it.domain] = (perD[it.domain] || 0) + 1;
     return true;
   };
-  // 1) 基础 / 分子医学：目标 4 篇，一刊一篇
+  // 1) 基础旗舰，一刊一篇
+  for (const it of pool) {
+    if (cnt(true) >= PICK_BASIC) break;
+    if (it.basic && articleTier(it) === 'flagship') add(it, 1);
+  }
+  // 2) 临床旗舰，先一刊一篇，再允许第二篇
+  for (const it of pool) {
+    if (cnt(false) >= PICK_CLINICAL) break;
+    if (!it.basic && articleTier(it) === 'flagship') add(it, 1);
+  }
+  for (const it of pool) {
+    if (cnt(false) >= PICK_CLINICAL) break;
+    if (!it.basic && articleTier(it) === 'flagship') add(it, 2);
+  }
+  // 3) 基础其余名额，一刊一篇（专科先于子刊，因为 pool 已按层级排过）
   for (const it of pool) {
     if (cnt(true) >= PICK_BASIC) break;
     if (it.basic) add(it, 1);
   }
-  // 2) 临床研究：目标 4 篇，优先覆盖不同领域
+  // 4) 临床其余名额，优先不同领域
   for (const it of pool) {
     if (cnt(false) >= PICK_CLINICAL) break;
     if (!it.basic && !perD[it.domain]) add(it, 2);
@@ -761,7 +879,7 @@ async function loadResearchNow(force) {
         seen.add(k); raw.push(r);
       }
     }
-    const items = balanceByJournal(
+    const items = composePool(
       raw.map(mapArticle).filter(Boolean).sort((a, b) => b.ts - a.ts)
     );
     const byKey = {};
@@ -883,6 +1001,7 @@ function mapCrossrefWork(item, meta, lo, hi) {
     issn: meta?.issn || '',
     platforms: Array.isArray(meta?.platforms) ? meta.platforms.slice() : [],
     domain: meta?.domain || '综合医学',
+    tier: meta?.tier || 'specialty',
     imp: meta?.if ?? 0,
     basic: isBasic,
     studyKey: study.key, studyZh: study.zh, studyRank: study.rank,
@@ -1278,7 +1397,7 @@ async function loadDigest() {
 }
 
 /** Snapshot articles, keyed by DOI. Used when a digest pick has fallen out of
- *  the live Europe PMC pool (that pool keeps only 8 papers per journal). */
+ *  the live Europe PMC pool. */
 async function loadSnapArticles() {
   if (S.snapByDoi) return S.snapByDoi;
   const snap = await trySnapshot('data/snapshot-journals.json');
@@ -1308,27 +1427,15 @@ async function loadBuilderDigest() {
 
 function applyDigest() {
   if (!S.digest.loaded || !S.jr.all) return;
-  const ageDays = S.digest.date ? (Date.now() - Date.parse(S.digest.date)) / 864e5 : 999;
-  if (ageDays > 5) {                              // stale — live curation, still 4+4
-    S.jr.picks = composeEight(curate(S.jr.all), S.jr.all);
-    return;
-  }
-  // A digest DOI missing from the live pool used to be dropped (`if (a) picked.push`).
-  // Nature / Nat Immunol in the 2026-10-17 digest fell out of the 8-per-journal cap,
-  // so 今日精选 showed 6. Resolve every digest row, from the live article, else the
-  // snapshot, else the digest record itself, then top up to 4 clinical + 4 basic.
+  // Notes still attach when a pooled paper is in the digest. The shortlist
+  // itself is the flagship-first curation, not the digest's DOI order.
   const byDoi = new Map(S.jr.all.map(a => [String(a.doi || '').toLowerCase(), a]));
-  const preferred = [];
-  for (const d of S.digest.items) {
+  for (const d of S.digest.items || []) {
     const doi = String(d.doi || '').toLowerCase();
-    let a = doi ? byDoi.get(doi) : null;
+    const a = doi ? byDoi.get(doi) : null;
     if (a) a.digest = d;
-    else a = articleFromDigest(d);
-    if (!a) continue;
-    ensureInAll(a);
-    preferred.push(a);
   }
-  S.jr.picks = composeEight(preferred, S.jr.all);
+  S.jr.picks = curate(S.jr.all);
 }
 
 function articleFromDigest(d) {
@@ -1347,6 +1454,7 @@ function articleFromDigest(d) {
     issn: meta?.issn || '',
     platforms: Array.isArray(d.platforms) ? d.platforms : (meta?.platforms || []),
     domain: d.domain || meta?.domain || '综合医学',
+    tier: meta?.tier || 'specialty',
     imp: meta?.if ?? 0,
     basic: d.basic != null ? !!d.basic : !!meta?.basic,
     studyKey: d.studyKey || 'other',
@@ -1395,7 +1503,8 @@ function composeEight(preferred, pool) {
     if (a.basic && nb < PICK_BASIC && take(a)) nb++;
     else if (!a.basic && nc < PICK_CLINICAL && take(a)) nc++;
   }
-  const rank = a => (a.studyRank || 0) * 1000 + (a.imp || 0);
+  const rank = a => (articleTier(a) === 'flagship' ? 2 : articleTier(a) === 'specialty' ? 1 : 0) * 100000
+    + (a.studyRank || 0) * 1000 + (a.imp || 0);
   const rest = [...(pool || [])].sort((a, b) => rank(b) - rank(a));
   const fill = (basic, need) => {
     for (const cap of [basic ? 1 : 2, 99]) {
@@ -2592,9 +2701,13 @@ const JOURNAL_ZH = {
   'Chest': '《胸》',
   'Ophthalmology': '《眼科学》',
   'Ophthalmol Retina': '《眼科学·视网膜》',
-  'Ophthalmol Glaucoma': '《眼科学·青光眼》',
-  'Ophthalmol Sci': '《眼科学·科学》',
   'Am J Ophthalmol': '《美国眼科杂志》',
+  'JAMA Ophthalmol': '《美国医学会眼科杂志》',
+  'Br J Ophthalmol': '《英国眼科杂志》',
+  'Prog Retin Eye Res': '《视网膜与眼研究进展》',
+  'IOVS': '《眼科研究与视觉科学》',
+  'Surv Ophthalmol': '《眼科学综述》',
+  'Eye': '《眼》',
   'Ann Oncol': '《肿瘤学年鉴》',
   'J Hepatol': '《肝脏病学杂志》',
   'Kidney Int': '《肾脏国际》',

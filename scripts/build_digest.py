@@ -195,15 +195,17 @@ def _doi(a):
 def choose_eight(fresh, full, n=8, n_basic=4, n_clinical=4):
     """Exactly n_basic basic + n_clinical clinical, or None.
 
-    Prefer `fresh` (not in pushed.txt). Top up from `full` (the whole window,
-    including papers already pushed) and relax the per-journal cap only after
-    the strict pass fails. Never borrows from the other side to pad the total.
+    Prefer flagships, then specialty journals, then subs. Within that, prefer
+    `fresh` (not in pushed.txt). Top up from `full` and relax the per-journal
+    cap only after the strict pass fails. Never borrows from the other side
+    to pad the total.
     """
     if n_basic + n_clinical != n:
         n_basic, n_clinical = n // 2, n - (n // 2)
 
     def rank(a):
-        return (a.get("studyRank") or 0) * 1000 + (a.get("imp") or 0)
+        tier = {"flagship": 2, "specialty": 1}.get(a.get("tier") or "", 0)
+        return tier * 100000 + (a.get("studyRank") or 0) * 1000 + (a.get("imp") or 0)
 
     picked, used = [], set()
     nb = nc = 0
@@ -237,9 +239,9 @@ def choose_eight(fresh, full, n=8, n_basic=4, n_clinical=4):
             if nb >= n_basic and nc >= n_clinical:
                 return
 
-    fill(fresh or [], ((1, 2), (99, 99)))
+    fill(fresh or [], ((1, 1), (1, 2), (99, 99)))
     if nb < n_basic or nc < n_clinical:
-        fill(full or [], ((1, 2), (99, 99)))
+        fill(full or [], ((1, 1), (1, 2), (99, 99)))
     if nb != n_basic or nc != n_clinical or len(picked) != n:
         return None
     return picked

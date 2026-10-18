@@ -61,9 +61,18 @@ POOL = {
     # both are too new for MEDLINE and return 0 hits from Europe PMC, so they are omitted.
     "0161-6420": ("眼科",       False, "Ophthalmology",       13.1),
     "2468-6530": ("眼科",       False, "Ophthalmol Retina",    5.9),
-    "2589-4196": ("眼科",       False, "Ophthalmol Glaucoma",  3.5),
-    "2666-9145": ("眼科",       False, "Ophthalmol Sci",       4.2),
     "0002-9394": ("眼科",       False, "Am J Ophthalmol",      4.1),
+    # Added 2026-10-18. Impact factors are 2025 JIF (publisher pages for
+    # JAMA Ophthalmology and Prog Retin Eye Res; the 2025 ophthalmology
+    # table for the others). Eye is the Royal College journal. Survey of
+    # Ophthalmology is the standard review title. Both are kept; Ophthalmol
+    # Glaucoma and Ophthalmol Sci are not.
+    "2168-6165": ("眼科",       False, "JAMA Ophthalmol",     10.5),
+    "0007-1161": ("眼科",       False, "Br J Ophthalmol",      4.5),
+    "1350-9462": ("眼科",       False, "Prog Retin Eye Res",  16.2),
+    "0146-0404": ("眼科",       False, "IOVS",                 5.5),
+    "0039-6257": ("眼科",       False, "Surv Ophthalmol",      6.8),
+    "0950-222X": ("眼科",       False, "Eye",                  4.4),
     "0923-7534": ("肿瘤",       False, "Ann Oncol",           56.7),
     "0168-8278": ("消化肝病",   False, "J Hepatol",           26.8),
     "0085-2538": ("肾脏",       False, "Kidney Int",          14.8),
@@ -104,6 +113,33 @@ POOL = {
 
 # mirrors BASIC_FRAGMENTS in the prompt doc: basic is decided by journal NAME
 BASIC_FRAGMENTS = ("Cell", "Nature", "Science", "Neuron", "JACC: Basic")
+
+# Six general flagships. Circulation and JACC are cardiology flagships of
+# their societies, so they stay specialty rather than joining this set.
+FLAGSHIP_ISSNS = {
+    "0140-6736",  # Lancet
+    "0028-4793",  # NEJM
+    "0959-8138",  # BMJ
+    "0028-0836",  # Nature
+    "0036-8075",  # Science
+    "0092-8674",  # Cell
+}
+# Family companions and the two Science spinouts. Ophthalmology's own
+# companion (Ophthalmol Retina) is a sub; the AAO flagship itself is specialty.
+SUB_SHORTS = {"EClinicalMedicine", "Sci Adv", "Sci Transl Med", "Ophthalmol Retina"}
+
+
+def tier_for(issn, short):
+    """flagship | sub | specialty. See FLAGSHIP_ISSNS / SUB_SHORTS."""
+    if issn in FLAGSHIP_ISSNS:
+        return "flagship"
+    name = short or ""
+    if name in SUB_SHORTS:
+        return "sub"
+    if (name.startswith("Lancet ") or name.startswith("JACC ")
+            or name.startswith("Nat ") or name.startswith("Cell ")):
+        return "sub"
+    return "specialty"
 
 # Full-text buttons for an Elsevier PII. The page shows ClinicalKey when "ck"
 # is present, otherwise ScienceDirect when "sd" is present, otherwise DOI only.
@@ -153,10 +189,10 @@ PLATFORMS = {
     # other Elsevier clinical titles named in the pool
     "0012-3692": CK_AND_SD,  # Chest
     "0161-6420": CK_AND_SD,  # Ophthalmology
-    "2468-6530": CK_AND_SD,
-    "2589-4196": CK_AND_SD,
-    "2666-9145": CK_AND_SD,
+    "2468-6530": CK_AND_SD,  # Ophthalmol Retina
     "0002-9394": CK_AND_SD,  # Am J Ophthalmol
+    "1350-9462": CK_AND_SD,  # Prog Retin Eye Res
+    "0039-6257": CK_AND_SD,  # Surv Ophthalmol
     "0923-7534": CK_AND_SD,  # Ann Oncol
     "0168-8278": CK_AND_SD,  # J Hepatol
     "0085-2538": CK_AND_SD,  # Kidney Int
@@ -286,7 +322,8 @@ def main():
         # basic flag must agree with the doc's name-fragment rule
         by_name = any(f in title for f in BASIC_FRAGMENTS) or basic
         row = {"issn": issn, "title": title or short, "short": short,
-               "domain": domain, "basic": bool(by_name), "if": imp, "n90": hits,
+               "domain": domain, "tier": tier_for(issn, short),
+               "basic": bool(by_name), "if": imp, "n90": hits,
                "platforms": resolve_platforms(issn, previous.get(issn))}
         if essn and essn != issn:
             row["essn"] = essn
