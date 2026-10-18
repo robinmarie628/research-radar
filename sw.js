@@ -1,5 +1,5 @@
 /* 科研雷达 service worker — app shell cached, data always network-first */
-const V = 'rr-v41';
+const V = 'rr-v42';
 const SHELL = [
   './', './index.html', './assets/styles.css', './assets/app.js',
   './assets/cite.js', './assets/share-card.js', './assets/qrcode.js',

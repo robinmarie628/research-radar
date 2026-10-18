@@ -86,6 +86,13 @@ export function normTitle(s) {
     .trim();
 }
 
+/** Chinese titles do not take a closing full stop. Quotes keep theirs. */
+export function stripTitleStop(text) {
+  const s = String(text || '').trim();
+  if (!/[\u4e00-\u9fff]/.test(s)) return s;
+  return s.replace(/(?:\s*[.。])+\s*$/g, '').trim();
+}
+
 /** Inclusive 15-calendar-day window ending today (UTC). 2026-10-18 → 2026-10-04. */
 export function titleZhCutoff(now = new Date()) {
   const d = new Date(now.getTime());

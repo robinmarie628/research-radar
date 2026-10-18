@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
-  TITLE_SYSTEM, DEFAULT_OVERRIDES, maskDrugs, restoreDrugs, applyGlossary,
+  TITLE_SYSTEM, DEFAULT_OVERRIDES, maskDrugs, restoreDrugs, applyGlossary, stripTitleStop,
   parseTranslationArray, isDrugToken, normTitle, titleZhCutoff, isAcronym,
   extractAiText,
 } from './mt.js';
@@ -60,6 +60,14 @@ test('INN stems from the brief are recognized', () => {
   for (const word of ['peptide', 'neuropeptide', 'ischemia', 'iliac', 'syndrome', 'ensemble', 'multicenter', 'intercept', 'PCI', 'behavior', 'except', 'accept']) {
     assert.equal(isDrugToken(word), false, word);
   }
+});
+
+test('a Chinese title drops a trailing full stop and keeps an interior one', () => {
+  assert.equal(stripTitleStop('非动脉性前部缺血性视神经病变中的前层高反射线。'), '非动脉性前部缺血性视神经病变中的前层高反射线');
+  assert.equal(stripTitleStop('前层高反射线.'), '前层高反射线');
+  assert.equal(stripTitleStop('前层高反射线。 '), '前层高反射线');
+  assert.equal(stripTitleStop('中间。保留'), '中间。保留');
+  assert.equal(stripTitleStop('Study.'), 'Study.');
 });
 
 test('glossary overrides fix the three known title failures', () => {
@@ -136,7 +144,7 @@ test('handler masks drugs, restores them, and caches nothing without the Cache A
         assert.equal(input.messages[0].content, TITLE_SYSTEM);
         assert.doesNotMatch(arr[0], /durvalumab/);
         assert.match(arr[0], /\[D1\]/);
-        return { response: JSON.stringify(arr.map(t => `译${t}`)) };
+        return { response: JSON.stringify(arr.map(t => `译${t}。`)) };
       },
     },
   };
@@ -154,6 +162,8 @@ test('handler masks drugs, restores them, and caches nothing without the Cache A
   assert.equal(data.items[0].id, '10.1/abc');
   assert.match(data.items[0].zh, /durvalumab/);
   assert.doesNotMatch(data.items[0].zh, /\[D1\]/);
+  assert.equal(data.items[0].zh.endsWith('。'), false);
+  assert.equal(data.items[0].zh.endsWith('.'), false);
   assert.equal(calls.length, 1);
   assert.match(calls[0].model, /qwen3-30b-a3b-fp8/);
 });

@@ -11,7 +11,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.18.41';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.18.42';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -129,10 +129,16 @@ const STUDY = [
 const STUDY_BY_KEY = Object.fromEntries(STUDY.map(s => [s.key, s]));
 const STUDY_OTHER = { key:'other', zh:'研究论文', rank:3 };
 const STUDY_LABELS = new Set(STUDY.map(s => s.zh).concat([STUDY_OTHER.zh]));
+/** Chinese titles do not take a closing full stop. Same rule as stripTitleStop in mt.js. */
+function stripTitleStop(text) {
+  const s = String(text || '').trim();
+  if (!/[\u4e00-\u9fff]/.test(s)) return s;
+  return s.replace(/(?:\s*[.。])+\s*$/g, '').trim();
+}
 /** Drop a trailing （journal，domain，study type） left by the old digest prompt.
  *  Parentheses that belong to the translation, such as （ASCVD）, stay. */
 function stripTitleMeta(text) {
-  const s = String(text || '').trim();
+  let s = stripTitleStop(text);
   const m = s.match(/(?:（|\()([^（）()]*)[，,]([^（）()]*)[，,]([^（）()]*)(?:）|\))\s*$/);
   if (!m) return s;
   const journal = m[1].trim();
@@ -140,7 +146,7 @@ function stripTitleMeta(text) {
   const kind = m[3].trim();
   const journalOk = /^[A-Za-z0-9][A-Za-z0-9 .:&/+-]{0,48}$/.test(journal);
   const domainOk = /^[\u4e00-\u9fff]{2,8}(?:与[\u4e00-\u9fff]{1,6})?$/.test(domain);
-  if (journalOk && domainOk && STUDY_LABELS.has(kind)) return s.slice(0, m.index).trim();
+  if (journalOk && domainOk && STUDY_LABELS.has(kind)) return stripTitleStop(s.slice(0, m.index));
   return s;
 }
 

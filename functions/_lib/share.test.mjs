@@ -276,6 +276,19 @@ test('a trial-design subtitle is removed and a scientific subtitle stays', () =>
   assert.equal(trimDesignSubtitle(review), 'Vitamin D and fracture risk');
 });
 
+test('the share-card title drops a trailing Chinese full stop', () => {
+  const src = readFileSync(new URL('../../assets/app.js', import.meta.url), 'utf8');
+  const start = src.indexOf('function stripTitleStop');
+  const end = src.indexOf('function stripTitleMeta');
+  const { stripTitleStop, stripTitleMeta } = new Function(
+    src.slice(start, end) + src.slice(end, src.indexOf('/* ---------------- abstract section headings')) + '\nreturn { stripTitleStop, stripTitleMeta };',
+  )();
+  const eye = '非动脉性前部缺血性视神经病变中的前层高反射线。';
+  assert.equal(stripTitleStop(eye), '非动脉性前部缺血性视神经病变中的前层高反射线');
+  assert.equal(stripTitleMeta(eye), '非动脉性前部缺血性视神经病变中的前层高反射线');
+  assert.equal(stripTitleMeta('前层高反射线（ASCVD）。'), '前层高反射线（ASCVD）');
+});
+
 test('an open-access flag is true only for Y or a Creative Commons license', () => {
   const src = readFileSync(new URL('../../assets/app.js', import.meta.url), 'utf8');
   const start = src.indexOf('function isOpenAccessFlag');
