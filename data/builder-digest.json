@@ -1,16 +1,16 @@
 {
  "date": "2026-10-19",
- "generatedAt": "2026-10-19T00:55:59Z",
+ "generatedAt": "2026-10-19T00:58:02Z",
  "model": "deepseek-flash",
- "headline": "Levie 反驳「AI 终结软件工程」，Replit 把 OpenAI 设为默认首选",
+ "headline": "Levie 说 AI 让软件工程更重要，Claude Code 应用变快，Replit 默认用 OpenAI",
  "bullets": [
-  "Levie 说 AI 不是让软件工程消失，而是让更多东西变成软件，工程师反而更重要。",
-  "Replit 澄清仍支持多模型，但把 OpenAI 定为 Agent 默认首选，理由是性能、成本和合作。",
-  "Peter Yang 实测 Claude Code app 变快变简单，但还缺浏览器操作、远程控制和实时语音。",
-  "Peter Yang 分享一段提示词，让 AI 帮你审计并清理 Google 账号里几十个应用授权。",
-  "swyx 说 Latent Space 月观看超百万，但 58% 是新观众、68% 没订阅，获客靠推荐不靠点击。"
+  "Levie 反驳「AI 终结软件工程」：agent 能写软件、用工具，反而让更多问题变成软件问题，工程师角色更吃重。",
+  "Peter Yang 夸 Claude Code 应用现在更快、比 ChatGPT 更简单，但缺浏览器操作、远程控制和实时语音。",
+  "Replit 澄清仍支持多模型，但基于性能、成本和合作，OpenAI 成为其 agent 的首选伙伴。",
+  "Peter Yang 分享一个让 AI 审计 Google 账号 45 个应用连接的提示词，先给建议再动手断开。",
+  "swyx 说 Latent Space 月观看超百万但 58% 是新观众、68% 没订阅，CTR 很差，想靠合作拉新。"
  ],
- "sentiment": "整体偏乐观和务实：builder 们忙着把 agent 接进真实工作流，同时对产品细节和分发效率保持清醒。",
+ "sentiment": "整体偏兴奋和务实：builder 们对 agent 能干的活越来越多感到乐观，同时也在吐槽分发难、订阅转化差。",
  "count": 16,
  "summarised": 16,
  "posts": [
@@ -32,7 +32,7 @@
    "handle": "rauchg",
    "text": "“What matters is the end product, whether it's a game or an engine”. Well said! https://t.co/PC90IVIa2y",
    "date": "2026-10-18T02:20:58.000Z",
-   "summaryZh": "Rauch 认同「重要的是最终产品，不管是游戏还是引擎」这句话。"
+   "summaryZh": "Rauch 赞同「重要的是最终产品，不管是游戏还是引擎」这个说法。"
   },
   {
    "id": "https://x.com/thenanyu/status/2111597172840083574",
@@ -42,7 +42,7 @@
    "handle": "thenanyu",
    "text": "I had the same conversation reminiscing at a team offsite the other day.\n\n“What did we pay attention to before AI?”\n\n“😅 Front end JavaScript frameworks” https://t.co/sKe9X8ylhL",
    "date": "2026-10-17T23:16:12.000Z",
-   "summaryZh": "Nanyu 回忆团队闲聊：AI 之前大家关注的是前端 JavaScript 框架。"
+   "summaryZh": "Nanyu 回忆团队闲聊：AI 之前大家关注什么？答案是前端 JavaScript 框架。"
   },
   {
    "id": "https://x.com/thsottiaux/status/2111566005684289735",
@@ -62,7 +62,7 @@
    "handle": "nikunj",
    "text": "introducing the modern venture capital stack (2026): \n- pre-pre-seed\n- pre-seed\n- post-pre-seed\n- mid-seed\n- pre-post-seed\n- post-seed\n- post-post-seed(?) https://t.co/WSFA45JCLu",
    "date": "2026-10-17T20:42:52.000Z",
-   "summaryZh": "Nikunj 调侃 2026 年风投融资轮次越切越细，从 pre-pre-seed 一路排到 post-post-seed。"
+   "summaryZh": "Nikunj 调侃 2026 年风投融资轮次越分越细：pre-pre-seed、post-pre-seed、post-post-seed 都出来了。"
   },
   {
    "id": "https://x.com/levie/status/2111525362446520466",
@@ -72,7 +72,7 @@
    "handle": "levie",
    "text": "The biggest misread of anyone predicting the end of software engineering was imagining that the world only needed a certain amount of software, and bringing automation to the field would reduce the need for labor. \n\nExactly the opposite is happening where essentially most things are actually turning into software. Because agents can use tools, work with computers, write software on the fly, and process data like humans (but far faster), we can now throw “software” at problems that never could reasonably be digitized before.\n\nWhat that leads to is the role of engineering taking on greater importance in the economy, because we can now engineer far more systems and processes than were possible before.\n\nIf you’re a bank trying to do new forms of trading, engineers are often your first bet. If you are in life sciences, you expect more and more research and lab work to be engineering centric. If you’re in manufacturing, you’re trying to automate more of the supply chain, all that is engineering. More and more work is shaped like software problems.\n\nYes we’re not going to be coding manually in the future. But almost everything will be code, which means those that understand it are in a fantastic position.",
    "date": "2026-10-17T18:30:51.000Z",
-   "summaryZh": "Levie 认为「AI 终结软件工程」是误读：agent 能写软件、用工具，让更多问题被软件化，工程师在经济中的角色反而更重要。"
+   "summaryZh": "Levie 认为「AI 终结软件工程」是误读：agent 让更多问题变成软件问题，工程角色在经济中反而更重要。"
   },
   {
    "id": "https://x.com/petergyang/status/2111508293818671449",
@@ -82,7 +82,7 @@
    "handle": "petergyang",
    "text": "If you have way too many apps and agents (45!) connected to your Google account like me, here's a prompt to audit and remove them:\n\n\"Help me audit my Google app connections at https://t.co/5eMX9dNhLD\n\n1. Review EVERY app across all connection categories. Ask me which ones I still use rather than guessing.\n\n2. Open each app's details. Distinguish basic Google sign-in from permissions to access Gmail, Drive, Calendar, or other data.\n\n3. Suggest which to keep, disconnect, or ask me about. Explain your reasoning and what might stop working. Flag broad permissions, unfamiliar providers, and duplicate entries.\n\n4. Show me your recommendations before changing anything. Only disconnect apps I explicitly approve, then verify they're removed. Don't delete app accounts or cancel subscriptions.”",
    "date": "2026-10-17T17:23:01.000Z",
-   "summaryZh": "Peter Yang 给了一段提示词，让 AI 逐项审计 Google 账号里 45 个应用授权，先给建议再经你批准才断开。"
+   "summaryZh": "Peter Yang 给出提示词，让 AI 审计 Google 账号里 45 个应用连接，先给建议、经批准再断开。"
   },
   {
    "id": "https://x.com/petergyang/status/2111496600522805624",
@@ -92,7 +92,7 @@
    "handle": "petergyang",
    "text": "Have to give credit to @amorriscode and team - the Claude Code app is much faster now and arguably simpler to use than ChatGPT.\n\nThe only things missing still are better browser/computer use, remote control for all threads, and live voice. https://t.co/kWULRv1A1t",
    "date": "2026-10-17T16:36:33.000Z",
-   "summaryZh": "Peter Yang 夸 Claude Code app 现在更快、用起来比 ChatGPT 还简单，但还缺更好的浏览器操作、全线程远程控制和实时语音。"
+   "summaryZh": "Peter Yang 夸 Claude Code 应用现在更快、比 ChatGPT 更简单，但还缺浏览器操作、远程控制和实时语音。"
   },
   {
    "id": "https://x.com/thsottiaux/status/2111495392559067199",
@@ -102,7 +102,7 @@
    "handle": "thsottiaux",
    "text": "My work dot \"Burger\" coordinated with my personal dot \"Dorito\" over email at my personal dots request to get documents, which then coordinated with with my CPA in order to file some tax stuff. Took 20 minutes. We're still so early.",
    "date": "2026-10-17T16:31:45.000Z",
-   "summaryZh": "thsottiaux 说他的工作账号和个人账号通过邮件协作，再对接会计师报税，20 分钟搞定，感叹「我们还太早期」。"
+   "summaryZh": "thsottiaux 说他的工作账号和个人账号通过邮件协作，再联系会计师报税，20 分钟搞定，感叹「我们还太早期」。"
   },
   {
    "id": "https://x.com/amasad/status/2111494912562888939",
@@ -112,7 +112,7 @@
    "handle": "amasad",
    "text": "To clarify: Replit remains model agnostic. Our users can choose Anthropic models as well as many other supported models.\n\nWhat I meant at TC Disrupt is that OpenAI is now our preferred partner powering Agent based on performance, cost, and strength of our partnership.\n\nWe believe in giving our users model choice while optimizing the default experience for the best performance at the best price.",
    "date": "2026-10-17T16:29:51.000Z",
-   "summaryZh": "Amasad 澄清 Replit 仍支持多模型，但基于性能、成本和合作，OpenAI 已成为其 Agent 的默认首选伙伴。"
+   "summaryZh": "Amasad 澄清 Replit 仍支持多模型，但基于性能、成本和合作，OpenAI 成为其 agent 的首选伙伴。"
   },
   {
    "id": "https://x.com/thsottiaux/status/2111492738025959922",
@@ -142,7 +142,7 @@
    "handle": "swyx",
    "text": "@dexhorthy @Jeffdelaney23 @ThePrimeagen kinda like this chart to tell the story.  basically no love for 2 years and then slowly we get recommended via browsing. our CTR sucks. https://t.co/XcQM6lzVvU",
    "date": "2026-10-17T07:07:32.000Z",
-   "summaryZh": "swyx 用一张图说明：前两年几乎没人推荐他们，现在靠浏览慢慢被推荐，但点击率很差。"
+   "summaryZh": "swyx 用图表说明：前两年没人推荐，现在靠浏览慢慢被推荐，但点击率很差。"
   },
   {
    "id": "https://x.com/swyx/status/2111351354409300230",
@@ -152,7 +152,7 @@
    "handle": "swyx",
    "text": "@dexhorthy channel affinity\n\nmy goal is basically to collab with every single one of these folks. you guys already love them.\n\npls @Jeffdelaney23 @ThePrimeagen https://t.co/QAhKVubT88",
    "date": "2026-10-17T06:59:24.000Z",
-   "summaryZh": "swyx 说他的目标是和这些频道主都合作一遍，因为观众本来就喜欢他们。"
+   "summaryZh": "swyx 说目标是和这些频道主都合作一遍，因为观众已经喜欢他们。"
   },
   {
    "id": "https://x.com/swyx/status/2111350966419411070",
@@ -162,7 +162,7 @@
    "handle": "swyx",
    "text": "@dexhorthy we serve &gt;1m unique viewers a month pretty much nonstop since May (after AIE EU) but even now 58% of  viewers a month are new to us. 68% of viewers not subscribed lol.\n\nmost viewers 7am-11am PT daily. nobody watches after 5pm. https://t.co/EdPFF9QllO",
    "date": "2026-10-17T06:57:52.000Z",
-   "summaryZh": "swyx 说 Latent Space 自 5 月起月观看稳定超百万，但 58% 是新观众、68% 没订阅，观看集中在太平洋时间早 7 点到 11 点。"
+   "summaryZh": "swyx 说 Latent Space 月观看超百万，但 58% 是新观众、68% 没订阅，观众集中在太平洋时间早 7 点到 11 点。"
   },
   {
    "id": "https://www.youtube.com/@DataDrivenNYC/videos",
@@ -173,7 +173,7 @@
    "title": "What Happens When Billions of AI Agents Hit Your Database? (Andy Pavlo)",
    "text": "",
    "date": "2026-10-08T11:30:00.000Z",
-   "summaryZh": "The MAD Podcast 请 Andy Pavlo 聊当数十亿 AI agent 涌向数据库时会发生什么。"
+   "summaryZh": "Matt Turck 播客请 Andy Pavlo 聊当数十亿 AI agent 冲击数据库时会发生什么。"
   }
  ]
 }
