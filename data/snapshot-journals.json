@@ -1,8 +1,8 @@
 {
- "generatedAt": "2026-10-18T23:35:40Z",
+ "generatedAt": "2026-10-19T00:56:17Z",
  "windowDays": 15,
  "journals": 68,
- "rawFetched": 221,
+ "rawFetched": 217,
  "updated": "2026-10-09",
  "picks": [
   {
@@ -6695,132 +6695,6 @@
    "volume": "",
    "issue": "",
    "pages": "S0140-6736(26)01292-4",
-   "oa": false
-  },
-  {
-   "id": "10.1016/j.eururo.2026.09.008",
-   "title": "Accumulating Evidence Supports NECTIN4 as a Predictive Biomarker for Enfortumab Vedotin: The Compartment Still Matters.",
-   "abstract": "Accumulating data support nectin-4, particularly membranous expression, as a predictive biomarker of enfortumab vedotin activity. Low expression identifies patients with poorer outcomes but not absence of benefit, underscoring the need for standardized prospective validation before clinical implementation.",
-   "sections": null,
-   "structured": false,
-   "journal": "Eur Urol",
-   "issn": "0302-2838",
-   "platforms": [
-    "ck",
-    "sd"
-   ],
-   "domain": "泌尿",
-   "tier": "specialty",
-   "imp": 25.3,
-   "basic": false,
-   "studyKey": "other",
-   "studyZh": "研究论文",
-   "studyRank": 3,
-   "stars": 4,
-   "date": "2026-10-03",
-   "ts": 0,
-   "year": "2026",
-   "authors": "Klümper N",
-   "pmid": "42829269",
-   "doi": "10.1016/j.eururo.2026.09.008",
-   "keywords": [],
-   "volume": "",
-   "issue": "",
-   "pages": "S0302-2838(26)02381-X",
-   "oa": false
-  },
-  {
-   "id": "10.1016/j.eururo.2026.09.017",
-   "title": "PSMA-PET/CT-guided Intensification of Radiation Therapy for Prostate Cancer (PSMAgRT): 5-yr Analysis of a Phase 2 Randomized Controlled Trial.",
-   "abstract": "",
-   "sections": {
-    "objective": "Prostate-specific membrane antigen positron emission tomography (PSMA-PET) improves lesion detection, leading to treatment intensification via PSMA-guided radiotherapy (PSMAgRT), but its impact on patient outcomes remains undefined. We evaluated whether PSMAgRT improves failure-free survival (FFS).",
-    "methods": "This phase 2, two-center, open-label randomized trial enrolled patients planned for standard-of-care (SOC) radiotherapy (RT). Patients were randomized 1:1 to SOC or PSMAgRT to all detected sites across four strata: salvage post-radical prostatectomy (RP), high-risk, oligometastatic, and salvage post-RT. Between 2018 and 2021, 262 patients were randomized (253 treated/analyzed).",
-    "results": "The primary FFS end point (measured from RT completion) comprised prostate-specific antigen (PSA)/radiological progression, next-line therapy, or death. Secondary end points included freedom from biochemical progression (FFBP; PSA rise ≥0.2 ng/ml post-RP or ≥2 ng/ml above nadir in other strata). Prespecified analyses used a one-sided threshold of p 1 < 0.10, whereas post hoc analyses used two-sided p < 0.05 thresholds and 95% confidence intervals (CIs). Among 253 patients, median follow-up was 66 mo (range 9-91). The 5-yr primary FFS was 66% with PSMAgRT versus 62% in controls (hazard ratio [HR] = 0.80; one-sided 90% CI, upper bound 1.04; p 1 = 0.14). FFBP favored PSMAgRT: 72% versus 65% overall (subdistribution HR [sHR] 0.70, one-sided 90% CI upper bound 0.92; p 1 = 0.048), 81% versus 66% in patients with high-risk disease (sHR 0.54; p 1 = 0.07), and 80% versus 68% in patients in post-RP stratum (sHR 0.54; p 1 = 0.037). In an exploratory, post hoc analysis combining patients with high-risk disease and those in the post-RP stratum, FFBP favored PSMAgRT (sHR 0.54, 95% CI = 0.32-0.91; two-sided p = 0.02). Only one grade ≥3 event was possibly related to dose escalation. Limitations include a phase 2 design with a heterogeneous population.",
-    "conclusion": "Although the primary FFS end point was not met in the overall population, treatment-effect estimates favored PSMAgRT in the high-risk and post-RP strata. These findings provide a meaningful rationale for the target populations currently being evaluated in the definitive phase 3 PATRON trial.",
-    "other": ""
-   },
-   "structured": true,
-   "journal": "Eur Urol",
-   "issn": "0302-2838",
-   "platforms": [
-    "ck",
-    "sd"
-   ],
-   "domain": "泌尿",
-   "tier": "specialty",
-   "imp": 25.3,
-   "basic": false,
-   "studyKey": "rct",
-   "studyZh": "随机对照试验",
-   "studyRank": 6,
-   "stars": 4,
-   "date": "2026-10-03",
-   "ts": 0,
-   "year": "2026",
-   "authors": "Belliveau C",
-   "pmid": "42829266",
-   "doi": "10.1016/j.eururo.2026.09.017",
-   "keywords": [
-    "Radiotherapy",
-    "Randomized controlled trial",
-    "prostate cancer",
-    "Salvage Radiotherapy",
-    "Biochemical Recurrence",
-    "Treatment Intensification",
-    "High-risk Prostate Cancer",
-    "Image-guided Radiotherapy",
-    "Failure-free Survival",
-    "Psma-pet"
-   ],
-   "volume": "",
-   "issue": "",
-   "pages": "S0302-2838(26)02413-9",
-   "oa": false
-  },
-  {
-   "id": "10.1016/j.chest.2026.09.091",
-   "title": "Sputum cellularity and health services utilization among patients with asthma and COPD.",
-   "abstract": "",
-   "sections": {
-    "objective": "Associations between health services utilization (HSU) and objectively measured airway inflammation in severe asthma or chronic obstructive pulmonary disease (COPD) patients remain unclear. Is there an association between quantitative sputum cell counts and HSU (hospitalizations, physician visits, emergency department visits) patterns in patients with asthma and COPD?",
-    "methods": "In this retrospective cohort study, clinical data, spirometry, and sputum cell counts (% of eosinophils, neutrophils) obtained during routine clinical assessment of patients attending a university tertiary airway disease clinic were linked to Ontario health administrative databases (2006-2019). Sputum inflammatory cell counts were treated as fixed baseline exposure variables and negative binomial regression models using generalized estimating equations estimated RRs and 95% CIs for subsequent HSU adjusting for demographic, socioeconomic, and clinical covariates.",
-    "results": "Of the 4821 patients included, 3714(77%) had asthma only and 1107(23%) had COPD only. Among patients with asthma, sputum eosinophilia (>3%) was associated with higher asthma-specific HSU. Compared with patients with sputum eosinophils 15% eosinophil groups had similarly increased rates of asthma-specific emergency department visits (RR=1.92, 95%CI:1.49-2.47 and RR=1.88, 95%CI:1.17-3.03). Conversely, sputum eosinophil counts were not significantly associated with HSU in COPD, whereas high sputum neutrophil counts were associated with increased all-cause hospitalizations (RR=1.71, 95%CI:1.11-2.64). Overall, those with higher eosinophil (>15%) and lower neutrophil counts (<65%) had significantly higher rates of asthma-specific and asthma-related HSU. In contrast, sputum eosinophil counts were not significantly associated with increased all-cause hospitalizations among patients with COPD.",
-    "conclusion": "Sputum eosinophilia (>3%) is associated with increased asthma-related HSU, whereas sputum eosinophils were not associated with increased HSU in COPD. These findings support the clinical relevance of airway inflammometry in asthma and highlight important differences in inflammatory phenotypes between asthma and COPD. Further studies are needed to better understand the mechanisms underlying these associations.",
-    "other": ""
-   },
-   "structured": true,
-   "journal": "Chest",
-   "issn": "0012-3692",
-   "platforms": [
-    "ck",
-    "sd"
-   ],
-   "domain": "呼吸与重症",
-   "tier": "specialty",
-   "imp": 9.5,
-   "basic": false,
-   "studyKey": "retrospective",
-   "studyZh": "回顾性研究",
-   "studyRank": 3,
-   "stars": 3,
-   "date": "2026-10-03",
-   "ts": 0,
-   "year": "2026",
-   "authors": "Nair P",
-   "pmid": "42829170",
-   "doi": "10.1016/j.chest.2026.09.091",
-   "keywords": [
-    "Asthma",
-    "Airway inflammation",
-    "eosinophils",
-    "chronic obstructive pulmonary disease",
-    "Health Service Utilization",
-    "Sputum Cellularity"
-   ],
-   "volume": "",
-   "issue": "",
-   "pages": "S0012-3692(26)06782-6",
    "oa": false
   }
  ]
