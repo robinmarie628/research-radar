@@ -11,8 +11,13 @@ Mirrors the client logic in assets/app.js:
   - structured abstracts are split into 目的/方法/结果/结论
 
 Writes:
-  data/snapshot-journals.json   Europe PMC articles (classified)
+  data/snapshot-journals.json   PubMed articles for the public pool (classified).
+                                Europe PMC is used only if PubMed returns nothing.
   data/snapshot-builders.json   follow-builders X / blog / podcast items
+
+The 15-day pool is PubMed `[pdat]` plus a real abstract. Europe PMC
+`FIRST_PDATE` lags, which was starving Lancet (and sometimes NEJM).
+最近一周 is still Crossref online dates plus PubMed abstracts.
 
 stdlib only.  Usage:  python build_snapshot.py [--days 15]
 """
@@ -29,13 +34,15 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import date, timedelta
 
 EPMC = "https://www.ebi.ac.uk/europepmc/webservices/rest/search"
-# Three ISSN slices, each walked with cursorMark until every journal in the
-# slice has `cap` abstracts or the result set ends. A single page of 100
-# sorted by date lets Science / Sci Adv / Cell Reports fill the page.
+# Empty-pool fallback only. Three ISSN slices, each walked with cursorMark
+# until every journal in the slice has `cap` abstracts or the result set ends.
+# A single page of 100 sorted by date lets Science / Sci Adv / Cell Reports
+# fill the page. A successful PubMed fetch never mixes these rows in.
 EPMC_PAGE = 100
 EPMC_CHUNK_PAGES = 15
 
-# 15-day pool. firstPublicationDate older than today-minus-days is absent.
+# 15-day pool caps. PubMed drops a record when neither the electronic date
+# nor the issue PubDate falls inside today-minus-days (see choose_pool_date).
 # Among flagship + sub articles the target is 7:3
 # (FLAGSHIP_SHARE). Specialty journals are outside that ratio.
 # Every sub journal that published keeps one seat, then each domain is
@@ -52,6 +59,21 @@ FLAGSHIP_SHARE = 0.70
 DOMAIN_FLOOR = 6
 POOL_MAX = 400
 WEEK_ABS_MIN = 40
+# PubMed prints a different ISSN than journals.config.json for a few titles.
+# The value is the config print/electronic ISSN the row is actually filed under.
+PUBMED_ISSN_ALIAS = {
+    "1876-7591": "1936-878X",  # JACC Cardiovasc Imaging
+    "2405-500X": "2405-5018",  # JACC Clin Electrophysiol (print; config stores electronic)
+    "0009-7322": "1524-4539",  # Circulation print
+    "1875-9777": "1934-5909",  # Cell Stem Cell linking ISSN
+}
+# Letters, errata, news, and one-paragraph commentary. High-volume titles list
+# hundreds of these; they are not the public pool even when a blurb exists.
+JUNK_PUBTYPES = {
+    "letter", "editorial", "comment", "news", "newspaper article", "interview",
+    "published erratum", "erratum", "retraction of publication",
+    "retracted publication",
+}
 EUTILS = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/"
 FEED = "https://raw.githubusercontent.com/zarazhangrui/follow-builders/main/"
 UA = "research-radar/1.0 (mailto:robinmarie628@users.noreply.github.com)"
@@ -249,7 +271,7 @@ def curate_pools(pools, n=8, n_basic=4, n_clinical=4):
 
     Each pool is ranked on its own (flagship, then specialty, then sub).
     Earlier pools take seats first, so last-week online papers fill the
-    shortlist before the 15-day Europe PMC pool tops up open seats.
+    shortlist before the 15-day PubMed pool tops up open seats.
     Basic slots stay one per journal so Cell cannot occupy every basic seat.
     """
     def rank(a):
@@ -321,8 +343,8 @@ def abstract_len(a):
 def select_picks(week, pool, n=8, n_basic=4, n_clinical=4):
     """Prefer last-week online papers, then fill from the 15-day pool.
 
-    When the same DOI is already in the Europe PMC pool with an abstract,
-    that richer record is the one that gets the seat.
+    When the same DOI is already in the 15-day pool with an abstract,
+    that record is the one that gets the seat.
     """
     by = {}
     for a in pool or []:
@@ -845,23 +867,434 @@ def compose_pool(items):
     return kept
 
 
-def build_journals(days, cap_per_journal=8):
-    """Query Europe PMC in ISSN slices, paging each slice so every journal is represented.
+_MONTH = {name: i for i, name in enumerate(
+    ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"], 1)}
 
-    A single page of 100 sorted by date lets a high-volume title fill the page.
-    Each slice is walked with cursorMark until every journal has its tier cap
-    or the result set ends. `cap_per_journal` is unused; caps come from TIER_CAP.
-    Print ISSN and eISSN both join to the config row.
+
+def norm_issn(value):
+    """Canonical `NNNN-NNNX` so print and electronic forms compare."""
+    raw = re.sub(r"[^0-9Xx]", "", str(value or "")).upper()
+    if len(raw) != 8:
+        return ""
+    return raw[:4] + "-" + raw[4:]
+
+
+def ymd_parts(year, month, day):
+    if not year or not month or not day:
+        return ""
+    token = str(month).strip().lower()
+    mi = int(token) if token.isdigit() else _MONTH.get(token[:3])
+    try:
+        yi, di = int(str(year).strip()), int(str(day).strip())
+    except ValueError:
+        return ""
+    if not mi or mi < 1 or mi > 12 or di < 1 or di > 31 or yi < 1800:
+        return ""
+    return f"{yi:04d}-{mi:02d}-{di:02d}"
+
+
+def date_from_pubmed_node(node):
+    """A full calendar day from PubDate or ArticleDate, including MedlineDate."""
+    if node is None:
+        return ""
+    parts = {_local(c.tag): (c.text or "").strip() for c in list(node)}
+    day = ymd_parts(parts.get("Year"), parts.get("Month"), parts.get("Day"))
+    if day:
+        return day
+    medline = parts.get("MedlineDate") or ""
+    m = re.search(r"(\d{4})\s+([A-Za-z]+)\s+(\d{1,2})(?:\s*[-/]\s*(\d{1,2}))?", medline)
+    if not m:
+        return ""
+    return ymd_parts(m.group(1), m.group(2), m.group(4) or m.group(3))
+
+
+def choose_pool_date(electronic, pub, lo, hi):
+    """Date stored on the card. Must fall inside the same window as the query.
+
+    Prefer the electronic day when PubMed has one inside the window. Lancet
+    often goes online weeks earlier; the issue PubDate is what `[pdat]` uses
+    to keep those trials inside the 15-day pool, so that day is the fallback.
     """
-    cfg = json.load(open(os.path.join(DATA, "journals.config.json"), encoding="utf-8"))
-    by_issn = index_journals(cfg)
+    if electronic and lo <= electronic <= hi:
+        return electronic
+    if pub and lo <= pub <= hi:
+        return pub
+    return ""
 
-    hi = date.today().isoformat()
-    lo = (date.today() - timedelta(days=days)).isoformat()
 
+def is_junk_pubtypes(types):
+    for label in types or []:
+        if str(label).strip().lower() in JUNK_PUBTYPES:
+            return True
+    return False
+
+
+def journal_indexes(cfg):
+    """ISSN (print and electronic) and exact short/title → config row."""
+    by_issn, by_name = {}, {}
+    for c in cfg:
+        for key in (c.get("issn"), c.get("essn")):
+            n = norm_issn(key)
+            if n:
+                by_issn[n] = c
+        for name in (c.get("short"), c.get("title")):
+            k = (name or "").strip().lower()
+            if k and k not in by_name:
+                by_name[k] = c
+    return by_issn, by_name
+
+
+def match_pubmed_journal(issns, names, by_issn, by_name):
+    """Join a PubMed record to one configured journal.
+
+    Order: ISSNLinking or Journal/ISSN already in the config, then a known
+    alias (PubMed's other ISSN for that title), then an exact ISO abbreviation
+    or MedlineTA against `short` / `title`. Prefix matches are rejected so
+    Lancet Oncology cannot land on Lancet.
+    """
+    norms = [norm_issn(v) for v in issns if norm_issn(v)]
+    for issn in norms:
+        hit = by_issn.get(issn)
+        if hit:
+            return hit, "issn"
+    for issn in norms:
+        alias = norm_issn(PUBMED_ISSN_ALIAS.get(issn, ""))
+        hit = by_issn.get(alias) if alias else None
+        if hit:
+            return hit, "alias"
+    for name in names:
+        hit = by_name.get((name or "").strip().lower())
+        if hit:
+            return hit, "name"
+    return None, ""
+
+
+def check_pool_rules():
+    """Guards for the date window, junk filter, and journal join."""
+    lo, hi = "2026-10-04", "2026-10-19"
+    assert choose_pool_date("2026-10-08", "2026-10-08", lo, hi) == "2026-10-08"
+    assert choose_pool_date("2026-09-30", "2026-10-17", lo, hi) == "2026-10-17"
+    assert choose_pool_date("2026-09-11", "2026-10-17", lo, hi) == "2026-10-17"
+    assert choose_pool_date("2026-09-30", "2026-09-30", lo, hi) == ""
+    assert choose_pool_date("", "2026-10-04", lo, hi) == "2026-10-04"
+    assert ymd_parts("2026", "Oct", "17") == "2026-10-17"
+    assert ymd_parts("2026", "10", "7") == "2026-10-07"
+    assert is_junk_pubtypes(["Journal Article", "Letter"])
+    assert is_junk_pubtypes(["Comment"])
+    assert is_junk_pubtypes(["Editorial"])
+    assert not is_junk_pubtypes(["Journal Article", "Review"])
+    assert not is_junk_pubtypes(["Randomized Controlled Trial"])
+    imaging = [{"issn": "1936-878X", "short": "JACC Imaging", "title": "JACC Imaging"}]
+    by_issn, by_name = journal_indexes(imaging)
+    meta, how = match_pubmed_journal(["1876-7591"], ["JACC Cardiovasc Imaging"], by_issn, by_name)
+    assert meta and meta["issn"] == "1936-878X" and how == "alias", (meta, how)
+    family = [
+        {"issn": "0140-6736", "short": "Lancet", "title": "Lancet"},
+        {"issn": "1470-2045", "short": "Lancet Oncol", "title": "Lancet Oncol"},
+    ]
+    by_issn, by_name = journal_indexes(family)
+    meta, how = match_pubmed_journal(["1474-547X", "0140-6736"], ["Lancet"], by_issn, by_name)
+    assert meta["short"] == "Lancet" and how == "issn"
+    meta, how = match_pubmed_journal(["1470-2045"], ["Lancet Oncol"], by_issn, by_name)
+    assert meta["short"] == "Lancet Oncol"
+    meta, how = match_pubmed_journal(["1471-0000"], ["Lancet Oncology"], by_issn, by_name)
+    assert meta is None and how == ""
+    stem = [{"issn": "1934-5909", "short": "Cell Stem Cell", "title": "Cell Stem Cell"}]
+    by_issn, by_name = journal_indexes(stem)
+    meta, how = match_pubmed_journal(["1875-9777"], ["Cell Stem Cell"], by_issn, by_name)
+    assert meta["short"] == "Cell Stem Cell" and how == "alias"
+    meta, how = match_pubmed_journal([], ["Cell Stem Cell"], by_issn, by_name)
+    assert how == "name"
+
+
+def _kid(node, name):
+    if node is None:
+        return None
+    for child in list(node):
+        if _local(child.tag) == name:
+            return child
+    return None
+
+
+def _kids(node, name):
+    if node is None:
+        return []
+    return [child for child in list(node) if _local(child.tag) == name]
+
+
+def _text(node):
+    if node is None:
+        return ""
+    return "".join(node.itertext()).strip()
+
+
+def pubmed_abstract(article):
+    """Structured abstract from the article node only, same slots as the week parser."""
+    sections = {"objective": "", "methods": "", "results": "", "conclusion": "", "other": ""}
+    chunks, mapped = [], False
+    abstract = _kid(article, "Abstract")
+    for node in list(abstract) if abstract is not None else []:
+        if _local(node.tag) != "AbstractText":
+            continue
+        label = (node.get("Label") or "").strip()
+        text = clean("".join(node.itertext()))
+        if not text:
+            continue
+        chunks.append(f"{label}: {text}" if label else text)
+        key = section_key(label)
+        if not key:
+            continue
+        if key != "other":
+            mapped = True
+        sections[key] = (sections[key] + " " + text).strip()
+    structured = mapped and any(sections[k] for k in ("objective", "methods", "results", "conclusion"))
+    plain = "\n".join(chunks).strip()
+    length = abstract_len({
+        "structured": structured,
+        "sections": sections if structured else None,
+        "abstract": plain,
+    })
+    blob = " ".join(v for v in sections.values() if v) if structured else plain
+    return {
+        "text": plain,
+        "structured": structured,
+        "sections": sections if structured else None,
+        "length": length,
+        "blob": blob,
+    }
+
+
+def pubmed_author(article):
+    authors = _kid(article, "AuthorList")
+    for node in list(authors) if authors is not None else []:
+        if _local(node.tag) != "Author":
+            continue
+        last = clean(_text(_kid(node, "LastName")))
+        ini = clean(_text(_kid(node, "Initials")))
+        if last and ini:
+            return f"{last} {ini}"
+        if last:
+            return last
+        collective = clean(_text(_kid(node, "CollectiveName")))
+        if collective:
+            return collective
+    return ""
+
+
+def pubmed_keywords(med):
+    out = []
+    for node in list(med) if med is not None else []:
+        if _local(node.tag) != "KeywordList":
+            continue
+        for kw in list(node):
+            if _local(kw.tag) != "Keyword":
+                continue
+            text = clean(_text(kw))
+            if text:
+                out.append(text)
+    return out
+
+
+def map_pubmed_article(art, by_issn, by_name, lo, hi):
+    """One PubmedArticle → pool card, or (None, reason)."""
+    med = _kid(art, "MedlineCitation")
+    article = _kid(med, "Article")
+    if article is None:
+        return None, "shape"
+    journal = _kid(article, "Journal")
+    info = _kid(med, "MedlineJournalInfo")
+    issns = []
+    linking = norm_issn(_text(_kid(info, "ISSNLinking")))
+    if linking:
+        issns.append(linking)
+    for node in _kids(journal, "ISSN"):
+        n = norm_issn(node.text or "")
+        if n and n not in issns:
+            issns.append(n)
+    iso = _text(_kid(journal, "ISOAbbreviation"))
+    ta = _text(_kid(info, "MedlineTA"))
+    meta, how = match_pubmed_journal(issns, [iso, ta], by_issn, by_name)
+    if not meta:
+        return None, "unmatched"
+    pubtypes = [_text(n) for n in _kids(_kid(article, "PublicationTypeList"), "PublicationType")]
+    pubtypes = [t for t in pubtypes if t]
+    if is_junk_pubtypes(pubtypes):
+        return None, "junk"
+    parsed = pubmed_abstract(article)
+    if parsed["length"] < WEEK_ABS_MIN:
+        return None, "abstract"
+    title = clean(_text(_kid(article, "ArticleTitle")))
+    if not title:
+        return None, "title"
+    issue = _kid(journal, "JournalIssue")
+    pub = date_from_pubmed_node(_kid(issue, "PubDate"))
+    electronic = ""
+    for node in _kids(article, "ArticleDate"):
+        if (node.get("DateType") or "") == "Electronic":
+            electronic = date_from_pubmed_node(node) or electronic
+    day = choose_pool_date(electronic, pub, lo, hi)
+    if not day:
+        return None, "date"
+    doi = ""
+    pmc = False
+    for node in _kids(_kid(_kid(art, "PubmedData"), "ArticleIdList"), "ArticleId"):
+        kind = (node.get("IdType") or "").lower()
+        if kind == "doi" and not doi:
+            doi = article_doi({"doi": node.text or ""})
+        elif kind == "pmc" and (node.text or "").strip():
+            pmc = True
+    if not doi:
+        for node in _kids(article, "ELocationID"):
+            if (node.get("EIdType") or "").lower() == "doi":
+                doi = article_doi({"doi": node.text or ""})
+                if doi:
+                    break
+    pmid = _text(_kid(med, "PMID"))
+    ident = doi or pmid.lower()
+    if not ident:
+        return None, "id"
+    is_basic = bool(meta.get("basic"))
+    study = detect_study(title, parsed["blob"], is_basic, pubtypes)
+    return {
+        "id": ident,
+        "title": title,
+        "abstract": "" if parsed["structured"] else parsed["text"],
+        "sections": parsed["sections"],
+        "structured": parsed["structured"],
+        "journal": meta.get("short") or iso or "—",
+        "issn": meta.get("issn") or "",
+        "platforms": list(meta.get("platforms") or []),
+        "domain": meta.get("domain") or "综合医学",
+        "tier": meta.get("tier") or "specialty",
+        "imp": meta.get("if", 0),
+        "basic": is_basic,
+        "studyKey": study,
+        "studyZh": STUDY_ZH.get(study, "研究论文"),
+        "studyRank": STUDY_RANK.get(study, 3),
+        "stars": stars(meta.get("if", 0)),
+        "date": day,
+        "ts": 0,
+        "year": day[:4],
+        "authors": pubmed_author(article),
+        "pmid": pmid,
+        "doi": doi,
+        "keywords": pubmed_keywords(med),
+        "volume": _text(_kid(issue, "Volume")),
+        "issue": _text(_kid(issue, "Issue")),
+        "pages": _text(_kid(_kid(article, "Pagination"), "MedlinePgn")),
+        "oa": pmc,
+    }, how
+
+
+def get_text(url, tries=4, timeout=90):
+    last = None
+    for i in range(tries):
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": UA})
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                return r.read()
+        except Exception as e:  # noqa: BLE001
+            last = e
+            time.sleep(1.5 + i * 2)
+    raise RuntimeError(f"{url[:90]} -> {last}")
+
+
+def pubmed_window_term(cfg, lo, hi):
+    issns = []
+    for c in cfg:
+        for key in (c.get("issn"), c.get("essn")):
+            n = norm_issn(key)
+            if n and n not in issns:
+                issns.append(n)
+    if not issns:
+        return ""
+    joined = " OR ".join(f"{i}[issn]" for i in issns)
+    junk = " OR ".join([
+        "letter[pt]", "editorial[pt]", "comment[pt]", "news[pt]", "interview[pt]",
+        '"published erratum"[pt]', "erratum[pt]",
+        '"retraction of publication"[pt]', '"retracted publication"[pt]',
+    ])
+    return (f"({joined}) AND {lo.replace('-', '/')}:{hi.replace('-', '/')}[pdat]"
+            f" AND hasabstract NOT ({junk})")
+
+
+def esearch_pmids(term):
+    ids, retstart, count = [], 0, None
+    while count is None or retstart < count:
+        query = urllib.parse.urlencode({
+            "db": "pubmed", "retmode": "json", "retmax": "500",
+            "retstart": str(retstart), "term": term, "sort": "pub_date",
+            "tool": "research-radar",
+            "email": "robinmarie628@users.noreply.github.com",
+        })
+        data = json.loads(get_text(EUTILS + "esearch.fcgi?" + query).decode("utf-8"))
+        res = data.get("esearchresult") or {}
+        if res.get("ERROR"):
+            raise RuntimeError(res.get("ERROR"))
+        count = int(res.get("count") or 0)
+        batch = res.get("idlist") or []
+        ids.extend(batch)
+        if not batch:
+            break
+        retstart += len(batch)
+        if retstart < count:
+            time.sleep(0.34)
+    seen, out = set(), []
+    for pmid in ids:
+        if pmid not in seen:
+            seen.add(pmid)
+            out.append(pmid)
+    return out
+
+
+def efetch_pubmed(pmids):
+    articles = []
+    for i in range(0, len(pmids), 120):
+        if i:
+            time.sleep(0.34)
+        query = urllib.parse.urlencode({
+            "db": "pubmed", "id": ",".join(pmids[i:i + 120]), "retmode": "xml",
+            "tool": "research-radar",
+            "email": "robinmarie628@users.noreply.github.com",
+        })
+        root = ET.fromstring(get_text(EUTILS + "efetch.fcgi?" + query))
+        for node in list(root):
+            if _local(node.tag) == "PubmedArticle":
+                articles.append(node)
+    return articles
+
+
+def fetch_pubmed_candidates(cfg, lo, hi):
+    """Every configured journal, one PubMed window, abstracts required.
+
+    Caps are applied later by compose_pool. Fetching the window (instead of
+    stopping at FLAGSHIP_CAP inside the query) lets a thin flagship such as
+    Lancet keep every abstract it actually has, up to that cap.
+    """
+    term = pubmed_window_term(cfg, lo, hi)
+    pmids = esearch_pmids(term)
+    print(f"      pubmed {lo}..{hi}: {len(pmids)} ids with abstracts")
+    articles = efetch_pubmed(pmids)
+    by_issn, by_name = journal_indexes(cfg)
+    cands, seen, stats = [], set(), {}
+    for art in articles:
+        item, how = map_pubmed_article(art, by_issn, by_name, lo, hi)
+        stats[how] = stats.get(how, 0) + 1
+        if not item:
+            continue
+        if item["id"] in seen:
+            stats["dup"] = stats.get("dup", 0) + 1
+            continue
+        seen.add(item["id"])
+        cands.append(item)
+    print(f"      pubmed kept {len(cands)} before caps {stats}")
+    return cands
+
+
+def fetch_epmc_candidates(cfg, by_issn, lo, hi):
+    """Previous Europe PMC pool. Only used when PubMed is down or empty."""
     step = max(1, (len(cfg) + 2) // 3)
     chunks = [cfg[i:i + step] for i in range(0, len(cfg), step)]
-
     merged, seen = [], set()
     for ch in chunks:
         for r in fetch_journal_chunk(ch, by_issn, lo, hi):
@@ -880,13 +1313,11 @@ def build_journals(days, cap_per_journal=8):
         title = clean(r.get("title"))
         if not title:
             continue
-
         parsed = parse_abstract(r.get("abstractText"))
         is_basic = bool(meta.get("basic"))
         body = parsed["text"] or " ".join(v for v in (parsed["sections"] or {}).values())
         study = detect_study(title, body, is_basic, r.get("pubTypeList", {}).get("pubType", []))
         d = r.get("firstPublicationDate") or r.get("electronicPublicationDate") or ""
-
         cands.append({
             "id": (r.get("doi") or r.get("id") or r.get("pmid") or "").lower(),
             "title": title,
@@ -895,8 +1326,6 @@ def build_journals(days, cap_per_journal=8):
             "structured": parsed["structured"],
             "journal": meta.get("short") or j.get("medlineAbbreviation") or "—",
             "issn": meta.get("issn") or issn,
-            # copied from journals.config.json so a snapshot item still knows
-            # which full-text button to show if the config row cannot be joined
             "platforms": list(meta.get("platforms") or []),
             "domain": meta.get("domain") or "综合医学",
             "tier": meta.get("tier") or "specialty",
@@ -915,6 +1344,34 @@ def build_journals(days, cap_per_journal=8):
             "pages": r.get("pageInfo") or "",
             "oa": str(r.get("isOpenAccess") or "").strip().upper() in {"Y", "TRUE", "1"},
         })
+    return cands, len(merged)
+
+
+def build_journals(days):
+    """PubMed abstracts for every configured journal, then the same compose_pool.
+
+    Caps are TIER_CAP inside compose_pool (flagship 28, sub 3, specialty 6).
+    Europe PMC remains a fallback for a PubMed outage, not a second source
+    mixed into a successful PubMed window. 最近一周 is unchanged.
+    """
+    cfg = json.load(open(os.path.join(DATA, "journals.config.json"), encoding="utf-8"))
+    by_issn = index_journals(cfg)
+    hi = date.today().isoformat()
+    lo = (date.today() - timedelta(days=days)).isoformat()
+
+    source = "pubmed"
+    try:
+        cands = fetch_pubmed_candidates(cfg, lo, hi)
+        raw = len(cands)
+    except Exception as e:  # noqa: BLE001
+        print(f"      pubmed pool failed ({e}); falling back to Europe PMC", file=sys.stderr)
+        cands, raw = [], 0
+        source = "europepmc"
+    if source == "pubmed" and not cands:
+        print("      pubmed pool empty; falling back to Europe PMC", file=sys.stderr)
+        source = "europepmc"
+    if source == "europepmc":
+        cands, raw = fetch_epmc_candidates(cfg, by_issn, lo, hi)
 
     items = compose_pool(cands)
     week = []
@@ -924,7 +1381,8 @@ def build_journals(days, cap_per_journal=8):
         print(f"      week fetch failed ({e}); picks fall back to the 15-day pool", file=sys.stderr)
 
     return {"generatedAt": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-            "windowDays": days, "journals": len(cfg), "rawFetched": len(merged),
+            "windowDays": days, "journals": len(cfg), "rawFetched": raw,
+            "source": source,
             "updated": items[0]["date"] if items else None,
             "picks": select_picks(week, items),
             "week": week,
@@ -965,6 +1423,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--days", type=int, default=15)
     a = ap.parse_args()
+    check_pool_rules()
 
     print(f"[1/2] journals (last {a.days}d) ...")
     jr = build_journals(a.days)
@@ -973,13 +1432,14 @@ def main():
               ensure_ascii=False, indent=1)
     print(f"      week candidates used for picks: {week_n}")
     from collections import Counter
-    print(f"      {len(jr['items'])} articles (raw {jr['rawFetched']}), newest {jr['updated']}")
+    print(f"      source {jr.get('source')}  {len(jr['items'])} articles"
+          f" (raw {jr['rawFetched']}), newest {jr['updated']}")
     print(f"      领域: {dict(Counter(x['domain'] for x in jr['items']))}")
     print(f"      类型: {dict(Counter(x['studyZh'] for x in jr['items']))}")
     print(f"      临床 {sum(1 for x in jr['items'] if not x['basic'])} / 基础 {sum(1 for x in jr['items'] if x['basic'])}"
           f"  | 结构化摘要 {sum(1 for x in jr['items'] if x['structured'])}")
     print(f"      今日精选 {len(jr['picks'])} 篇 (基础 {sum(1 for p in jr['picks'] if p['basic'])})")
-    focus = ("NEJM", "BMJ", "Nature")
+    focus = ("Lancet", "Nature", "NEJM", "Science", "BMJ", "Cell")
     got = Counter(x["journal"] for x in jr["items"])
     print("      重点: " + ", ".join(f"{name} {got.get(name, 0)}" for name in focus))
     tiers = Counter(x.get("tier") or "specialty" for x in jr["items"])

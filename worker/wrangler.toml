@@ -3,15 +3,7 @@ main = "trigger.js"
 compatibility_date = "2026-10-17"
 
 # GitHub PAT 通过 `wrangler secret put GITHUB_PAT` 设置，千万不要写在这个文件里。
-# 这个 Worker 不读任何请求体 / 不含敏感信息，CORS 用 * 即可。
-
-# 收藏发信需要自有域名上的 Email Routing。这个账号还没有自定义域名，
-# 页面改为下载 Markdown，不再调用 /favorites。绑定先不写，
-# 避免 `wrangler deploy` 时被要求去 Dashboard 配邮箱。
-# 有域名之后再取消注释，并把 from 设成该域名上的地址（不要写 Gmail）：
-# [[send_email]]
-# name = "EMAIL"
-# destination_address = "robinmarie628@gmail.com"
+# 这个 Worker 只转发 workflow_dispatch，不发信，不读收藏内容。CORS 用 * 即可。
 
 [observability]
 enabled = true

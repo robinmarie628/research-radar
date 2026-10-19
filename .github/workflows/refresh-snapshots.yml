@@ -1,7 +1,10 @@
 name: Refresh snapshots
 
-# Optional. The web app fetches live data from Europe PMC + follow-builders every time
-# it opens, so this workflow is only a safety net (and lets the page work offline).
+# Optional safety net. The page builds the 15-day pool live from PubMed
+# (Europe PMC only when that pool is empty) and the builder feed live from
+# follow-builders. This workflow commits the same PubMed snapshot, so the
+# page still has articles when PubMed is down. 最近一周 is Crossref online
+# dates plus PubMed abstracts, produced by the same script.
 # Disable it by deleting this file if you don't want the commits.
 
 on:

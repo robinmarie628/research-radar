@@ -99,7 +99,7 @@ const WORKER_URL = 'https://REPLACE-ME.workers.dev';
 
 ## 收藏
 
-页面在「收藏」里下载 Markdown，不请求 `/favorites`。发信要自有域名上的 Email Routing；这个账号还没有自定义域名，所以 `wrangler.toml` 里先不放 `[[send_email]]`，部署 trigger Worker 时不用去 Dashboard 配邮箱。`favorites-mail.js` 先留着，等有域名再接上。
+收藏留在浏览器 `localStorage`（`rr.fav.v1`），页面下载 Markdown。这个 Worker 只触发 GitHub Actions，不接收收藏，也不发信。
 
 ## 排查
 

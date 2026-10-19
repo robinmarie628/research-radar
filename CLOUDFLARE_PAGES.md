@@ -16,7 +16,7 @@ redeploys on every push to `main` — including the bot's daily data commits.
 
 1. Cloudflare dashboard → **Workers & Pages** → **Create** → **Pages** → **Connect to Git**.
 2. Authorise GitHub if prompted, then select **`robinmarie628/research-radar`**.
-3. Project name: `research-radar` → the site will be at `https://research-radar.pages.dev`.
+3. Project name: `research-radar`. The public host is `https://research-radar-f5j.pages.dev` (the Pages subdomain, not the project name).
 4. **Production branch**: `main`.
 5. **Framework preset**: `None`.
 6. **Build command**: `bash scripts/pages-build.sh`
@@ -55,19 +55,20 @@ a quota error is shown in the popup and is not billed.
 
 ## Verify
 
-- Open `https://research-radar.pages.dev` — the app should load.
-- Open `https://research-radar.pages.dev/data/digest.json` and check the `generatedAt` field;
+- Open `https://research-radar-f5j.pages.dev` — the app should load.
+- Open `https://research-radar-f5j.pages.dev/data/digest.json` and check the `generatedAt` field;
   after a daily run it should be today's timestamp.
 - In **Deployments**, confirm the latest deploy was triggered by `chore: daily digest` /
   `chore: refresh snapshots` and is green.
 
 ## Notes
 
-- **收藏**：页面上点「下载 Markdown」。发到邮箱要自有域名上的 Cloudflare Email Routing；目前没有自定义域名，所以不走发信，也不用在 Dashboard 配 Email。
+- **收藏**：心形按钮写入本机 `localStorage`（`rr.fav.v1`），收藏视图下载 Markdown。没有发信路由，也不要给 Pages 加 Email 绑定。
 
 - **Build limit**: the free plan allows 500 builds/month. Two bot commits a day is ~60/month.
-- **Deploy lag**: a push takes ~1 minute to go live. The app's live fetches (Europe PMC,
-  follow-builders) update on page open regardless; only the committed JSONs need the redeploy.
+- **Deploy lag**: a push takes ~1 minute to go live. On open, the page refetches
+  PubMed for the 15-day pool and follow-builders for the AI tab. Europe PMC runs
+  only if that pool is empty. The committed snapshot and digest still need the redeploy.
 - **Mainland China**: `*.pages.dev` is not reliably reachable without a VPN. Bind a custom
   domain in **Custom domains** if you need better access.
 - GitHub Pages can stay enabled as a fallback; both hosts read the same repo.

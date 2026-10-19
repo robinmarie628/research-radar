@@ -493,6 +493,35 @@ test('journal filter narrows the current list and can be cleared', () => {
   assert.match(src, /id="journalSheet"|journalSheet/);
 });
 
+test('publication date sort toggles newest and oldest without dropping a tied row', () => {
+  const src = fs.readFileSync(path.join(root, 'assets/app.js'), 'utf8');
+  const start = src.indexOf('function pubDateKey');
+  const end = src.indexOf('function filteredArticles');
+  const { sortByPubDate } = new Function(
+    src.slice(start, end) + '\nreturn { sortByPubDate };',
+  )();
+  const list = [
+    { title: 'a', date: '2026-10-10' },
+    { title: 'b', date: '2026-10-17' },
+    { title: 'c', date: '2026-10-10' },
+    { title: 'd', date: '' },
+    { title: 'e', date: '2026-10-04' },
+  ];
+  assert.deepEqual(sortByPubDate(list, 'new').map(a => a.title), ['b', 'a', 'c', 'e', 'd']);
+  assert.deepEqual(sortByPubDate(list, 'old').map(a => a.title), ['e', 'a', 'c', 'b', 'd']);
+  const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+  const tools = html.slice(html.indexOf('id="markAllRead"'), html.indexOf('class="viewtog"'));
+  assert.match(tools, /id="dateSortBtn"/);
+  const css = fs.readFileSync(path.join(root, 'assets/styles.css'), 'utf8');
+  const ghost = css.slice(css.indexOf('.ghost-btn{'), css.indexOf('.date-sort{'));
+  const top = css.slice(css.indexOf('.to-top{'), css.indexOf('.to-top[hidden]'));
+  assert.equal(ghost.includes('--read'), false);
+  assert.equal(top.includes('--read'), false);
+  assert.match(top, /safe-area-inset-bottom|var\(--safe-b\)/);
+  assert.match(src, /rr\.sort\.v1/);
+  assert.match(src, /scrollTo\(\{ top: 0/);
+});
+
 test('shipped journal snapshot stays inside the 15-day window it was built for', () => {
   const snap = JSON.parse(fs.readFileSync(path.join(root, 'data/snapshot-journals.json'), 'utf8'));
   assert.equal(snap.windowDays, 15);

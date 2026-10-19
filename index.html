@@ -100,6 +100,7 @@ try{
           <span id="researchHead">今日精选 — 篇</span>
           <div class="lh-tools">
             <button id="markAllRead" class="ghost-btn" type="button">全部已读</button>
+            <button id="dateSortBtn" class="ghost-btn date-sort" type="button" title="发表日期：最新在前" aria-label="按发表日期排序，当前最新在前">日期<svg class="sort-arrow" viewBox="0 0 12 12" width="9" height="9" aria-hidden="true"><path d="M6 2.2v7.2M3.4 6.8 6 9.4l2.6-2.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
             <div class="viewtog" role="group" aria-label="视图切换">
               <button type="button" data-view="card" class="is-active" aria-pressed="true">卡片</button>
               <button type="button" data-view="index" aria-pressed="false">索引表</button>
@@ -150,7 +151,7 @@ try{
     </section>
 
     <footer class="foot">
-      <span id="footStatus">数据源：Europe PMC · follow-builders</span>
+      <span id="footStatus">数据源：PubMed · Crossref · follow-builders</span>
       <span id="footTime"></span>
       <button class="verbtn" id="regenBtn" type="button" title="请求 GitHub 重新生成今日数据">🔁 重新生成</button>
       <button class="verbtn" id="verBtn" type="button" title="强制拉取最新版本">
@@ -158,6 +159,9 @@ try{
       </button>
     </footer>
   </main>
+  <button id="toTop" class="to-top" type="button" hidden aria-label="回到顶部">
+    <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M6 9.4V2.6M3.2 5.2 6 2.4l2.8 2.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
 </div>
 
 <!-- ══ 按期刊筛选 ══ -->
