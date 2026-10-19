@@ -1,6 +1,7 @@
 /* ============================================================
    科研雷达 · Research Radar
-   Live data: Europe PMC (journals) + Crossref (PII → ClinicalKey / ScienceDirect)
+   Live data: PubMed (15-day journal pool; Europe PMC only if PubMed fails)
+              + Crossref (PII → ClinicalKey / ScienceDirect)
               + Crossref online dates & PubMed abstracts (最近一周)
               + follow-builders (AI builders)
    Zero build, zero API keys in the client.
@@ -11,7 +12,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.19.2';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.19.3';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -26,11 +27,13 @@ const DAYS     = 15;        // discovery window — abstracts lag 2–4 days, so
 const MAXJ     = 100;       // Europe PMC page size (resultType=core). One page is not the pool.
 const CHUNKS   = 3;         // ISSN slices. Each slice is paged until every journal has its cap.
 const EPMC_PAGES = 15;      // 1500 core rows per slice — enough for the busiest third of the pool
-/* 15 天池。发表日早于「今天往前 15 天」的文章不进公开池，也不进快照。
+/* 15 天池，主源是 PubMed（[pdat] + 摘要）。Europe PMC 的 FIRST_PDATE 滞后，
+   只在 PubMed 失败时兜底。发表日早于「今天往前 15 天」的文章不进公开池，也不进快照。
    旗舰 + 子刊合计按 7:3（FLAGSHIP_SHARE）。专科刊不进这个比例。
    每刊上限：旗舰 28、专科 6。子刊先保证领域保底（DOMAIN_FLOOR），
    保底之后再按影响因子轮流补到大约 30%。一个领域若窗口里不足 6 篇，就停在有的篇数。
-   全池大约 300–400（POOL_MAX）。收藏例外：用户点过心的文章留在本机，不写回共享快照。 */
+   全池大约 300–400（POOL_MAX）。收藏例外：用户点过心的文章留在本机，不写回共享快照。
+   最近一周仍用 Crossref 在线日期，不用这个池。 */
 const FLAGSHIP_CAP = 28;
 const SUB_CAP = 3;
 const SPECIALTY_CAP = 6;
@@ -51,7 +54,7 @@ const PICK_N   = 8;         // 今日精选 size
 const PICK_BASIC    = 4;    // …其中基础 / 分子医学
 const PICK_CLINICAL = 4;    // …其中临床研究
 const TTL      = 30 * 60e3; // cache freshness
-const LS_KEY   = 'rr.cache.v6';  // v5 still held the 30-day journal pool
+const LS_KEY   = 'rr.cache.v7';  // v6 still held the Europe PMC 15-day pool
 const SEEN_KEY = 'rr.seen.v1';
 const FAV_KEY  = 'rr.fav.v1';
 /* Crossref polite pool + NCBI identification. Browsers forbid a custom
@@ -1078,6 +1081,273 @@ function jrSignature() {
   return S.jr.all.map(x => x.id).join('|') + '#' + S.jr.picks.map(x => x.id).join('|');
 }
 
+/* PubMed is the 15-day pool. These ISSNs are the ones PubMed prints when
+   journals.config.json stores the other identifier for the same title. */
+const PUBMED_ISSN_ALIAS = {
+  '1876-7591': '1936-878X',
+  '2405-500X': '2405-5018',
+  '0009-7322': '1524-4539',
+  '1875-9777': '1934-5909',
+};
+const JUNK_PUBTYPES = new Set([
+  'letter', 'editorial', 'comment', 'news', 'newspaper article', 'interview',
+  'published erratum', 'erratum', 'retraction of publication', 'retracted publication',
+]);
+const PUBMED_MONTH = {
+  jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6,
+  jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12,
+};
+
+function normIssn(value) {
+  const raw = String(value || '').replace(/[^0-9Xx]/g, '').toUpperCase();
+  return raw.length === 8 ? raw.slice(0, 4) + '-' + raw.slice(4) : '';
+}
+function cfgByExactName(name) {
+  const n = String(name || '').trim().toLowerCase();
+  if (!n || !S.cfg) return null;
+  return S.cfg.find(c => String(c.short || '').toLowerCase() === n
+    || String(c.title || '').toLowerCase() === n) || null;
+}
+function childEl(node, name) {
+  if (!node) return null;
+  for (const ch of node.children) if (ch.localName === name) return ch;
+  return null;
+}
+function childText(node, name) {
+  return (childEl(node, name)?.textContent || '').trim();
+}
+function ymdParts(y, m, d) {
+  if (!y || !m || !d) return '';
+  const token = String(m).trim().toLowerCase();
+  const mi = /^\d+$/.test(token) ? +token : PUBMED_MONTH[token.slice(0, 3)];
+  const yi = +y, di = +d;
+  if (!mi || mi < 1 || mi > 12 || !yi || yi < 1800 || !di || di < 1 || di > 31) return '';
+  return `${yi}-${String(mi).padStart(2, '0')}-${String(di).padStart(2, '0')}`;
+}
+function dateFromPubmedNode(node) {
+  if (!node) return '';
+  const day = ymdParts(childText(node, 'Year'), childText(node, 'Month'), childText(node, 'Day'));
+  if (day) return day;
+  const medline = childText(node, 'MedlineDate');
+  const match = medline.match(/(\d{4})\s+([A-Za-z]+)\s+(\d{1,2})(?:\s*[-/]\s*(\d{1,2}))?/);
+  if (!match) return '';
+  return ymdParts(match[1], match[2], match[4] || match[3]);
+}
+function choosePoolDate(electronic, pub, lo, hi) {
+  if (electronic && electronic >= lo && electronic <= hi) return electronic;
+  if (pub && pub >= lo && pub <= hi) return pub;
+  return '';
+}
+function metaForPubmed(art) {
+  const issns = [];
+  const linking = normIssn(art.querySelector('MedlineJournalInfo > ISSNLinking')?.textContent);
+  if (linking) issns.push(linking);
+  art.querySelectorAll('MedlineCitation > Article > Journal > ISSN').forEach(n => {
+    const id = normIssn(n.textContent);
+    if (id && !issns.includes(id)) issns.push(id);
+  });
+  for (const id of issns) {
+    const hit = cfgByIssn(id);
+    if (hit) return hit;
+  }
+  for (const id of issns) {
+    const alias = normIssn(PUBMED_ISSN_ALIAS[id] || '');
+    const hit = alias && cfgByIssn(alias);
+    if (hit) return hit;
+  }
+  const iso = art.querySelector('MedlineCitation > Article > Journal > ISOAbbreviation')?.textContent;
+  const ta = art.querySelector('MedlineJournalInfo > MedlineTA')?.textContent;
+  return cfgByExactName(iso) || cfgByExactName(ta);
+}
+function mapPubmedArticle(art, lo, hi) {
+  const meta = metaForPubmed(art);
+  const article = art.querySelector('MedlineCitation > Article');
+  if (!meta || !article) return null;
+  const pubtypes = [...article.querySelectorAll('PublicationTypeList > PublicationType')]
+    .map(n => (n.textContent || '').trim()).filter(Boolean);
+  if (pubtypes.some(t => JUNK_PUBTYPES.has(t.toLowerCase()))) return null;
+  const sections = { objective: '', methods: '', results: '', conclusion: '', other: '' };
+  const chunks = [];
+  let mapped = false;
+  for (const n of article.querySelectorAll('Abstract > AbstractText')) {
+    const label = (n.getAttribute('Label') || '').trim();
+    const text = cleanText(n.textContent || '');
+    if (!text) continue;
+    chunks.push(label ? `${label}: ${text}` : text);
+    const key = sectionKeyForLabel(label);
+    if (!key) continue;
+    if (key !== 'other') mapped = true;
+    sections[key] = sections[key] ? sections[key] + ' ' + text : text;
+  }
+  const structured = mapped && !!(sections.objective || sections.methods || sections.results || sections.conclusion);
+  const plain = chunks.join('\n').trim();
+  if (abstractChars({ structured, sections: structured ? sections : null, abstract: plain }) < WEEK_ABS_MIN) return null;
+  const title = cleanText(article.querySelector('ArticleTitle')?.textContent || '');
+  if (!title) return null;
+  const journal = article.querySelector('Journal');
+  const issue = journal && childEl(journal, 'JournalIssue');
+  const pub = dateFromPubmedNode(issue && childEl(issue, 'PubDate'));
+  let electronic = '';
+  for (const node of article.children) {
+    if (node.localName === 'ArticleDate' && (node.getAttribute('DateType') || '') === 'Electronic') {
+      electronic = dateFromPubmedNode(node) || electronic;
+    }
+  }
+  const date = choosePoolDate(electronic, pub, lo, hi);
+  if (!date) return null;
+  let doi = '';
+  let oa = false;
+  art.querySelectorAll('PubmedData > ArticleIdList > ArticleId').forEach(n => {
+    const kind = (n.getAttribute('IdType') || '').toLowerCase();
+    if (kind === 'doi' && !doi) doi = normDoi(n.textContent || '');
+    else if (kind === 'pmc' && (n.textContent || '').trim()) oa = true;
+  });
+  if (!doi) {
+    for (const node of article.children) {
+      if (node.localName === 'ELocationID' && (node.getAttribute('EIdType') || '').toLowerCase() === 'doi') {
+        doi = normDoi(node.textContent || '');
+        if (doi) break;
+      }
+    }
+  }
+  const pmid = (art.querySelector('MedlineCitation > PMID')?.textContent || '').trim();
+  const id = (doi || pmid).toLowerCase();
+  if (!id) return null;
+  const authorCite = [];
+  const authorList = childEl(article, 'AuthorList');
+  if (authorList) {
+    for (const node of authorList.children) {
+      if (node.localName !== 'Author') continue;
+      const name = citePerson(childText(node, 'LastName'), childText(node, 'Initials') || childText(node, 'ForeName'))
+        || cleanText(childText(node, 'CollectiveName'));
+      if (name) authorCite.push(name);
+    }
+  }
+  const blob = structured ? Object.values(sections).join(' ') : plain;
+  const isBasic = !!meta.basic;
+  const study = detectStudy(title, blob, isBasic, pubtypes);
+  return {
+    id,
+    title,
+    abstract: structured ? '' : plain,
+    sections: structured ? sections : null,
+    structured,
+    journal: meta.short || '—',
+    issn: meta.issn || '',
+    platforms: Array.isArray(meta.platforms) ? meta.platforms.slice() : [],
+    domain: meta.domain || '综合医学',
+    tier: meta.tier || 'specialty',
+    imp: meta.if ?? 0,
+    basic: isBasic,
+    studyKey: study.key, studyZh: study.zh, studyRank: study.rank,
+    stars: starTier(meta.if ?? 0),
+    date,
+    ts: Date.parse(date) || 0,
+    year: date.slice(0, 4),
+    authors: authorCite[0] || '',
+    authorCite,
+    volume: reliableVolume(issue ? childText(issue, 'Volume') : ''),
+    issue: issue ? childText(issue, 'Issue') : '',
+    pages: reliablePages(childText(childEl(article, 'Pagination'), 'MedlinePgn')),
+    pmid,
+    doi,
+    keywords: [...art.querySelectorAll('KeywordList > Keyword')].map(n => cleanText(n.textContent)).filter(Boolean),
+    oa,
+    pii: undefined,
+  };
+}
+function pubmedWindowTerm(cfg, lo, hi) {
+  const issns = [];
+  for (const c of cfg || []) {
+    for (const id of [c && c.issn, c && c.essn]) {
+      const n = normIssn(id);
+      if (n && !issns.includes(n)) issns.push(n);
+    }
+  }
+  if (!issns.length) return '';
+  const junk = [
+    'letter[pt]', 'editorial[pt]', 'comment[pt]', 'news[pt]', 'interview[pt]',
+    '"published erratum"[pt]', 'erratum[pt]',
+    '"retraction of publication"[pt]', '"retracted publication"[pt]',
+  ].join(' OR ');
+  const win = `${lo.replace(/-/g, '/')}:${hi.replace(/-/g, '/')}[pdat]`;
+  return `(${issns.map(i => `${i}[issn]`).join(' OR ')}) AND ${win} AND hasabstract NOT (${junk})`;
+}
+async function esearchPmids(term) {
+  const ids = [];
+  let retstart = 0;
+  let count = null;
+  while (count == null || retstart < count) {
+    await sleep(NCBI_GAP_MS);
+    const url = EUTILS + 'esearch.fcgi?' + new URLSearchParams({
+      db: 'pubmed', retmode: 'json', retmax: '500', retstart: String(retstart),
+      term, sort: 'pub_date', tool: 'research-radar', email: API_MAIL,
+    });
+    const data = await fetchJSONRetry(url, 3, 30000);
+    const res = data?.esearchresult || {};
+    if (res.ERROR) throw new Error(String(res.ERROR));
+    count = +(res.count || 0);
+    const batch = res.idlist || [];
+    ids.push(...batch);
+    if (!batch.length || count > 5000) break;
+    retstart += batch.length;
+  }
+  return [...new Set(ids)];
+}
+async function fetchPubmedPool(cfg) {
+  const { lo, hi } = epmcWindow();
+  const term = pubmedWindowTerm(cfg, lo, hi);
+  if (!term) return [];
+  const pmids = await esearchPmids(term);
+  const seen = new Set();
+  const out = [];
+  for (let i = 0; i < pmids.length; i += 80) {
+    if (i) await sleep(NCBI_GAP_MS);
+    const url = EUTILS + 'efetch.fcgi?' + new URLSearchParams({
+      db: 'pubmed', id: pmids.slice(i, i + 80).join(','), retmode: 'xml',
+      tool: 'research-radar', email: API_MAIL,
+    });
+    const xml = await fetchTextRetry(url, 2, 40000);
+    const doc = new DOMParser().parseFromString(xml, 'text/xml');
+    if (doc.querySelector('parsererror')) throw new Error('PubMed XML 无法解析');
+    for (const art of doc.querySelectorAll('PubmedArticle')) {
+      const item = mapPubmedArticle(art, lo, hi);
+      if (!item || seen.has(item.id)) continue;
+      seen.add(item.id);
+      out.push(item);
+    }
+  }
+  return out;
+}
+async function loadEpmcPool() {
+  const groups = await fetchEpmcPool(S.cfg);
+  const seen = new Set(), raw = [];
+  for (const group of groups) {
+    for (const r of group) {
+      const k = String(r.doi || r.id || r.pmid || '').toLowerCase();
+      if (!k || seen.has(k)) continue;
+      seen.add(k); raw.push(r);
+    }
+  }
+  return withinPool(composePool(
+    raw.map(mapArticle).filter(Boolean).sort((a, b) => b.ts - a.ts)
+  ));
+}
+function installJournalPool(items) {
+  const byKey = {};
+  for (const it of items) {
+    (byKey[it.domain] ||= []).push(it);
+    (byKey[it.basic ? 'basic' : 'clinical'] ||= []).push(it);
+  }
+  S.jr = {
+    all: items, byKey, picks: [],
+    updated: items.length ? items[0].date : null,
+    fetchedAt: new Date().toISOString(),
+    loaded: true, error: null,
+  };
+  jrLiveAt = Date.now();
+}
+
 let jrLiveAt = 0;
 function loadResearch(force) {
   if (loadResearch.flight) return loadResearch.flight;
@@ -1098,49 +1368,36 @@ async function loadResearchNow(force) {
       return;
     }
   }
+  let items = null;
   try {
-    const groups = await fetchEpmcPool(S.cfg);
-    const seen = new Set(), raw = [];
-    for (const group of groups) {
-      for (const r of group) {
-        const k = String(r.doi || r.id || r.pmid || '').toLowerCase();
-        if (!k || seen.has(k)) continue;
-        seen.add(k); raw.push(r);
-      }
-    }
-    const items = withinPool(composePool(
-      raw.map(mapArticle).filter(Boolean).sort((a, b) => b.ts - a.ts)
-    ));
-    const byKey = {};
-    for (const it of items) {
-      (byKey[it.domain] ||= []).push(it);
-      (byKey[it.basic ? 'basic' : 'clinical'] ||= []).push(it);
-    }
-    S.jr = {
-      all: items, byKey, picks: [],
-      updated: items.length ? items[0].date : null,
-      fetchedAt: new Date().toISOString(),       // 数据实际拉取时间（≠ 最新文章发表日；Europe PMC 索引有 1-2 天延迟，发表日会滞后）
-      loaded: true, error: null,
-    };
-    jrLiveAt = Date.now();
+    items = withinPool(composePool(await fetchPubmedPool(S.cfg)));
+    if (!items.length) throw new Error('PubMed 窗口没有可用摘要');
   } catch (e) {
-    console.warn('[research] live fetch failed:', e);
-    if (!S.jr.loaded) {
-      const snap = await trySnapshot('data/snapshot-journals.json');
-      const snapItems = withinPool(snap?.items);
-      if (snapItems.length) {
-        const byKey = {};
-        for (const it of snapItems) {
-          (byKey[it.domain] ||= []).push(it);
-          (byKey[it.basic ? 'basic' : 'clinical'] ||= []).push(it);
-        }
-        S.jr = { all: snapItems, byKey, picks: Array.isArray(snap.picks) && snap.picks.length ? snap.picks : [],
-                 updated: snapItems[0]?.date || snap.updated, fetchedAt: snap.generatedAt, loaded: true, error: 'snapshot' };
-      } else {
-        S.jr = { ...S.jr, loaded: true, error: e.message };
+    console.warn('[research] pubmed pool failed:', e);
+    // Snapshot is built from the same PubMed window. Europe PMC is last,
+    // because its FIRST_PDATE lag is the gap this pool is meant to close.
+    const snap = await trySnapshot('data/snapshot-journals.json');
+    const snapItems = withinPool(snap?.items);
+    if (snapItems.length) {
+      const byKey = {};
+      for (const it of snapItems) {
+        (byKey[it.domain] ||= []).push(it);
+        (byKey[it.basic ? 'basic' : 'clinical'] ||= []).push(it);
+      }
+      S.jr = { all: snapItems, byKey, picks: Array.isArray(snap.picks) && snap.picks.length ? snap.picks : [],
+               updated: snapItems[0]?.date || snap.updated, fetchedAt: snap.generatedAt, loaded: true, error: 'snapshot' };
+    } else {
+      try {
+        items = await loadEpmcPool();
+        if (!items.length) throw new Error('Europe PMC 窗口为空');
+      } catch (e2) {
+        console.warn('[research] europepmc fallback failed:', e2);
+        items = null;
+        if (!S.jr.loaded) S.jr = { ...S.jr, loaded: true, error: (e2 && e2.message) || e.message };
       }
     }
   }
+  if (items && items.length) installJournalPool(items);
   if (!S.digest.loaded) refreshPicks();
   applyDigest();
   if (S.jr.loaded && S.jr.all?.length) {
