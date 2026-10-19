@@ -465,6 +465,34 @@ test('今日精选 takes last-week papers before the older 15-day pool', () => {
   assert.match(src, /S\.week\.loading && !weekReady/);
 });
 
+test('journal filter narrows the current list and can be cleared', () => {
+  const src = fs.readFileSync(path.join(root, 'assets/app.js'), 'utf8');
+  const start = src.indexOf('function journalName');
+  const end = src.indexOf('function openJournalSheet');
+  const { applyJournal, journalChoices } = new Function(`
+    const S = { cfg: [{ short: 'NEJM', title: 'NEJM', issn: '0028-4793' }] };
+    ${src.slice(start, end)}
+    return { applyJournal, journalChoices };
+  `)();
+  const list = [
+    { journal: 'Lancet', title: 'A' },
+    { journal: 'Nature', title: 'B' },
+    { journal: 'Lancet', title: 'C' },
+    { journal: '  ', title: 'D' },
+  ];
+  assert.equal(applyJournal(list, '').length, 4);
+  assert.deepEqual(applyJournal(list, 'Lancet').map(a => a.title), ['A', 'C']);
+  assert.equal(applyJournal(list, 'NEJM').length, 0);
+  const choices = journalChoices(
+    [{ journal: 'Lancet' }, { journal: 'Lancet' }, { journal: 'Nature' }],
+    'nejm',
+  );
+  assert.equal(choices.length, 1);
+  assert.equal(choices[0].name, 'NEJM');
+  assert.equal(choices[0].n, 0);
+  assert.match(src, /id="journalSheet"|journalSheet/);
+});
+
 test('shipped journal snapshot stays inside the 15-day window it was built for', () => {
   const snap = JSON.parse(fs.readFileSync(path.join(root, 'data/snapshot-journals.json'), 'utf8'));
   assert.equal(snap.windowDays, 15);

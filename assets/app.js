@@ -11,7 +11,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.19.1';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.19.2';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -226,6 +226,7 @@ const S = {
   digest: { date: null, items: [], byDoi: new Map(), loaded: false },
   bd: { date: null, headline: '', bullets: [], sentiment: '', byId: new Map(), loaded: false },
   jFilter: 'pick',
+  journal: '',
   jView: 'card',
   q: '',
   domainsOpen: false,
@@ -1160,8 +1161,11 @@ async function loadResearchNow(force) {
    Europe PMC FIRST_PDATE lags about a week, so the 7-day chip cannot read
    the 15-day pool. Crossref `from-online-pub-date` is current; its abstracts
    are often empty (NEJM). PubMed E-utilities already have those abstracts.
-   Results live in S.week and the `week` cache slot (same 30 min TTL). A
-   failure here never blocks the Europe PMC list. */
+   Lancet stores only a month-level print date, so this filter returns nothing
+   for it; a created-date fallback also pulls in whole other journals, and the
+   newest Lancet articles often have no PubMed abstract yet. Results live in
+   S.week and the `week` cache slot (same 30 min TTL). A failure here never
+   blocks the Europe PMC list. */
 let weekGen = 0;
 
 function normDoi(s) {
@@ -1879,6 +1883,7 @@ function renderResearch() {
     chip({ ico:'🌐', text:'全部' }, all.length, S.jFilter === 'all', () => setJFilter('all'), '', 'all'),
     chip({ ico:'✨', text:'未读' }, unread, S.jFilter === 'unread', () => setJFilter('unread'), '', 'unread'),
     chip({ ico:'📅', text:'最近一周' }, weekChipCount(), S.jFilter === 'week', () => setJFilter('week'), '', 'week'),
+    journalFilterChip(),
     chip({ ico:'♥', text:'收藏' }, S.fav.order.length, S.jFilter === 'fav', () => setJFilter('fav'), '', 'fav'),
     chip({ ico:'🧬', text:'基础/分子' }, (S.jr.byKey.basic || []).length, S.jFilter === 'basic', () => setJFilter('basic'), '', 'basic'),
     chip({ ico:'📚', text:'专业词汇' }, S.gloss.length, false, openGlossary),
@@ -1907,16 +1912,19 @@ function renderResearch() {
   const isPick = !q && S.jFilter === 'pick';
   if (q) {
     $('#researchHead').textContent = `搜索结果 ${list.length} 篇`;
-    $('#researchSub').textContent = `在全部 ${all.length} 篇里匹配「${S.q.trim()}」· 标题、摘要、期刊、关键词`;
+    $('#researchSub').textContent = S.journal
+      ? `在「${S.journal}」里匹配「${S.q.trim()}」· 标题、摘要、期刊、关键词`
+      : `在全部 ${all.length} 篇里匹配「${S.q.trim()}」· 标题、摘要、期刊、关键词`;
   } else {
     $('#researchHead').textContent = headLabel(list.length, isPick);
-    $('#researchSub').textContent = isPick
+    const journalNote = S.journal ? ` · 只看 ${S.journal}` : '';
+    $('#researchSub').textContent = (isPick
       ? `优先最近 7 天在线发表，不够再从 15 天池补 · ${PICK_CLINICAL} 篇临床 + ${PICK_BASIC} 篇基础`
       : S.jFilter === 'fav'
         ? '小红心只存在这台浏览器 · 可下载 Markdown 清单'
         : S.jFilter === 'week'
           ? `在线发表 ${utcDay(-6)} – ${utcDay(0)}（UTC）· Crossref 发现，摘要优先 PubMed`
-          : '点卡片任意位置展开摘要（摘要较长可在框内滚动）';
+          : '点卡片任意位置展开摘要（摘要较长可在框内滚动）') + journalNote;
   }
   const dlBtn = $('#downloadFavBtn');
   if (dlBtn) dlBtn.hidden = S.jFilter !== 'fav' || !!q;
@@ -1928,13 +1936,14 @@ function renderResearch() {
 }
 
 function headLabel(n, isPick) {
-  if (S.jFilter === 'pick')   return `今日精选 ${n} 篇`;
-  if (S.jFilter === 'all')    return `最新推送 ${n} 篇`;
-  if (S.jFilter === 'unread') return `未读 ${n} 篇`;
-  if (S.jFilter === 'week')   return `最近一周 ${n} 篇`;
-  if (S.jFilter === 'fav')    return `收藏 ${n} 篇`;
-  if (S.jFilter === 'basic')  return `基础/分子医学 ${n} 篇`;
-  return `${S.jFilter} ${n} 篇`;
+  const j = S.journal ? ` · ${S.journal}` : '';
+  if (S.jFilter === 'pick')   return `今日精选${j} ${n} 篇`;
+  if (S.jFilter === 'all')    return `最新推送${j} ${n} 篇`;
+  if (S.jFilter === 'unread') return `未读${j} ${n} 篇`;
+  if (S.jFilter === 'week')   return `最近一周${j} ${n} 篇`;
+  if (S.jFilter === 'fav')    return `收藏${j} ${n} 篇`;
+  if (S.jFilter === 'basic')  return `基础/分子医学${j} ${n} 篇`;
+  return `${S.jFilter}${j} ${n} 篇`;
 }
 
 function searchQuery() { return String(S.q || '').trim(); }
@@ -2024,7 +2033,15 @@ function utcDay(offset = 0) {
   return d.toISOString().slice(0, 10);
 }
 
-function filteredArticles() {
+function journalName(a) {
+  return String(a?.journal || '').trim();
+}
+function applyJournal(list, journal) {
+  const name = String(journal || '').trim();
+  if (!name) return list || [];
+  return (list || []).filter(a => journalName(a) === name);
+}
+function viewArticles() {
   const q = searchQuery();
   if (q) return S.jr.all.filter(a => articleMatches(a, q));
   const k = S.jFilter;
@@ -2035,6 +2052,94 @@ function filteredArticles() {
   if (k === 'fav')    return favoriteArticles();
   if (k === 'basic')  return S.jr.byKey.basic || [];
   return S.jr.byKey[k] || [];
+}
+function filteredArticles() {
+  return applyJournal(viewArticles(), S.journal);
+}
+function journalFilterChip() {
+  const base = viewArticles();
+  const active = String(S.journal || '');
+  const n = active
+    ? base.filter(a => journalName(a) === active).length
+    : new Set(base.map(journalName).filter(Boolean)).size;
+  const b = el('button', 'chip');
+  b.type = 'button';
+  b.dataset.k = 'journal';
+  b.setAttribute('aria-pressed', String(!!active));
+  b.setAttribute('aria-haspopup', 'dialog');
+  b.setAttribute('aria-label', active ? `期刊 ${active}` : '按期刊筛选');
+  b.append(el('span', 'ci', '📰'));
+  b.append(document.createTextNode(active || '期刊'));
+  b.append(el('span', 'cnt', `(${n})`));
+  b.append(el('span', 'chev', '▾'));
+  b.addEventListener('click', openJournalSheet);
+  return b;
+}
+function journalChoices(base, q) {
+  const counts = new Map();
+  for (const a of base || []) {
+    const name = journalName(a);
+    if (name) counts.set(name, (counts.get(name) || 0) + 1);
+  }
+  const key = String(q || '').trim().toLowerCase();
+  const blobOf = name => {
+    const c = (S.cfg || []).find(x => x && x.short === name) || {};
+    return `${name} ${c.title || ''} ${c.issn || ''} ${c.essn || ''}`.toLowerCase();
+  };
+  const rows = [];
+  for (const [name, n] of counts) {
+    if (!key || blobOf(name).includes(key)) rows.push({ name, n });
+  }
+  if (key) {
+    for (const c of S.cfg || []) {
+      const name = String(c?.short || '').trim();
+      if (!name || counts.has(name)) continue;
+      if (blobOf(name).includes(key)) rows.push({ name, n: 0 });
+    }
+  }
+  rows.sort((a, b) => b.n - a.n || a.name.localeCompare(b.name, 'en'));
+  return rows;
+}
+function openJournalSheet() {
+  const sheet = $('#journalSheet');
+  if (!sheet) return;
+  sheet.hidden = false;
+  const input = $('#journalSearch');
+  if (input) input.value = '';
+  renderJournalSheet('');
+  setTimeout(() => { if (input) input.focus(); }, 320);
+}
+function closeJournalSheet() {
+  const sheet = $('#journalSheet');
+  if (sheet) sheet.hidden = true;
+}
+function chooseJournal(name) {
+  S.journal = String(name || '').trim();
+  closeJournalSheet();
+  renderResearch();
+  const sc = $('#scrollArea');
+  if (sc) sc.scrollTo({ top: Math.max(0, $('#researchChips').offsetTop - 96), behavior: 'smooth' });
+}
+function journalRow(value, label, n, on) {
+  const b = el('button', 'jrow' + (on ? ' is-on' : ''));
+  b.type = 'button';
+  b.append(el('span', 'jrow-name', label), el('span', 'jrow-n', String(n)));
+  b.addEventListener('click', () => chooseJournal(value));
+  return b;
+}
+function renderJournalSheet(q) {
+  const host = $('#journalList');
+  if (!host) return;
+  const base = viewArticles();
+  const key = String(q || '').trim();
+  const rows = journalChoices(base, key);
+  host.replaceChildren();
+  if (!key) host.append(journalRow('', '全部期刊', base.length, !S.journal));
+  if (!rows.length) {
+    host.append(emptyBox('🔍', '没有这个期刊', '换个名字试试，或看全部期刊。'));
+    return;
+  }
+  for (const r of rows) host.append(journalRow(r.name, r.name, r.n, S.journal === r.name));
 }
 
 function setJFilter(k) {
@@ -2250,6 +2355,9 @@ function buildArticleBody(a, card) {
 }
 
 function researchEmpty() {
+  if (S.journal && !searchQuery()) {
+    return emptyBox('📰', `${S.journal} 在这个筛选里还没有文章`, '换个期刊，或看全部期刊。', '全部期刊', () => chooseJournal(''));
+  }
   if (searchQuery()) {
     return emptyBox('🔍', '没有匹配的文章', '换个关键词，或清空搜索看回当前筛选。', '清除搜索', () => {
       const input = $('#researchSearch');
@@ -3513,6 +3621,10 @@ if (researchSearchClear) researchSearchClear.addEventListener('click', () => {
   setSearchQuery('');
 });
 $('#glossSheet').addEventListener('click', e => { if (e.target.closest('[data-close]')) closeGlossary(); });
+const journalSheet = $('#journalSheet');
+if (journalSheet) journalSheet.addEventListener('click', e => { if (e.target.closest('[data-close]')) closeJournalSheet(); });
+const journalSearch = $('#journalSearch');
+if (journalSearch) journalSearch.addEventListener('input', e => renderJournalSheet(e.target.value));
 const downloadFavBtn = $('#downloadFavBtn');
 if (downloadFavBtn) downloadFavBtn.addEventListener('click', () => downloadFavoritesMarkdown());
 document.addEventListener('keydown', e => {
@@ -3521,6 +3633,7 @@ document.addEventListener('keydown', e => {
   hideMtPop();
   closeShareSheet();
   closeGlossary();
+  closeJournalSheet();
 });
 const shareSheetEl = $('#shareSheet');
 if (shareSheetEl) shareSheetEl.addEventListener('click', e => {

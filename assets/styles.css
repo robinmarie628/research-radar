@@ -1022,6 +1022,17 @@ table.idx .b{width:42px;text-align:center}
 }
 .sheet-search:focus{border-color:var(--focus);background:var(--card)}
 .sheet-list{flex:1 1 auto;min-height:0;overflow-y:auto;padding:0 16px 20px}
+.jrow{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  width:100%;text-align:left;padding:12px 2px;
+  border:0;border-bottom:1px solid var(--line-2);
+  background:transparent;font-family:inherit;font-size:14px;font-weight:700;
+  color:var(--ink);cursor:pointer;
+}
+.jrow:active{transform:scale(.99)}
+.jrow.is-on{color:var(--brand-ink);font-weight:800}
+.jrow-n{font-size:12px;font-weight:800;color:var(--ink-4);font-variant-numeric:tabular-nums}
+.jrow.is-on .jrow-n{color:var(--brand)}
 .gl-letter{
   position:sticky;top:0;z-index:1;
   background:var(--head-bg);color:var(--head-fg);

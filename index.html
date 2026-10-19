@@ -160,6 +160,25 @@ try{
   </main>
 </div>
 
+<!-- ══ 按期刊筛选 ══ -->
+<div class="sheet" id="journalSheet" hidden>
+  <div class="sheet-mask" data-close></div>
+  <div class="sheet-body" role="dialog" aria-modal="true" aria-label="按期刊筛选">
+    <div class="sheet-grip" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <h3>按期刊筛选</h3>
+      <button class="icon-btn" type="button" data-close aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+    <input class="sheet-search" id="journalSearch" type="search" placeholder="搜索期刊，如 Lancet、NEJM" />
+    <div class="sheet-list" id="journalList"></div>
+  </div>
+</div>
+
 <!-- ══ 专业词汇抽屉 ══ -->
 <div class="sheet" id="glossSheet" hidden>
   <div class="sheet-mask" data-close></div>
