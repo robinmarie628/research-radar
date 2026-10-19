@@ -11,7 +11,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.19.5';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.19.6';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -231,6 +231,7 @@ const S = {
   jFilter: 'pick',
   journal: '',
   jView: 'card',
+  dateSort: 'new',
   q: '',
   domainsOpen: false,
   aFilter: 'all',
@@ -2309,8 +2310,25 @@ function viewArticles() {
   if (k === 'basic')  return S.jr.byKey.basic || [];
   return S.jr.byKey[k] || [];
 }
+/** YYYY-MM-DD (or YYYY-MM / YYYY) from the date shown on the card. */
+function pubDateKey(a) {
+  const d = String(a?.date || '').trim().slice(0, 10);
+  return /^\d{4}(-\d{2}(-\d{2})?)?$/.test(d) ? d : '';
+}
+/** Newest or oldest first. Same-day rows keep their incoming order; undated rows go last. */
+function sortByPubDate(list, dir) {
+  const newest = dir !== 'old';
+  return (list || []).map((a, i) => ({ a, i, d: pubDateKey(a) })).sort((x, y) => {
+    if (x.d !== y.d) {
+      if (!x.d) return 1;
+      if (!y.d) return -1;
+      return newest ? (x.d < y.d ? 1 : -1) : (x.d < y.d ? -1 : 1);
+    }
+    return x.i - y.i;
+  }).map(x => x.a);
+}
 function filteredArticles() {
-  return applyJournal(viewArticles(), S.journal);
+  return sortByPubDate(applyJournal(viewArticles(), S.journal), S.dateSort);
 }
 function journalFilterChip() {
   const base = viewArticles();
@@ -2652,21 +2670,7 @@ function renderArticleList(host, list, isPick) {
   host.append(frag);
 }
 
-/** 窄索引表 — # / 期刊 / 类型 / 领域 / 临床或基础 */
-function indexLetter(journal) {
-  const ch = String(journal || '').trim().charAt(0);
-  if (!ch) return '#';
-  return /[A-Za-z]/.test(ch) ? ch.toUpperCase() : ch;
-}
-
-function sortByJournal(list) {
-  return [...list].sort((a, b) => {
-    const c = String(a.journal || '').localeCompare(String(b.journal || ''), 'en', { sensitivity: 'base' });
-    if (c) return c;
-    return String(a.title || '').localeCompare(String(b.title || ''), 'en', { sensitivity: 'base' });
-  });
-}
-
+/** 窄索引表 — # / 期刊 / 类型 / 领域 / 临床或基础. Row order is the date sort. */
 function renderIndexTable(host, list) {
   host.replaceChildren();
   if (S.jFilter !== 'week' && S.jFilter !== 'fav' && !S.jr.loaded) return;
@@ -2681,17 +2685,7 @@ function renderIndexTable(host, list) {
   ['#', '期刊', '类型', '领域', '临/基'].forEach(h => hr.append(el('th', '', h)));
   thead.append(hr);
   const tb = el('tbody');
-  let letter = '';
-  sortByJournal(list).forEach((a, i) => {
-    const L = indexLetter(a.journal);
-    if (L !== letter) {
-      letter = L;
-      const lr = el('tr', 'idx-letter');
-      const ltd = el('td', '', L);
-      ltd.colSpan = 5;
-      lr.append(ltd);
-      tb.append(lr);
-    }
+  list.forEach((a, i) => {
     const tr = el('tr');
     tr.append(el('td', 'n', String(i + 1)));
     const jd = el('td', 'j');
@@ -2916,6 +2910,7 @@ function setTab(tab) {
   $('#panel-research').hidden = tab !== 'research';
   $('#panel-builders').hidden = tab !== 'builders';
   $('#scrollArea').scrollTop = 0;
+  syncToTop();
   $('#brandSub').textContent = tab === 'research' ? '科研雷达 · 临床顶刊每日速递' : '科研雷达 · AI Builder 一手动态';
   if (tab === 'builders' && !S.ai.loaded) loadBuilders(false);
   if (tab === 'builders' && !S.bd.loaded) loadBuilderDigest();
@@ -3910,10 +3905,23 @@ if (mtPop) {
   mtPop.addEventListener('touchstart', e => e.preventDefault(), { passive: false });
 }
 const scrollArea = $('#scrollArea');
+const TO_TOP_AT = 280;
+function syncToTop() {
+  const b = $('#toTop');
+  if (!b || !scrollArea) return;
+  b.hidden = scrollArea.scrollTop <= TO_TOP_AT;
+}
 if (scrollArea) scrollArea.addEventListener('scroll', () => {
   setTypeOpen(false);
   hideMtPop();
+  syncToTop();
 }, { passive: true });
+const toTop = $('#toTop');
+if (toTop) toTop.addEventListener('click', () => {
+  if (!scrollArea) return;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  scrollArea.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+});
 window.addEventListener('hashchange', () => {
   const on = location.hash === '#fav';
   if (on && S.jFilter !== 'fav') setJFilter('fav');
@@ -3935,6 +3943,38 @@ if (markAll) markAll.addEventListener('click', () => {
   S.jr.all.forEach(a => S.seen.add(a.id));
   writeSeen();
   toast('已把 ' + S.jr.all.length + ' 篇标为已读');
+  renderResearch();
+});
+
+/* Publication-date order for whatever list is on screen. Default newest first. */
+const SORT_KEY = 'rr.sort.v1';
+function readDateSort() {
+  try { return localStorage.getItem(SORT_KEY) === 'old' ? 'old' : 'new'; }
+  catch { return 'new'; }
+}
+function writeDateSort(dir) {
+  try {
+    if (dir === 'old') localStorage.setItem(SORT_KEY, 'old');
+    else localStorage.removeItem(SORT_KEY);
+  } catch { /* private mode */ }
+}
+function paintDateSort() {
+  const b = $('#dateSortBtn');
+  if (!b) return;
+  const old = S.dateSort === 'old';
+  b.classList.toggle('is-old', old);
+  b.title = old ? '发表日期：最早在前' : '发表日期：最新在前';
+  b.setAttribute('aria-label', old
+    ? '按发表日期排序，当前最早在前'
+    : '按发表日期排序，当前最新在前');
+}
+S.dateSort = readDateSort();
+paintDateSort();
+const dateSortBtn = $('#dateSortBtn');
+if (dateSortBtn) dateSortBtn.addEventListener('click', () => {
+  S.dateSort = S.dateSort === 'old' ? 'new' : 'old';
+  writeDateSort(S.dateSort);
+  paintDateSort();
   renderResearch();
 });
 

@@ -494,7 +494,7 @@ body{
 .scroll{
   flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;
   -webkit-overflow-scrolling:touch;
-  padding:0 16px calc(24px + var(--safe-b));
+  padding:0 16px calc(46px + var(--safe-b));
   scrollbar-width:none;
 }
 .scroll::-webkit-scrollbar{display:none}
@@ -813,6 +813,15 @@ mark.hit{
   transition:transform .16s cubic-bezier(.34,1.4,.64,1),background .2s;
 }
 .ghost-btn:active{transform:scale(.93);background:var(--brand-soft)}
+.date-sort{display:inline-flex;align-items:center;gap:3px;white-space:nowrap}
+.date-sort .sort-arrow{display:block;flex:0 0 auto}
+.date-sort.is-old .sort-arrow{transform:rotate(180deg)}
+@media (max-width:360px){
+  .lh-top{gap:6px}
+  .lh-tools{gap:4px}
+  .ghost-btn{padding:5px 6px}
+  .viewtog button{padding:4px 6px}
+}
 .viewtog{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:2px;gap:2px}
 .viewtog button{
   font-family:inherit;font-size:10.5px;font-weight:800;color:var(--ink-3);
@@ -840,11 +849,6 @@ table.idx td{
 table.idx tr:last-child td{border-bottom:0}
 table.idx tbody tr{cursor:pointer}
 table.idx tbody tr:active{background:var(--surface)}
-table.idx tr.idx-letter{cursor:default}
-table.idx tr.idx-letter td{
-  background:var(--head-bg);color:var(--head-fg);font-weight:800;font-size:11px;
-  letter-spacing:.4px;padding:6px 10px;
-}
 table.idx .n{width:22px;text-align:center;color:var(--ink-4);font-weight:800}
 table.idx .j{
   width:30%;font-weight:800;color:var(--brand-ink);
@@ -988,6 +992,20 @@ table.idx .b{width:42px;text-align:center}
   50%{box-shadow:0 0 0 5px transparent}
 }
 .verdot{width:6px;height:6px;border-radius:50%;background:var(--star);flex:0 0 auto}
+
+/* Back to top. Small, fixed to the phone shell, under sheets (z 60 / 80). */
+.to-top{
+  position:absolute;z-index:40;
+  right:10px;bottom:calc(10px + var(--safe-b));
+  width:30px;height:30px;padding:0;
+  display:grid;place-items:center;
+  border-radius:9px;border:1px solid var(--line);
+  background:rgba(255,255,255,.92);color:var(--brand-ink);
+  box-shadow:var(--sh-1);cursor:pointer;
+}
+.to-top[hidden]{display:none !important}
+.to-top:active{transform:scale(.93)}
+.to-top svg{display:block}
 
 /* ---------- glossary sheet ---------- */
 .sheet{position:fixed;inset:0;z-index:60;display:flex;flex-direction:column;justify-content:flex-end}
