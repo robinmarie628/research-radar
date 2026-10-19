@@ -12,7 +12,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.19.3';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.19.4';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -1016,7 +1016,7 @@ function pickId(a) {
 /** 今日精选：8 篇 = 4 篇临床 + 4 篇基础/分子医学。
  *  Each pool is ranked on its own (旗舰，再专科，再子刊). Earlier pools are
  *  filled first, so the last-7-days online list wins seats before the 15-day
- *  Europe PMC pool tops up whatever is still short. */
+ *  PubMed pool tops up whatever is still short. */
 function curatePools(pools, n = PICK_N) {
   const groups = (pools || []).map(items => [...(items || [])].sort((a, b) => pickRank(b) - pickRank(a)));
   const picked = [];
@@ -1415,14 +1415,13 @@ async function loadResearchNow(force) {
 }
 
 /* ---------------- 最近一周: Crossref online date + PubMed abstract --------
-   Europe PMC FIRST_PDATE lags about a week, so the 7-day chip cannot read
-   the 15-day pool. Crossref `from-online-pub-date` is current; its abstracts
-   are often empty (NEJM). PubMed E-utilities already have those abstracts.
-   Lancet stores only a month-level print date, so this filter returns nothing
-   for it; a created-date fallback also pulls in whole other journals, and the
-   newest Lancet articles often have no PubMed abstract yet. Results live in
-   S.week and the `week` cache slot (same 30 min TTL). A failure here never
-   blocks the Europe PMC list. */
+   The 15-day pool uses PubMed publication dates, often the issue day.
+   This chip uses Crossref `from-online-pub-date` for the last 7 UTC days
+   and fills empty abstracts from PubMed. Lancet's Crossref print date is
+   month-level, so that filter returns nothing for it; a created-date
+   fallback also pulls in other journals. Results live in S.week and the
+   `week` cache slot (same 30 min TTL). A failure here never blocks the
+   15-day list. */
 let weekGen = 0;
 
 function normDoi(s) {
@@ -1635,7 +1634,7 @@ async function fetchWeekArticles() {
     .sort((a, b) => (b.date || '').localeCompare(a.date || '') || a.title.localeCompare(b.title));
 }
 
-/** Crossref+PubMed rows, swapping in the Europe PMC card when the same DOI is already pooled. */
+/** Crossref+PubMed rows, swapping in the 15-day pool card when the same DOI is already pooled. */
 function weekList() {
   const pool = new Map();
   for (const a of S.jr.all || []) {
@@ -1733,7 +1732,7 @@ async function loadWeek(force = false) {
      else DOI only
    ClinicalKey wins when both are listed. Snapshot items often have no ISSN;
    those match the config row's exact `short` or `title`.
-   Europe PMC exposes no PII, so it comes from Crossref's alternative-id.
+   PubMed and Europe PMC expose no Elsevier PII, so it comes from Crossref's alternative-id.
    `filter=doi:a,doi:b` batches ~20 DOIs per request.
    The id is the compact Elsevier PII (`S` + digits, no hyphens), which is
    what both ClinicalKey (`1-s2.0-` + PII) and ScienceDirect (`/pii/` + PII)
@@ -1928,7 +1927,7 @@ async function loadDigest() {
 }
 
 /** Snapshot articles, keyed by DOI. Used when a digest pick has fallen out of
- *  the live Europe PMC pool. */
+ *  the live 15-day pool. */
 async function loadSnapArticles() {
   if (S.snapByDoi) return S.snapByDoi;
   const snap = await trySnapshot('data/snapshot-journals.json');
@@ -2283,7 +2282,7 @@ function setSearchQuery(raw) {
   renderResearch();
 }
 
-/** UTC calendar day, same clock as the Europe PMC window (`iso`). */
+/** UTC calendar day, same clock as the 15-day pool window (`iso`). */
 function utcDay(offset = 0) {
   const d = new Date();
   d.setUTCDate(d.getUTCDate() + offset);
@@ -3790,7 +3789,7 @@ async function boot() {
 
   setTimeout(() => { if (!S.ai.loaded) loadBuilders(false); }, 1200);
   setTimeout(() => {
-    // The first load already paged Europe PMC. Don't page it again immediately.
+    // The first load already fetched the PubMed pool. Don't fetch it again immediately.
     if (Date.now() - jrLiveAt < 2 * 60e3) loadBuilders(true);
     else { loadResearch(true); loadBuilders(true); }
   }, 2500);

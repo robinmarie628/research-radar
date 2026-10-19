@@ -34,13 +34,15 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import date, timedelta
 
 EPMC = "https://www.ebi.ac.uk/europepmc/webservices/rest/search"
-# Three ISSN slices, each walked with cursorMark until every journal in the
-# slice has `cap` abstracts or the result set ends. A single page of 100
-# sorted by date lets Science / Sci Adv / Cell Reports fill the page.
+# Empty-pool fallback only. Three ISSN slices, each walked with cursorMark
+# until every journal in the slice has `cap` abstracts or the result set ends.
+# A single page of 100 sorted by date lets Science / Sci Adv / Cell Reports
+# fill the page. A successful PubMed fetch never mixes these rows in.
 EPMC_PAGE = 100
 EPMC_CHUNK_PAGES = 15
 
-# 15-day pool. firstPublicationDate older than today-minus-days is absent.
+# 15-day pool caps. PubMed drops a record when neither the electronic date
+# nor the issue PubDate falls inside today-minus-days (see choose_pool_date).
 # Among flagship + sub articles the target is 7:3
 # (FLAGSHIP_SHARE). Specialty journals are outside that ratio.
 # Every sub journal that published keeps one seat, then each domain is
@@ -269,7 +271,7 @@ def curate_pools(pools, n=8, n_basic=4, n_clinical=4):
 
     Each pool is ranked on its own (flagship, then specialty, then sub).
     Earlier pools take seats first, so last-week online papers fill the
-    shortlist before the 15-day Europe PMC pool tops up open seats.
+    shortlist before the 15-day PubMed pool tops up open seats.
     Basic slots stay one per journal so Cell cannot occupy every basic seat.
     """
     def rank(a):
@@ -341,8 +343,8 @@ def abstract_len(a):
 def select_picks(week, pool, n=8, n_basic=4, n_clinical=4):
     """Prefer last-week online papers, then fill from the 15-day pool.
 
-    When the same DOI is already in the Europe PMC pool with an abstract,
-    that richer record is the one that gets the seat.
+    When the same DOI is already in the 15-day pool with an abstract,
+    that record is the one that gets the seat.
     """
     by = {}
     for a in pool or []:

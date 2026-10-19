@@ -3,8 +3,9 @@
 
 Fields: 背景 / 创新点 / 怎么做的 / 看点·临床含义 / 未来研究方向
 
-Reuses build_snapshot.py for the Europe PMC fetch and the shortlist, so the
-digest matches the page: last-7-days online papers first, then the 15-day pool.
+Reuses build_snapshot.py for the PubMed 15-day pool and the shortlist, so the
+digest matches the page: last-7-days online papers first, then that pool.
+Europe PMC is only the empty-pool fallback inside build_snapshot.
 
 Output  data/digest.json   — read by the app; fields keyed by DOI
         data/pushed.txt    — DOIs already covered, so days don't repeat
@@ -232,7 +233,7 @@ def choose_eight(week, full, n=8, n_basic=4, n_clinical=4):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--n", type=int, default=8, help="papers per day")
-    ap.add_argument("--days", type=int, default=15, help="Europe PMC window")
+    ap.add_argument("--days", type=int, default=15, help="PubMed pool window")
     ap.add_argument("--dry-run", action="store_true",
                     help="build the prompt and print it, but do not call the model")
     a = ap.parse_args()

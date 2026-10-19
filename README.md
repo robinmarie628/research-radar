@@ -4,7 +4,7 @@
 
 | 标签页 | 内容 | 数据来源 |
 |---|---|---|
-| 🔬 **科研顶刊** | 临床顶刊 + 基础/分子医学每日速递，按领域分类，标注研究类型与临床/基础 | [Europe PMC](https://europepmc.org/) + [Crossref](https://api.crossref.org) |
+| 🔬 **科研顶刊** | 临床顶刊 + 基础/分子医学每日速递，按领域分类，标注研究类型与临床/基础 | [PubMed](https://pubmed.ncbi.nlm.nih.gov/)（15 天池）+ [Crossref](https://api.crossref.org)（最近一周的在线日期、全文 PII） |
 | 🤖 **AI Builder** | 26 位一线 AI builder 的 X 动态、播客、官方博客 | [follow-builders](https://github.com/zarazhangrui/follow-builders) 公共 feed |
 
 **打开即最新**：页面每次打开都直接向上游实时抓取，没有后端、没有定时任务、没有 API key。数据缓存在浏览器本地（30 分钟），第二次打开秒开，后台再静默校验一次。
@@ -56,21 +56,30 @@ research-radar/
 
 ## 科研顶刊是怎么来的
 
-**一句话：Europe PMC 一次查询拿到 54 本顶刊近 15 天带摘要的全部新文章，在浏览器里解析结构、判定研究类型、按规则精选。**
+**一句话：PubMed 一次查询拿到配置里全部期刊近 15 天、带可用摘要的文章；浏览器里解析结构、判定研究类型，再按旗舰 / 子刊 / 专科的上限精选。**
 
-选 Europe PMC 而不是 Scopus / PubMed 的原因：**免 key、免配额、带摘要、支持多 ISSN 联合查询**。（Crossref 对 Elsevier 系期刊完全不返回摘要，NEJM、Lancet、JACC 全部 0/20。）
+15 天公开池以 PubMed 为主。Europe PMC 的 `FIRST_PDATE` 比 PubMed 慢，Lancet、NEJM 会在窗口里缺页。PubMed 免 key，用 `tool` + `email` 标明来源，多本 ISSN 可以 OR 在同一条检索里。Crossref 对 Elsevier 系期刊经常不给摘要，所以不用它当 15 天池的主源；它只负责「最近一周」的在线发表日，以及全文按钮要用的 PII。
 
 ```
-(ISSN:"0140-6736" OR ISSN:"0028-4793" OR …)
-  AND SRC:MED AND HAS_ABSTRACT:Y AND FIRST_PDATE:[<lo> TO <hi>]
+(0140-6736[issn] OR 0028-4793[issn] OR …)
+  AND <lo>:<hi>[pdat]
+  AND hasabstract
+  NOT (letter[pt] OR editorial[pt] OR comment[pt] OR news[pt]
+       OR interview[pt] OR erratum[pt] OR "published erratum"[pt]
+       OR "retraction of publication"[pt] OR "retracted publication"[pt])
 ```
+
+`<lo>` / `<hi>` 与页面的 `--days`（默认 15）是同一窗口。刊名单是 `data/journals.config.json` 里的 `issn` 和 `essn`。
 
 ### 关键设计
 
-1. **必须加 `HAS_ABSTRACT:Y`。** `journal-article` 类型太粗，会混进勘误（`Department of Error`）、讣告、通讯、评论。「有摘要」是唯一能干净分出真正研究论文的条件。
-2. **窗口取 15 天，不是 1 天。** 摘要入库滞后发表 2–4 天，1 天窗口基本是空的。早于这个窗口的文章不进公开池；用户收藏过的留在本机。
-3. **拆成 3 段查询再合并。** 单次查询会被高产期刊淹没。拆段 + **每刊最多 8 篇**，保证小刊也能露脸。
-4. **不写「今日发表」。** 显示的是文章真实的 `firstPublicationDate`。
+1. **要有可用摘要，并丢掉信件 / 勘误 / 评论。** `hasabstract` 加上上面的文献类型排除。摘要正文还要至少 40 个字符（与「最近一周」同一条线）。高产刊在 PubMed 里会列出大量 Letter、Erratum、Editorial、Comment、News，这些不进公开池。
+2. **窗口仍是 15 天，不是 30 天，也不是 1 天。** 摘要入库仍可能晚于在线发表几天，1 天窗口基本是空的。早于这个窗口的文章不进公开池；用户收藏过的留在本机。
+3. **一篇记录怎么对上配置里的期刊。** 先用 PubMed 的 `ISSNLinking` 或 `Journal/ISSN` 对配置里的 `issn` / `essn`。对不上时用一小张别名表：PubMed 印出来的是另一条 ISSN（JACC Imaging `1876-7591` → `1936-878X`，JACC Clin EP `2405-500X` → `2405-5018`，Circulation `0009-7322` → `1524-4539`，Cell Stem Cell `1875-9777` → `1934-5909`）。再不行就用 ISO 缩写或 Medline 刊名，和配置里的 `short` / `title` **整段相等**。没有前缀匹配，`Lancet Oncol` 不会并进 `Lancet`。
+4. **卡片上的日期。** 电子出版日落在窗口内就用它；否则用期次 `PubDate`（也必须在窗口内）。Lancet 常先上网、后进某一期，Europe PMC 的 `FIRST_PDATE` 跟着更早的上网日走，15 天后就从池里消失；PubMed 的期次日仍在这 15 天里，所以这些试验留得住。两个日期都不在窗口内的记录丢掉。
+5. **上限在合并之后，不在检索里。** 检索拿回窗口内全部合格摘要，再跑和页面相同的 `compose_pool`：旗舰每刊最多 28，专科 6；子刊先保证领域至少能看到，再把旗舰+子刊压向大约 7:3。全池上限 400。小刊不会被 Nature / Science 挤没。
+6. **Europe PMC 只在池子是空的时候出现。** 页面顺序是：实时 PubMed → 同一窗口生成的快照 → Europe PMC。`scripts/build_snapshot.py` 同样：PubMed 失败或 0 篇才回退 Europe PMC。成功的 PubMed 结果不和 Europe PMC 混在一起。
+7. **「最近一周」不是这 15 天池。** 芯片用 Crossref `from-online-pub-date` 的最近 7 个 UTC 日，摘要不够时再向 PubMed 要。不用全库 `created` 日期兜底（那样一周列表会涨到三百多篇）。
 
 ### 领域（21 个）
 
@@ -94,7 +103,7 @@ research-radar/
 
 ### 结构化摘要：目的 / 方法 / 结果 / 结论
 
-Europe PMC 返回的摘要**自带小标题**（`<h4>Background</h4>…<h4>Results</h4>…`）。解析成中文四段，比一整块文字好读得多：
+PubMed 的结构化摘要带 `AbstractText` 的 `Label`（`BACKGROUND` / `METHODS` / `FINDINGS` / `INTERPRETATION`）。解析成中文四段，比一整块文字好读得多。只有池子退回 Europe PMC 时，才解析它那种 `<h4>Background</h4>` 小标题：
 
 | 原小标题 | 映射 |
 |---|---|
@@ -104,7 +113,7 @@ Europe PMC 返回的摘要**自带小标题**（`<h4>Background</h4>…<h4>Resul
 | Conclusions / Interpretation / Discussion / Translation | **结论** |
 | Funding / Trial registration / Financial disclosure | 丢弃 |
 
-当前 189 篇里有 101 篇是结构化摘要（53%），其余回退成整段原文。
+当前这份 PubMed 快照 275 篇里有 123 篇是结构化摘要，其余回退成整段原文。
 
 > **陷阱**：基因名也用小标题标签包裹（`TRAF7`、`Cxcl1`、`BBX28`、`IAA19`…）。解析器只在标签文本**命中已知小标题词表**时才当作分段，否则忽略——否则一篇分子生物学论文会被切成十几个假章节。
 
@@ -116,7 +125,7 @@ Europe PMC 返回的摘要**自带小标题**（`<h4>Background</h4>…<h4>Resul
 - **临床 4 篇**，优先覆盖不同领域（优先补还没出现过的领域）
 - **同刊最多 2 篇**（基础名额是一刊一篇）。某一边不够 4 篇时，从当日池子里继续补**同一边**，而不是用另一边凑满 8
 - 排序权重 = 研究类型等级 ×1000 + 影响因子 + 结构化摘要加成
-- 页面上的「今日精选」**始终是 4 篇临床 + 4 篇基础**。digest 里的 DOI 如果不在实时池（每刊只留 8 篇，高产刊会把更早的文章挤掉），就用 `snapshot-journals.json` 里的那一篇补上，再不济用 digest 记录本身渲染
+- 页面上的「今日精选」**始终是 4 篇临床 + 4 篇基础**。digest 里的 DOI 如果不在实时池（旗舰每刊最多 28 篇、专科 6 篇，更早的文章会被挤掉），就用 `snapshot-journals.json` 里的那一篇补上，再不济用 digest 记录本身渲染
 
 「今日首选」由 LLM 在 8 篇中评出（选证据等级最高、临床影响最大的一篇）。
 
@@ -159,7 +168,7 @@ Europe PMC 返回的摘要**自带小标题**（`<h4>Background</h4>…<h4>Resul
 
 ### 原文链接
 
-按钮由 `data/journals.config.json` 里每本刊的 `platforms` 决定，不在 `app.js` 里写死刊名。Europe PMC 不提供 PII，所以向 Crossref 取 `alternative-id`。`filter=doi:a,doi:b` 一次最多约 20 个 DOI。只有紧凑形式的 Elsevier PII（`^S[0-9X]{10,}$`，无连字符，如 `S0092867411001279`）才算数。有 PII 时：
+按钮由 `data/journals.config.json` 里每本刊的 `platforms` 决定，不在 `app.js` 里写死刊名。PubMed 和 Europe PMC 都不提供 Elsevier PII，所以向 Crossref 取 `alternative-id`。`filter=doi:a,doi:b` 一次最多约 20 个 DOI。只有紧凑形式的 Elsevier PII（`^S[0-9X]{10,}$`，无连字符，如 `S0092867411001279`）才算数。有 PII 时：
 
 1. `platforms` 含 `"ck"` → **ClinicalKey**（`https://www.clinicalkey.com/#!/content/playContent/1-s2.0-<PII>`）。两边都有时优先 ClinicalKey。
 2. 否则 `platforms` 含 `"sd"` → **ScienceDirect**（`https://www.sciencedirect.com/science/article/pii/<PII>`）。
@@ -263,7 +272,7 @@ python scripts/build_config.py --sample   # 逐本查询 + 抽样摘要小标题
 
 ## 已知边界
 
-- **摘要有 2–4 天滞后**，这是 Europe PMC 的入库节奏，不是 bug。所以标题写「最新推送」而非「今日推送」。
+- **摘要仍可能比在线发表晚几天**，所以标题写「最新推送」而非「今日推送」。15 天窗口不变。Europe PMC 的 `FIRST_PDATE` 更慢，公开池不再用它当主源。
 - **影响因子是 2024 JCR 近似值**，只用于星级分级和排序权重，不要当引用依据；展开卡片会显示精确数值。
 - **「今日精选」是启发式排序，不是 LLM 精读**。任务文档里的「创新 / 看点」需要模型读摘要才能写，静态前端做不到——因此只呈现**摘要原文的分段**（目的/方法/结果/结论），**不生成任何摘要里没有的结论**，符合文档「不得编造」的硬性约束。
 - **基础/分子论文**判定依据是期刊名（Cell / Nature / Science / Neuron / JACC: Basic 片段），与任务文档一致。
