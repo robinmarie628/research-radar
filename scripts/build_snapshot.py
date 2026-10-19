@@ -24,6 +24,8 @@ import sys
 import time
 import urllib.parse
 import urllib.request
+import xml.etree.ElementTree as ET
+from concurrent.futures import ThreadPoolExecutor
 from datetime import date, timedelta
 
 EPMC = "https://www.ebi.ac.uk/europepmc/webservices/rest/search"
@@ -49,6 +51,8 @@ TIER_CAP = {"flagship": FLAGSHIP_CAP, "sub": SUB_CAP, "specialty": SPECIALTY_CAP
 FLAGSHIP_SHARE = 0.70
 DOMAIN_FLOOR = 6
 POOL_MAX = 400
+WEEK_ABS_MIN = 40
+EUTILS = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/"
 FEED = "https://raw.githubusercontent.com/zarazhangrui/follow-builders/main/"
 UA = "research-radar/1.0 (mailto:robinmarie628@users.noreply.github.com)"
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -240,79 +244,380 @@ def tier_bonus(a):
     return {"flagship": 2, "specialty": 1, "sub": 0}[tier_name(a)]
 
 
-def curate(items, n=8, n_basic=4, n_clinical=4):
+def curate_pools(pools, n=8, n_basic=4, n_clinical=4):
     """今日精选：n 篇 = n_clinical 篇临床 + n_basic 篇基础/分子医学。
 
-    Flagships are taken first (one journal each, then a second clinical
-    paper from a flagship). Specialty fills what flagships cannot, then subs.
+    Each pool is ranked on its own (flagship, then specialty, then sub).
+    Earlier pools take seats first, so last-week online papers fill the
+    shortlist before the 15-day Europe PMC pool tops up open seats.
     Basic slots stay one per journal so Cell cannot occupy every basic seat.
     """
     def rank(a):
-        return (tier_bonus(a) * 100000 + a["studyRank"] * 1000
-                + (a.get("imp") or 0) + (40 if a["structured"] else 0))
+        return (tier_bonus(a) * 100000 + (a.get("studyRank") or 0) * 1000
+                + (a.get("imp") or 0) + (40 if a.get("structured") else 0))
 
-    pool = sorted(items, key=rank, reverse=True)
-    picked, per_j, per_d = [], {}, {}
+    groups = [sorted(items or [], key=rank, reverse=True) for items in (pools or [])]
+    picked, per_j, per_d, seen, wave = [], {}, {}, set(), {}
 
-    def add(it, j_cap):
-        if it in picked:
+    def add(it, j_cap, wave_index):
+        doi = article_doi(it)
+        if not doi or doi in seen:
             return False
-        if per_j.get(it["journal"], 0) >= j_cap:
+        if per_j.get(it.get("journal"), 0) >= j_cap:
             return False
+        seen.add(doi)
+        wave[doi] = wave_index
         picked.append(it)
-        per_j[it["journal"]] = per_j.get(it["journal"], 0) + 1
-        per_d[it["domain"]] = per_d.get(it["domain"], 0) + 1
+        per_j[it.get("journal")] = per_j.get(it.get("journal"), 0) + 1
+        per_d[it.get("domain")] = per_d.get(it.get("domain"), 0) + 1
         return True
 
     def cnt(basic):
-        return sum(1 for p in picked if bool(p["basic"]) is basic)
+        return sum(1 for p in picked if bool(p.get("basic")) is basic)
 
-    for it in pool:                                    # 基础旗舰，一刊一篇
-        if cnt(True) >= n_basic:
-            break
-        if it["basic"] and tier_name(it) == "flagship":
-            add(it, 1)
+    def scan(pred, j_cap, done):
+        for wave_index, pool in enumerate(groups):
+            for it in pool:
+                if done():
+                    return
+                if pred(it):
+                    add(it, j_cap, wave_index)
 
-    for it in pool:                                    # 临床旗舰，先一刊一篇再允许第二篇
-        if cnt(False) >= n_clinical:
-            break
-        if not it["basic"] and tier_name(it) == "flagship":
-            add(it, 1)
-    for it in pool:
-        if cnt(False) >= n_clinical:
-            break
-        if not it["basic"] and tier_name(it) == "flagship":
-            add(it, 2)
+    scan(lambda it: it.get("basic") and tier_name(it) == "flagship", 1,
+         lambda: cnt(True) >= n_basic)
+    scan(lambda it: not it.get("basic") and tier_name(it) == "flagship", 1,
+         lambda: cnt(False) >= n_clinical)
+    scan(lambda it: not it.get("basic") and tier_name(it) == "flagship", 2,
+         lambda: cnt(False) >= n_clinical)
+    scan(lambda it: bool(it.get("basic")), 1, lambda: cnt(True) >= n_basic)
+    scan(lambda it: not it.get("basic") and not per_d.get(it.get("domain")), 2,
+         lambda: cnt(False) >= n_clinical)
+    scan(lambda it: not it.get("basic"), 2, lambda: cnt(False) >= n_clinical)
+    scan(lambda it: True, 2, lambda: len(picked) >= n)
+    scan(lambda it: True, 99, lambda: len(picked) >= n)
+    # Earlier pools stay above later ones, so a last-week paper leads the
+    # shortlist even when a 15-day top-up has a higher impact factor.
+    return sorted(
+        picked[:n],
+        key=lambda a: (wave.get(article_doi(a), 0), -rank(a)),
+    )
 
-    for it in pool:                                    # 基础其余名额，一刊一篇
-        if cnt(True) >= n_basic:
-            break
-        if it["basic"]:
-            add(it, 1)
 
-    for it in pool:                                    # 临床其余名额，优先不同领域
-        if cnt(False) >= n_clinical:
-            break
-        if not it["basic"] and not per_d.get(it["domain"]):
-            add(it, 2)
+def curate(items, n=8, n_basic=4, n_clinical=4):
+    return curate_pools([items], n, n_basic, n_clinical)
 
-    for it in pool:
-        if cnt(False) >= n_clinical:
-            break
-        if not it["basic"]:
-            add(it, 2)
 
-    for it in pool:                                    # 补足
-        if len(picked) >= n:
-            break
-        add(it, 2)
+def article_doi(a):
+    raw = ((a or {}).get("doi") or (a or {}).get("id") or "")
+    return re.sub(r"^https?://(dx\.)?doi\.org/", "", str(raw).strip().lower())
 
-    for it in pool:                                    # 一刊上限仍挡路时放开，池子够大就凑满 n
-        if len(picked) >= n:
-            break
-        add(it, 99)
 
-    return sorted(picked[:n], key=rank, reverse=True)
+def abstract_len(a):
+    if a.get("structured") and isinstance(a.get("sections"), dict):
+        return sum(len(str(v or "").strip()) for v in a["sections"].values())
+    return len(str(a.get("abstract") or "").strip())
+
+
+def select_picks(week, pool, n=8, n_basic=4, n_clinical=4):
+    """Prefer last-week online papers, then fill from the 15-day pool.
+
+    When the same DOI is already in the Europe PMC pool with an abstract,
+    that richer record is the one that gets the seat.
+    """
+    by = {}
+    for a in pool or []:
+        doi = article_doi(a)
+        if doi and doi not in by:
+            by[doi] = a
+    preferred, seen = [], set()
+    for a in week or []:
+        doi = article_doi(a)
+        if not doi or doi in seen or abstract_len(a) < WEEK_ABS_MIN:
+            continue
+        seen.add(doi)
+        hit = by.get(doi)
+        preferred.append(hit if hit and abstract_len(hit) >= WEEK_ABS_MIN else a)
+    rest = [a for a in (pool or []) if article_doi(a) not in seen]
+    return curate_pools([preferred, rest], n, n_basic, n_clinical)
+
+
+SEC_HEAD = [
+    ("objective", re.compile(r"^(background|objectives?|aims?|purpose|introduction|importance)", re.I)),
+    ("methods", re.compile(r"^(methods?|materials and methods|study design|design|patients|participants|interventions?)", re.I)),
+    ("results", re.compile(r"^(results?|findings|main results|outcomes?)", re.I)),
+    ("conclusion", re.compile(r"^(conclusions?|interpretation|discussion|implications?)", re.I)),
+]
+SEC_SKIP = re.compile(r"^(clinical trial registration|trial registration|registration|funding|conflict of interest|copyright|data availability|ethics|acknowledg)", re.I)
+
+
+def section_key(label):
+    if not label or SEC_SKIP.search(label):
+        return ""
+    for key, cre in SEC_HEAD:
+        if cre.search(label):
+            return key
+    return "other"
+
+
+def crossref_day(item):
+    online = (item.get("published-online") or item.get("issued") or {}).get("date-parts") or []
+    parts = online[0] if online else []
+    if len(parts) < 3 or not parts[0]:
+        return ""
+    y, m, d = parts[:3]
+    return f"{int(y):04d}-{int(m):02d}-{int(d):02d}"
+
+
+def week_window(today=None):
+    """Same 7 UTC dates as the client's utcDay(-6) … utcDay(0)."""
+    hi = today or date.today()
+    return (hi - timedelta(days=6)).isoformat(), hi.isoformat()
+
+
+def get_soft(url, timeout=25):
+    try:
+        return get(url, tries=2, timeout=timeout)
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def crossref_journal_works(issn, lo, hi):
+    items, offset = [], 0
+    for _page in range(3):
+        query = urllib.parse.urlencode({
+            "filter": f"type:journal-article,from-online-pub-date:{lo},until-online-pub-date:{hi}",
+            "rows": "100",
+            "offset": str(offset),
+            "select": "DOI,title,abstract,author,published-online,issued,volume,issue,page,license",
+            "mailto": "robinmarie628@users.noreply.github.com",
+        })
+        data = get_soft(f"https://api.crossref.org/journals/{urllib.parse.quote(issn)}/works?{query}")
+        batch = ((data or {}).get("message") or {}).get("items") or []
+        items.extend(batch)
+        total = ((data or {}).get("message") or {}).get("total-results") or 0
+        offset += len(batch)
+        if not batch or offset >= total or offset >= 300:
+            break
+    return items
+
+
+def map_crossref_work(item, meta, lo, hi):
+    title = clean((item.get("title") or [""])[0])
+    doi = article_doi({"doi": item.get("DOI") or ""})
+    day = crossref_day(item)
+    if not title or not doi or not day or day < lo or day > hi:
+        return None
+    abstract = clean(item.get("abstract") or "")
+    is_basic = bool(meta.get("basic"))
+    study = detect_study(title, abstract, is_basic, [])
+    authors = item.get("author") or []
+    author0 = authors[0] if authors else {}
+    name = " ".join(x for x in (author0.get("family"), author0.get("given")) if x) or author0.get("name") or ""
+    return {
+        "id": doi,
+        "title": title,
+        "abstract": abstract,
+        "sections": None,
+        "structured": False,
+        "journal": meta.get("short") or "—",
+        "issn": meta.get("issn") or "",
+        "platforms": list(meta.get("platforms") or []),
+        "domain": meta.get("domain") or "综合医学",
+        "tier": meta.get("tier") or "specialty",
+        "imp": meta.get("if", 0),
+        "basic": is_basic,
+        "studyKey": study,
+        "studyZh": STUDY_ZH.get(study, "研究论文"),
+        "studyRank": STUDY_RANK.get(study, 3),
+        "stars": stars(meta.get("if", 0)),
+        "date": day,
+        "ts": 0,
+        "year": day[:4],
+        "authors": clean(name),
+        "pmid": "",
+        "doi": doi,
+        "keywords": [],
+        "volume": str(item.get("volume") or ""),
+        "issue": str(item.get("issue") or ""),
+        "pages": str(item.get("page") or ""),
+        "oa": False,
+    }
+
+
+def _local(tag):
+    return tag.rsplit("}", 1)[-1]
+
+
+def _parent_map(root):
+    parent = {}
+    for node in root.iter():
+        for child in list(node):
+            parent[child] = node
+    return parent
+
+
+def _under_reference(node, parent):
+    while node is not None:
+        if _local(node.tag) == "ReferenceList":
+            return True
+        node = parent.get(node)
+    return False
+
+
+def parse_pubmed_article(art):
+    parent = _parent_map(art)
+    sections = {"objective": "", "methods": "", "results": "", "conclusion": "", "other": ""}
+    chunks, mapped = [], False
+    for node in art.iter():
+        if _local(node.tag) != "AbstractText" or _under_reference(node, parent):
+            continue
+        label = (node.get("Label") or "").strip()
+        text = clean("".join(node.itertext()))
+        if not text:
+            continue
+        chunks.append(f"{label}: {text}" if label else text)
+        key = section_key(label)
+        if not key:
+            continue
+        if key != "other":
+            mapped = True
+        sections[key] = (sections[key] + " " + text).strip()
+    structured = mapped and any(sections[k] for k in ("objective", "methods", "results", "conclusion"))
+    doi = pmid = ""
+    pub_types = []
+    eloc = ""
+    for node in art.iter():
+        if _under_reference(node, parent):
+            continue
+        name = _local(node.tag)
+        # The first article-level DOI. Later ArticleId nodes are cited papers;
+        # keeping the last one files this abstract under someone else's DOI.
+        if name == "ArticleId" and not doi and (node.get("IdType") or "").lower() == "doi":
+            doi = article_doi({"doi": node.text or ""})
+        elif name == "ELocationID" and not eloc and (node.get("EIdType") or "").lower() == "doi":
+            eloc = article_doi({"doi": node.text or ""})
+        elif name == "PMID" and not pmid and (node.get("Version") or "1") == "1":
+            pmid = (node.text or "").strip()
+        elif name == "PublicationType":
+            label = clean("".join(node.itertext()))
+            if label:
+                pub_types.append(label)
+    doi = doi or eloc
+    return {
+        "doi": doi,
+        "pmid": pmid,
+        "pubTypes": pub_types,
+        "text": "\n".join(chunks),
+        "structured": structured,
+        "sections": sections if structured else None,
+    }
+
+
+def fill_pubmed_abstracts(articles):
+    dois = []
+    for a in articles:
+        doi = article_doi(a)
+        if doi and doi not in dois:
+            dois.append(doi)
+    pmids = []
+    for i in range(0, len(dois), 40):
+        chunk = dois[i:i + 40]
+        term = " OR ".join(f"{d}[doi]" for d in chunk)
+        query = urllib.parse.urlencode({
+            "db": "pubmed", "retmode": "json", "retmax": "80", "term": term,
+            "tool": "research-radar", "email": "robinmarie628@users.noreply.github.com",
+        })
+        data = get_soft(EUTILS + "esearch.fcgi?" + query, timeout=25)
+        pmids.extend((((data or {}).get("esearchresult") or {}).get("idlist") or []))
+        if i + 40 < len(dois):
+            time.sleep(0.4)
+    uniq, by_doi = [], {}
+    for pmid in pmids:
+        if pmid not in uniq:
+            uniq.append(pmid)
+    for i in range(0, len(uniq), 80):
+        if i:
+            time.sleep(0.4)
+        query = urllib.parse.urlencode({
+            "db": "pubmed", "id": ",".join(uniq[i:i + 80]), "retmode": "xml",
+            "tool": "research-radar", "email": "robinmarie628@users.noreply.github.com",
+        })
+        try:
+            req = urllib.request.Request(EUTILS + "efetch.fcgi?" + query, headers={"User-Agent": UA})
+            with urllib.request.urlopen(req, timeout=40) as r:
+                root = ET.fromstring(r.read())
+        except Exception as e:  # noqa: BLE001
+            print(f"      pubmed efetch skipped ({e})", file=sys.stderr)
+            continue
+        for art in root.iter():
+            if _local(art.tag) != "PubmedArticle":
+                continue
+            hit = parse_pubmed_article(art)
+            if hit["doi"]:
+                by_doi[hit["doi"]] = hit
+    for a in articles:
+        hit = by_doi.get(article_doi(a))
+        if not hit:
+            continue
+        if hit["pmid"]:
+            a["pmid"] = hit["pmid"]
+        text = (hit["text"] or "").strip()
+        if len(text) < WEEK_ABS_MIN and abstract_len({
+            "structured": hit["structured"], "sections": hit["sections"], "abstract": text,
+        }) < WEEK_ABS_MIN:
+            continue
+        a["abstract"] = "" if hit["structured"] else text
+        a["sections"] = hit["sections"]
+        a["structured"] = bool(hit["structured"])
+        blob = " ".join((hit["sections"] or {}).values()) if hit["structured"] else text
+        study = detect_study(a.get("title") or "", blob, a.get("basic"), hit["pubTypes"])
+        a["studyKey"] = study
+        a["studyZh"] = STUDY_ZH.get(study, "研究论文")
+        a["studyRank"] = STUDY_RANK.get(study, 3)
+
+
+def _week_for_journal(meta, lo, hi):
+    ids, found = [], []
+    for issn in (meta.get("issn"), meta.get("essn")):
+        if issn and issn not in ids:
+            ids.append(issn)
+    for issn in ids:
+        works = crossref_journal_works(issn, lo, hi)
+        for work in works:
+            art = map_crossref_work(work, meta, lo, hi)
+            if art:
+                found.append(art)
+        if works:
+            break
+    return found
+
+
+def fetch_week_articles(cfg, today=None):
+    """Crossref online dates for the last 7 days, abstracts from PubMed when needed.
+
+    Mirrors assets/app.js fetchWeekArticles. A failure here returns [] so the
+    shortlist falls back to the 15-day pool.
+    """
+    lo, hi = week_window(today)
+    rows = [c for c in (cfg or []) if c and c.get("issn")]
+    found = []
+    with ThreadPoolExecutor(max_workers=3) as pool:
+        for batch in pool.map(lambda meta: _week_for_journal(meta, lo, hi), rows):
+            found.extend(batch)
+    by_doi = {}
+    for art in found:
+        by_doi.setdefault(art["doi"], art)
+    articles = list(by_doi.values())
+    if articles:
+        fill_pubmed_abstracts(articles)
+    kept = [a for a in articles if a.get("title") and abstract_len(a) >= WEEK_ABS_MIN]
+    # Same order as assets/app.js fetchWeekArticles: newer online date first,
+    # then title A→Z. Rank ties in 今日精选 keep this order, so the snapshot
+    # hero matches the page when two papers share a tier and study type.
+    kept.sort(key=lambda a: a.get("title") or "")
+    kept.sort(key=lambda a: a.get("date") or "", reverse=True)
+    print(f"      week {lo}..{hi}: {len(kept)} articles with abstracts ({len(articles)} online)")
+    return kept
 
 
 def keyword_list(raw):
@@ -612,11 +917,17 @@ def build_journals(days, cap_per_journal=8):
         })
 
     items = compose_pool(cands)
+    week = []
+    try:
+        week = fetch_week_articles(cfg)
+    except Exception as e:  # noqa: BLE001
+        print(f"      week fetch failed ({e}); picks fall back to the 15-day pool", file=sys.stderr)
 
     return {"generatedAt": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
             "windowDays": days, "journals": len(cfg), "rawFetched": len(merged),
             "updated": items[0]["date"] if items else None,
-            "picks": curate(items),
+            "picks": select_picks(week, items),
+            "week": week,
             "items": items}
 
 
@@ -657,8 +968,10 @@ def main():
 
     print(f"[1/2] journals (last {a.days}d) ...")
     jr = build_journals(a.days)
+    week_n = len(jr.pop("week", []) or [])
     json.dump(jr, open(os.path.join(DATA, "snapshot-journals.json"), "w", encoding="utf-8"),
               ensure_ascii=False, indent=1)
+    print(f"      week candidates used for picks: {week_n}")
     from collections import Counter
     print(f"      {len(jr['items'])} articles (raw {jr['rawFetched']}), newest {jr['updated']}")
     print(f"      领域: {dict(Counter(x['domain'] for x in jr['items']))}")
