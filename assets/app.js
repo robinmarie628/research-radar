@@ -11,7 +11,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.18.49';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.19.1';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -1001,56 +1001,68 @@ function composePool(items) {
   return kept;
 }
 
+/** Flagship, then specialty, then sub; study type and impact break ties. */
+function pickRank(a) {
+  return (articleTier(a) === 'flagship' ? 2 : articleTier(a) === 'specialty' ? 1 : 0) * 100000
+    + (a.studyRank || 0) * 1000 + (a.imp || 0) + (a.structured ? 40 : 0);
+}
+function pickId(a) {
+  return String(a?.doi || a?.id || '').trim().toLowerCase().replace(/^https?:\/\/(dx\.)?doi\.org\//, '');
+}
 /** 今日精选：8 篇 = 4 篇临床 + 4 篇基础/分子医学。
- *  先拿旗舰（基础一刊一篇；临床先一刊一篇，再允许第二篇），
- *  旗舰不够再用专科，最后才是子刊。 */
-function curate(items, n = PICK_N) {
-  const rank = a => (articleTier(a) === 'flagship' ? 2 : articleTier(a) === 'specialty' ? 1 : 0) * 100000
-    + a.studyRank * 1000 + (a.imp || 0) + (a.structured ? 40 : 0);
-  const pool = [...items].sort((a, b) => rank(b) - rank(a));
-  const picked = [], perJ = {}, perD = {};
+ *  Each pool is ranked on its own (旗舰，再专科，再子刊). Earlier pools are
+ *  filled first, so the last-7-days online list wins seats before the 15-day
+ *  Europe PMC pool tops up whatever is still short. */
+function curatePools(pools, n = PICK_N) {
+  const groups = (pools || []).map(items => [...(items || [])].sort((a, b) => pickRank(b) - pickRank(a)));
+  const picked = [];
+  const perJ = {};
+  const perD = {};
+  const seen = new Set();
+  const wave = new Map();
   const cnt = basic => picked.filter(p => !!p.basic === basic).length;
-  const add = (it, jCap) => {
-    if (!it || picked.includes(it)) return false;
+  const add = (it, jCap, waveIndex) => {
+    if (!it) return false;
+    const id = pickId(it);
+    if (!id || seen.has(id)) return false;
     if ((perJ[it.journal] || 0) >= jCap) return false;
+    seen.add(id);
+    wave.set(id, waveIndex);
     picked.push(it);
     perJ[it.journal] = (perJ[it.journal] || 0) + 1;
     perD[it.domain] = (perD[it.domain] || 0) + 1;
     return true;
   };
+  const scan = (pred, jCap, done) => {
+    groups.forEach((pool, waveIndex) => {
+      for (const it of pool) {
+        if (done()) return;
+        if (pred(it)) add(it, jCap, waveIndex);
+      }
+    });
+  };
   // 1) 基础旗舰，一刊一篇
-  for (const it of pool) {
-    if (cnt(true) >= PICK_BASIC) break;
-    if (it.basic && articleTier(it) === 'flagship') add(it, 1);
-  }
+  scan(it => it.basic && articleTier(it) === 'flagship', 1, () => cnt(true) >= PICK_BASIC);
   // 2) 临床旗舰，先一刊一篇，再允许第二篇
-  for (const it of pool) {
-    if (cnt(false) >= PICK_CLINICAL) break;
-    if (!it.basic && articleTier(it) === 'flagship') add(it, 1);
-  }
-  for (const it of pool) {
-    if (cnt(false) >= PICK_CLINICAL) break;
-    if (!it.basic && articleTier(it) === 'flagship') add(it, 2);
-  }
-  // 3) 基础其余名额，一刊一篇（专科先于子刊，因为 pool 已按层级排过）
-  for (const it of pool) {
-    if (cnt(true) >= PICK_BASIC) break;
-    if (it.basic) add(it, 1);
-  }
+  scan(it => !it.basic && articleTier(it) === 'flagship', 1, () => cnt(false) >= PICK_CLINICAL);
+  scan(it => !it.basic && articleTier(it) === 'flagship', 2, () => cnt(false) >= PICK_CLINICAL);
+  // 3) 基础其余名额，一刊一篇（专科先于子刊，因为每一池已按层级排过）
+  scan(it => !!it.basic, 1, () => cnt(true) >= PICK_BASIC);
   // 4) 临床其余名额，优先不同领域
-  for (const it of pool) {
-    if (cnt(false) >= PICK_CLINICAL) break;
-    if (!it.basic && !perD[it.domain]) add(it, 2);
-  }
-  for (const it of pool) {
-    if (cnt(false) >= PICK_CLINICAL) break;
-    if (!it.basic) add(it, 2);
-  }
-  // 3) 某一边不足时补足总数
-  for (const it of pool) { if (picked.length >= n) break; add(it, 2); }
-  // 4) 一刊上限仍挡路时放开，池子够大就凑满 n
-  for (const it of pool) { if (picked.length >= n) break; add(it, 99); }
-  return picked.slice(0, n).sort((a, b) => rank(b) - rank(a));
+  scan(it => !it.basic && !perD[it.domain], 2, () => cnt(false) >= PICK_CLINICAL);
+  scan(it => !it.basic, 2, () => cnt(false) >= PICK_CLINICAL);
+  scan(() => true, 2, () => picked.length >= n);
+  scan(() => true, 99, () => picked.length >= n);
+  // Earlier pools stay above later ones, so a last-week paper is 今日首选
+  // even when a top-up from the 15-day pool has a higher impact factor.
+  return picked.slice(0, n).sort((a, b) => {
+    const dw = (wave.get(pickId(a)) || 0) - (wave.get(pickId(b)) || 0);
+    if (dw) return dw;
+    return pickRank(b) - pickRank(a);
+  });
+}
+function curate(items, n = PICK_N) {
+  return curatePools([items], n);
 }
 
 function keywordList(list) {
@@ -1104,7 +1116,7 @@ async function loadResearchNow(force) {
       (byKey[it.basic ? 'basic' : 'clinical'] ||= []).push(it);
     }
     S.jr = {
-      all: items, byKey, picks: curate(items),
+      all: items, byKey, picks: [],
       updated: items.length ? items[0].date : null,
       fetchedAt: new Date().toISOString(),       // 数据实际拉取时间（≠ 最新文章发表日；Europe PMC 索引有 1-2 天延迟，发表日会滞后）
       loaded: true, error: null,
@@ -1121,13 +1133,14 @@ async function loadResearchNow(force) {
           (byKey[it.domain] ||= []).push(it);
           (byKey[it.basic ? 'basic' : 'clinical'] ||= []).push(it);
         }
-        S.jr = { all: snapItems, byKey, picks: curate(snapItems),
+        S.jr = { all: snapItems, byKey, picks: Array.isArray(snap.picks) && snap.picks.length ? snap.picks : [],
                  updated: snapItems[0]?.date || snap.updated, fetchedAt: snap.generatedAt, loaded: true, error: 'snapshot' };
       } else {
         S.jr = { ...S.jr, loaded: true, error: e.message };
       }
     }
   }
+  if (!S.digest.loaded) refreshPicks();
   applyDigest();
   if (S.jr.loaded && S.jr.all?.length) {
     writeCache('jr', {
@@ -1379,15 +1392,48 @@ function weekList() {
   }
   return out;
 }
+/** Last-7-days online papers first; the 15-day pool only fills seats still open. */
+function freshPickPools() {
+  const pool = S.jr.all || [];
+  const weekReady = !!(S.week && S.week.loaded && !S.week.error);
+  const week = weekReady ? weekList() : [];
+  if (!week.length) return [pool];
+  const ids = new Set(week.map(a => normDoi(a.doi)).filter(Boolean));
+  return [week, pool.filter(a => !ids.has(normDoi(a.doi)))];
+}
+function refreshPicks() {
+  if (!S.jr?.all) return false;
+  attachDigestNotes();
+  // While Crossref is still loading, do not install a 15-day-only shortlist:
+  // that is the lagged list Robin keeps seeing as 今日首选. Keep snapshot or
+  // cached picks if they are already in hand. Once the week request settles,
+  // rank last-7-days papers first and top up from the 15-day pool. A failed
+  // week request still falls back to that pool so the section is not blank.
+  const weekReady = !!(S.week && S.week.loaded && !S.week.error);
+  const weekLoading = !!(S.week && S.week.loading && !weekReady);
+  if (!weekReady && (S.jr.picks || []).length) return false;
+  if (weekLoading) return false;
+  const next = curatePools(freshPickPools());
+  const sig = list => (list || []).map(a => pickId(a)).join('|');
+  const changed = sig(S.jr.picks) !== sig(next);
+  S.jr.picks = next;
+  return changed;
+}
 function weekChipCount() {
   if (!S.week.loaded && !(S.week.items || []).length) return '…';
   return weekList().length;
 }
 function paintWeek() {
-  if (S.jFilter === 'week') { renderResearch(); return; }
+  const picksChanged = refreshPicks();
+  if (S.jFilter === 'week' || (S.jFilter === 'pick' && picksChanged)) {
+    renderResearch();
+    return;
+  }
   const cnt = document.querySelector('#researchChips .chip[data-k="week"] .cnt');
+  const pickCnt = document.querySelector('#researchChips .chip[data-k="pick"] .cnt');
   if (cnt) cnt.textContent = `(${weekChipCount()})`;
-  else renderResearch();
+  if (pickCnt) pickCnt.textContent = `(${(S.jr.picks || []).length})`;
+  if (!cnt) renderResearch();
 }
 async function loadWeek(force = false) {
   const gen = ++weekGen;
@@ -1600,8 +1646,8 @@ async function trySnapshot(path) {
 
 /* ---------------- 创新 / 看点 digest ----------------
    Generated daily by scripts/build_digest.py (GitHub Action) and committed as
-   static JSON. When it is fresh, its DOIs *define* 今日精选 so the editorial
-   notes always line up with the shortlist. Falls back to live curation otherwise. */
+   static JSON. Notes attach by DOI. 今日精选 itself prefers papers that went
+   online in the last 7 days, then tops up from the 15-day pool. */
 async function loadDigest() {
   const d = await trySnapshot('data/digest.json');
   if (!d || !Array.isArray(d.items) || !d.items.length) return;
@@ -1649,17 +1695,24 @@ async function loadBuilderDigest() {
   renderBuilders();
 }
 
-function applyDigest() {
-  if (!S.digest.loaded || !S.jr.all) return;
-  // Notes still attach when a pooled paper is in the digest. The shortlist
-  // itself is the flagship-first curation, not the digest's DOI order.
-  const byDoi = new Map(S.jr.all.map(a => [String(a.doi || '').toLowerCase(), a]));
+function attachDigestNotes() {
+  if (!S.digest.loaded) return;
+  // Notes attach when a pooled or last-week paper is in the digest. The
+  // shortlist itself prefers the Crossref 7-day window, then the 15-day pool.
+  const byDoi = new Map();
+  for (const a of [...(S.jr.all || []), ...((S.week && S.week.items) || [])]) {
+    const doi = normDoi(a.doi);
+    if (doi && !byDoi.has(doi)) byDoi.set(doi, a);
+  }
   for (const d of S.digest.items || []) {
-    const doi = String(d.doi || '').toLowerCase();
-    const a = doi ? byDoi.get(doi) : null;
+    const a = byDoi.get(String(d.doi || '').toLowerCase());
     if (a) a.digest = d;
   }
-  S.jr.picks = curate(S.jr.all);
+}
+function applyDigest() {
+  if (!S.digest.loaded || !S.jr.all) return;
+  attachDigestNotes();
+  refreshPicks();
 }
 
 function articleFromDigest(d) {
@@ -1858,7 +1911,7 @@ function renderResearch() {
   } else {
     $('#researchHead').textContent = headLabel(list.length, isPick);
     $('#researchSub').textContent = isPick
-      ? `每日精选 ${PICK_N} 篇 · ${PICK_CLINICAL} 篇临床 + ${PICK_BASIC} 篇基础/分子 · 点卡片展开摘要`
+      ? `优先最近 7 天在线发表，不够再从 15 天池补 · ${PICK_CLINICAL} 篇临床 + ${PICK_BASIC} 篇基础`
       : S.jFilter === 'fav'
         ? '小红心只存在这台浏览器 · 可下载 Markdown 清单'
         : S.jFilter === 'week'
@@ -3344,6 +3397,7 @@ async function boot() {
     const d = c.jr.data;
     d.picks = d.picks?.length ? d.picks : curate(d.all);
     S.jr = { ...d, loaded: true };
+    if (S.week?.loaded) refreshPicks();
     renderResearch();
     loadPII(S.jr.picks);
   }

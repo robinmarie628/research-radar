@@ -402,6 +402,69 @@ test('the journal pool drops dates older than 15 days and keeps a favorite local
   assert.equal(legacy.journal, 'BMJ');
 });
 
+test('今日精选 takes last-week papers before the older 15-day pool', () => {
+  const src = fs.readFileSync(path.join(root, 'assets/app.js'), 'utf8');
+  const start = src.indexOf('function pickRank');
+  const end = src.indexOf('function keywordList');
+  const { curate, curatePools } = new Function(`
+    function articleTier(a) {
+      return a && (a.tier === 'flagship' || a.tier === 'sub') ? a.tier : 'specialty';
+    }
+    const PICK_N = 8, PICK_BASIC = 4, PICK_CLINICAL = 4;
+    ${src.slice(start, end)}
+    return { curate, curatePools };
+  `)();
+  const paper = (doi, journal, basic, imp, date) => ({
+    id: doi, doi, title: doi, journal, basic, tier: 'flagship', studyRank: 6, imp, date, structured: true,
+  });
+  const week = [
+    paper('10.w/c1', 'NEJM', false, 40, '2026-10-18'),
+    paper('10.w/c2', 'BMJ', false, 30, '2026-10-17'),
+    paper('10.w/c3', 'JAMA', false, 20, '2026-10-16'),
+    paper('10.w/c4', 'Lancet', false, 10, '2026-10-15'),
+    paper('10.w/b1', 'Nature', true, 40, '2026-10-18'),
+    paper('10.w/b2', 'Cell', true, 30, '2026-10-17'),
+    paper('10.w/b3', 'Science', true, 20, '2026-10-16'),
+    paper('10.w/b4', 'Neuron', true, 10, '2026-10-15'),
+  ];
+  const older = [
+    paper('10.old/angio', 'Lancet', false, 98, '2026-10-08'),
+    paper('10.old/c2', 'Ann Oncol', false, 80, '2026-10-07'),
+    paper('10.old/c3', 'Chest', false, 70, '2026-10-06'),
+    paper('10.old/c4', 'Blood', false, 60, '2026-10-05'),
+    paper('10.old/cell', 'Cell', true, 90, '2026-10-09'),
+    paper('10.old/b2', 'Nat Genet', true, 80, '2026-10-08'),
+    paper('10.old/b3', 'Nat Neurosci', true, 70, '2026-10-07'),
+    paper('10.old/b4', 'Sci Adv', true, 60, '2026-10-06'),
+  ];
+  const picks = curatePools([week, older]);
+  assert.equal(picks.length, 8);
+  assert.equal(picks.filter(p => p.basic).length, 4);
+  assert.equal(picks.filter(p => !p.basic).length, 4);
+  const ids = new Set(picks.map(p => p.doi));
+  for (const a of week) assert.equal(ids.has(a.doi), true, a.doi);
+  assert.equal(ids.has('10.old/angio'), false);
+  assert.equal(ids.has('10.old/cell'), false);
+
+  const thin = curatePools([[week[0], week[4]], older]);
+  const thinIds = thin.map(p => p.doi);
+  assert.equal(thinIds.includes('10.w/c1'), true);
+  assert.equal(thinIds.includes('10.w/b1'), true);
+  assert.equal(thinIds.includes('10.old/angio'), true);
+  assert.equal(thin.filter(p => !p.basic).length, 4);
+  assert.equal(thin[0].doi.startsWith('10.w/'), true);
+  assert.ok(thin.findIndex(p => p.doi === '10.old/angio') > thin.findIndex(p => p.doi === '10.w/c1'));
+
+  const dup = curatePools([[week[0]], [week[0], ...older]]);
+  assert.equal(dup.filter(p => p.doi === '10.w/c1').length, 1);
+
+  const solo = curate(week);
+  assert.equal(solo.length, 8);
+  assert.match(src, /function freshPickPools/);
+  assert.match(src, /curatePools\(freshPickPools\(\)\)/);
+  assert.match(src, /S\.week\.loading && !weekReady/);
+});
+
 test('shipped journal snapshot stays inside the 15-day window it was built for', () => {
   const snap = JSON.parse(fs.readFileSync(path.join(root, 'data/snapshot-journals.json'), 'utf8'));
   assert.equal(snap.windowDays, 15);

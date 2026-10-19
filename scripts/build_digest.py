@@ -3,8 +3,8 @@
 
 Fields: 背景 / 创新点 / 怎么做的 / 看点·临床含义 / 未来研究方向
 
-Reuses build_snapshot.py for the Europe PMC fetch + 今日精选 curation, so the
-digest always matches what the page shows.
+Reuses build_snapshot.py for the Europe PMC fetch and the shortlist, so the
+digest matches the page: last-7-days online papers first, then the 15-day pool.
 
 Output  data/digest.json   — read by the app; fields keyed by DOI
         data/pushed.txt    — DOIs already covered, so days don't repeat
@@ -17,9 +17,9 @@ Provider defaults to DeepSeek but any OpenAI-compatible endpoint works:
 stdlib only.  Usage:  python build_digest.py [--n 8] [--dry-run]
 
 The shortlist is always exactly --n papers (default 8 = 4 clinical + 4 basic).
-Fresh (not-yet-pushed) papers are preferred. If that side of the pool is short,
-already-covered papers from the same window fill the gap. The script refuses to
-overwrite digest.json when it cannot hit that split.
+Papers that went online in the last 7 days fill those seats first. The 15-day
+pool tops up whatever is still short. pushed.txt still records what was written.
+The script refuses to overwrite digest.json when it cannot hit that split.
 """
 import argparse
 import json
@@ -212,63 +212,21 @@ def extract_json(text):
         return json.loads(m.group(0))
 
 
-def _doi(a):
-    return (a.get("doi") or a.get("id") or "").lower()
-
-
-def choose_eight(fresh, full, n=8, n_basic=4, n_clinical=4):
+def choose_eight(week, full, n=8, n_basic=4, n_clinical=4):
     """Exactly n_basic basic + n_clinical clinical, or None.
 
-    Prefer flagships, then specialty journals, then subs. Within that, prefer
-    `fresh` (not in pushed.txt). Top up from `full` and relax the per-journal
-    cap only after the strict pass fails. Never borrows from the other side
-    to pad the total.
+    Same rule as the page: last-7-days online papers first, then the 15-day
+    pool. Returns None when that split cannot be filled, so digest.json is
+    left alone.
     """
     if n_basic + n_clinical != n:
         n_basic, n_clinical = n // 2, n - (n // 2)
-
-    def rank(a):
-        tier = {"flagship": 2, "specialty": 1}.get(a.get("tier") or "", 0)
-        return tier * 100000 + (a.get("studyRank") or 0) * 1000 + (a.get("imp") or 0)
-
-    picked, used = [], set()
-    nb = nc = 0
-
-    def take(a):
-        nonlocal nb, nc
-        i = _doi(a)
-        if not a or not i or i in used:
-            return False
-        used.add(i)
-        picked.append(a)
-        if a.get("basic"):
-            nb += 1
-        else:
-            nc += 1
-        return True
-
-    def fill(pool, caps):
-        ordered = sorted(pool, key=rank, reverse=True)
-        for cap_b, cap_c in caps:
-            for a in ordered:
-                basic = bool(a.get("basic"))
-                if basic and nb >= n_basic:
-                    continue
-                if not basic and nc >= n_clinical:
-                    continue
-                cap = cap_b if basic else cap_c
-                if sum(1 for x in picked if x.get("journal") == a.get("journal")) >= cap:
-                    continue
-                take(a)
-            if nb >= n_basic and nc >= n_clinical:
-                return
-
-    fill(fresh or [], ((1, 1), (1, 2), (99, 99)))
-    if nb < n_basic or nc < n_clinical:
-        fill(full or [], ((1, 1), (1, 2), (99, 99)))
-    if nb != n_basic or nc != n_clinical or len(picked) != n:
+    picks = bs.select_picks(week, full, n, n_basic, n_clinical)
+    nb = sum(1 for p in picks if p.get("basic"))
+    nc = len(picks) - nb
+    if len(picks) != n or nb != n_basic or nc != n_clinical:
         return None
-    return picked
+    return picks
 
 
 def main():
@@ -283,23 +241,23 @@ def main():
     base = os.environ.get("LLM_BASE_URL") or DEFAULT_BASE
     model = os.environ.get("LLM_MODEL") or DEFAULT_MODEL
 
-    print(f"[1/4] fetching candidates (last {a.days}d) ...")
+    print(f"[1/4] fetching candidates (last {a.days}d, picks prefer last 7d online) ...")
     jr = bs.build_journals(a.days)
     items = jr["items"]
-    print(f"      {len(items)} articles from {jr['journals']} journals")
+    week = jr.get("week") or []
+    print(f"      {len(items)} articles from {jr['journals']} journals, {len(week)} from the last week")
 
     pushed = set(load_pushed())
-    fresh = [x for x in items if (x.get("doi") or "").lower() not in pushed]
-    print(f"      {len(fresh)} not yet covered ({len(pushed)} in pushed.txt)")
+    print(f"      {len(pushed)} already in pushed.txt (recorded after a successful write)")
 
     n_basic, n_clinical = a.n // 2, a.n - (a.n // 2)
-    picks = choose_eight(fresh, items, a.n, n_basic, n_clinical)
+    picks = choose_eight(week, items, a.n, n_basic, n_clinical)
     if not picks:
         nb = sum(1 for x in items if x.get("basic"))
         nc = len(items) - nb
         print(
             f"ERROR: need exactly {n_clinical} clinical + {n_basic} basic "
-            f"(got a window of {nc} clinical / {nb} basic, {len(fresh)} fresh). "
+            f"(got a window of {nc} clinical / {nb} basic, {len(week)} from the last week). "
             f"Refusing to overwrite digest.json.",
             file=sys.stderr,
         )
