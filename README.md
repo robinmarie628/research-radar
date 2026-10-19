@@ -7,7 +7,7 @@
 | 🔬 **科研顶刊** | 临床顶刊 + 基础/分子医学每日速递，按领域分类，标注研究类型与临床/基础 | [PubMed](https://pubmed.ncbi.nlm.nih.gov/)（15 天池）+ [Crossref](https://api.crossref.org)（最近一周的在线日期、全文 PII） |
 | 🤖 **AI Builder** | 26 位一线 AI builder 的 X 动态、播客、官方博客 | [follow-builders](https://github.com/zarazhangrui/follow-builders) 公共 feed |
 
-**打开即最新**：页面每次打开都直接向上游实时抓取，没有后端、没有定时任务、没有 API key。数据缓存在浏览器本地（30 分钟），第二次打开秒开，后台再静默校验一次。
+**打开即最新**：科研页每次打开向 PubMed 拉 15 天池；PubMed 失败时用同一窗口的快照，快照也空才用 Europe PMC。AI 页读 follow-builders。结果缓存在浏览器本地 30 分钟。GitHub Actions 每天刷新兜底快照，并用 DeepSeek 写一次每日摘要。机翻标题、划词和分享金句走 Cloudflare Workers AI（`qwen3-30b`）。页面里不放 API key。
 
 ---
 
@@ -45,12 +45,12 @@ research-radar/
 
 ## 期刊池
 
-**38 本临床顶刊 + 16 本 CNS / 基础医学期刊（共 54 本）**，全部逐个校验过 ISSN。
+**52 本临床刊 + 16 本 CNS / 基础医学期刊（共 68 本）**，名单以 `data/journals.config.json` 为准，ISSN 逐本校验过。
 
-- **临床**：Lancet 全家族（肿瘤/神经/感染/呼吸/内分泌/消化肝病/血液/风湿/精神/公共卫生/全球健康/数字医疗/儿科/老年/HIV/微生物）、JACC 全家族、CHEST、Ophthalmology 家族、Annals of Oncology、Journal of Hepatology、Kidney International、JAAD、European Urology、NEJM、EClinicalMedicine
+- **临床**：Lancet 全家族、JACC 全家族、Circulation、CHEST、Ophthalmology 家族、Annals of Oncology、Journal of Hepatology、Kidney International、JAAD、European Urology、血管外科家族（J Vasc Surg 等）、NEJM、BMJ、EClinicalMedicine
 - **基础/分子**：Cell、Nature、Science、Nature Genetics、Nature Immunology、Cell Stem Cell、Science Translational Medicine、Science Advances、Cell Reports、Cell Host & Microbe、Cell Systems、Nature Biomedical Engineering、Nature Biotechnology、Nature Neuroscience、Neuron、JACC: Basic to Translational Science
 
-> 原任务文档里的 **CHEST Pulmonary (2949-7884)** 和 **CHEST Critical Care (2949-7892)** 在 Europe PMC 返回 0 条——两本刊太新，尚未被 MEDLINE 收录，因此未纳入。**Nature Biomedical Engineering** 的正确 ISSN 是 `2157-846X`（`2372-7705` 无效）。
+> 原任务文档里的 **CHEST Pulmonary (2949-7884)** 和 **CHEST Critical Care (2949-7892)** 尚未被 MEDLINE 收录，校验时 0 条，因此未纳入。**Nature Biomedical Engineering** 的正确 ISSN 是 `2157-846X`（`2372-7705` 无效）。
 
 ---
 
@@ -77,19 +77,19 @@ research-radar/
 2. **窗口仍是 15 天，不是 30 天，也不是 1 天。** 摘要入库仍可能晚于在线发表几天，1 天窗口基本是空的。早于这个窗口的文章不进公开池；用户收藏过的留在本机。
 3. **一篇记录怎么对上配置里的期刊。** 先用 PubMed 的 `ISSNLinking` 或 `Journal/ISSN` 对配置里的 `issn` / `essn`。对不上时用一小张别名表：PubMed 印出来的是另一条 ISSN（JACC Imaging `1876-7591` → `1936-878X`，JACC Clin EP `2405-500X` → `2405-5018`，Circulation `0009-7322` → `1524-4539`，Cell Stem Cell `1875-9777` → `1934-5909`）。再不行就用 ISO 缩写或 Medline 刊名，和配置里的 `short` / `title` **整段相等**。没有前缀匹配，`Lancet Oncol` 不会并进 `Lancet`。
 4. **卡片上的日期。** 电子出版日落在窗口内就用它；否则用期次 `PubDate`（也必须在窗口内）。Lancet 常先上网、后进某一期，Europe PMC 的 `FIRST_PDATE` 跟着更早的上网日走，15 天后就从池里消失；PubMed 的期次日仍在这 15 天里，所以这些试验留得住。两个日期都不在窗口内的记录丢掉。
-5. **上限在合并之后，不在检索里。** 检索拿回窗口内全部合格摘要，再跑和页面相同的 `compose_pool`：旗舰每刊最多 28，专科 6；子刊先保证领域至少能看到，再把旗舰+子刊压向大约 7:3。全池上限 400。小刊不会被 Nature / Science 挤没。
+5. **上限在合并之后，不在检索里。** 检索拿回窗口内全部合格摘要，再跑和页面相同的 `compose_pool`：旗舰每刊最多 28，子刊 3，专科 6。子刊先保证每个领域至少能看到（领域保底 6，窗口里不够就停在有的篇数），再把旗舰+子刊压向大约 7:3。全池上限 400。小刊不会被 Nature / Science 挤没。早于窗口的文章在写入快照时就丢掉，不是只在页面上藏起来。
 6. **Europe PMC 只在池子是空的时候出现。** 页面顺序是：实时 PubMed → 同一窗口生成的快照 → Europe PMC。`scripts/build_snapshot.py` 同样：PubMed 失败或 0 篇才回退 Europe PMC。成功的 PubMed 结果不和 Europe PMC 混在一起。
-7. **「最近一周」不是这 15 天池。** 芯片用 Crossref `from-online-pub-date` 的最近 7 个 UTC 日，摘要不够时再向 PubMed 要。不用全库 `created` 日期兜底（那样一周列表会涨到三百多篇）。
+7. **「最近一周」不是这 15 天池。** 芯片用 Crossref `from-online-pub-date` 的最近 7 个 UTC 日，摘要不足 40 字再向 PubMed 要。BMJ 的印刷 ISSN 在 Crossref 是空的，所以这条检索在印刷 ISSN 没有结果时改用电子 ISSN。不用全库 `created` 日期兜底（那样一周列表会涨到三百多篇）。
 
-### 领域（21 个）
+### 领域（22 个）
 
 领域直接来自期刊本身，不做关键词猜测——Lancet Oncology 就是肿瘤，JACC 就是心血管，准确率 100%。
 
-综合医学 · 心血管 · 呼吸与重症 · 肿瘤 · 神经 · 感染 · 血液 · 内分泌代谢 · 消化肝病 · 公共卫生 · 眼科 · 儿科 · 精神心理 · 风湿免疫 · 肾脏 · 皮肤 · 泌尿 · 全球健康 · 数字医疗 · 老年医学 · 基础医学
+综合医学 · 心血管 · 呼吸与重症 · 肿瘤 · 神经 · 感染 · 血液 · 内分泌代谢 · 消化肝病 · 公共卫生 · 眼科 · 儿科 · 精神心理 · 风湿免疫 · 肾脏 · 皮肤 · 泌尿 · 血管外科 · 全球健康 · 数字医疗 · 老年医学 · 基础医学
 
 ### 研究类型（12 类）
 
-**`pubTypes` 几乎没用**——实测绝大多数文章只返回 `['Journal Article']`。所以研究类型是从**摘要正文**里读出来的：
+研究类型优先看具体的 `pubType`。PubMed 给出 Randomized Controlled Trial、Guideline、Meta-Analysis、Multicenter Study 时以它为准。只有笼统的 `Journal Article` 时，再从**摘要正文**里读：
 
 | 优先级 | 类型 | 判定依据 |
 |---|---|---|
@@ -119,7 +119,7 @@ PubMed 的结构化摘要带 `AbstractText` 的 `Label`（`BACKGROUND` / `METHOD
 
 ### 今日精选（默认视图）
 
-从当日池子里精选 **8 篇 = 4 篇临床 + 4 篇基础/分子医学**：
+从当日池子里精选 **8 篇 = 4 篇临床 + 4 篇基础/分子医学**。座位先给最近一周在线发表、且摘要够长的文章，不够再从 15 天池补：
 
 - **基础 4 篇**，且**一刊一篇**——否则一本刊（如 Cell）能占满，出现两篇几乎雷同的论文
 - **临床 4 篇**，优先覆盖不同领域（优先补还没出现过的领域）
@@ -133,7 +133,7 @@ PubMed 的结构化摘要带 `AbstractText` 的 `Label`（`BACKGROUND` / `METHOD
 
 任务文档要求的「创新 / 看点」需要模型精读摘要才能写，静态前端做不到。做法是**每天用 GitHub Action 调 LLM 生成，结果提交成静态数据** `data/digest.json`，页面直接读——不需要任何服务器。
 
-- **脚本**：`scripts/build_digest.py`，OpenAI 兼容格式，默认 DeepSeek（`deepseek-chat`）
+- **脚本**：`scripts/build_digest.py`，OpenAI 兼容格式，默认 DeepSeek（`deepseek-flash`，关闭思考模式）。机翻标题、划词翻译和分享卡片金句不走这条，它们用 Workers AI `qwen3-30b`
 - **提示词**：把当日精选 8 篇的**摘要原文**一起发给模型，要求用**大白话**写，
   语气像跟同科室同事讲「这篇为什么能上顶刊」。五个部分按叙事顺序：
   - `background` **背景** —— 这个病/问题为什么重要？此前卡在哪、缺什么
@@ -142,7 +142,7 @@ PubMed 的结构化摘要带 `AbstractText` 的 `Label`（`BACKGROUND` / `METHOD
   - `takeaway` **看点 / 临床含义** —— 关键数字 + 对临床决策意味着什么，争议和局限也直说
   - `future` **未来研究方向** —— **明确禁止写「摘要未提及」**，要基于摘要里已有的结果、
     机制、人群给出合理且有意义的方向（这是唯一允许「超出摘要」的部分）
-  - 另外写 `titleZh`，格式固定为 `<中文主题>（<刊名>，<领域>，<研究类型>）`
+  - 另外写 `titleZh`：只写中文标题本身，结尾不加 `。`，也不加 `（刊名，领域，研究类型）`。旧格式如果还出现在 digest 里，页面会把这截尾巴去掉
   - 并选出 1 篇「今日首选」+ 理由
 - **硬性约束写死在提示词里**：①②③④ 只能用摘要明确写出的信息，不得推测编造；数字必须与摘要
   完全一致；**大白话**（短句、主动语态、不照抄英文句式、不堆术语）；必须出现的术语保留英文原词
@@ -258,7 +258,7 @@ git push -u origin main
   "platforms": ["ck", "sd"] }
 ```
 
-`domain` 取上面 21 个领域之一；`basic: true` 表示基础/分子医学期刊。`platforms` 取 `"ck"`（ClinicalKey）和 `"sd"`（ScienceDirect）的组合：两边都写时页面只显示 ClinicalKey；只在 ScienceDirect 的刊写 `["sd"]`；都不是就写 `[]`。`scripts/build_config.py` 重写这份配置时会保留已有的 `platforms`，不会在每日数据更新里丢掉。
+`domain` 取上面 22 个领域之一；`basic: true` 表示基础/分子医学期刊。页面认这个字段，不在运行时用刊名片段猜测。`platforms` 取 `"ck"`（ClinicalKey）和 `"sd"`（ScienceDirect）的组合：两边都写时页面只显示 ClinicalKey；只在 ScienceDirect 的刊写 `["sd"]`；都不是就写 `[]`。`scripts/build_config.py` 重写这份配置时会保留已有的 `platforms`，不会在每日数据更新里丢掉。
 
 **加完必须校验 ISSN**——错的 ISSN 会静默返回 0 条，不报错：
 
@@ -274,13 +274,16 @@ python scripts/build_config.py --sample   # 逐本查询 + 抽样摘要小标题
 
 - **摘要仍可能比在线发表晚几天**，所以标题写「最新推送」而非「今日推送」。15 天窗口不变。Europe PMC 的 `FIRST_PDATE` 更慢，公开池不再用它当主源。
 - **影响因子是 2024 JCR 近似值**，只用于星级分级和排序权重，不要当引用依据；展开卡片会显示精确数值。
-- **「今日精选」是启发式排序，不是 LLM 精读**。任务文档里的「创新 / 看点」需要模型读摘要才能写，静态前端做不到——因此只呈现**摘要原文的分段**（目的/方法/结果/结论），**不生成任何摘要里没有的结论**，符合文档「不得编造」的硬性约束。
-- **基础/分子论文**判定依据是期刊名（Cell / Nature / Science / Neuron / JACC: Basic 片段），与任务文档一致。
-- 上游波动时页面自动回落到 `data/snapshot-*.json` 并给出提示。
+- **「今日精选」**：digest 在 5 天内时，顺序和「创新 / 看点」来自每天一次的 DeepSeek。digest 缺失或过期时，页面用启发式排序（最近一周优先，再从 15 天池补），只展示摘要分段，不现编结论。
+- **基础/分子论文**看配置里的 `basic` 字段。
+- PubMed 失败时页面先用 `data/snapshot-journals.json`（同一套 PubMed 窗口，过期文章不写入）。快照也空，才回退 Europe PMC。
+- **收藏**在本机 `localStorage`（`rr.fav.v1`，含文章全文），从收藏视图下载 Markdown。
+- **分享卡片**的金句按 `functions/_lib/quotes.js` 的 GIMAP6 顺序挑选。二维码指向 ClinicalKey，没有再指向 ScienceDirect，再没有指向 DOI。
+- 列表上的 **期刊** 芯片按刊筛选。正文字号滑条是 100–150%，**B** 把正文加粗到 600。
 
 ## 版本更新按钮
 
-页面底部有一个 **「版本 2026.10.01」** 按钮：
+页面底部有一个版本按钮（文案是 `APP_VERSION`）：
 
 - 点一下 → 注销 Service Worker、清空所有缓存、带 cache-busting 参数重新加载，**强制拉取最新版本**
 - Service Worker 检测到新版本时会**自动高亮**（变黄 + 呼吸光圈 + 「发现新版本 · 点此更新」），每 30 分钟自动查一次

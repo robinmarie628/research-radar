@@ -1347,10 +1347,10 @@ def fetch_epmc_candidates(cfg, by_issn, lo, hi):
     return cands, len(merged)
 
 
-def build_journals(days, cap_per_journal=8):
+def build_journals(days):
     """PubMed abstracts for every configured journal, then the same compose_pool.
 
-    `cap_per_journal` is unused; caps come from TIER_CAP inside compose_pool.
+    Caps are TIER_CAP inside compose_pool (flagship 28, sub 3, specialty 6).
     Europe PMC remains a fallback for a PubMed outage, not a second source
     mixed into a successful PubMed window. 最近一周 is unchanged.
     """

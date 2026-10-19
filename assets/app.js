@@ -5,14 +5,13 @@
               + Crossref online dates & PubMed abstracts (最近一周)
               + follow-builders (AI builders)
    Zero build, zero API keys in the client.
-   Favorites stay in localStorage. The 收藏 view downloads a Markdown file.
-   Email Routing needs a custom domain, which this account does not have,
-   so the page does not call /api/favorites or the Worker /favorites route.
+   Favorites stay in localStorage (`rr.fav.v1`) and download as Markdown.
+   There is no favorites-mail route.
    ============================================================ */
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.19.4';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.19.5';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -24,9 +23,9 @@ const FEED     = 'https://raw.githubusercontent.com/zarazhangrui/follow-builders
    （或绑定的自定义域名）。详见 research-radar/worker/README-deploy.md */
 const WORKER_URL = 'https://research-radar-trigger.robinmarie628.workers.dev';
 const DAYS     = 15;        // discovery window — abstracts lag 2–4 days, so never use 1
-const MAXJ     = 100;       // Europe PMC page size (resultType=core). One page is not the pool.
-const CHUNKS   = 3;         // ISSN slices. Each slice is paged until every journal has its cap.
-const EPMC_PAGES = 15;      // 1500 core rows per slice — enough for the busiest third of the pool
+const MAXJ     = 100;       // Europe PMC fallback page size (resultType=core)
+const CHUNKS   = 3;         // Fallback ISSN slices. Each slice pages until journalCap or the cursor ends.
+const EPMC_PAGES = 15;      // Fallback only: 1500 core rows per slice
 /* 15 天池，主源是 PubMed（[pdat] + 摘要）。Europe PMC 的 FIRST_PDATE 滞后，
    只在 PubMed 失败时兜底。发表日早于「今天往前 15 天」的文章不进公开池，也不进快照。
    旗舰 + 子刊合计按 7:3（FLAGSHIP_SHARE）。专科刊不进这个比例。
@@ -191,8 +190,9 @@ function preserveTitleContrast(en, zh) {
 }
 
 /* ---------------- abstract section headings ----------------
-   Europe PMC returns real structure: <h4>Background</h4>…<h4>Results</h4>…
-   Mapped onto the prompt's 目的 / 方法 / 结果 / 结论.                        */
+   PubMed structured abstracts use AbstractText Label (see sectionKeyForLabel).
+   This heading list is for the Europe PMC fallback, whose abstracts are
+   <h4>Background</h4>…<h4>Results</h4>. Both map onto 目的 / 方法 / 结果 / 结论. */
 const SEC_HEAD = [
   ['objective', /^(background|objectives?|aims?|purpose|research question|rationale|introduction|importance|context|question|hypothesis|why (did|do) we|what is known|unmet need|significance of this study|summary|overview|topic|topic importance|impact and implications)/i],
   ['methods',   /^(methods?|materials and methods|study design|design|patients and methods|setting|approach|experimental approach|patients|participants|subjects?|data sources|study selection|study population|exposure|interventions?|procedures?|measurements?|main outcomes? (and )?measures?|outcomes? and measures|data collection|statistical analysis|study (design|population|setting|sample)|structure)/i],
@@ -247,8 +247,8 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 /* ---------------- utils ---------------- */
 const iso = d => d.toISOString().slice(0, 10);
 
-/** Decode entities FIRST, then strip tags — Europe PMC double-encodes markup, so a
- *  tag-strip before decoding leaves `&lt;sup&gt;` behind as a literal `<sup>`. */
+/** Decode entities FIRST, then strip tags. The Europe PMC fallback double-encodes
+ *  markup, so a tag-strip before decoding leaves `&lt;sup&gt;` as a literal `<sup>`. */
 function cleanText(s) {
   let out = String(s || '');
   for (let p = 0; p < 2; p++) {
@@ -678,7 +678,7 @@ function syncFavHash() {
   if (url.href !== location.href) history.replaceState(null, '', url);
 }
 
-/* ---------------- Europe PMC ---------------- */
+/* ---------------- Europe PMC (empty-pool fallback only) ---------------- */
 function cfgByIssn(value) {
   if (!value || !S.cfg?.length) return null;
   return S.cfg.find(c => c.issn === value || c.essn === value) || null;
@@ -719,7 +719,7 @@ function epmcWindow() {
     lo: poolCutoff(),
   };
 }
-/** Page one ISSN slice until every journal has its tier cap, or the cursor ends. */
+/** Fallback slice: page until every journal hits journalCap, or the cursor ends. */
 async function fetchEpmcChunk(slice) {
   const { lo, hi } = epmcWindow();
   const issns = [];
@@ -2966,9 +2966,8 @@ async function triggerRegenerate() {
 }
 
 /* ---------------- favorites markdown download ----------------
-   Cloudflare Email Routing cannot send without a custom domain.
-   The 收藏 view writes a local .md file instead of calling
-   /api/favorites or the Worker /favorites route. */
+   收藏 is localStorage only (rr.fav.v1, full article payload).
+   The view writes a local .md file. */
 function favDoiToken(a) {
   let s = String(a?.doi || '').trim();
   s = s.replace(/^https?:\/\/(?:dx\.)?doi\.org\//i, '');

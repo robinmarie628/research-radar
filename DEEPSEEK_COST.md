@@ -20,13 +20,9 @@ GitHub Actions 定时任务每天跑一次 workflow，内含两个脚本，各�
 
 月用量 ≈ 30 × 19,200 ≈ **576,000 tokens / 月**
 
-## 费用（关键提醒：模型名已变）
+## 费用
 
-脚本里 `DEFAULT_MODEL = "deepseek-chat"`。但 **DeepSeek 2026 当前价目表已不再列 `deepseek-chat`**，现售：
-- `deepseek-flash`（最便宜）
-- `deepseek-v4-pro`
-
-价目表注明旧模型名已归档退役。**请确认 `deepseek-chat` 是否仍可用，或直接把 `DEFAULT_MODEL` 改成 `deepseek-flash`。**
+两个脚本的默认模型都是 `deepseek-flash`（`DEFAULT_MODEL`），请求里关闭了思考模式。`deepseek-chat` 已退役，不再使用。机翻标题、划词和分享金句走 Workers AI，不计入下面的 DeepSeek 用量。
 
 ### 用 `deepseek-flash` 计费（每 1M tokens，USD，来自官方价目表）
 - 输入 缓存未命中：峰时 $0.30 / 谷时 $0.15

@@ -161,7 +161,7 @@ def call_llm(base, key, model, prompt, tries=3, timeout=180):
         "model": model,
         # deepseek-flash defaults to thinking mode (high effort); for this simple
         # structured-extraction task we turn it off so reasoning tokens aren't
-        # billed as output and latency stays low. Mirrors old deepseek-chat behavior.
+        # billed as output and latency stays low.
         "thinking": {"type": "disabled"},
         "messages": [
             {"role": "system", "content": SYSTEM},

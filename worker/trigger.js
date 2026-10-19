@@ -14,14 +14,11 @@
  *   4) 记下输出的 *.workers.dev 地址，填进前端 assets/app.js 的 WORKER_URL。
  *
  * POST /            触发上面的两个 workflow。
- * POST /favorites  收藏发信代码还在，但页面已不再调用。
- *                  没有自定义域名时 Email Routing 发不出去，收藏改为本地下载 Markdown。
- *                  见 favorites-mail.js。有域名之前不要加 [[send_email]]。
+ *
+ * 收藏只在浏览器 localStorage，页面下载 Markdown。这个 Worker 不发信。
  *
  * 详见同目录 README-deploy.md
  */
-
-import { handleFavoritesRequest } from './favorites-mail.js';
 
 const REPO = 'robinmarie628/research-radar';
 const WORKFLOWS = ['daily-digest.yml', 'refresh-snapshots.yml'];
@@ -49,9 +46,6 @@ export default {
     if (request.method === 'OPTIONS') {
       return new Response(null, { status: 204, headers: corsHeaders() });
     }
-    const path = new URL(request.url).pathname.replace(/\/+$/, '') || '/';
-    // 页面不再调用这条路由（没有自定义域名，发不了信）。代码留着，等有域名再用。
-    if (path === '/favorites') return handleFavoritesRequest(request, env);
     if (request.method !== 'POST') {
       return json({ ok: false, error: '只接受 POST 请求' }, 405);
     }

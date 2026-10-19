@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Validate the journal pool and emit data/journals.config.json.
+"""Validate ISSNs and emit data/journals.config.json.
 
-Pool = 40 clinical top journals + 17 CNS / basic-science journals, per
-daily_journal_watch_prompt.md. Each ISSN is probed against Europe PMC; anything
-returning 0 hits over 90 days is rejected (a wrong ISSN fails silently as 0 rows).
+This is the journal list (52 clinical + 16 basic, including 血管外科), not the
+15-day article pool. The article pool is PubMed in build_snapshot.py.
+Each ISSN is probed against Europe PMC so a wrong ISSN fails as 0 hits over
+90 days instead of an empty pool later. Anything with 0 hits is rejected.
 
 Also samples recent abstracts per journal so the section parser can be built
 against real heading vocabularies rather than guesswork.
@@ -27,7 +28,7 @@ DATA = os.path.join(HERE, "..", "data")
 
 # issn -> (领域 domain, 基础/分子 basic, short label, approx 2024 JCR IF)
 POOL = {
-    # ── 40 本临床顶刊 ────────────────────────────────────────────────
+    # ── 临床顶刊（含 Lancet / JACC / 眼科 / 血管外科等；NEJM、BMJ 在后面）──
     "0140-6736": ("综合医学",   False, "Lancet",             98.4),
     "1470-2045": ("肿瘤",       False, "Lancet Oncol",       41.6),
     "1474-4422": ("神经",       False, "Lancet Neurol",       46.5),
@@ -87,7 +88,7 @@ POOL = {
     "0895-7967": ("血管外科",   False, "Semin Vasc Surg",      4.6),
     "1708-5381": ("血管外科",   False, "Vascular",             1.0),  # 90d 仅 ~1 篇，量很低
     "1538-5744": ("血管外科",   False, "Vasc Endovasc Surg",   1.0),
-    # ── 17 本基础 / 分子医学（CNS 及其生物医学子刊）──────────────────
+    # ── 基础 / 分子医学（CNS 及其生物医学子刊）。NEJM、BMJ 夹在这段，basic 为 false。
     "0092-8674": ("基础医学",   True,  "Cell",                45.5),
     "0028-0836": ("基础医学",   True,  "Nature",              50.5),
     "0036-8075": ("基础医学",   True,  "Science",             44.7),
@@ -111,7 +112,8 @@ POOL = {
     "0896-6273": ("神经",       True,  "Neuron",              14.7),
 }
 
-# mirrors BASIC_FRAGMENTS in the prompt doc: basic is decided by journal NAME
+# On rebuild, a title containing one of these fragments is marked basic even
+# if the POOL flag is false. The page itself trusts the saved `basic` field.
 BASIC_FRAGMENTS = ("Cell", "Nature", "Science", "Neuron", "JACC: Basic")
 
 # Six general flagships. Circulation and JACC are cardiology flagships of
