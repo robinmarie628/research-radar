@@ -27,7 +27,7 @@ research-radar/
 │   ├── glossary.json              # 96 条专业词汇
 │   ├── digest.json                # 每日「创新 / 看点」（由 GitHub Action 生成）
 │   ├── builder-digest.json        # 今日 AI 动态总览 + 每条动态的中文一句话
-│   ├── pushed.txt                 # 已推送过的 DOI，避免隔天重复
+│   ├── pushed.txt                 # 历次精选 DOI 存档。隔天去重用 digest 的 previousDois
 │   ├── snapshot-journals.json     # 兜底快照（接口挂了也能看）
 │   └── snapshot-builders.json     # 兜底快照
 ├── scripts/
@@ -147,7 +147,7 @@ PubMed 的结构化摘要带 `AbstractText` 的 `Label`（`BACKGROUND` / `METHOD
 - **硬性约束写死在提示词里**：①②③④ 只能用摘要明确写出的信息，不得推测编造；数字必须与摘要
   完全一致；**大白话**（短句、主动语态、不照抄英文句式、不堆术语）；必须出现的术语保留英文原词
   （hazard ratio、intention-to-treat…）并顺手解释一句；每部分 ≤140 字
-- **去重**：选中的 DOI 追加到 `data/pushed.txt`，次日不会再推同样的文章
+- **去重**：新一天的精选排除上一天 digest 里的 DOI（写在 `previousDois`，页面用同一份）。最近一周的文章仍先入座，不够再从 15 天池补，不会把昨天的 DOI 捡回来凑数。选中的 DOI 仍追加到 `data/pushed.txt` 留档，但不用整份历史来排除，否则 15 天池会被掏空
 - **成本**：每天 1 次调用、约 6k input tokens
 
 页面上的呈现：展开卡片后，**通俗版五段**以彩色编辑注显示在最前面（不用滚动就能看到）；下方是**折叠起来**的英文摘要原文，需要时点「▸ 查看英文摘要原文」展开——这样卡片聚焦在好读的通俗版，原文又随时可查。「今日首选」的卡片带金色边框和 ⭐ 角标。

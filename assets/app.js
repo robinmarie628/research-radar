@@ -11,7 +11,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.20.1';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.20.2';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -1653,14 +1653,46 @@ function weekList() {
   }
   return out;
 }
-/** Last-7-days online papers first; the 15-day pool only fills seats still open. */
+/** DOIs featured on the previous digest day.
+ *  digest.json keeps one day. While that date is still before today (UTC,
+ *  same clock as the digest job), the file itself is yesterday's list.
+ *  Once today's file is in place, yesterday is previousDois, so the page
+ *  does not drop the papers whose Chinese notes were just written.
+ *  No digest, no date, or a first run skips nothing. localStorage is not
+ *  the source: a new browser follows the same published list. */
+function yesterdayFeaturedSet() {
+  const d = S.digest;
+  if (!d || !d.loaded) return new Set();
+  const today = new Date().toISOString().slice(0, 10);
+  const day = String(d.date || '');
+  const raw = day && day < today ? (d.items || []).map(x => x && x.doi) : (d.previousDois || []);
+  const out = new Set();
+  for (const id of raw) {
+    const doi = normDoi(id);
+    if (doi) out.add(doi);
+  }
+  return out;
+}
+function dropFeatured(list, blocked) {
+  if (!blocked || !blocked.size) return list || [];
+  return (list || []).filter(a => {
+    const id = pickId(a);
+    return !id || !blocked.has(id);
+  });
+}
+/** Last-7-days online papers first; the 15-day pool only fills seats still open.
+ *  Yesterday's featured DOIs are removed from both waves and are not used to
+ *  fill a seat that the week can no longer cover. */
 function freshPickPools() {
   const pool = S.jr.all || [];
   const weekReady = !!(S.week && S.week.loaded && !S.week.error);
   const week = weekReady ? weekList() : [];
-  if (!week.length) return [pool];
-  const ids = new Set(week.map(a => normDoi(a.doi)).filter(Boolean));
-  return [week, pool.filter(a => !ids.has(normDoi(a.doi)))];
+  const blocked = yesterdayFeaturedSet();
+  const openWeek = dropFeatured(week, blocked);
+  const openPool = dropFeatured(pool, blocked);
+  if (!openWeek.length) return [openPool];
+  const ids = new Set(openWeek.map(a => normDoi(a.doi)).filter(Boolean));
+  return [openWeek, openPool.filter(a => !ids.has(normDoi(a.doi)))];
 }
 function refreshPicks() {
   if (!S.jr?.all) return false;
@@ -1907,8 +1939,9 @@ async function trySnapshot(path) {
 
 /* ---------------- 创新 / 看点 digest ----------------
    Generated daily by scripts/build_digest.py (GitHub Action) and committed as
-   static JSON. Notes attach by DOI. 今日精选 itself prefers papers that went
-   online in the last 7 days, then tops up from the 15-day pool. */
+   static JSON. Notes attach by DOI. 今日精选 skips the previous day's
+   featured DOIs, then prefers papers that went online in the last 7 days,
+   and tops up from the 15-day pool. */
 async function loadDigest() {
   const d = await trySnapshot('data/digest.json');
   if (!d || !Array.isArray(d.items) || !d.items.length) return;
@@ -1918,6 +1951,8 @@ async function loadDigest() {
   }
   S.digest = {
     date: d.date || null,
+    previousDate: d.previousDate || null,
+    previousDois: Array.isArray(d.previousDois) ? d.previousDois.map(normDoi).filter(Boolean) : [],
     items: d.items,
     byDoi: new Map(d.items.map(x => [String(x.doi || '').toLowerCase(), x])),
     model: d.model || '',
@@ -2176,7 +2211,7 @@ function renderResearch() {
     $('#researchHead').textContent = headLabel(list.length, isPick);
     const journalNote = S.journal ? ` · 只看 ${S.journal}` : '';
     $('#researchSub').textContent = (isPick
-      ? `优先最近 7 天在线发表，不够再从 15 天池补 · ${PICK_CLINICAL} 篇临床 + ${PICK_BASIC} 篇基础`
+      ? `优先最近 7 天在线发表，不与昨天重复，不够再从 15 天池补 · ${PICK_CLINICAL} 篇临床 + ${PICK_BASIC} 篇基础`
       : S.jFilter === 'fav'
         ? '小红心只存在这台浏览器 · 可下载 Markdown 清单'
         : S.jFilter === 'week'
