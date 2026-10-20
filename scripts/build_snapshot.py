@@ -340,12 +340,78 @@ def abstract_len(a):
     return len(str(a.get("abstract") or "").strip())
 
 
-def select_picks(week, pool, n=8, n_basic=4, n_clinical=4):
+def featured_dois(digest):
+    """DOIs on one digest, in file order, lowercased and de-duplicated."""
+    out, seen = [], set()
+    for it in (digest or {}).get("items") or []:
+        doi = article_doi(it if isinstance(it, dict) else {"doi": it})
+        if doi and doi not in seen:
+            seen.add(doi)
+            out.append(doi)
+    return out
+
+
+def normalize_doi_list(raw):
+    out, seen = [], set()
+    for item in raw or []:
+        doi = article_doi(item if isinstance(item, dict) else {"doi": item})
+        if doi and doi not in seen:
+            seen.add(doi)
+            out.append(doi)
+    return out
+
+
+def _as_date(today):
+    if isinstance(today, date):
+        return today.isoformat()
+    return today or date.today().isoformat()
+
+
+def previous_featured_dois(digest, today=None):
+    """DOIs featured on the previous digest day. Empty when there is no prior day.
+
+    digest.json stores a single day. While its date is still before today, that
+    file is the list to skip. After today's file is written, yesterday is
+    previousDois, so a same-day rerun does not drop the papers it just published.
+    A missing file, a missing date, or a first run excludes nothing.
+    """
+    if not isinstance(digest, dict) or not digest:
+        return []
+    today_s = _as_date(today)
+    day = str(digest.get("date") or "")
+    if day and day < today_s:
+        return featured_dois(digest)
+    if day == today_s:
+        return normalize_doi_list(digest.get("previousDois"))
+    return []
+
+
+def carry_previous(digest, today=None):
+    """(previousDate, previousDois) to copy onto the digest about to be written."""
+    if not isinstance(digest, dict) or not digest:
+        return None, []
+    today_s = _as_date(today)
+    day = str(digest.get("date") or "")
+    if day and day < today_s:
+        return day, featured_dois(digest)
+    if day == today_s:
+        prev = str(digest.get("previousDate") or "") or None
+        return prev, normalize_doi_list(digest.get("previousDois"))
+    return None, []
+
+
+def select_picks(week, pool, n=8, n_basic=4, n_clinical=4, exclude=None):
     """Prefer last-week online papers, then fill from the 15-day pool.
 
     When the same DOI is already in the 15-day pool with an abstract,
-    that record is the one that gets the seat.
+    that record is the one that gets the seat. DOIs in `exclude` (yesterday's
+    featured list) are removed from both waves first. They are not put back
+    to fill an empty seat; open seats come from older papers still in the pool.
     """
+    blocked = set(normalize_doi_list(exclude))
+    if blocked:
+        week = [a for a in (week or []) if article_doi(a) not in blocked]
+        pool = [a for a in (pool or []) if article_doi(a) not in blocked]
     by = {}
     for a in pool or []:
         doi = article_doi(a)
@@ -361,6 +427,93 @@ def select_picks(week, pool, n=8, n_basic=4, n_clinical=4):
         preferred.append(hit if hit and abstract_len(hit) >= WEEK_ABS_MIN else a)
     rest = [a for a in (pool or []) if article_doi(a) not in seen]
     return curate_pools([preferred, rest], n, n_basic, n_clinical)
+
+
+def _read_digest():
+    path = os.path.join(DATA, "digest.json")
+    if not os.path.exists(path):
+        return {}
+    try:
+        with open(path, encoding="utf-8") as f:
+            data = json.load(f)
+    except (OSError, json.JSONDecodeError):
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def _paper(doi, journal, basic, tier="flagship", imp=10, domain="综合医学", abstract=None):
+    return {
+        "doi": doi,
+        "id": doi,
+        "journal": journal,
+        "basic": basic,
+        "tier": tier,
+        "imp": imp,
+        "domain": domain,
+        "abstract": abstract if abstract is not None else ("word " * 30),
+        "structured": False,
+        "studyRank": 6 if not basic else 3,
+        "title": doi,
+        "date": "2026-10-18",
+    }
+
+
+def check_yesterday_exclusion():
+    """Yesterday's DOIs stay out. Last week still fills seats before the 15-day pool."""
+    assert previous_featured_dois(None) == []
+    assert previous_featured_dois({}) == []
+    assert previous_featured_dois({"items": [{"doi": "10.1000/a"}]}) == []
+    prior = {
+        "date": "2026-10-19",
+        "items": [{"doi": "10.1000/Y1"}, {"doi": "https://doi.org/10.1000/Y2"}, {"doi": ""}],
+    }
+    assert previous_featured_dois(prior, "2026-10-20") == ["10.1000/y1", "10.1000/y2"]
+    assert carry_previous(prior, "2026-10-20") == ("2026-10-19", ["10.1000/y1", "10.1000/y2"])
+    rerun = {
+        "date": "2026-10-20",
+        "previousDate": "2026-10-19",
+        "previousDois": ["10.1000/Y1"],
+        "items": [{"doi": "10.1000/today"}],
+    }
+    assert previous_featured_dois(rerun, "2026-10-20") == ["10.1000/y1"]
+    assert carry_previous(rerun, "2026-10-20") == ("2026-10-19", ["10.1000/y1"])
+    assert previous_featured_dois({"date": "2026-10-21", "items": [{"doi": "10.1000/future"}]}, "2026-10-20") == []
+
+    yesterday = ["10.1000/w-clin", "10.1000/w-basic"]
+    week = [
+        _paper("10.1000/w-clin", "NEJM", False, imp=90),
+        _paper("10.1000/w-basic", "Nature", True, imp=50),
+        _paper("10.1000/w-keep", "Lancet", False, imp=20),
+    ]
+    pool = week + [
+        _paper("10.1000/old-clin", "BMJ", False, imp=80, domain="心血管"),
+        _paper("10.1000/old-basic", "Cell", True, imp=70),
+        _paper("10.1000/old-clin-2", "JAMA", False, imp=60, domain="肿瘤"),
+        _paper("10.1000/old-basic-2", "Science", True, imp=40),
+        _paper("10.1000/old-clin-3", "Lancet Oncol", False, imp=30, domain="肿瘤"),
+        _paper("10.1000/old-basic-3", "Neuron", True, imp=25),
+        _paper("10.1000/old-clin-4", "Circulation", False, imp=15, domain="心血管"),
+        _paper("10.1000/old-basic-4", "Nat Genet", True, imp=12),
+    ]
+    # Pad to 4 + 4. Week contributes the one kept clinical paper; the rest
+    # of the seats are older pool papers, never yesterday's DOIs.
+    picks = select_picks(week, pool, exclude=yesterday)
+    got = [article_doi(p) for p in picks]
+    assert len(picks) == 8, got
+    assert sum(1 for p in picks if p["basic"]) == 4
+    assert sum(1 for p in picks if not p["basic"]) == 4
+    assert not (set(got) & {"10.1000/w-clin", "10.1000/w-basic"}), got
+    assert got[0] == "10.1000/w-keep"
+    # A higher-impact 15-day paper does not jump ahead of the remaining week paper.
+    assert "10.1000/old-clin" in got
+    assert got.index("10.1000/w-keep") < got.index("10.1000/old-clin")
+
+    # When the whole week was featured yesterday, every seat comes from the pool.
+    only_old = select_picks(week[:2], pool, exclude=yesterday)
+    old_ids = [article_doi(p) for p in only_old]
+    assert len(only_old) == 8
+    assert not (set(old_ids) & set(yesterday))
+    assert "10.1000/w-keep" in old_ids
 
 
 SEC_HEAD = [
@@ -1005,6 +1158,7 @@ def check_pool_rules():
     assert meta["short"] == "Cell Stem Cell" and how == "alias"
     meta, how = match_pubmed_journal([], ["Cell Stem Cell"], by_issn, by_name)
     assert how == "name"
+    check_yesterday_exclusion()
 
 
 def _kid(node, name):
@@ -1380,11 +1534,15 @@ def build_journals(days):
     except Exception as e:  # noqa: BLE001
         print(f"      week fetch failed ({e}); picks fall back to the 15-day pool", file=sys.stderr)
 
+    exclude = previous_featured_dois(_read_digest())
+    if exclude:
+        print(f"      excluding {len(exclude)} DOIs featured on the previous digest day")
+
     return {"generatedAt": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
             "windowDays": days, "journals": len(cfg), "rawFetched": raw,
             "source": source,
             "updated": items[0]["date"] if items else None,
-            "picks": select_picks(week, items),
+            "picks": select_picks(week, items, exclude=exclude),
             "week": week,
             "items": items}
 

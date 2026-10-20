@@ -8,7 +8,7 @@ digest matches the page: last-7-days online papers first, then that pool.
 Europe PMC is only the empty-pool fallback inside build_snapshot.
 
 Output  data/digest.json   — read by the app; fields keyed by DOI
-        data/pushed.txt    — DOIs already covered, so days don't repeat
+        data/pushed.txt    — archive of DOIs already written (not the exclude list)
 
 Provider defaults to DeepSeek but any OpenAI-compatible endpoint works:
     LLM_BASE_URL   (default https://api.deepseek.com)
@@ -18,8 +18,11 @@ Provider defaults to DeepSeek but any OpenAI-compatible endpoint works:
 stdlib only.  Usage:  python build_digest.py [--n 8] [--dry-run]
 
 The shortlist is always exactly --n papers (default 8 = 4 clinical + 4 basic).
-Papers that went online in the last 7 days fill those seats first. The 15-day
-pool tops up whatever is still short. pushed.txt still records what was written.
+DOIs from the previous day's digest are left out. Papers that went online in
+the last 7 days fill the remaining seats first. The 15-day pool tops up
+whatever is still short; yesterday's DOIs are not put back to fill a seat.
+A same-day rerun keeps excluding that previous day (previousDois), not the
+file it is about to overwrite. pushed.txt still records what was written.
 The script refuses to overwrite digest.json when it cannot hit that split.
 """
 import argparse
@@ -213,16 +216,16 @@ def extract_json(text):
         return json.loads(m.group(0))
 
 
-def choose_eight(week, full, n=8, n_basic=4, n_clinical=4):
+def choose_eight(week, full, n=8, n_basic=4, n_clinical=4, exclude=None):
     """Exactly n_basic basic + n_clinical clinical, or None.
 
-    Same rule as the page: last-7-days online papers first, then the 15-day
-    pool. Returns None when that split cannot be filled, so digest.json is
-    left alone.
+    Same rule as the page: skip yesterday's featured DOIs, then last-7-days
+    online papers first, then the 15-day pool. Returns None when that split
+    cannot be filled, so digest.json is left alone.
     """
     if n_basic + n_clinical != n:
         n_basic, n_clinical = n // 2, n - (n // 2)
-    picks = bs.select_picks(week, full, n, n_basic, n_clinical)
+    picks = bs.select_picks(week, full, n, n_basic, n_clinical, exclude=exclude)
     nb = sum(1 for p in picks if p.get("basic"))
     nc = len(picks) - nb
     if len(picks) != n or nb != n_basic or nc != n_clinical:
@@ -251,13 +254,32 @@ def main():
     pushed = set(load_pushed())
     print(f"      {len(pushed)} already in pushed.txt (recorded after a successful write)")
 
+    prior = {}
+    if os.path.exists(DIGEST):
+        try:
+            with open(DIGEST, encoding="utf-8") as f:
+                prior = json.load(f)
+        except (OSError, json.JSONDecodeError):
+            prior = {}
+    if not isinstance(prior, dict):
+        prior = {}
+    today = date.today()
+    exclude = bs.previous_featured_dois(prior, today)
+    prev_date, prev_dois = bs.carry_previous(prior, today)
+    if exclude:
+        print(f"      excluding {len(exclude)} DOIs from the previous featured day"
+              f" ({prev_date or 'undated'})")
+    else:
+        print("      no previous featured day to exclude (first run or missing digest)")
+
     n_basic, n_clinical = a.n // 2, a.n - (a.n // 2)
-    picks = choose_eight(week, items, a.n, n_basic, n_clinical)
+    picks = choose_eight(week, items, a.n, n_basic, n_clinical, exclude=exclude)
     if not picks:
         nb = sum(1 for x in items if x.get("basic"))
         nc = len(items) - nb
         print(
             f"ERROR: need exactly {n_clinical} clinical + {n_basic} basic "
+            f"after excluding {len(exclude)} yesterday DOIs "
             f"(got a window of {nc} clinical / {nb} basic, {len(week)} from the last week). "
             f"Refusing to overwrite digest.json.",
             file=sys.stderr,
@@ -309,7 +331,9 @@ def main():
         out_items.append(row)
 
     digest = {
-        "date": date.today().isoformat(),
+        "date": today.isoformat(),
+        "previousDate": prev_date,
+        "previousDois": prev_dois,
         "generatedAt": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "model": model,
         "count": len(out_items),
