@@ -11,7 +11,7 @@
 (() => {
 'use strict';
 
-const APP_VERSION = '2026.10.19.6';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
+const APP_VERSION = '2026.10.20.1';  // 改动前端资源时同步 bump（并同步 sw.js 的 V）
 
 /* ---------------- endpoints / tuning ---------------- */
 const EPMC     = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search';
@@ -2523,11 +2523,22 @@ function articleCard(a, isPick, pickRank) {
   c.addEventListener('pointermove', trackPress, { passive: true });
   c.addEventListener('touchstart', armPress, { passive: true });
   c.addEventListener('touchmove', trackPress, { passive: true });
+  // Capture runs before the document pointerdown that hides #mtPop, and before
+  // iOS clears the selection. touchstart and pointerdown are one gesture.
+  c.addEventListener('pointerdown', noteMtPopGesture, true);
+  c.addEventListener('touchstart', noteMtPopGesture, { capture: true, passive: true });
   c.addEventListener('click', ev => {
     // A vertical pan on the abstract used to bubble as a click and fold the card.
     if (press && press.moved) { press = null; return; }
     // 忽略链接和按钮 —— 否则点「查看英文摘要」会冒泡到这里，把整张卡片折叠掉
     if (ev.target.closest('a, button, input, select, textarea, #mtPop')) return;
+    // Popup was open when this gesture began. pointerdown has usually hidden
+    // it already, and iOS has dropped the selection, so this click must not fold.
+    if (mtPopOpenAtGesture) {
+      mtPopOpenAtGesture = false;
+      hideMtPop();
+      return;
+    }
     // A drag-selection is not a tap. Opening the card would move the text.
     const sel = window.getSelection && window.getSelection();
     if (sel && !sel.isCollapsed && String(sel).trim()) return;
@@ -3254,6 +3265,38 @@ function queueMachineTitles() {
 
 let mtPopToken = 0;
 let mtPopText = '';
+// True when #mtPop was visible at pointerdown/touchstart of the current gesture.
+// The document pointerdown handler hides it before click, so the click path
+// cannot read pop.hidden. iOS also clears the selection on tap.
+let mtPopOpenAtGesture = false;
+let mtPopGestureSeen = false;
+let mtPopGestureAt = 0;
+function mtPopIsOpen() {
+  const pop = $('#mtPop');
+  return !!(pop && !pop.hidden);
+}
+function noteMtPopGesture() {
+  const open = mtPopIsOpen();
+  const now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+  // A missed pointerup would leave the latch stuck. Twin events are the same
+  // millisecond; a later tap is a new gesture and must sample again.
+  if (mtPopGestureSeen && now - mtPopGestureAt > 700) mtPopGestureSeen = false;
+  // A tap fires touchstart and pointerdown. The later one can run after the
+  // bubble handler has already hidden #mtPop — don't let it clear the sample.
+  if (mtPopGestureSeen) {
+    if (open) mtPopOpenAtGesture = true;
+    return;
+  }
+  mtPopGestureSeen = true;
+  mtPopGestureAt = now;
+  mtPopOpenAtGesture = open;
+}
+function endMtPopGesture() {
+  // click follows pointerup/touchend in the same turn. Drop the latch on the
+  // next task so a twin event before click cannot overwrite the sample, and
+  // the following tap records a fresh one.
+  setTimeout(() => { mtPopGestureSeen = false; }, 0);
+}
 function selCacheMap() {
   if (selCacheMap.m) return selCacheMap.m;
   const m = new Map();
@@ -3890,6 +3933,15 @@ if (shareSheetEl) shareSheetEl.addEventListener('click', e => {
   if (e.target.closest('[data-close]')) closeShareSheet();
 });
 document.addEventListener('selectionchange', scheduleMtPop);
+// Sample #mtPop before the bubble listener below hides it. Card capture
+// listeners call the same helper; this covers the gesture if the card's
+// own listener has not run yet (document capture is earlier).
+document.addEventListener('pointerdown', noteMtPopGesture, true);
+document.addEventListener('touchstart', noteMtPopGesture, { capture: true, passive: true });
+document.addEventListener('pointerup', endMtPopGesture, true);
+document.addEventListener('pointercancel', endMtPopGesture, true);
+document.addEventListener('touchend', endMtPopGesture, true);
+document.addEventListener('touchcancel', endMtPopGesture, true);
 document.addEventListener('pointerdown', e => {
   const t = e.target;
   if (!(t instanceof Element)) return;
