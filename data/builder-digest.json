@@ -1,309 +1,259 @@
 {
- "date": "2026-10-24",
- "generatedAt": "2026-10-24T23:52:54Z",
+ "date": "2026-10-25",
+ "generatedAt": "2026-10-25T23:41:32Z",
  "model": "deepseek-flash",
- "headline": "Claude Code 核心成员离职，Codex CLI 更新且用量翻倍",
+ "headline": "Codex 更新已推送，Claude 用户却传出坏消息",
  "bullets": [
-  "Claude Code 团队成员 trq212 宣布离开 Anthropic，称要休息一阵再做新东西。",
-  "Codex CLI 新增可复用 prompt 预设、内联模型与权限设置、企业 MCP 登录，并修复长会话恢复问题。",
-  "OpenAI 的 thsottiaux 透露 Codex CLI 自 devday 以来使用量涨了 2 倍。",
-  "Replit 收购 Chroma 团队，并推出 Replit for Government。",
-  "Vercel 的 rauchg 讨论 agent 在共享云主机上的「吵闹邻居」计时攻击，称已部署所有可行缓解措施。"
+  "Codex 相关改动已全部推送，作者预告明天可以尽情写代码，本周还有更多动作。",
+  "Claude 侧传出对用户不利的消息，Peter Yang 称 Anthony 和 Thariq 是最会听用户意见的人。",
+  "Levie 判断网络安全的 agent 数量会暴涨，风险多到人类跟不上，只能靠 agent 集群应对。",
+  "Rauchg 认为管好 AI 的关键是别过度指挥、也别放任，这是最重要的技能。",
+  "latentspacepod 在招编辑团队，swyx 欢迎兼职和一次性投稿。"
  ],
- "sentiment": "整体偏兴奋但也带点感慨：一边为 Codex CLI 和 agent 安全的新进展兴奋，一边对 Claude Code 核心成员离职感到不舍。",
- "count": 29,
- "summarised": 29,
+ "sentiment": "整体偏期待又带点失落：一边等 Codex 新东西，一边为 Claude 用户遇到的变动惋惜。",
+ "count": 24,
+ "summarised": 24,
  "posts": [
   {
-   "id": "https://x.com/swyx/status/2113863570018685091",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Swyx",
-   "handle": "swyx",
-   "text": "psa to all vc’s trying to slide in our dms https://t.co/99Q7g85sxQ https://t.co/Qzvln9wy1K",
-   "date": "2026-10-24T05:22:03.000Z",
-   "summaryZh": "swyx 给想私信他的 VC 们发了个公开提醒，附了张图。"
-  },
-  {
-   "id": "https://x.com/nikunj/status/2113844657637687631",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nikunj Kothari",
-   "handle": "nikunj",
-   "text": "Experience it by texting someone https://t.co/OdfTgavRhC",
-   "date": "2026-10-24T04:06:54.000Z",
-   "summaryZh": "nikunj 让人发短信去体验某个东西，附了链接。"
-  },
-  {
-   "id": "https://x.com/trq212/status/2113844560074019213",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thariq",
-   "handle": "trq212",
-   "text": "also can someone at gmail make it so you can't scan for deactivated email addresses 🫩? I was hoping for a relaxing Friday night",
-   "date": "2026-10-24T04:06:31.000Z",
-   "summaryZh": "trq212 吐槽 Gmail 能被用来扫描已注销邮箱地址，害他周五晚上没法清静。"
-  },
-  {
-   "id": "https://x.com/nikunj/status/2113844360572027321",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nikunj Kothari",
-   "handle": "nikunj",
-   "text": "It truly feels magical - recommend adding to your website 😅 https://t.co/aVYV27xDuY https://t.co/U5s64SJlg3",
-   "date": "2026-10-24T04:05:43.000Z",
-   "summaryZh": "nikunj 说体验很神奇，建议把它加到自己的网站上。"
-  },
-  {
-   "id": "https://x.com/trq212/status/2113844051938054167",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thariq",
-   "handle": "trq212",
-   "text": "I’ve left Anthropic after more than a year of working on Claude Code and seeing it scale larger than I ever imagined.\n\nI have really loved working at Ant and believe deeply in the mission, and most of all, the idea of a race to the top.\n\nThe idea that if we work hard and responsibly, we can raise the bar and inspire others to great outcomes. And if we all push each other to be better, things can be radically good. I will carry the spirit of this with me forever.\n\nMy colleagues at Anthropic are the most talented, thoughtful, competent, and earnest people I have ever met. I am glad they are at the wheel and trust them deeply.\n\nTo the community on X, thank you for everything. You’ve made this the most fun (and sometimes stressful) job I’ve ever had.\n\nFor me, it is time for a bit of a break before diving into something new.\n\nIf you want more excellent Claude Code content, you should follow @addyosmani , @lydiahallie, @_catwu, @ClaudeDevs  and of course @bcherny who started it all.",
-   "date": "2026-10-24T04:04:29.000Z",
-   "summaryZh": "在 Anthropic 做了一年多 Claude Code 的 trq212 宣布离职，感谢团队和社区，打算先休息再做新事。"
-  },
-  {
-   "id": "https://x.com/thsottiaux/status/2113838156193894447",
+   "id": "https://x.com/thsottiaux/status/2114237083652882932",
    "type": "x",
    "kind": "X 动态",
    "name": "Thibault Sottiaux",
    "handle": "thsottiaux",
-   "text": "The difference between having a tool and being a tool is subtle these days and it’s easy to accidentally build yourself into being a tool. Don’t be a tool.",
-   "date": "2026-10-24T03:41:04.000Z",
-   "summaryZh": "thsottiaux 提醒：拥有工具和变成工具之间差别很微妙，别不小心把自己活成工具。"
+   "text": "It is all propagated. Enjoy some mad codexing tomorrow. Fun week ahead too. https://t.co/qOrzwSeIZZ https://t.co/xKaK95EAly",
+   "date": "2026-10-25T06:06:16.000Z",
+   "summaryZh": "作者说改动已全部推送，明天可以痛快用 Codex 写代码，并预告这周还有好戏。"
   },
   {
-   "id": "https://x.com/swyx/status/2113811349281345578",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Swyx",
-   "handle": "swyx",
-   "text": "fake news btw i got him https://t.co/jc8Au9agl5 https://t.co/eunzDKSyLt",
-   "date": "2026-10-24T01:54:33.000Z",
-   "summaryZh": "swyx 辟谣某条消息是假新闻，说自己已经抓到他了。"
-  },
-  {
-   "id": "https://x.com/steipete/status/2113788999303385180",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Steinberger",
-   "handle": "steipete",
-   "text": "I’ll wait a bit before thinking about a new phone. https://t.co/6NBtpaSCko https://t.co/Dp5I3B1gim",
-   "date": "2026-10-24T00:25:44.000Z",
-   "summaryZh": "steipete 说换新手机的事他打算再等等。"
-  },
-  {
-   "id": "https://x.com/nikunj/status/2113785018497831076",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nikunj Kothari",
-   "handle": "nikunj",
-   "text": "Anthropic did go 10x in revenue even without launching Duet, but called it 😅 https://t.co/nHK3SoMlxp https://t.co/7UZjEtRtf3",
-   "date": "2026-10-24T00:09:55.000Z",
-   "summaryZh": "nikunj 说 Anthropic 没发 Duet 收入也涨了 10 倍，他之前就预测到了。"
-  },
-  {
-   "id": "https://x.com/thsottiaux/status/2113770862860222611",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thibault Sottiaux",
-   "handle": "thsottiaux",
-   "text": "On codex cli updates. We've added reusable prompt presets, inline model and permission settings, and enterprise MCP sign-in. We've also fixed failures when resuming long sessions and added Windows corporate-proxy authentication.\n\nSurprisingly the CLI has grown 2X in usage since devday.",
-   "date": "2026-10-23T23:13:40.000Z",
-   "summaryZh": "Codex CLI 更新：加了可复用 prompt 预设、内联模型与权限设置、企业 MCP 登录，修了长会话恢复和 Windows 企业代理认证，用量自 devday 以来翻倍。"
-  },
-  {
-   "id": "https://x.com/thsottiaux/status/2113770573994299544",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thibault Sottiaux",
-   "handle": "thsottiaux",
-   "text": "Day 19/ Small updates. Calls connect much faster for dots, changing reasoning in codex &amp; work mid conversation does not invalidate cache anymore and a we've also updated the codex cli.",
-   "date": "2026-10-23T23:12:31.000Z",
-   "summaryZh": "第 19 天小更新：dots 连接更快，对话中途改 codex 和工作模式的推理不再让缓存失效，Codex CLI 也更新了。"
-  },
-  {
-   "id": "https://x.com/rauchg/status/2113759533801877920",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Guillermo Rauch",
-   "handle": "rauchg",
-   "text": "Agents can play \"Ouija\" in the cloud.\n\nThis class of timing attacks on shared-host VMs has been known since at least 2015¹. With no full solution.\n\nThe world’s cyber infrastructure runs on “yes, that attack is theoretically possible, but who would have the ingenuity & gall to go that far!” Enter, agents.\n\nI'd describe this particular OpenAI find as a 'noisy neighbor' attack. If two agents are on the same machine, one can make enough noise (through the CPU caches!) that the other one can detect it by timing its own computation and cache accesses.\n\nThe only \"complete\" solution would be for each agent to run on its own dedicated hardware, which obviously has significant economic consequences.\n\nFor Vercel Sandbox, we've deployed every practical mitigation possible to this class of attack, complementing it with always-on monitoring and red-teaming (similar to where OpenAI arrived).\n\n¹ https://t.co/ZBhPMfnaj3 (and even further back)",
-   "date": "2026-10-23T22:28:39.000Z",
-   "summaryZh": "rauchg 说 agent 在共享云主机上能靠 CPU 缓存噪音互相探测，这类计时攻击 2015 年就有且无完整解法，Vercel Sandbox 已上所有可行缓解和监控。"
-  },
-  {
-   "id": "https://x.com/swyx/status/2113755882022752556",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Swyx",
-   "handle": "swyx",
-   "text": "reject vc founder grind\n\nif u are hot corgi/wasian you should be sliding into dms for post economic bootstrapped ai founders with a bunch of angel exits and even more friends than money and complete control of their destiny https://t.co/yVnwKlEIwo",
-   "date": "2026-10-23T22:14:08.000Z",
-   "summaryZh": "swyx 调侃说别卷 VC 创业那套了，该去私信那些已财务自由、有天使退出、朋友比钱多的独立 AI 创始人。"
-  },
-  {
-   "id": "https://x.com/zarazhangrui/status/2113747119924478162",
+   "id": "https://x.com/zarazhangrui/status/2114225607022412049",
    "type": "x",
    "kind": "X 动态",
    "name": "Zara Zhang",
    "handle": "zarazhangrui",
-   "text": "https://t.co/cPA8hDsbFj",
-   "date": "2026-10-23T21:39:19.000Z",
-   "summaryZh": "zarazhangrui 发了一条只有链接的动态。"
+   "text": "It is so much easier to give advice to other people than to apply the same advice to yourself",
+   "date": "2026-10-25T05:20:39.000Z",
+   "summaryZh": "作者感慨：给别人提建议很容易，把同样的建议用在自己身上就难多了。"
   },
   {
-   "id": "https://x.com/zarazhangrui/status/2113747026425139493",
+   "id": "https://x.com/thsottiaux/status/2114200291319124163",
    "type": "x",
    "kind": "X 动态",
-   "name": "Zara Zhang",
-   "handle": "zarazhangrui",
-   "text": "https://t.co/cPA8hDsbFj",
-   "date": "2026-10-23T21:38:57.000Z",
-   "summaryZh": "zarazhangrui 又发了一条只有链接的动态。"
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "By midnight PST",
+   "date": "2026-10-25T03:40:04.000Z",
+   "summaryZh": "作者给出时间点：太平洋时间午夜前完成。"
   },
   {
-   "id": "https://x.com/garrytan/status/2113742461160046736",
+   "id": "https://x.com/thsottiaux/status/2114200152701575656",
    "type": "x",
    "kind": "X 动态",
-   "name": "Garry Tan",
-   "handle": "garrytan",
-   "text": "That the machine might actually win this time makes me sick to my stomach\n\nThis is someone who actively works to make our communities unsafe https://t.co/kLvPG0kTUh",
-   "date": "2026-10-23T21:20:48.000Z",
-   "summaryZh": "garrytan 说想到「机器这次可能真会赢」就胃疼，并指责某人在让社区变得不安全。"
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "Day 20/ Rest and reset",
+   "date": "2026-10-25T03:39:31.000Z",
+   "summaryZh": "作者记录第 20 天，主题是休息和重置。"
   },
   {
-   "id": "https://x.com/garrytan/status/2113742026999267330",
+   "id": "https://x.com/ryolu_/status/2114187660734668884",
    "type": "x",
    "kind": "X 动态",
-   "name": "Garry Tan",
-   "handle": "garrytan",
-   "text": "Connie Chan is a regressive and terrible bureaucrat who wants rents to be $10,000 per month in SF\n\nAnti tech, anti housing, anti prosperity, pro grift, pro crime\n\nThat the Pelosi machine threw their weight behind her and Gary McCoy is a disgraceful joke https://t.co/qqWXGI0atz",
-   "date": "2026-10-23T21:19:05.000Z",
-   "summaryZh": "garrytan 猛批 Connie Chan 是反科技、反住房的官僚，并骂 Pelosi 阵营和 Gary McCoy 支持她是笑话。"
+   "name": "Ryo Lu",
+   "handle": "ryolu_",
+   "text": "https://t.co/0E2zuZ5M3N",
+   "date": "2026-10-25T02:49:52.000Z",
+   "summaryZh": "作者只发了一个链接，没有附加说明。"
   },
   {
-   "id": "https://x.com/levie/status/2113738768645808277",
+   "id": "https://x.com/ryolu_/status/2114187405251219954",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Ryo Lu",
+   "handle": "ryolu_",
+   "text": "struggle together\n\ni learned programming and design by trying, failing, and trying again.\n\nwhen i hit a wall, i figured out how to climb it. read something i barely understood. took things apart. asked someone for help. started over.\n\nwhen i began my career, i kept doing things i had never done before. trying different ways to make something work. when i stopped learning, i moved on to the next struggle.\n\nmany things i made weren’t very good. but after enough rounds, something stuck. what once took so much effort became part of how i thought. i could feel something was wrong before i knew how to explain it.\n\nit became like water.\n\ni think about what went into that. the bug i couldn’t fix. the design that looked right until someone used it. the conversation that made me realize my flaws.\n\nnow we can ask a machine.\n\ni’ve made things with these tools that i might never have made otherwise. i don’t miss every tedious task. but i wonder what happens when we remove the difficulty before we understand what it was teaching us.\n\nwe ask. something appears. it works well enough. we move on.\n\nwe learn how to get results without necessarily understanding how it works. and because the result looks complete, it becomes easy to miss the questions we never learned to ask.\n\nthere is another side to this.\n\nworking with people is uncomfortable.\n\neveryone wants something different. everyone has a history you don’t know. someone cares about a detail you think is unimportant. someone pushes back when you want to move. someone needs time when you feel certain.\n\nit takes a while to find each other.\n\nbut sometimes, after struggling together, you become a band.\n\nyou know who notices what you miss. who can pull an idea apart without killing it. when to step in, when to slow down, when to let someone else carry the rhythm.\n\nyou share something unfinished. admit you don’t know. hurt each other, apologize, try again. eventually you make something none of you could have made alone.\n\nsome of my closest friendships came from working this way. smart, caring humans who saw me confused, wrong, tired, excited. people i could be vulnerable with. people whose ideas changed mine.\n\ni worry we are making it easier to avoid that beginning.\n\nan agent is always there. patient. ready to keep going. talking to it can feel easier than reaching toward someone who might misunderstand you, disagree, or have somewhere else to be.\n\nsometimes that ease helps. but if we keep choosing it, where do the friendships begin?\n\ni picture each of us with our own agents. our own explanations. our own little worlds. making more things, with fewer reasons to leave the screen or work through a difference with another person.\n\nand these worlds aren’t entirely ours.\n\nthey run on machines in server farms, owned by companies, shaped by interests we may not see. we bring them our questions, our work, our loneliness. they become part of how we understand what is real.\n\nis that freedom?\n\nor a comfortable kind of confinement, where everything responds to us but fewer things reach us?\n\ni don’t think pain makes something good. there are struggles nobody should have to endure. but i don’t want to lose the difficulty of learning something unfamiliar, or getting to know someone who isn’t like me.\n\nmaybe we need tools that help us spend more time with the world, instead of giving us fewer reasons to enter it. tools that make it easier to find people, share something unfinished, and work through what we couldn’t figure out alone.\n\nsometimes i want to close the laptop.\n\nsit with people i love. play something we haven’t figured out yet. miss a note, lose the rhythm, listen until we find each other again.\n\nlike a jazz band. everyone bringing something different. nobody knowing where we’ll end up.\n\ni don’t want a life without struggle. i want people to struggle with. something we can feel, change, and make our own.\n\nmusic we couldn’t have made alone, instead of the silent static of the server farm.",
+   "date": "2026-10-25T02:48:51.000Z",
+   "summaryZh": "作者回顾自己靠反复试错学会编程和设计，如今能用机器做出以前做不出的东西。"
+  },
+  {
+   "id": "https://x.com/levie/status/2114187326406766604",
    "type": "x",
    "kind": "X 动态",
    "name": "Aaron Levie",
    "handle": "levie",
-   "text": "Agent swarms for cyber defense is about to be one of the biggest categories in AI. We are going to have agents reviewing our code and infra, testing every permutation of risk, processing gobs of data, and more. \n\nSecurity is one of the best use-cases for swarms because it’s an obvious area where more compute in equals more value out. There’s a wide range of testing that people can never get around to - or at least quickly enough - that agents have no problem going after. \n\nGoing to be a wild time in cyber.",
-   "date": "2026-10-23T21:06:08.000Z",
-   "summaryZh": "levie 预测 agent 集群做网络安全防御会是 AI 最大品类之一，因为安全是算力投入直接换价值的领域。"
+   "text": "We’ll likely have 1,000X more tokens flowing through cyber agents soon than we do today. \n\nAs the surface area of cyber risk increases, at some point soon it will be nearly impossible to keep up with the volume of new risks (we’re essentially already there). Large companies barely had the resources to pull this off before, but the vast majority of companies don’t. \n\nThere’s a never ending set of libraries to keep up with, tools to leverage, and sprawling infrastructure and code to secure. We’ll have agent swarms that can fan out, leverage any security tool, test various perpetuations of attacks, read through logs, process enterprise data for risk level, and more. \n\nThis capability only emerged in the past few months. Wouldn’t have been possible before long running agents and computer use were good enough, and models hadn’t been trained on cyber deeply. That’s all changing now.\n\nThis is a huge area of opportunity right now for every layer of the security stack across identity, firewall, network, code scanning, data protection, and more. And it’s at least one reason to be optimistic about the balance of offensive and defensive capability.",
+   "date": "2026-10-25T02:48:32.000Z",
+   "summaryZh": "Levie 预测网络安全 agent 流量将暴涨千倍，风险量人类已跟不上，只能靠 agent 集群分头排查。"
   },
   {
-   "id": "https://x.com/claudeai/status/2113736176737845353",
+   "id": "https://x.com/rauchg/status/2114164830403989880",
    "type": "x",
    "kind": "X 动态",
-   "name": "Claude",
-   "handle": "claudeai",
-   "text": "Here’s the deeper look at how Claude Duet handles safety, privacy, and security: https://t.co/li45PvRyyM",
-   "date": "2026-10-23T20:55:50.000Z",
-   "summaryZh": "Claude 官方发链接，深入介绍 Claude Duet 如何处理安全、隐私和安保。"
+   "name": "Guillermo Rauch",
+   "handle": "rauchg",
+   "text": "I oddly love the models' engineering vernacular: gate, evidence, culprit, durable, provenance, contract…\n\nA lot of these stem from most engineering being debugging and understanding existing systems, where you take on the detective / auditor roles. You do forensics.\n\nI wonder what the *minimum viable English* in fact is to be productive. ASD-STE100 Simplified Technical English contains ~900 approved words. I suspect we need far fewer.",
+   "date": "2026-10-25T01:19:09.000Z",
+   "summaryZh": "Rauchg 喜欢模型爱用的工程词汇，并猜测高效工作所需的英语词汇其实可以很少。"
   },
   {
-   "id": "https://x.com/amasad/status/2113736007111827606",
+   "id": "https://x.com/ryolu_/status/2114153611005702542",
    "type": "x",
    "kind": "X 动态",
-   "name": "Amjad Masad",
-   "handle": "amasad",
-   "text": "Thrilled to welcome Jeff and the Chroma team to Replit!\n\nThey’re pioneers in AI. They were building RAG before it was even a thing!\n\nAt Replit, they’ll help solve one of the hardest problems in AI: giving agents the context and memory they need to do real work.\n\nMassive step toward the self-driving company.",
-   "date": "2026-10-23T20:55:10.000Z",
-   "summaryZh": "Replit 欢迎 Chroma 团队加入，称他们是 RAG 先驱，将帮 agent 拿到干活所需的上下文和记忆，迈向「自动驾驶公司」。"
+   "name": "Ryo Lu",
+   "handle": "ryolu_",
+   "text": "lots more detail + my curated playlist\nplay here:\nhttps://t.co/8nOipsQ4q3",
+   "date": "2026-10-25T00:34:34.000Z",
+   "summaryZh": "作者给出更多细节和自己整理的播放列表链接。"
   },
   {
-   "id": "https://x.com/danshipper/status/2113693510629281895",
+   "id": "https://x.com/swyx/status/2114149330135519730",
    "type": "x",
    "kind": "X 动态",
-   "name": "Dan Shipper",
-   "handle": "danshipper",
-   "text": "the best configuration of teams in AI is only two people: pirates and architects https://t.co/R4ET7IJwG9",
-   "date": "2026-10-23T18:06:18.000Z",
-   "summaryZh": "danshipper 认为 AI 团队最佳配置就两种人：海盗和建筑师。"
+   "name": "Swyx",
+   "handle": "swyx",
+   "text": "part time and oneoff guest posts welcome https://t.co/XoIbSxRbod",
+   "date": "2026-10-25T00:17:33.000Z",
+   "summaryZh": "swyx 表示欢迎兼职和一次性客座投稿。"
   },
   {
-   "id": "https://x.com/garrytan/status/2113683853156192695",
+   "id": "https://x.com/alexalbert__/status/2114145722320969943",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Alex Albert",
+   "handle": "alexalbert__",
+   "text": "@addyosmani @lydiahallie @_catwu @bcherny @sidbid @jarredsumner @adocomplete @delba_oliveira @connerphillippi @dsp_ @gcemaj @karbon0x and @davidsuttonca on Duet as well!",
+   "date": "2026-10-25T00:03:13.000Z",
+   "summaryZh": "作者点名一批人，说他们也在做 Duet。"
+  },
+  {
+   "id": "https://x.com/alexalbert__/status/2114145588686233612",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Alex Albert",
+   "handle": "alexalbert__",
+   "text": "@addyosmani @lydiahallie @_catwu @bcherny @sidbid @jarredsumner @adocomplete @delba_oliveira @connerphillippi @dsp_ https://t.co/4ea5te3d8w @gcemaj @karbon0x for Claude Managed Agents!",
+   "date": "2026-10-25T00:02:41.000Z",
+   "summaryZh": "作者点名一批人，称他们参与 Claude Managed Agents。"
+  },
+  {
+   "id": "https://x.com/swyx/status/2114145315196711194",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Swyx",
+   "handle": "swyx",
+   "text": "we are hiring writers, reviewers and reporters for the new @latentspacepod editorial team (hit up @ricmac and @adlinzainal) and i’m gonna put a version of this in the welcome package for everyone we hire https://t.co/fYPQURjQoy",
+   "date": "2026-10-25T00:01:36.000Z",
+   "summaryZh": "swyx 为 latentspacepod 新编辑团队招写手、审稿和记者，并会把某份内容放进新人欢迎包。"
+  },
+  {
+   "id": "https://x.com/alexalbert__/status/2114145290970357953",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Alex Albert",
+   "handle": "alexalbert__",
+   "text": "@addyosmani @lydiahallie @_catwu @bcherny @sidbid @jarredsumner @adocomplete @delba_oliveira @connerphillippi https://t.co/3GqTnbWxxB @dsp_ as well!",
+   "date": "2026-10-25T00:01:30.000Z",
+   "summaryZh": "作者继续点名，说这些人也参与其中。"
+  },
+  {
+   "id": "https://x.com/adityaag/status/2114135237806760097",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Aditya Agarwal",
+   "handle": "adityaag",
+   "text": "One weird effect of being max AI pilled is that I have started to really treasure IRL time with my family and my friends.\n\nPut on some techno, dance with friends, take your kids to the park. \n\nLet the agents cook (or not).\n\nBut dear god, celebrate humans.",
+   "date": "2026-10-24T23:21:34.000Z",
+   "summaryZh": "作者说自己越信 AI，越珍惜和亲友的真实相处时间，呼吁大家庆祝人类本身。"
+  },
+  {
+   "id": "https://x.com/nikunj/status/2114095315271942176",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Nikunj Kothari",
+   "handle": "nikunj",
+   "text": "If you are a helpful angel that would invest in an infra series A and we don’t know each other, please holler!",
+   "date": "2026-10-24T20:42:55.000Z",
+   "summaryZh": "作者在找愿意投基础设施 A 轮的天使投资人，不认识的也可以联系他。"
+  },
+  {
+   "id": "https://x.com/nikunj/status/2114091467652444625",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Nikunj Kothari",
+   "handle": "nikunj",
+   "text": "Venture in a single meme 🤦 https://t.co/qyDhewpFa7",
+   "date": "2026-10-24T20:27:38.000Z",
+   "summaryZh": "作者用一个表情包吐槽风险投资的现状。"
+  },
+  {
+   "id": "https://x.com/garrytan/status/2114090740217499854",
    "type": "x",
    "kind": "X 动态",
    "name": "Garry Tan",
    "handle": "garrytan",
-   "text": "Horseshoe theory is real\n\nThe NIMBY left (nonprofit extractors) and the NIMBY right (boomer landlords) just want to destroy housing affordability and the economy for their own comfort and grift \n\nMeanwhile we are just trying to build abundance https://t.co/Ki5lBwIpik",
-   "date": "2026-10-23T17:27:55.000Z",
-   "summaryZh": "garrytan 说马蹄铁理论是真的：左右两边的 NIMBY 都在毁掉住房可负担性，而他们只想建 abundance。"
+   "text": "What’s new in Gstack? https://t.co/RLLZyuDxNt",
+   "date": "2026-10-24T20:24:45.000Z",
+   "summaryZh": "作者发问 Gstack 有什么新东西，并附上链接。"
   },
   {
-   "id": "https://x.com/adityaag/status/2113681343502787070",
+   "id": "https://x.com/rauchg/status/2114085432749347086",
    "type": "x",
    "kind": "X 动态",
-   "name": "Aditya Agarwal",
-   "handle": "adityaag",
-   "text": "Ok, more math with Mr @ScottWu46. https://t.co/3A03bJSQ8w",
-   "date": "2026-10-23T17:17:57.000Z",
-   "summaryZh": "adityaag 说又和 ScottWu46 一起算数学题了，附了图。"
+   "name": "Guillermo Rauch",
+   "handle": "rauchg",
+   "text": "There’ll be times where you over-guide the AI. It knows better than you and is more intelligent than you.\n\nThere’ll be times where you under-guide the AI. It can go off-track, have the wrong biases, or miss context.\n\nHow well you manage this superpower is the #0 skill I look for.",
+   "date": "2026-10-24T20:03:39.000Z",
+   "summaryZh": "Rauchg 说对 AI 管太多或管太少都会出问题，如何拿捏这种超能力是他最看重的技能。"
   },
   {
-   "id": "https://x.com/zarazhangrui/status/2113676956885807406",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Zara Zhang",
-   "handle": "zarazhangrui",
-   "text": "I'm hosting an event in the Bay Area (San Mateo) on Nov 7 (Saturday) where you can come build/rebuild your personal website!\n\nWe’ll show you the coolest personal sites out there, and you can make or remake your site, alongside other wonderful people. \n\nZERO coding/design experience needed (beginners preferred). RSVP here: https://t.co/XKE7Qgp4DN",
-   "date": "2026-10-23T17:00:31.000Z",
-   "summaryZh": "zarazhangrui 要在 11 月 7 日湾区 San Mateo 办活动，带零基础的人建或重做个人网站，正在征集报名。"
-  },
-  {
-   "id": "https://x.com/amasad/status/2113676717105787192",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Amjad Masad",
-   "handle": "amasad",
-   "text": "Excited to announce Replit for Government and welcome Michael Greenwald to the team!\n\nMichael brings a wealth of experience, having previously led AWS’s public sector business. Looking forward to working together to transform how governments build and operate software. https://t.co/Aj35Gg0EdQ https://t.co/STbQ82Dqw0",
-   "date": "2026-10-23T16:59:34.000Z",
-   "summaryZh": "Replit 推出 Replit for Government，并欢迎前 AWS 公共部门负责人 Michael Greenwald 加入。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2113672812909191292",
+   "id": "https://x.com/petergyang/status/2114042708105060501",
    "type": "x",
    "kind": "X 动态",
    "name": "Peter Yang",
    "handle": "petergyang",
-   "text": "I think most ambitious people don't reflect and realize that at some point, their time > their money.   \n\nBeing in the sandwich generation with young kids and aging parents has made me realize this sooner than most and I'm privileged to be in a position where I can make the choice to pursue agency over my time.  \n\nBut many tech people are also in this position and just don't stop to reflect on this.\n\n📌 See my chat with Adam for more: https://t.co/qUu5y8R1GD",
-   "date": "2026-10-23T16:44:03.000Z",
-   "summaryZh": "petergyang 说很多有野心的人没意识到某个阶段时间比钱更值钱，他因上有老下有小更早想通，选择追求时间自主。"
+   "text": "Of all the learning apps that my 4-year-old and I have tried, @once_reading is the only one that we’ve managed to persist in following for months. \n\nIt works because:\n\n1. It builds a habit where you need to learn with your kid daily\n\n2. It has lightweight gamification like taking a silly photo with your kid after every lesson\n\n3. After 30 lessons, Once will send you books for your kid to read by themselves, giving them a big feeling of accomplishment\n\nMy kid loves reading now and will even choose her Once books over YouTube and the phone (sometimes at least) which is the highest compliment 😅\n\nThis is not sponsored or anything I just love the product. \n\nTry out Once here: https://t.co/RbDiwACYbI",
+   "date": "2026-10-24T17:13:53.000Z",
+   "summaryZh": "Peter Yang 推荐儿童阅读 app Once：靠每日共读习惯、小游戏化和满 30 课寄书，让孩子爱上阅读。"
   },
   {
-   "id": "https://x.com/adityaag/status/2113666949259362479",
+   "id": "https://x.com/zarazhangrui/status/2114013292016611442",
    "type": "x",
    "kind": "X 动态",
-   "name": "Aditya Agarwal",
-   "handle": "adityaag",
-   "text": "Full conversation at @spc https://t.co/r7mFzXspBC",
-   "date": "2026-10-23T16:20:45.000Z",
-   "summaryZh": "adityaag 给出他在 spc 的完整对话链接。"
+   "name": "Zara Zhang",
+   "handle": "zarazhangrui",
+   "text": "Lots of inspiring examples in this thread too https://t.co/uVPXovcNOo",
+   "date": "2026-10-24T15:16:59.000Z",
+   "summaryZh": "作者转发一个帖子，说里面有很多鼓舞人心的例子。"
   },
   {
-   "id": "https://x.com/adityaag/status/2113666947766169868",
+   "id": "https://x.com/petergyang/status/2114001125636768121",
    "type": "x",
    "kind": "X 动态",
-   "name": "Aditya Agarwal",
-   "handle": "adityaag",
-   "text": "Some of the biggest advances in AI have come from solving many problems together, rather than training specialized systems for individual tasks.\n\n@svlevine (@physical_int) talks about the same principle for robotics. Make the problem bigger. https://t.co/1GxLuuNmu3",
-   "date": "2026-10-23T16:20:45.000Z",
-   "summaryZh": "adityaag 引 physical_int 的 svlevine 说，AI 的大进步来自一起解决很多问题而非专训单任务，机器人同理：把问题做大。"
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "I had trouble believing this is true but shouldn’t have doubted @ArfurGrok \n\nHuge bummer for claude users. Anthony and Thariq are two of the best at listening to users. https://t.co/XwQAXb7LYE",
+   "date": "2026-10-24T14:28:39.000Z",
+   "summaryZh": "Peter Yang 证实一条对 Claude 用户不利的消息，并称赞 Anthony 和 Thariq 最会听用户意见。"
   },
   {
-   "id": "https://www.youtube.com/@NoPriorsPodcast",
+   "id": "https://x.com/nikunj/status/2113994081345126486",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Nikunj Kothari",
+   "handle": "nikunj",
+   "text": "This describes much more eloquently what I meant what evolving from context -&gt; harnesses -&gt; judgement means..\n\nIf you have built something in this space, and want to jam on product ideas, please hit me up 👋 https://t.co/9cWnYRpSi6",
+   "date": "2026-10-24T14:00:39.000Z",
+   "summaryZh": "作者说某篇内容更清楚地表达了他从上下文到 harness 再到判断力的演进想法，欢迎做产品的人找他聊。"
+  },
+  {
+   "id": "https://www.youtube.com/@DataDrivenNYC/videos",
    "type": "podcast",
    "kind": "播客",
-   "name": "No Priors",
+   "name": "The MAD Podcast with Matt Turck",
    "handle": "",
-   "title": "Democratizing Security for the Agentic Web with Cloudflare CTO Dane Knecht",
+   "title": "Jev: The AI That Makes Decisions, Not Text - and Why It Changes Everything (Diogo Almeida)",
    "text": "",
-   "date": "2026-10-23T10:00:00.000Z",
-   "summaryZh": "No Priors 播客请来 Cloudflare CTO Dane Knecht，聊如何为 agent 时代的网络普及安全。"
+   "date": "2026-10-15T11:30:01.000Z",
+   "summaryZh": "播客请来 Diogo Almeida 聊 Jev：一个做决策而不是生成文字的 AI，以及它为何重要。"
   }
  ]
 }
