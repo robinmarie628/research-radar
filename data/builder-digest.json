@@ -1,259 +1,169 @@
 {
- "date": "2026-10-25",
- "generatedAt": "2026-10-25T23:41:32Z",
+ "date": "2026-10-27",
+ "generatedAt": "2026-10-27T01:00:52Z",
  "model": "deepseek-flash",
- "headline": "Codex 更新已推送，Claude 用户却传出坏消息",
+ "headline": "今天没有大模型发布，builder 们在聊安全、视频编辑和日常内容运营",
  "bullets": [
-  "Codex 相关改动已全部推送，作者预告明天可以尽情写代码，本周还有更多动作。",
-  "Claude 侧传出对用户不利的消息，Peter Yang 称 Anthony 和 Thariq 是最会听用户意见的人。",
-  "Levie 判断网络安全的 agent 数量会暴涨，风险多到人类跟不上，只能靠 agent 集群应对。",
-  "Rauchg 认为管好 AI 的关键是别过度指挥、也别放任，这是最重要的技能。",
-  "latentspacepod 在招编辑团队，swyx 欢迎兼职和一次性投稿。"
+  "HyperFrames 把「用 Claude 复制任意短视频风格」做成了原生功能，上传参考片段再用提示词描述改动即可。",
+  "Levie 认为大企业安全现状很糟：数据碎片化、权限开太大、靠 obscurity 撑着，风险面只会更复杂。",
+  "Matt Turck 调侃 2021 年押注元宇宙、游戏和加密挖矿的 VC，如今把这些包装成「mission-critical AI 基础设施」。",
+  "有 builder 强调每天稳定发内容比砸钱做一次大 launch 更有效。",
+  "ChatGPT 网页版外观可以自定义，有人提醒这个设置。"
  ],
- "sentiment": "整体偏期待又带点失落：一边等 Codex 新东西，一边为 Claude 用户遇到的变动惋惜。",
- "count": 24,
- "summarised": 24,
+ "sentiment": "整体偏轻松围观，夹杂对安全现状的担忧和对 VC 叙事的吐槽，没有明显的兴奋或焦虑。",
+ "count": 15,
+ "summarised": 15,
  "posts": [
   {
-   "id": "https://x.com/thsottiaux/status/2114237083652882932",
+   "id": "https://x.com/thsottiaux/status/2114595002210783279",
    "type": "x",
    "kind": "X 动态",
    "name": "Thibault Sottiaux",
    "handle": "thsottiaux",
-   "text": "It is all propagated. Enjoy some mad codexing tomorrow. Fun week ahead too. https://t.co/qOrzwSeIZZ https://t.co/xKaK95EAly",
-   "date": "2026-10-25T06:06:16.000Z",
-   "summaryZh": "作者说改动已全部推送，明天可以痛快用 Codex 写代码，并预告这周还有好戏。"
+   "text": "Reminder you can customize the appearance of chatgpt on web and make it soothing\n\nhttps://t.co/an6R8iY5Ix https://t.co/iysHpdDLml",
+   "date": "2026-10-26T05:48:30.000Z",
+   "summaryZh": "提醒大家 ChatGPT 网页版可以自定义外观，调成看着舒服的样子。"
   },
   {
-   "id": "https://x.com/zarazhangrui/status/2114225607022412049",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Zara Zhang",
-   "handle": "zarazhangrui",
-   "text": "It is so much easier to give advice to other people than to apply the same advice to yourself",
-   "date": "2026-10-25T05:20:39.000Z",
-   "summaryZh": "作者感慨：给别人提建议很容易，把同样的建议用在自己身上就难多了。"
-  },
-  {
-   "id": "https://x.com/thsottiaux/status/2114200291319124163",
+   "id": "https://x.com/thsottiaux/status/2114588174249071102",
    "type": "x",
    "kind": "X 动态",
    "name": "Thibault Sottiaux",
    "handle": "thsottiaux",
-   "text": "By midnight PST",
-   "date": "2026-10-25T03:40:04.000Z",
-   "summaryZh": "作者给出时间点：太平洋时间午夜前完成。"
+   "text": "Day 21/ Wonder what happens the remaining seven days. But today is a reset.",
+   "date": "2026-10-26T05:21:22.000Z",
+   "summaryZh": "打卡第 21 天，说今天是重置，好奇剩下七天会发生什么。"
   },
   {
-   "id": "https://x.com/thsottiaux/status/2114200152701575656",
+   "id": "https://x.com/petergyang/status/2114560930646487116",
    "type": "x",
    "kind": "X 动态",
-   "name": "Thibault Sottiaux",
-   "handle": "thsottiaux",
-   "text": "Day 20/ Rest and reset",
-   "date": "2026-10-25T03:39:31.000Z",
-   "summaryZh": "作者记录第 20 天，主题是休息和重置。"
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "This is beautiful. Who said AI doesn't have taste https://t.co/gaPLhncKM2",
+   "date": "2026-10-26T03:33:07.000Z",
+   "summaryZh": "感叹某个 AI 产出很漂亮，反问谁说 AI 没有审美。"
   },
   {
-   "id": "https://x.com/ryolu_/status/2114187660734668884",
+   "id": "https://x.com/petergyang/status/2114557067700916723",
    "type": "x",
    "kind": "X 动态",
-   "name": "Ryo Lu",
-   "handle": "ryolu_",
-   "text": "https://t.co/0E2zuZ5M3N",
-   "date": "2026-10-25T02:49:52.000Z",
-   "summaryZh": "作者只发了一个链接，没有附加说明。"
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "lol this is me except my wife still buys snacks https://t.co/OvTm1jMXGD",
+   "date": "2026-10-26T03:17:46.000Z",
+   "summaryZh": "转发一个段子，说这说的就是自己，只不过他老婆还会买零食。"
   },
   {
-   "id": "https://x.com/ryolu_/status/2114187405251219954",
+   "id": "https://x.com/danshipper/status/2114509827057561603",
    "type": "x",
    "kind": "X 动态",
-   "name": "Ryo Lu",
-   "handle": "ryolu_",
-   "text": "struggle together\n\ni learned programming and design by trying, failing, and trying again.\n\nwhen i hit a wall, i figured out how to climb it. read something i barely understood. took things apart. asked someone for help. started over.\n\nwhen i began my career, i kept doing things i had never done before. trying different ways to make something work. when i stopped learning, i moved on to the next struggle.\n\nmany things i made weren’t very good. but after enough rounds, something stuck. what once took so much effort became part of how i thought. i could feel something was wrong before i knew how to explain it.\n\nit became like water.\n\ni think about what went into that. the bug i couldn’t fix. the design that looked right until someone used it. the conversation that made me realize my flaws.\n\nnow we can ask a machine.\n\ni’ve made things with these tools that i might never have made otherwise. i don’t miss every tedious task. but i wonder what happens when we remove the difficulty before we understand what it was teaching us.\n\nwe ask. something appears. it works well enough. we move on.\n\nwe learn how to get results without necessarily understanding how it works. and because the result looks complete, it becomes easy to miss the questions we never learned to ask.\n\nthere is another side to this.\n\nworking with people is uncomfortable.\n\neveryone wants something different. everyone has a history you don’t know. someone cares about a detail you think is unimportant. someone pushes back when you want to move. someone needs time when you feel certain.\n\nit takes a while to find each other.\n\nbut sometimes, after struggling together, you become a band.\n\nyou know who notices what you miss. who can pull an idea apart without killing it. when to step in, when to slow down, when to let someone else carry the rhythm.\n\nyou share something unfinished. admit you don’t know. hurt each other, apologize, try again. eventually you make something none of you could have made alone.\n\nsome of my closest friendships came from working this way. smart, caring humans who saw me confused, wrong, tired, excited. people i could be vulnerable with. people whose ideas changed mine.\n\ni worry we are making it easier to avoid that beginning.\n\nan agent is always there. patient. ready to keep going. talking to it can feel easier than reaching toward someone who might misunderstand you, disagree, or have somewhere else to be.\n\nsometimes that ease helps. but if we keep choosing it, where do the friendships begin?\n\ni picture each of us with our own agents. our own explanations. our own little worlds. making more things, with fewer reasons to leave the screen or work through a difference with another person.\n\nand these worlds aren’t entirely ours.\n\nthey run on machines in server farms, owned by companies, shaped by interests we may not see. we bring them our questions, our work, our loneliness. they become part of how we understand what is real.\n\nis that freedom?\n\nor a comfortable kind of confinement, where everything responds to us but fewer things reach us?\n\ni don’t think pain makes something good. there are struggles nobody should have to endure. but i don’t want to lose the difficulty of learning something unfamiliar, or getting to know someone who isn’t like me.\n\nmaybe we need tools that help us spend more time with the world, instead of giving us fewer reasons to enter it. tools that make it easier to find people, share something unfinished, and work through what we couldn’t figure out alone.\n\nsometimes i want to close the laptop.\n\nsit with people i love. play something we haven’t figured out yet. miss a note, lose the rhythm, listen until we find each other again.\n\nlike a jazz band. everyone bringing something different. nobody knowing where we’ll end up.\n\ni don’t want a life without struggle. i want people to struggle with. something we can feel, change, and make our own.\n\nmusic we couldn’t have made alone, instead of the silent static of the server farm.",
-   "date": "2026-10-25T02:48:51.000Z",
-   "summaryZh": "作者回顾自己靠反复试错学会编程和设计，如今能用机器做出以前做不出的东西。"
+   "name": "Dan Shipper",
+   "handle": "danshipper",
+   "text": "https://t.co/F3WWInD6LH https://t.co/PKNm0MT3So",
+   "date": "2026-10-26T00:10:03.000Z",
+   "summaryZh": "只发了一个链接，没有配文字说明。"
   },
   {
-   "id": "https://x.com/levie/status/2114187326406766604",
+   "id": "https://x.com/mattturck/status/2114507945585328606",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Matt Turck",
+   "handle": "mattturck",
+   "text": "Rare footage of how VCs turned their 2021 bets in metaverse, gaming and crypto mining into 'mission-critical AI infrastructure’ https://t.co/ULSKrUwg1f",
+   "date": "2026-10-26T00:02:34.000Z",
+   "summaryZh": "调侃 VC 把 2021 年在元宇宙、游戏和加密挖矿上的押注，说成是「mission-critical AI 基础设施」。"
+  },
+  {
+   "id": "https://x.com/petergyang/status/2114507378532229214",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "Here’s how to use Claude to copy any video shorts style in a few minutes.\n\nFrom @jake11moran:\n\n“We added this as a native capability in @HyperFrames_ studio. You just upload or pick a reference clip and then describe in the prompt what you want to change.\n\nYou can see where we’re drawing inspiration from and apply a different font or different colors. It’s still structurally the same idea.”\n\n📌 Watch our full AI video editing tutorial here: https://t.co/1seCb77tGJ",
+   "date": "2026-10-26T00:00:19.000Z",
+   "summaryZh": "介绍 HyperFrames studio 的新原生功能：上传参考短片并用提示词描述改动，几分钟就能复制任意短视频风格。"
+  },
+  {
+   "id": "https://x.com/thenanyu/status/2114433404557279435",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Nan Yu",
+   "handle": "thenanyu",
+   "text": "Anyone else find it insane that this is the default for unoptimized apps when the iPhone Duo supports split mode? https://t.co/TOoeDyhMzz https://t.co/uXGfG7EbYt",
+   "date": "2026-10-25T19:06:22.000Z",
+   "summaryZh": "吐槽未优化应用在支持分屏的 iPhone Duo 上仍默认单屏，觉得这很离谱。"
+  },
+  {
+   "id": "https://x.com/thenanyu/status/2114427877240488442",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Nan Yu",
+   "handle": "thenanyu",
+   "text": "By the time it shows up in the data or UXR interviews it’s too late. The damage has been done and the reputation tarnished https://t.co/hIPaT1BOmk",
+   "date": "2026-10-25T18:44:24.000Z",
+   "summaryZh": "认为等数据或用户访谈暴露出问题时已经太晚，损害和口碑损失已经造成。"
+  },
+  {
+   "id": "https://x.com/mattturck/status/2114411547594457483",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Matt Turck",
+   "handle": "mattturck",
+   "text": "Good neighborhood https://t.co/ZRTxHmsoZv https://t.co/OCMZ85Yk8G",
+   "date": "2026-10-25T17:39:31.000Z",
+   "summaryZh": "随手发了一句「好社区」，配了张图。"
+  },
+  {
+   "id": "https://x.com/levie/status/2114391265655816315",
    "type": "x",
    "kind": "X 动态",
    "name": "Aaron Levie",
    "handle": "levie",
-   "text": "We’ll likely have 1,000X more tokens flowing through cyber agents soon than we do today. \n\nAs the surface area of cyber risk increases, at some point soon it will be nearly impossible to keep up with the volume of new risks (we’re essentially already there). Large companies barely had the resources to pull this off before, but the vast majority of companies don’t. \n\nThere’s a never ending set of libraries to keep up with, tools to leverage, and sprawling infrastructure and code to secure. We’ll have agent swarms that can fan out, leverage any security tool, test various perpetuations of attacks, read through logs, process enterprise data for risk level, and more. \n\nThis capability only emerged in the past few months. Wouldn’t have been possible before long running agents and computer use were good enough, and models hadn’t been trained on cyber deeply. That’s all changing now.\n\nThis is a huge area of opportunity right now for every layer of the security stack across identity, firewall, network, code scanning, data protection, and more. And it’s at least one reason to be optimistic about the balance of offensive and defensive capability.",
-   "date": "2026-10-25T02:48:32.000Z",
-   "summaryZh": "Levie 预测网络安全 agent 流量将暴涨千倍，风险量人类已跟不上，只能靠 agent 集群分头排查。"
+   "text": "Good assessment of the on the ground reality for security in most large enterprises right now. The fragmented landscape of the risk surface is only going to get more gnarly, making it even more complex for enterprises to solve.\n\nThere’s a never ending set of libraries to keep up with, tools to leverage, and sprawling infrastructure, data, and code to secure. Most large enterprises can barely keep up with this, let alone smaller startups or most companies outside of tech. \n\nIn many cases enterprises need to work to modernize their tech stacks. Data, in most organizations, is highly fragmented which means you don’t really know the state of risk at any given time. Some systems are open up privileges too broadly, and others are operating primarily via security through obscurity. Lots of upgrading here to do.\n\nOnce you can get your data and infra into a better spot, at least you have a chance for agents to help you secure the environment. Agent swarms can fan out, leverage any security tool, test various perpetuations of attacks, read through logs, process enterprise data for risk level, and more. This capability only emerged in the past few months, and none of it would be possible before we had long running agents and computer use good enough.\n\nThis is a huge area of opportunity right now for every layer of the security stack across identity, firewall, network, code scanning, data protection, and more. And it’s at least one reason to be optimistic about the balance of offensive and defensive capability. \n\nBut everyone does need to do the hard work of getting the basics right at the start.",
+   "date": "2026-10-25T16:18:55.000Z",
+   "summaryZh": "认为大企业安全现状很糟：数据碎片化、权限过宽、靠 obscurity 撑着，风险面只会更复杂，得先现代化技术栈。"
   },
   {
-   "id": "https://x.com/rauchg/status/2114164830403989880",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Guillermo Rauch",
-   "handle": "rauchg",
-   "text": "I oddly love the models' engineering vernacular: gate, evidence, culprit, durable, provenance, contract…\n\nA lot of these stem from most engineering being debugging and understanding existing systems, where you take on the detective / auditor roles. You do forensics.\n\nI wonder what the *minimum viable English* in fact is to be productive. ASD-STE100 Simplified Technical English contains ~900 approved words. I suspect we need far fewer.",
-   "date": "2026-10-25T01:19:09.000Z",
-   "summaryZh": "Rauchg 喜欢模型爱用的工程词汇，并猜测高效工作所需的英语词汇其实可以很少。"
-  },
-  {
-   "id": "https://x.com/ryolu_/status/2114153611005702542",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Ryo Lu",
-   "handle": "ryolu_",
-   "text": "lots more detail + my curated playlist\nplay here:\nhttps://t.co/8nOipsQ4q3",
-   "date": "2026-10-25T00:34:34.000Z",
-   "summaryZh": "作者给出更多细节和自己整理的播放列表链接。"
-  },
-  {
-   "id": "https://x.com/swyx/status/2114149330135519730",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Swyx",
-   "handle": "swyx",
-   "text": "part time and oneoff guest posts welcome https://t.co/XoIbSxRbod",
-   "date": "2026-10-25T00:17:33.000Z",
-   "summaryZh": "swyx 表示欢迎兼职和一次性客座投稿。"
-  },
-  {
-   "id": "https://x.com/alexalbert__/status/2114145722320969943",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Alex Albert",
-   "handle": "alexalbert__",
-   "text": "@addyosmani @lydiahallie @_catwu @bcherny @sidbid @jarredsumner @adocomplete @delba_oliveira @connerphillippi @dsp_ @gcemaj @karbon0x and @davidsuttonca on Duet as well!",
-   "date": "2026-10-25T00:03:13.000Z",
-   "summaryZh": "作者点名一批人，说他们也在做 Duet。"
-  },
-  {
-   "id": "https://x.com/alexalbert__/status/2114145588686233612",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Alex Albert",
-   "handle": "alexalbert__",
-   "text": "@addyosmani @lydiahallie @_catwu @bcherny @sidbid @jarredsumner @adocomplete @delba_oliveira @connerphillippi @dsp_ https://t.co/4ea5te3d8w @gcemaj @karbon0x for Claude Managed Agents!",
-   "date": "2026-10-25T00:02:41.000Z",
-   "summaryZh": "作者点名一批人，称他们参与 Claude Managed Agents。"
-  },
-  {
-   "id": "https://x.com/swyx/status/2114145315196711194",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Swyx",
-   "handle": "swyx",
-   "text": "we are hiring writers, reviewers and reporters for the new @latentspacepod editorial team (hit up @ricmac and @adlinzainal) and i’m gonna put a version of this in the welcome package for everyone we hire https://t.co/fYPQURjQoy",
-   "date": "2026-10-25T00:01:36.000Z",
-   "summaryZh": "swyx 为 latentspacepod 新编辑团队招写手、审稿和记者，并会把某份内容放进新人欢迎包。"
-  },
-  {
-   "id": "https://x.com/alexalbert__/status/2114145290970357953",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Alex Albert",
-   "handle": "alexalbert__",
-   "text": "@addyosmani @lydiahallie @_catwu @bcherny @sidbid @jarredsumner @adocomplete @delba_oliveira @connerphillippi https://t.co/3GqTnbWxxB @dsp_ as well!",
-   "date": "2026-10-25T00:01:30.000Z",
-   "summaryZh": "作者继续点名，说这些人也参与其中。"
-  },
-  {
-   "id": "https://x.com/adityaag/status/2114135237806760097",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Aditya Agarwal",
-   "handle": "adityaag",
-   "text": "One weird effect of being max AI pilled is that I have started to really treasure IRL time with my family and my friends.\n\nPut on some techno, dance with friends, take your kids to the park. \n\nLet the agents cook (or not).\n\nBut dear god, celebrate humans.",
-   "date": "2026-10-24T23:21:34.000Z",
-   "summaryZh": "作者说自己越信 AI，越珍惜和亲友的真实相处时间，呼吁大家庆祝人类本身。"
-  },
-  {
-   "id": "https://x.com/nikunj/status/2114095315271942176",
+   "id": "https://x.com/nikunj/status/2114380495140405394",
    "type": "x",
    "kind": "X 动态",
    "name": "Nikunj Kothari",
    "handle": "nikunj",
-   "text": "If you are a helpful angel that would invest in an infra series A and we don’t know each other, please holler!",
-   "date": "2026-10-24T20:42:55.000Z",
-   "summaryZh": "作者在找愿意投基础设施 A 轮的天使投资人，不认识的也可以联系他。"
+   "text": "Golden hour 🌅 https://t.co/VPmAgnMkGH",
+   "date": "2026-10-25T15:36:07.000Z",
+   "summaryZh": "发了一张黄昏金色时刻的照片。"
   },
   {
-   "id": "https://x.com/nikunj/status/2114091467652444625",
+   "id": "https://x.com/swyx/status/2114263159355904426",
    "type": "x",
    "kind": "X 动态",
-   "name": "Nikunj Kothari",
-   "handle": "nikunj",
-   "text": "Venture in a single meme 🤦 https://t.co/qyDhewpFa7",
-   "date": "2026-10-24T20:27:38.000Z",
-   "summaryZh": "作者用一个表情包吐槽风险投资的现状。"
+   "name": "Swyx",
+   "handle": "swyx",
+   "text": "i need 12 more likes to ratio @ArfurRock whos got it",
+   "date": "2026-10-25T07:49:52.000Z",
+   "summaryZh": "开玩笑说还差 12 个赞就能 ratio 某人，问谁愿意帮忙。"
   },
   {
-   "id": "https://x.com/garrytan/status/2114090740217499854",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Garry Tan",
-   "handle": "garrytan",
-   "text": "What’s new in Gstack? https://t.co/RLLZyuDxNt",
-   "date": "2026-10-24T20:24:45.000Z",
-   "summaryZh": "作者发问 Gstack 有什么新东西，并附上链接。"
-  },
-  {
-   "id": "https://x.com/rauchg/status/2114085432749347086",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Guillermo Rauch",
-   "handle": "rauchg",
-   "text": "There’ll be times where you over-guide the AI. It knows better than you and is more intelligent than you.\n\nThere’ll be times where you under-guide the AI. It can go off-track, have the wrong biases, or miss context.\n\nHow well you manage this superpower is the #0 skill I look for.",
-   "date": "2026-10-24T20:03:39.000Z",
-   "summaryZh": "Rauchg 说对 AI 管太多或管太少都会出问题，如何拿捏这种超能力是他最看重的技能。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2114042708105060501",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "Of all the learning apps that my 4-year-old and I have tried, @once_reading is the only one that we’ve managed to persist in following for months. \n\nIt works because:\n\n1. It builds a habit where you need to learn with your kid daily\n\n2. It has lightweight gamification like taking a silly photo with your kid after every lesson\n\n3. After 30 lessons, Once will send you books for your kid to read by themselves, giving them a big feeling of accomplishment\n\nMy kid loves reading now and will even choose her Once books over YouTube and the phone (sometimes at least) which is the highest compliment 😅\n\nThis is not sponsored or anything I just love the product. \n\nTry out Once here: https://t.co/RbDiwACYbI",
-   "date": "2026-10-24T17:13:53.000Z",
-   "summaryZh": "Peter Yang 推荐儿童阅读 app Once：靠每日共读习惯、小游戏化和满 30 课寄书，让孩子爱上阅读。"
-  },
-  {
-   "id": "https://x.com/zarazhangrui/status/2114013292016611442",
+   "id": "https://x.com/zarazhangrui/status/2114255477907570865",
    "type": "x",
    "kind": "X 动态",
    "name": "Zara Zhang",
    "handle": "zarazhangrui",
-   "text": "Lots of inspiring examples in this thread too https://t.co/uVPXovcNOo",
-   "date": "2026-10-24T15:16:59.000Z",
-   "summaryZh": "作者转发一个帖子，说里面有很多鼓舞人心的例子。"
+   "text": "Great interview. Most people overestimate the importance of one huge launch and underestimate the power of just showing up every day on the timeline\n\nDevelop a system where you make a video every day &gt; spending tens of thousands of dollars on a single launch video https://t.co/ujN4fPyN1y",
+   "date": "2026-10-25T07:19:21.000Z",
+   "summaryZh": "赞同某访谈观点：多数人高估一次大发布、低估每天稳定出现，天天做视频比砸几万美元做发布片更值。"
   },
   {
-   "id": "https://x.com/petergyang/status/2114001125636768121",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "I had trouble believing this is true but shouldn’t have doubted @ArfurGrok \n\nHuge bummer for claude users. Anthony and Thariq are two of the best at listening to users. https://t.co/XwQAXb7LYE",
-   "date": "2026-10-24T14:28:39.000Z",
-   "summaryZh": "Peter Yang 证实一条对 Claude 用户不利的消息，并称赞 Anthony 和 Thariq 最会听用户意见。"
-  },
-  {
-   "id": "https://x.com/nikunj/status/2113994081345126486",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nikunj Kothari",
-   "handle": "nikunj",
-   "text": "This describes much more eloquently what I meant what evolving from context -&gt; harnesses -&gt; judgement means..\n\nIf you have built something in this space, and want to jam on product ideas, please hit me up 👋 https://t.co/9cWnYRpSi6",
-   "date": "2026-10-24T14:00:39.000Z",
-   "summaryZh": "作者说某篇内容更清楚地表达了他从上下文到 harness 再到判断力的演进想法，欢迎做产品的人找他聊。"
-  },
-  {
-   "id": "https://www.youtube.com/@DataDrivenNYC/videos",
+   "id": "https://www.youtube.com/@NoPriorsPodcast",
    "type": "podcast",
    "kind": "播客",
-   "name": "The MAD Podcast with Matt Turck",
+   "name": "No Priors",
    "handle": "",
-   "title": "Jev: The AI That Makes Decisions, Not Text - and Why It Changes Everything (Diogo Almeida)",
+   "title": "The Changing Physics of Cybersecurity and Drug Development with OpenAI President Greg Brockman",
    "text": "",
-   "date": "2026-10-15T11:30:01.000Z",
-   "summaryZh": "播客请来 Diogo Almeida 聊 Jev：一个做决策而不是生成文字的 AI，以及它为何重要。"
+   "date": "2026-10-15T10:00:00.000Z",
+   "summaryZh": "No Priors 播客请到 OpenAI 总裁 Greg Brockman，聊网络安全和药物研发正在变化的底层逻辑。"
   }
  ]
 }
