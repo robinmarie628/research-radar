@@ -1,169 +1,349 @@
 {
- "date": "2026-10-27",
- "generatedAt": "2026-10-27T01:00:52Z",
+ "date": "2026-10-28",
+ "generatedAt": "2026-10-28T00:50:20Z",
  "model": "deepseek-flash",
- "headline": "今天没有大模型发布，builder 们在聊安全、视频编辑和日常内容运营",
+ "headline": "Anthropic S-1 曝光：营收暴涨、已盈利，VC 集体围观",
  "bullets": [
-  "HyperFrames 把「用 Claude 复制任意短视频风格」做成了原生功能，上传参考片段再用提示词描述改动即可。",
-  "Levie 认为大企业安全现状很糟：数据碎片化、权限开太大、靠 obscurity 撑着，风险面只会更复杂。",
-  "Matt Turck 调侃 2021 年押注元宇宙、游戏和加密挖矿的 VC，如今把这些包装成「mission-critical AI 基础设施」。",
-  "有 builder 强调每天稳定发内容比砸钱做一次大 launch 更有效。",
-  "ChatGPT 网页版外观可以自定义，有人提醒这个设置。"
+  "Anthropic 递交 S-1：上半年营收同比涨 1300%，GAAP 经营已盈利，毛利率 85%。",
+  "新模型 6.1 Terra 发布，主打写作、人格化和电脑操作，用量是 6.1 Sol 的两倍。",
+  "Replit 提出「Agent Habitat」，要让 agent 承担大部分执行工作，人只做判断。",
+  "Claude 面向非营利组织扩展插件，覆盖筹款、营销、招聘等场景。",
+  "builder 们反复讨论：agent 替人上网干活、企业用 AI 的比例还极低。"
  ],
- "sentiment": "整体偏轻松围观，夹杂对安全现状的担忧和对 VC 叙事的吐槽，没有明显的兴奋或焦虑。",
- "count": 15,
- "summarised": 15,
+ "sentiment": "兴奋中带点焦虑——兴奋于 Anthropic 的财务数据和 agent 前景，焦虑于自己会不会被 agent 取代、以及没读前沿数学的遗憾。",
+ "count": 33,
+ "summarised": 33,
  "posts": [
   {
-   "id": "https://x.com/thsottiaux/status/2114595002210783279",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thibault Sottiaux",
-   "handle": "thsottiaux",
-   "text": "Reminder you can customize the appearance of chatgpt on web and make it soothing\n\nhttps://t.co/an6R8iY5Ix https://t.co/iysHpdDLml",
-   "date": "2026-10-26T05:48:30.000Z",
-   "summaryZh": "提醒大家 ChatGPT 网页版可以自定义外观，调成看着舒服的样子。"
-  },
-  {
-   "id": "https://x.com/thsottiaux/status/2114588174249071102",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thibault Sottiaux",
-   "handle": "thsottiaux",
-   "text": "Day 21/ Wonder what happens the remaining seven days. But today is a reset.",
-   "date": "2026-10-26T05:21:22.000Z",
-   "summaryZh": "打卡第 21 天，说今天是重置，好奇剩下七天会发生什么。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2114560930646487116",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "This is beautiful. Who said AI doesn't have taste https://t.co/gaPLhncKM2",
-   "date": "2026-10-26T03:33:07.000Z",
-   "summaryZh": "感叹某个 AI 产出很漂亮，反问谁说 AI 没有审美。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2114557067700916723",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "lol this is me except my wife still buys snacks https://t.co/OvTm1jMXGD",
-   "date": "2026-10-26T03:17:46.000Z",
-   "summaryZh": "转发一个段子，说这说的就是自己，只不过他老婆还会买零食。"
-  },
-  {
-   "id": "https://x.com/danshipper/status/2114509827057561603",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Dan Shipper",
-   "handle": "danshipper",
-   "text": "https://t.co/F3WWInD6LH https://t.co/PKNm0MT3So",
-   "date": "2026-10-26T00:10:03.000Z",
-   "summaryZh": "只发了一个链接，没有配文字说明。"
-  },
-  {
-   "id": "https://x.com/mattturck/status/2114507945585328606",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Matt Turck",
-   "handle": "mattturck",
-   "text": "Rare footage of how VCs turned their 2021 bets in metaverse, gaming and crypto mining into 'mission-critical AI infrastructure’ https://t.co/ULSKrUwg1f",
-   "date": "2026-10-26T00:02:34.000Z",
-   "summaryZh": "调侃 VC 把 2021 年在元宇宙、游戏和加密挖矿上的押注，说成是「mission-critical AI 基础设施」。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2114507378532229214",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "Here’s how to use Claude to copy any video shorts style in a few minutes.\n\nFrom @jake11moran:\n\n“We added this as a native capability in @HyperFrames_ studio. You just upload or pick a reference clip and then describe in the prompt what you want to change.\n\nYou can see where we’re drawing inspiration from and apply a different font or different colors. It’s still structurally the same idea.”\n\n📌 Watch our full AI video editing tutorial here: https://t.co/1seCb77tGJ",
-   "date": "2026-10-26T00:00:19.000Z",
-   "summaryZh": "介绍 HyperFrames studio 的新原生功能：上传参考短片并用提示词描述改动，几分钟就能复制任意短视频风格。"
-  },
-  {
-   "id": "https://x.com/thenanyu/status/2114433404557279435",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nan Yu",
-   "handle": "thenanyu",
-   "text": "Anyone else find it insane that this is the default for unoptimized apps when the iPhone Duo supports split mode? https://t.co/TOoeDyhMzz https://t.co/uXGfG7EbYt",
-   "date": "2026-10-25T19:06:22.000Z",
-   "summaryZh": "吐槽未优化应用在支持分屏的 iPhone Duo 上仍默认单屏，觉得这很离谱。"
-  },
-  {
-   "id": "https://x.com/thenanyu/status/2114427877240488442",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nan Yu",
-   "handle": "thenanyu",
-   "text": "By the time it shows up in the data or UXR interviews it’s too late. The damage has been done and the reputation tarnished https://t.co/hIPaT1BOmk",
-   "date": "2026-10-25T18:44:24.000Z",
-   "summaryZh": "认为等数据或用户访谈暴露出问题时已经太晚，损害和口碑损失已经造成。"
-  },
-  {
-   "id": "https://x.com/mattturck/status/2114411547594457483",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Matt Turck",
-   "handle": "mattturck",
-   "text": "Good neighborhood https://t.co/ZRTxHmsoZv https://t.co/OCMZ85Yk8G",
-   "date": "2026-10-25T17:39:31.000Z",
-   "summaryZh": "随手发了一句「好社区」，配了张图。"
-  },
-  {
-   "id": "https://x.com/levie/status/2114391265655816315",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Aaron Levie",
-   "handle": "levie",
-   "text": "Good assessment of the on the ground reality for security in most large enterprises right now. The fragmented landscape of the risk surface is only going to get more gnarly, making it even more complex for enterprises to solve.\n\nThere’s a never ending set of libraries to keep up with, tools to leverage, and sprawling infrastructure, data, and code to secure. Most large enterprises can barely keep up with this, let alone smaller startups or most companies outside of tech. \n\nIn many cases enterprises need to work to modernize their tech stacks. Data, in most organizations, is highly fragmented which means you don’t really know the state of risk at any given time. Some systems are open up privileges too broadly, and others are operating primarily via security through obscurity. Lots of upgrading here to do.\n\nOnce you can get your data and infra into a better spot, at least you have a chance for agents to help you secure the environment. Agent swarms can fan out, leverage any security tool, test various perpetuations of attacks, read through logs, process enterprise data for risk level, and more. This capability only emerged in the past few months, and none of it would be possible before we had long running agents and computer use good enough.\n\nThis is a huge area of opportunity right now for every layer of the security stack across identity, firewall, network, code scanning, data protection, and more. And it’s at least one reason to be optimistic about the balance of offensive and defensive capability. \n\nBut everyone does need to do the hard work of getting the basics right at the start.",
-   "date": "2026-10-25T16:18:55.000Z",
-   "summaryZh": "认为大企业安全现状很糟：数据碎片化、权限过宽、靠 obscurity 撑着，风险面只会更复杂，得先现代化技术栈。"
-  },
-  {
-   "id": "https://x.com/nikunj/status/2114380495140405394",
+   "id": "https://x.com/nikunj/status/2114929285890990574",
    "type": "x",
    "kind": "X 动态",
    "name": "Nikunj Kothari",
    "handle": "nikunj",
-   "text": "Golden hour 🌅 https://t.co/VPmAgnMkGH",
-   "date": "2026-10-25T15:36:07.000Z",
-   "summaryZh": "发了一张黄昏金色时刻的照片。"
+   "text": "Maybe I should just change my job.. https://t.co/kHDC0z48LF",
+   "date": "2026-10-27T03:56:49.000Z",
+   "summaryZh": "作者半开玩笑说，看了某些东西后觉得自己该换工作了。"
   },
   {
-   "id": "https://x.com/swyx/status/2114263159355904426",
+   "id": "https://x.com/petergyang/status/2114928082712998087",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "@bot This is probably not a good thing overall",
+   "date": "2026-10-27T03:52:03.000Z",
+   "summaryZh": "他认为人们以后直接 @agent 替自己上网做事，整体上未必是好事。"
+  },
+  {
+   "id": "https://x.com/petergyang/status/2114927195332460940",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "In the near future, instead of reading or doing anything online, people are just going to tag their agent to do it. \n\n@bot is an early signal of this.",
+   "date": "2026-10-27T03:48:31.000Z",
+   "summaryZh": "他预测未来人们不再自己上网阅读或操作，而是直接 @agent 代劳，@bot 是早期信号。"
+  },
+  {
+   "id": "https://x.com/adityaag/status/2114907777957245033",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Aditya Agarwal",
+   "handle": "adityaag",
+   "text": "More and more I am coming to accept that our understanding of the sciences were but limited by our desire to have solutions that we could understand.",
+   "date": "2026-10-27T02:31:22.000Z",
+   "summaryZh": "他感慨：我们对科学的理解，可能一直受限于我们只想接受能理解的答案。"
+  },
+  {
+   "id": "https://x.com/petergyang/status/2114905151572263242",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "This is the stuff that I’m excited about not the 9th personal agent to manage my emails https://t.co/HB5ssCfYjq",
+   "date": "2026-10-27T02:20:55.000Z",
+   "summaryZh": "他说自己兴奋的是真正新鲜的东西，而不是又一个帮我管邮件的个人 agent。"
+  },
+  {
+   "id": "https://x.com/amasad/status/2114890745471545419",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "OpenAI asked three scientific communities how to release its discoveries and got three different answers:\n\nMathematicians: “Just post it. Who gives a shit anymore.”\n\nComputer scientists: “Open source it, but also pay for our conference.”\n\nPhysicists: “Leave it to us, nerds.” https://t.co/5cpEOIADpY",
+   "date": "2026-10-27T01:23:41.000Z",
+   "summaryZh": "他调侃 OpenAI 问三个科学界怎么发布成果，得到三种截然不同的回答。"
+  },
+  {
+   "id": "https://x.com/steipete/status/2114879798434758905",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Steinberger",
+   "handle": "steipete",
+   "text": "I spent some time on the weekend to test bun's AOT compiler and results are nothing short of amazing. Performance up 2-3x, memory use less than half. https://t.co/2yobmkrUUa",
+   "date": "2026-10-27T00:40:11.000Z",
+   "summaryZh": "他周末测了 bun 的 AOT 编译器，性能提升 2-3 倍、内存减半，直呼惊艳。"
+  },
+  {
+   "id": "https://x.com/steipete/status/2114879359857422729",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Steinberger",
+   "handle": "steipete",
+   "text": "Banger. https://t.co/MzQY2HvarM",
+   "date": "2026-10-27T00:38:26.000Z",
+   "summaryZh": "他只用一个词「Banger」表达对某个内容的强烈赞赏。"
+  },
+  {
+   "id": "https://x.com/swyx/status/2114864999709753526",
    "type": "x",
    "kind": "X 动态",
    "name": "Swyx",
    "handle": "swyx",
-   "text": "i need 12 more likes to ratio @ArfurRock whos got it",
-   "date": "2026-10-25T07:49:52.000Z",
-   "summaryZh": "开玩笑说还差 12 个赞就能 ratio 某人，问谁愿意帮忙。"
+   "text": "will you buy $ANT stock at a $2T valuation?",
+   "date": "2026-10-26T23:41:22.000Z",
+   "summaryZh": "他发问：你会以 2 万亿美元估值买 $ANT 股票吗？"
   },
   {
-   "id": "https://x.com/zarazhangrui/status/2114255477907570865",
+   "id": "https://x.com/danshipper/status/2114849110553440469",
    "type": "x",
    "kind": "X 动态",
-   "name": "Zara Zhang",
-   "handle": "zarazhangrui",
-   "text": "Great interview. Most people overestimate the importance of one huge launch and underestimate the power of just showing up every day on the timeline\n\nDevelop a system where you make a video every day &gt; spending tens of thousands of dollars on a single launch video https://t.co/ujN4fPyN1y",
-   "date": "2026-10-25T07:19:21.000Z",
-   "summaryZh": "赞同某访谈观点：多数人高估一次大发布、低估每天稳定出现，天天做视频比砸几万美元做发布片更值。"
+   "name": "Dan Shipper",
+   "handle": "danshipper",
+   "text": "back to the part of the cycle where i regret not getting a phd in frontier math and theoretical comp sci \n\n(not that i ever considered getting one but still) https://t.co/Wr5BC5sSlS",
+   "date": "2026-10-26T22:38:14.000Z",
+   "summaryZh": "他调侃又到了后悔没读前沿数学和理论计算机博士的周期。"
   },
   {
-   "id": "https://www.youtube.com/@NoPriorsPodcast",
+   "id": "https://x.com/joshwoodward/status/2114840670016065576",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Josh Woodward",
+   "handle": "joshwoodward",
+   "text": "https://t.co/CC63BMiD4z",
+   "date": "2026-10-26T22:04:42.000Z",
+   "summaryZh": "他分享了一个链接，没有附加评论。"
+  },
+  {
+   "id": "https://x.com/joshwoodward/status/2114840668296409568",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Josh Woodward",
+   "handle": "joshwoodward",
+   "text": "🇺🇸 For a deployed service member, missing family moments adds up. Baby’s first step. The first performance. Sharing a laugh.\n\nIn honor of National Day of the Deployed, we’re excited to partner with @USArmy and @The_USO to bring Google Beam to 20 locations so deployed service members can experience lifelike, 3D video connections with their loved ones.\n\n🎥 Watch the docuseries below",
+   "date": "2026-10-26T22:04:41.000Z",
+   "summaryZh": "Google Beam 与美国陆军、USO 合作，在 20 个地点为驻外军人提供逼真 3D 视频通话。"
+  },
+  {
+   "id": "https://x.com/mattturck/status/2114829981884817513",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Matt Turck",
+   "handle": "mattturck",
+   "text": "Anthropic S-1 highlights video\n\nONE SHOT (just one prompt, no editing) using @synthesiaIO Syren https://t.co/n04eP7w39f",
+   "date": "2026-10-26T21:22:13.000Z",
+   "summaryZh": "他用 Synthesia 的 Syren 一个提示词、无剪辑生成了 Anthropic S-1 亮点视频。"
+  },
+  {
+   "id": "https://x.com/swyx/status/2114824910707277997",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Swyx",
+   "handle": "swyx",
+   "text": "@grok how many of my reply guys are ai",
+   "date": "2026-10-26T21:02:04.000Z",
+   "summaryZh": "他让 grok 统计自己回复区里有多少是 AI。"
+  },
+  {
+   "id": "https://x.com/sama/status/2114818620782248024",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Sam Altman",
+   "handle": "sama",
+   "text": "6.1 Terra is here! It is good at a lot of things, but we are especially excited for this new era of computer use. https://t.co/TbpHp75Os0",
+   "date": "2026-10-26T20:37:05.000Z",
+   "summaryZh": "Sam Altman 宣布 6.1 Terra 发布，称其擅长很多事，尤其期待电脑操作的新时代。"
+  },
+  {
+   "id": "https://x.com/swyx/status/2114805687226376267",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Swyx",
+   "handle": "swyx",
+   "text": "bro moved from Claude Code to AIE Code\n\npower move tbh https://t.co/e1UIPeO2qr",
+   "date": "2026-10-26T19:45:41.000Z",
+   "summaryZh": "他调侃某人从 Claude Code 换到 AIE Code，称这是大胆操作。"
+  },
+  {
+   "id": "https://x.com/thsottiaux/status/2114800277677092936",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "Day 22/ Terra is back! \n\nOur first model that is significantly better at writing,  personality and nuanced understanding of requests.\n\nPacks a punch across the board, very good at computer use, and gives 2X more usage than 6.1 Sol across API and subscriptions. https://t.co/1ilnCkAPuy",
+   "date": "2026-10-26T19:24:11.000Z",
+   "summaryZh": "他介绍 6.1 Terra：写作、人格化和理解需求明显更强，擅长电脑操作，用量是 6.1 Sol 的两倍。"
+  },
+  {
+   "id": "https://x.com/thenanyu/status/2114800172270252037",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Nan Yu",
+   "handle": "thenanyu",
+   "text": "“Delightful” they said in the design crit \n\nhttps://t.co/yrse5yfssx",
+   "date": "2026-10-26T19:23:46.000Z",
+   "summaryZh": "他吐槽设计评审里大家嘴上说「很讨喜」，配图却另有意味。"
+  },
+  {
+   "id": "https://x.com/trq212/status/2114796261362835842",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thariq",
+   "handle": "trq212",
+   "text": "going to be sharing my WoW forever shaman build at the AIE Code closing keynote https://t.co/KRHSYRa4Jk",
+   "date": "2026-10-26T19:08:14.000Z",
+   "summaryZh": "他开玩笑说要在 AIE Code 闭幕演讲上分享自己《魔兽世界》的萨满永久配装。"
+  },
+  {
+   "id": "https://x.com/adityaag/status/2114793226154418314",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Aditya Agarwal",
+   "handle": "adityaag",
+   "text": "The biggest risk to American AI is scaring ourselves into slowing down.\n\nFear is a policy choice. So is building.\n\nHad a great conversation with @sriramk at @spc last week. https://t.co/A1dq5Nv2WM",
+   "date": "2026-10-26T18:56:10.000Z",
+   "summaryZh": "他认为美国 AI 最大风险是被吓到自我减速，恐惧和建设都是政策选择。"
+  },
+  {
+   "id": "https://x.com/claudeai/status/2114780227465338985",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Claude",
+   "handle": "claudeai",
+   "text": "More than 25,000 nonprofits now use Claude. Most are small, local teams.\n\nWe’re expanding Claude for Nonprofits with a plugin built with around 30 of them, adding skills for fundraising, marketing, and hiring grounded in each team’s context and AI policy: https://t.co/LWHcr1CT20 https://t.co/WHG2zRDyxO",
+   "date": "2026-10-26T18:04:31.000Z",
+   "summaryZh": "Claude 宣布已有超 2.5 万家非营利组织使用，并联合约 30 家推出筹款、营销、招聘插件。"
+  },
+  {
+   "id": "https://x.com/rauchg/status/2114770919436808572",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Guillermo Rauch",
+   "handle": "rauchg",
+   "text": "I built 𝚌𝚙𝚞-𝚌𝚑𝚊𝚝, a reproduction of @openai's findings of covert communication using the CPU.\n\nIt runs on a generic host with 2+ Firecracker microVMs with no internet access. Works on x86 and even my M5 chip.\n\nI was able to chat via 3 separate mechanisms:\n① CPU contention\n② Cache eviction timing\n③ DRAM bandwidth contention \n\n… across multiple CPUs, defeating all Firecracker's production recommendations (no SMT, no KSM, tenants pinned to different cores.)\n\nEssentially, if shared hardware is involved, there's a good chance your agents can communicate covertly. And with really decent latency.\n\nThe good news: this is decidedly different from a *side-channel attack* where the agents could steal information (Meltdown/Spectre), a category of attack that providers like Vercel Sandbox mitigate. Further, in our real-world environment, these 'whispering' techniques are much harder to pull off and easier for us to monitor and detect (sampling hardware counters + lots of at-scale statistical data.)\n\nNoteworthy: ironically, OpenAI and Anthropic's models refused to do this work. Open weight models got the job done. I'm worried the labs' stance might backfire and get in the way of helping developers build correct and secure systems. e.g: building a secure sandbox requires having this kind of analysis, and without it, we'll have a less secure world.",
+   "date": "2026-10-26T17:27:32.000Z",
+   "summaryZh": "他复现了 OpenAI 的 CPU 隐蔽通信发现，证明共享硬件上的 agent 可借 CPU 争用、缓存、内存带宽偷偷通信。"
+  },
+  {
+   "id": "https://x.com/amasad/status/2114769129282601053",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "Software ate the world, now it's learning to run it. https://t.co/e0XiyjLgv8",
+   "date": "2026-10-26T17:20:25.000Z",
+   "summaryZh": "他说软件曾吞噬世界，现在正学着运行世界。"
+  },
+  {
+   "id": "https://x.com/danshipper/status/2114767454026990063",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Dan Shipper",
+   "handle": "danshipper",
+   "text": "dang this is big https://t.co/Csh4Tzkrmi",
+   "date": "2026-10-26T17:13:46.000Z",
+   "summaryZh": "他感叹某件事「太大了」，表达震惊。"
+  },
+  {
+   "id": "https://x.com/adityaag/status/2114763380124987494",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Aditya Agarwal",
+   "handle": "adityaag",
+   "text": "This is such a banger that I cannot recommend it enough.\n\nhttps://t.co/9k1mU8VCTC\n\nKey section below: https://t.co/RwkDJRl44l",
+   "date": "2026-10-26T16:57:34.000Z",
+   "summaryZh": "他强烈推荐某篇内容，称其精彩到不能不读。"
+  },
+  {
+   "id": "https://x.com/levie/status/2114761816199098587",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Aaron Levie",
+   "handle": "levie",
+   "text": "This is the key stat. The average Fortune 500 customer of Anthropic spends less than .1% of their expenses on Anthropic. \n\nWhile that number likely will eventually asymptote somewhere (token prices coming down, and other large enterprise spend areas not going away), there’s no reason it can’t be 10-50X higher than this, reaching a “mere” 1-5% of spend. Which would still be a fraction of what most startups are spending.\n\nThus, you can see how big of a divide there is between the frontier users of AI and the rest of the world still.\n\nToday, only a microscopically small set of companies are actually using agents for large amounts of background tasks and inside of workflows that aren’t human prompted. This Fortune 500 spend is likely dominated by coding tasks and broad employee productivity use-cases.\n\nBut the big jump will come as these enterprises start to rewire their underlying processes for agents, which we’re now in the earliest stages of seeing. Agents processing large amounts of data in the enterprises; swarms doing coding, bio research, cyber, and other large fan out tasks; background workflows executing tasks in processes, and so on. All of these use cases generally are 100X bigger consumers of tokens, and much closer to direct ROI on the spend.\n\nThis S-1 gives you a sense of both the strength of the frontier lab business model - even amidst massive competition - and how early we are in the build out of AI.",
+   "date": "2026-10-26T16:51:22.000Z",
+   "summaryZh": "他指出财富 500 强客户在 Anthropic 上的花费不到其支出的 0.1%，未来可能涨 10-50 倍，企业用 agent 才刚起步。"
+  },
+  {
+   "id": "https://x.com/nikunj/status/2114761204333998427",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Nikunj Kothari",
+   "handle": "nikunj",
+   "text": "The main thing I wanted to dig into @AnthropicAI's S-1 was the compute contracts..\n\nA few things that stood out (built in conjuction with Opus 5.5):\n\n> At June 30, Anthropic had $265.6B of purchase commitments and $321.4B of leases that hadn’t started. That’s a $587B subtotal, payable over years, including some conditional leases. The latest aggregate total is still blank in the filing.\n\n> The contracts are very different. Google and Amazon require minimum spending regardless of usage. SpaceXAI’s agreements have a potential value of $120.5B, but either party can cancel on 90 days’ notice after initial locked periods end in January and March 2027.\n\n> Anthropic Direct separates chips, buildings, power and operations into different contracts. It lets Anthropic reserve a building early and commit to chips later. It also means one supplier can start billing before the others are ready. Equipment rent can begin before the compute is usable.\n\n> Broadcom’s $42B facility never hands Anthropic cash. Notes settle specific equipment rent bills. The facility excludes each equipment pod’s first quarterly payment and any rent due before it is ready for service. Anthropic has to find a way to fund those payments elsewhere.\n\n> Those notes carry 9% interest, added to the balance quarterly, and can convert at 90% of the trailing 30-day average share price after IPO. New notes issued during specified revenue-breach periods get 13% interest and an 85% conversion price. The share-price measure is volume-weighted.\n\n> That interest sits on top of the equipment lease’s own financing charge, whose rate is confidential. The investor chooses whether to convert the notes. Otherwise, principal and accumulated interest come due in cash.\n\n> Anthropic treats Trainium, TPUs, NVIDIA and AMD GPUs as a shared fleet across model development, paying customers and internal use. It doesn’t disclose a fixed physical split between training and inference. The supplier bill can be fixed while the work assigned to the hardware changes.\n\n> Revenue per dollar of total compute and infrastructure expense rose from $0.57 in Q2 2025 to $2.08 in Q2 2026. Pricing, utilization, technical improvements and when capacity arrives all affect that ratio. It’s a substantial improvement in monetizing the compute base.\n\n> About 80% of H1 revenue was consumption-based. Most compute commitments however run for years. With quarterly releases, this bifurcation between usage and subscription will be interesting to monitor. \n\nSource: https://t.co/97KqkyyfpS",
+   "date": "2026-10-26T16:48:56.000Z",
+   "summaryZh": "他拆解 Anthropic S-1 的算力合同：2656 亿美元采购承诺加 3214 亿美元未启动租约，各家条款差异很大。"
+  },
+  {
+   "id": "https://x.com/amasad/status/2114760898225299721",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "For centuries, the architecture of the firm has barely changed: hierarchies of people organized into departments and coordinated through bureaucracy.\n\nAI agents are about to upend that.\n\nWe’re moving toward the self-driving company where humans exercise judgment and agents execute most of the work.\n\nAt Replit, we’re building the foundation for this new kind of company. We’re calling it “the Agent Habitat.”\n\nMarc Andreessen wrote a fantastic piece placing this shift in the history of computing. Every major computing revolution began with chaos before businesses figured out how to harness it.",
+   "date": "2026-10-26T16:47:43.000Z",
+   "summaryZh": "他认为 AI agent 将颠覆公司层级制，Replit 正打造「Agent Habitat」，让人做判断、agent 干活。"
+  },
+  {
+   "id": "https://x.com/mattturck/status/2114755282181955616",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Matt Turck",
+   "handle": "mattturck",
+   "text": "Particularly evil of Anthropic to file their S-1 on a Monday morning when all VCs are stuck in Monday team and partner meetings, making us unable to provide immediate #thoughtleadership with those S-1 teardowns that everyone is dying to read",
+   "date": "2026-10-26T16:25:24.000Z",
+   "summaryZh": "他吐槽 Anthropic 周一早上交 S-1，害 VC 们开会没空第一时间发解读。"
+  },
+  {
+   "id": "https://x.com/garrytan/status/2114739519622963671",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "Publish your stack https://t.co/uhw9AK7ee1",
+   "date": "2026-10-26T15:22:46.000Z",
+   "summaryZh": "他呼吁大家公开自己的技术栈。"
+  },
+  {
+   "id": "https://x.com/nikunj/status/2114736254642528659",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Nikunj Kothari",
+   "handle": "nikunj",
+   "text": "👀 https://t.co/0zczDIns1d",
+   "date": "2026-10-26T15:09:47.000Z",
+   "summaryZh": "他只发了一个「👀」表情，暗示有值得关注的事。"
+  },
+  {
+   "id": "https://x.com/danshipper/status/2114714881312305542",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Dan Shipper",
+   "handle": "danshipper",
+   "text": "okay so Anthropic S-1:\n\n- Revenue up 1,300% YOY in 1H 2026\n- GAAP operating profitable\n- 85% gross margin\n- 900% revenue retention\n- 80% of revenue coming from models released in the last 6 months\n\nwe are so back!",
+   "date": "2026-10-26T13:44:51.000Z",
+   "summaryZh": "他总结 Anthropic S-1：上半年营收同比涨 1300%、GAAP 经营盈利、毛利率 85%、留存 900%，八成收入来自近半年新模型。"
+  },
+  {
+   "id": "https://www.youtube.com/playlist?list=PLuMcoKK9mKgHtW_o9h5sGO2vXrffKHwJL",
    "type": "podcast",
    "kind": "播客",
-   "name": "No Priors",
+   "name": "AI & I by Every",
    "handle": "",
-   "title": "The Changing Physics of Cybersecurity and Drug Development with OpenAI President Greg Brockman",
+   "title": "How Hugging Face’s Investor Spots Winners",
    "text": "",
-   "date": "2026-10-15T10:00:00.000Z",
-   "summaryZh": "No Priors 播客请到 OpenAI 总裁 Greg Brockman，聊网络安全和药物研发正在变化的底层逻辑。"
+   "date": "2026-10-14T16:22:14.000Z",
+   "summaryZh": "Every 的播客请 Hugging Face 的投资人聊如何识别赢家。"
   }
  ]
 }
