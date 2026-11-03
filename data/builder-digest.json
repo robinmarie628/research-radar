@@ -1,159 +1,249 @@
 {
- "date": "2026-11-02",
- "generatedAt": "2026-11-02T01:08:42Z",
+ "date": "2026-11-03",
+ "generatedAt": "2026-11-03T03:10:58Z",
  "model": "deepseek-flash",
- "headline": "Levie 说 AI 用法该升级了：产出要超过你原本能做到的",
+ "headline": "Karpathy 用 Claude 做了个 HackerTube，AI 订阅可能涨价",
  "bullets": [
-  "Levie 提出判断 AI 用得够不够的标准：原型、架构、调研、流程都该明显超出不用 AI 时的水平。",
-  "swyx 说 Karpathy 在新项目 Hackertube 里用 opus 5.5 的 medium 档，effort 档位之争被他比作当年的 tabs vs spaces。",
-  "swyx 主张低 effort 加批判循环，比超高 effort 更适合受吞吐量限制的人。",
-  "Latent Space 播客聊用 agent 做长周期金融工作。",
-  "今天不少 builder 在发万圣节内容，正经产品讨论不多。"
+  "Karpathy 周末用 Claude Code 和 Opus 5.5 过滤 4300 万条 HN 评论，做出推荐更好的 HackerTube。",
+  "Garry Tan 说 Particle-1 做 agent 检索效果不输大模型，价格只有 1/23。",
+  "Replit 上线新开关：网站上的用户反馈可以直接变成 agent 的构建提示词。",
+  "Amasad 提醒：享受补贴价 AI 订阅的人，要做好被涨价收割的准备。",
+  "Rauchg 呼吁本地模型继续普及，把 harness、数据、运行时都握在自己手里。"
  ],
- "sentiment": "整体偏轻松过节气氛，技术讨论集中在 AI 用法和 effort 档位这类方法论话题上，没有明显的兴奋或焦虑。",
- "count": 14,
- "summarised": 14,
+ "sentiment": "兴奋中带点警惕——大家一边晒新玩法，一边担心订阅涨价和平台锁定。",
+ "count": 23,
+ "summarised": 23,
  "posts": [
   {
-   "id": "https://x.com/swyx/status/2116773135668404286",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Swyx",
-   "handle": "swyx",
-   "text": "btw @karpathy uses medium on opus 5.5 on his latest project (Hackertube launched today).\n\noverall i think having strong opinions on effort levels is like the tabs vs spaces of our time. just tweak to taste. altho mine is definitely superior to yours. https://t.co/oSCPvlogKc https://t.co/3OIWb03BtY",
-   "date": "2026-11-01T06:03:37.000Z",
-   "summaryZh": "swyx 说 Karpathy 在新项目 Hackertube 里用 opus 5.5 的 medium 档，认为纠结 effort 档位就像当年的 tabs vs spaces，按口味调就行。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2116754343315841471",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "Is it weird if I prefer listening to this over Spotify https://t.co/lH3wixKArx",
-   "date": "2026-11-01T04:48:57.000Z",
-   "summaryZh": "Peter Yang 说自己更愿意听这个而不是 Spotify，觉得有点奇怪。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2116733034926100841",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "Don't particularly care about the trick or treat part, just being able to dress up as whatever you want is the best",
-   "date": "2026-11-01T03:24:17.000Z",
-   "summaryZh": "Peter Yang 说万圣节的重点不是讨糖，而是能随便装扮成任何样子。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2116732887265656978",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "Halloween is honestly the best holiday and should be held every quarter",
-   "date": "2026-11-01T03:23:41.000Z",
-   "summaryZh": "Peter Yang 认为万圣节是最好的节日，应该每季度过一次。"
-  },
-  {
-   "id": "https://x.com/rauchg/status/2116710688550994042",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Guillermo Rauch",
-   "handle": "rauchg",
-   "text": "This would go so hard in SF https://t.co/RgE7UIADws",
-   "date": "2026-11-01T01:55:29.000Z",
-   "summaryZh": "Rauch 转发一个东西，说放在旧金山会很带感。"
-  },
-  {
-   "id": "https://x.com/thsottiaux/status/2116692529970311254",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thibault Sottiaux",
-   "handle": "thsottiaux",
-   "text": "Banked 1/2",
-   "date": "2026-11-01T00:43:20.000Z",
-   "summaryZh": "thsottiaux 发了一句「存下 1/2」，没有更多上下文。"
-  },
-  {
-   "id": "https://x.com/mattturck/status/2116653171741470990",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Matt Turck",
-   "handle": "mattturck",
-   "text": "A classic that never goes out of style 🎃👻 https://t.co/4AiSR3Qg4L",
-   "date": "2026-10-31T22:06:56.000Z",
-   "summaryZh": "Matt Turck 发了张万圣节主题图，配文说经典永不过时。"
-  },
-  {
-   "id": "https://x.com/levie/status/2116652002830963114",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Aaron Levie",
-   "handle": "levie",
-   "text": "This is one of the better litmus tests for whether you’re pushing your use of AI enough or not. \n\nUp until maybe six months ago probably the best you could do with AI was pull off something you already would produce, but just doing it a little faster. But now we’re entering a point where the output of working with AI can and should dramatically exceed what you would been able to do before, in a fraction of the time.\n\nThe product prototype should not only be fully functional and interactive, but it should probably have meaningfully better features than it would have had before. The engineering architecture should be able to deliver performance gains that you wouldn’t have been able to go after otherwise. \n\nThe research for a project should consume every single fact on the subject across every dimension of analysis possible. The business process you implement with AI should operate entirely differently and learn from all its past failures in a way no human could. \n\nWe’re unquestionably entering a period where AI will be smarter than us on most axes. Perhaps not on every dimension that matters (intelligence is still very jagged), but at least on enough dimensions that when we combine it with what we’re good at, you get qualitatively different outcomes.\n\nSo the simple test is: if you could have done what you’re doing before AI, you’re likely not pushing it enough.",
-   "date": "2026-10-31T22:02:17.000Z",
-   "summaryZh": "Levie 说判断 AI 用得够不够，要看产出是否明显超过不用 AI 时的水平，而不只是快一点。"
-  },
-  {
-   "id": "https://x.com/swyx/status/2116642586387730593",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Swyx",
-   "handle": "swyx",
-   "text": "join me all the way on the light side guys\n\nlow effort + critique loop &gt; superultramaxhighwhatever\n\n(for the throughput-constrained; see swyxio/skills/babysit-runs) https://t.co/TuAWCwUPR1",
-   "date": "2026-10-31T21:24:52.000Z",
-   "summaryZh": "swyx 劝大家走低 effort 路线：低 effort 加批判循环，比超高 effort 更适合受吞吐量限制的人。"
-  },
-  {
-   "id": "https://x.com/garrytan/status/2116640529232609515",
+   "id": "https://x.com/garrytan/status/2117137390016073977",
    "type": "x",
    "kind": "X 动态",
    "name": "Garry Tan",
    "handle": "garrytan",
-   "text": "> Why does the worst rise to the top in a society rife with broken politics? \n\n“When the plan fails—and it always fails—coercion is needed. You need people willing to do what honest people refuse to do. The system doesn't promote the best; it selects those with no scruples. And to rally a majority around the plan, nothing works better than a common enemy: the rich, the foreigner, the dissenter.”",
-   "date": "2026-10-31T21:16:42.000Z",
-   "summaryZh": "Garry Tan 引用一段话说，坏制度会筛掉有底线的人，靠树立共同敌人来拉拢多数。"
+   "text": "Particle-1 is as good as much larger models for agentic retrieval but 1/23 the price\n\nhttps://t.co/1CmqlXOx8D https://t.co/7s33EuSO0L",
+   "date": "2026-11-02T06:11:02.000Z",
+   "summaryZh": "Garry Tan 称 Particle-1 做 agent 检索效果不输大模型，价格却只有 1/23。"
   },
   {
-   "id": "https://x.com/nikunj/status/2116624458198982668",
+   "id": "https://x.com/levie/status/2117134917847093491",
    "type": "x",
    "kind": "X 动态",
-   "name": "Nikunj Kothari",
-   "handle": "nikunj",
-   "text": "First snow is always special ❄️ https://t.co/FzWYVB4HUl",
-   "date": "2026-10-31T20:12:50.000Z",
-   "summaryZh": "Nikunj 发了张初雪照片，说初雪总是特别的。"
+   "name": "Aaron Levie",
+   "handle": "levie",
+   "text": "Increasingly this will be the new job description for a lot of roles, not just coding. We’re clearly moving from a world where agents help us do our work incrementally better or faster, to us helping agents do their work.\n\nThis turns everyone in one of these positions to that of a manager of a team of agents, instead of an individual contributor with just some added leverage from AI. The biggest areas of impact will be information-heavy jobs, like coding, cybersecurity, legal work, biotech, engineering, and many other fields. \n\nAnd as a result, in these jobs your leverage will begin to be decoupled from the normal ratio of hours spent working to output generated. For essentially the history of knowledge work the main variable you had to play with was hours of work done (assuming fixed level talent/coordination/strategy). \n\nNow we’ve separated these variables because agents can parallelize work for us, to in theory execute as much as we need to pull off whatever goal we’re trying to accomplish. The people and organizations that discover this sooner, and orient their operations around it, will see compounding gains in their workflows.",
+   "date": "2026-11-02T06:01:13.000Z",
+   "summaryZh": "Levie 认为工作正从「agent 帮我们干活」变成「我们帮 agent 干活」，人人变成 agent 团队的管理者。"
   },
   {
-   "id": "https://www.youtube.com/@LatentSpacePod",
-   "type": "podcast",
-   "kind": "播客",
-   "name": "Latent Space",
-   "handle": "",
-   "title": "Using Agents for Long-Horizon Financial Work — Aman Singh, Arca",
-   "text": "",
-   "date": "2026-10-31T16:00:00.000Z",
-   "summaryZh": "Latent Space 播客请 Arca 的 Aman Singh 聊怎么用 agent 做长周期金融工作。"
-  },
-  {
-   "id": "https://x.com/nikunj/status/2116554844207198501",
+   "id": "https://x.com/zarazhangrui/status/2117086544586780867",
    "type": "x",
    "kind": "X 动态",
-   "name": "Nikunj Kothari",
-   "handle": "nikunj",
-   "text": "what do you mean you dressed up as cybersecurity awareness month for halloween\n\ni hate sf https://t.co/TLitKBVgUu",
-   "date": "2026-10-31T15:36:13.000Z",
-   "summaryZh": "Nikunj 吐槽有人万圣节扮成「网络安全意识月」，说受不了旧金山。"
+   "name": "Zara Zhang",
+   "handle": "zarazhangrui",
+   "text": "What if your Linktree were an actual tree https://t.co/3ozuquLIIC https://t.co/WEzBKd6aaF",
+   "date": "2026-11-02T02:49:00.000Z",
+   "summaryZh": "Zara 开脑洞：如果 Linktree 真的是一棵树会怎样。"
   },
   {
-   "id": "https://x.com/swyx/status/2116544052267205093",
+   "id": "https://x.com/petergyang/status/2117059131349868790",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "Upcoming episodes of Behind the Craft:\n\n1. Ashley Alexander\n\nAshley is VP of Product at @OpenAI. We had a heart-to-heart conversation about what it's like to care for parents through cancer and where ChatGPT and AI can help.\n\n2. Nate Parrott\n\n@nateparrott is the @AnthropicAI designer behind Claude Design, Dashboard, Motion, and more. He was refreshingly honest about how to get Claude to avoid designing AI slop with a live walkthrough of a real example.\n\n3. Matt Pocock\n\nMatt's AI skills for working with coding agents have 300K+ (!) GitHub stars. He teaches an excellent course on engineering fundamentals, and I can't wait to learn from him how to build software factories the right way.\n\n4. Jacob Sansbury\n\n@jsnnsa, according to my friend and a16z partner @illscience, has built the most AI-pilled gaming company in the world with just 10 people and $32M/year in Claude spend. Excited to dig into all this with him.\n\nWith all my interviews, I try to find people who are builders and practitioners who can talk about topics that I genuinely care about.\n\n📌 Subscribe to get all the episodes soon:\nhttps://t.co/NSTj7ijxE0\n\nThanks for your support!",
+   "date": "2026-11-02T01:00:04.000Z",
+   "summaryZh": "Peter Yang 预告 Behind the Craft 新嘉宾：OpenAI 产品 VP、Claude Design 设计师、Matt Pocock 等。"
+  },
+  {
+   "id": "https://x.com/rauchg/status/2117039740096847920",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Guillermo Rauch",
+   "handle": "rauchg",
+   "text": "F1 is basically the perfect competition for our times. The celebration of extraordinary technology and extraordinary human ability. That’s what Vercel stands for! (also: winning) https://t.co/XkxVDnmWjE",
+   "date": "2026-11-01T23:43:01.000Z",
+   "summaryZh": "Rauchg 说 F1 是当下最完美的竞技：极致技术与极致人类能力的结合，正合 Vercel 的调性。"
+  },
+  {
+   "id": "https://x.com/thsottiaux/status/2117035794678546764",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "Day 28/ Banked 2/2",
+   "date": "2026-11-01T23:27:20.000Z",
+   "summaryZh": "thsottiaux 打卡第 28 天，完成 2/2。"
+  },
+  {
+   "id": "https://x.com/danshipper/status/2117014507083948453",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Dan Shipper",
+   "handle": "danshipper",
+   "text": "argon cooks https://t.co/RmZ0FeQLpM",
+   "date": "2026-11-01T22:02:45.000Z",
+   "summaryZh": "Dan Shipper 简短夸了句 argon 很能打。"
+  },
+  {
+   "id": "https://x.com/amasad/status/2117010858845089805",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "If you’re enjoying a subsidized AI subscription get ready to get rug pulled. https://t.co/XCjMc61pir",
+   "date": "2026-11-01T21:48:15.000Z",
+   "summaryZh": "Amjad 警告：现在享受补贴价 AI 订阅的人，早晚会被涨价收割。"
+  },
+  {
+   "id": "https://x.com/rauchg/status/2117000819623243925",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Guillermo Rauch",
+   "handle": "rauchg",
+   "text": "Own your intelligence.\n\nAnyone that opposes this has something to sell you (perhaps your own intelligence back to you.)\n\nLocal models need to continue proliferating. The “absolute unit” massive models may be out of reach for now locally, so your best option is to, indeed, keep your options open. Own your harness, data, connections, runtime: your agents. Embrace open source.",
+   "date": "2026-11-01T21:08:22.000Z",
+   "summaryZh": "Rauchg 主张「拥有你自己的智能」：本地模型要继续普及，harness、数据、运行时都要握在自己手里，拥抱开源。"
+  },
+  {
+   "id": "https://x.com/amasad/status/2116998155925360965",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "You can enable this on Replit with one toggle. If you enable the “feedback widget” on your site, users’ feedback become prompts for the agents to build. https://t.co/QLBwKenews",
+   "date": "2026-11-01T20:57:46.000Z",
+   "summaryZh": "Replit 上线一个开关：开启网站反馈组件后，用户反馈会直接变成 agent 的构建提示词。"
+  },
+  {
+   "id": "https://x.com/rauchg/status/2116988333096370443",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Guillermo Rauch",
+   "handle": "rauchg",
+   "text": "Working with Gemini on https://t.co/3Z4NESzNKd is hilarious 😂😂\n\nOther than being SUPER EXCITED!, I've been testing it on two high complexity projects and it's doing great. https://t.co/Vb16Fbyats",
+   "date": "2026-11-01T20:18:45.000Z",
+   "summaryZh": "Rauchg 说用 Gemini 干活很欢乐，在两个高复杂度项目上表现不错。"
+  },
+  {
+   "id": "https://x.com/petergyang/status/2116987415319740756",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "\"It really makes you question, why do you want a person in your product? Is your product something that needs a UI?\"\n\nFrom @jacalulu (product director at @GoogleLabs):\n\n\"Anything that involves me creating something. Anything where I want to learn something, there might be a reason for me to interact.\n\nAnytime I want to be entertained or consume something, I'm still the one using the product.\n\nBut there are definitely products that I use today that I would be more than happy to not use, or at least not be the main person interacting with the interface.\"\n\n📌 Watch our full episode here: https://t.co/8hLt6x6atQ",
+   "date": "2026-11-01T20:15:06.000Z",
+   "summaryZh": "Google Labs 产品总监说：创造和学习类产品还需要人操作界面，纯消费类产品可以不用人当主角。"
+  },
+  {
+   "id": "https://x.com/danshipper/status/2116978123044688304",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Dan Shipper",
+   "handle": "danshipper",
+   "text": "this is anti competitive and not cool https://t.co/3hu26UpLkX",
+   "date": "2026-11-01T19:38:10.000Z",
+   "summaryZh": "Dan Shipper 吐槽某件事反竞争、不地道。"
+  },
+  {
+   "id": "https://x.com/trq212/status/2116977363728867664",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thariq",
+   "handle": "trq212",
+   "text": "also had a little highlight intro video\n\nI like how its all coming together! hoping to have a vertical slice sometime next week https://t.co/YAurDfYM5S",
+   "date": "2026-11-01T19:35:09.000Z",
+   "summaryZh": "trq212 晒了段高光介绍视频，希望下周能做出可玩的垂直切片。"
+  },
+  {
+   "id": "https://x.com/trq212/status/2116976789046350040",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thariq",
+   "handle": "trq212",
+   "text": "adding a new character: a taekwondo master that fights with fire\n\nI also updated the art style from 3d models to use generated sprites https://t.co/4F60NS4TQy https://t.co/hLIVplRPrW",
+   "date": "2026-11-01T19:32:52.000Z",
+   "summaryZh": "trq212 给游戏加了用火战斗的跆拳道大师角色，美术从 3D 模型换成生成式 sprite。"
+  },
+  {
+   "id": "https://x.com/karpathy/status/2116957135661945283",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Andrej Karpathy",
+   "handle": "karpathy",
+   "text": "Weekend hack: HackerTube. I was annoyed with YouTube's recommendations so I had Claude filter down 43M comments over 20 years of HN to 6,454 videos that keep being recommended. *Significantly* better viewing experience, ~2 hours with Opus 5.5:\nhttps://t.co/JIhXN7OSh1\n\n- Excellent recs without any logins (state is kept in local browser session)\n- Thumbnail is a representative frame from middle of the video instead of the super duper A/B test hyper-optimized user uploads\n- Underlying data from the comment analysis as one zip file, point your Claude at it and ask for your own version\n- HackerTube Longs ✊\n\nA bit more on the process:\nI use Claude Code (desktop app for Mac), Opus 5.5 on Medium effort as my default. I only talk to Claude and have it do everything, the only \"manual work\" I helped with in tandem was in the browser (reminiscent of MenuGen): 1) I had to create some kind of API key from Google Cloud UI to query YouTube for video metadata, 2) I booted up a VPS box for serving and 3) I bought the domain name. Once the box was up I gave Claude the IP and told it update, secure, harden, deploy and optimize the code, and it did the whole thing.\n\nMany awesome projects that would have normally taken weeks/months even can now be few-shotted for breakfast. What else are we not thinking of.",
+   "date": "2026-11-01T18:14:46.000Z",
+   "summaryZh": "Karpathy 用 Claude Code 和 Opus 5.5 花约两小时，把 4300 万条 HN 评论筛成 6454 个常被推荐的视频，做出 HackerTube。"
+  },
+  {
+   "id": "https://x.com/petergyang/status/2116946320674152810",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "I wish I could just use one AI tool but right now there are clear winners in each category below:\n\nBrowser/computer use = ChatGPT + Codex\nDesign/video editing/\"taste\" = Claude\n24/7 agents and scheduled jobs = Grok Bot\n\nAlso, Gemini is underrated for writing but need to test it more.",
+   "date": "2026-11-01T17:31:48.000Z",
+   "summaryZh": "Peter Yang 说各品类有各自赢家：浏览器操作靠 ChatGPT+Codex，设计靠 Claude，定时 agent 靠 Grok Bot，Gemini 写作被低估。"
+  },
+  {
+   "id": "https://x.com/garrytan/status/2116941191526895975",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "Practical robotics is nigh https://t.co/uFs7HoCLvs",
+   "date": "2026-11-01T17:11:25.000Z",
+   "summaryZh": "Garry Tan 断言实用机器人马上就要来了。"
+  },
+  {
+   "id": "https://x.com/thsottiaux/status/2116936205623611781",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "My dog just patched that bug we couldn’t find for two weeks. Clever dog",
+   "date": "2026-11-01T16:51:36.000Z",
+   "summaryZh": "thsottiaux 开玩笑说自家狗修好了两周没找到的 bug。"
+  },
+  {
+   "id": "https://x.com/thsottiaux/status/2116936031866077423",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "My dog sent you the meeting notes from yesterday, did you see them?",
+   "date": "2026-11-01T16:50:55.000Z",
+   "summaryZh": "thsottiaux 调侃狗替他发了昨天的会议纪要。"
+  },
+  {
+   "id": "https://x.com/garrytan/status/2116909591607099793",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "YC is the YC for hard tech https://t.co/M9UWjjHuJo",
+   "date": "2026-11-01T15:05:51.000Z",
+   "summaryZh": "Garry Tan 说 YC 就是硬科技领域的 YC。"
+  },
+  {
+   "id": "https://x.com/swyx/status/2116782055665402157",
    "type": "x",
    "kind": "X 动态",
    "name": "Swyx",
    "handle": "swyx",
-   "text": "direct clip: https://t.co/fcuFuFRIpO",
-   "date": "2026-10-31T14:53:20.000Z",
-   "summaryZh": "swyx 发了一个直接剪辑的链接。"
+   "text": "@karpathy https://t.co/ff9Go6a7Zd url",
+   "date": "2026-11-01T06:39:04.000Z",
+   "summaryZh": "swyx 回复 Karpathy，只贴了个链接。"
+  },
+  {
+   "id": "https://www.youtube.com/@RedpointAI",
+   "type": "podcast",
+   "kind": "播客",
+   "name": "Unsupervised Learning",
+   "handle": "",
+   "title": "Ep 95: Modal CEO on the Future of Inference, the Chaos of the GPU Market &amp; Origins of the Sandbox Bet",
+   "text": "",
+   "date": "2026-10-28T13:03:16.000Z",
+   "summaryZh": "Unsupervised Learning 第 95 期请 Modal CEO 聊推理的未来、GPU 市场的混乱和 sandbox 赌注的由来。"
   }
  ]
 }
