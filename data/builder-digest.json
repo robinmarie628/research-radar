@@ -1,329 +1,319 @@
 {
- "date": "2026-11-06",
- "generatedAt": "2026-11-06T01:56:09Z",
+ "date": "2026-11-07",
+ "generatedAt": "2026-11-07T01:27:29Z",
  "model": "deepseek-flash",
- "headline": "Vercel 24小时扫出6817个漏洞，AI 重写软件时代来了",
+ "headline": "Claude 上线个人财务功能，Vercel 推定时任务让 agent 能「按时间办事」",
  "bullets": [
-  "Vercel 的 Agent 安全审查 24 小时内找出 6817 个漏洞，其中 580 个高危，1411 个已被自动修复。",
-  "Replit 与日本 SMFL 合作，一人一周干完过去六人半年的活，AI 写软件开始进大企业。",
-  "swyx 说 thinkymachines 的 inkling 模型蒸馏后快 3 倍、便宜 5 倍，评测还不掉，称它是最被低估的基座模型。",
-  "OpenAI 继续招人：Cat Wu 加入负责核心产品 PM，还组了网络安全团队。",
-  "builder 们反复在聊：AI 写的软件会又快又安全，人类只负责把关和提需求。"
+  "Claude 在美国推出 Personal Finance 测试版，可连接账户、只读查询余额和交易，无广告也不给投资建议。",
+  "Vercel 发布 Schedules，号称「加强版 Cron」，可在运行时定义、无限扩展，让 agent 能按时间主动做事。",
+  "Replit 称自研内核构建能规避 96% 的 Linux 零日漏洞，并强调自己是唯一协作式 AI 编程系统。",
+  "Box 联手 NVIDIA 做企业上下文检索，解决 agent 访问占企业数据 90% 的非结构化内容的问题。",
+  "Garry Tan 呼吁国会为「小科技」打开市场，别让几家万亿公司挡住新产品触达用户。"
  ],
- "sentiment": "整体兴奋偏震撼，主要对 AI 自动找漏洞、重写软件的能力感到冲击，也有人开始反思工具该帮人思考而不是替人思考。",
- "count": 31,
- "summarised": 31,
+ "sentiment": "整体偏兴奋和务实，大家在聊 agent 怎么真正落地干活——按时间主动执行、拿到企业数据、跑在安全沙箱里。",
+ "count": 30,
+ "summarised": 30,
  "posts": [
   {
-   "id": "https://x.com/garrytan/status/2118221083233206736",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Garry Tan",
-   "handle": "garrytan",
-   "text": "GStack’s /review skill is actually useful for preventing bugs still https://t.co/aROfFOWDwK",
-   "date": "2026-11-05T05:57:15.000Z",
-   "summaryZh": "Garry Tan 说 GStack 的 /review 技能到现在依然能有效防 bug。"
-  },
-  {
-   "id": "https://x.com/swyx/status/2118208851506036989",
+   "id": "https://x.com/swyx/status/2118589412011622728",
    "type": "x",
    "kind": "X 动态",
    "name": "Swyx",
    "handle": "swyx",
-   "text": "uhhh what, 3x faster 5x cheaper but evals SAME ON FRONTIERCODE 2\n\nthis is distillation without tradeoffs. i think @thinkymachines inkling is one of the most underrated base models in the world. expect to see a TON more of these esp on US pretrained models https://t.co/zvJFP9EIPL",
-   "date": "2026-11-05T05:08:39.000Z",
-   "summaryZh": "swyx 惊讶于某模型快 3 倍、便宜 5 倍但 FrontierCode 2 评测不掉，称这是无折衷的蒸馏，并说 thinkymachines 的 inkling 是最被低估的基座模型。"
+   "text": "also we need:\n\n- trumpet/clarinet guy\n- woodwinds guy\n- horn guy\n\nfor next year’s show. tagging @creatine_cycle for musician friends",
+   "date": "2026-11-06T06:20:51.000Z",
+   "summaryZh": "swyx 在为明年的演出招募小号、单簧管、木管和圆号乐手，并请朋友帮忙介绍音乐圈的人。"
   },
   {
-   "id": "https://x.com/ryolu_/status/2118207967728451760",
+   "id": "https://x.com/thsottiaux/status/2118569441860723112",
    "type": "x",
    "kind": "X 动态",
-   "name": "Ryo Lu",
-   "handle": "ryolu_",
-   "text": "gave a talk at @aiDotEngineer shanghai about about a question i keep coming back to: when we can make anything, do we still know what we want?\n\ni want tools that help us find our own answers, not skip the process of forming them. not just more output, but more room to think, care, and make together.\n\nwill share more soon!",
-   "date": "2026-11-05T05:05:08.000Z",
-   "summaryZh": "ryolu 在上海 AI Engineer 演讲提出：当什么都能造时，我们是否还知道自己要什么；他想要帮人自己找答案、留出思考空间的工具，而不是跳过形成答案的过程。"
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "Formal proofs of tens of millions of lines of code are not a ridiculous thing anymore and within the realm of what should be considered when designing new systems.",
+   "date": "2026-11-06T05:01:30.000Z",
+   "summaryZh": "他认为对几千万行代码做形式化证明已不再荒谬，设计新系统时应当把它纳入考虑。"
   },
   {
-   "id": "https://x.com/petergyang/status/2118197393229545534",
+   "id": "https://x.com/thsottiaux/status/2118569235953893573",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "I can confidently say that humans were not very good at writing secure infrastructure. The endstate will be hypersecure infrastructure and software for all, but we're going to go through some turbulence before we reach that.",
+   "date": "2026-11-06T05:00:41.000Z",
+   "summaryZh": "他直言人类写安全基础设施并不擅长，终局会是人人用上超安全的基础设施和软件，但中间会有阵痛。"
+  },
+  {
+   "id": "https://x.com/realmadhuguru/status/2118562286256414897",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Madhu Guru",
+   "handle": "realmadhuguru",
+   "text": "good hang with @signulll today! \n\ngonna start making time to  meet with more of my twitter friends through the end of the year.\n\nhit me up if you’re in the bay area!",
+   "date": "2026-11-06T04:33:04.000Z",
+   "summaryZh": "他今天和 signulll 聊得不错，打算年底前多约推特上的朋友见面，在湾区的可以找他。"
+  },
+  {
+   "id": "https://x.com/garrytan/status/2118557765610377611",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "From @WalterIsaacson's podcast with me that went live earlier this week. \n\nWatch the full convo here: https://t.co/JjmccSUi5v",
+   "date": "2026-11-06T04:15:06.000Z",
+   "summaryZh": "他分享了自己上 Walter Isaacson 播客的片段，并附上完整对话链接。"
+  },
+  {
+   "id": "https://x.com/garrytan/status/2118557763156733984",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "This week's results make me optimistic. We have an unprecedented bipartisan opportunity to take on Big Tech’s abuse of market power and open up markets for the next generation of founders.\n\nInventing powerful AI is only half the job. People must be able to use it to make their lives better and their businesses more productive. That gets harder when a few trillion-dollar companies can block new products from reaching them.\n\nCongress can open those markets for Little Tech. Let thousands of startups compete to lower costs and grow the economy for everyone. We should spread the gains from AI as widely as possible, not concentrate even more power in the companies that already control distribution.",
+   "date": "2026-11-06T04:15:06.000Z",
+   "summaryZh": "他认为本周结果让人乐观，两党有机会遏制大科技滥用市场权力，让成千上万初创公司公平竞争、共享 AI 收益。"
+  },
+  {
+   "id": "https://x.com/petergyang/status/2118551550859907392",
    "type": "x",
    "kind": "X 动态",
    "name": "Peter Yang",
    "handle": "petergyang",
-   "text": "Was super fun hosting this event with my friends from @OpenAI and @Amplitude_HQ https://t.co/VVwHHCVofW https://t.co/TPdxuCYJxz",
-   "date": "2026-11-05T04:23:07.000Z",
-   "summaryZh": "Peter Yang 说和 OpenAI、Amplitude 的朋友一起办活动很开心。"
+   "text": "Yo it’s just cardboard https://t.co/ztjTZq0CRF",
+   "date": "2026-11-06T03:50:25.000Z",
+   "summaryZh": "他吐槽某样东西其实就是纸板做的，配了张图。"
   },
   {
-   "id": "https://x.com/amasad/status/2118180254300688857",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Amjad Masad",
-   "handle": "amasad",
-   "text": "Excited to announce our partnership with Sumitomo Mitsui Finance & Leasing (SMFL), one of Japan’s leading financial institutions!\n\nReplit is powering SMFL’s core software products and has massively accelerated their development process: For example they recently in just one week, with one person, completed a project that previously required six people working for six months.\n\nNext we’re partnering to bring AI-powered software creation to Japanese enterprises, helping them overcome labor shortages, accelerate innovation, and unlock entirely new business opportunities.\n\nhttps://t.co/eTMLFDkIv1",
-   "date": "2026-11-05T03:15:01.000Z",
-   "summaryZh": "Replit 与日本 SMFL 合作，帮其加速核心软件开发，一人一周完成过去六人半年的项目，接下来要帮日本企业用 AI 造软件应对人力短缺。"
-  },
-  {
-   "id": "https://x.com/danshipper/status/2118170810841965023",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Dan Shipper",
-   "handle": "danshipper",
-   "text": "all of these new @openai hires obvoiusly because they read my codex piece https://t.co/UA75jNNUoJ",
-   "date": "2026-11-05T02:37:29.000Z",
-   "summaryZh": "Dan Shipper 调侃 OpenAI 这波新招的人都是因为读了他的 Codex 文章。"
-  },
-  {
-   "id": "https://x.com/swyx/status/2118169736563589350",
+   "id": "https://x.com/swyx/status/2118542845556691411",
    "type": "x",
    "kind": "X 动态",
    "name": "Swyx",
    "handle": "swyx",
-   "text": "announced on aie channel. so hyped\n\nhttps://t.co/eFuOmBuROE",
-   "date": "2026-11-05T02:33:13.000Z",
-   "summaryZh": "swyx 说在 aie 频道宣布了某事，非常期待。"
+   "text": "for those who want a GREAT scout experience i cannot recommend highly enough @brittwalker_ who has been thru thick and thin with me and is honestly sharper than me on many things, always learn lots talking to her\n\nhttps://t.co/AxlmTgcoHS",
+   "date": "2026-11-06T03:15:49.000Z",
+   "summaryZh": "他大力推荐 @brittwalker_ 作为 scout 人选，说一起经历了很多，很多事上比自己更敏锐。"
   },
   {
-   "id": "https://x.com/rauchg/status/2118166970273292299",
+   "id": "https://x.com/swyx/status/2118538896434999759",
    "type": "x",
    "kind": "X 动态",
-   "name": "Guillermo Rauch",
-   "handle": "rauchg",
-   "text": "We will all be learning in coming weeks & months, that most human-made software:\n\n▫️ Was really slow\n▫️ Had many security vulnerabilities\n▫️ Was under-specified and incorrect\n\nAI will rewrite it all. Many times. It will make it fast, cost-efficient, and secure. It will think about failure modes we couldn't wrap our heads around.\n\nIt will prove, formally verify, load test, harden. It will turn memory-unsafe foundations into robust, optimized ones. If you ask, it'll thoroughly document it, teach you about it, make diagrams, animations, and slide decks.\n\nIn many ways, we are witnessing the true birth of software engineering.",
-   "date": "2026-11-05T02:22:14.000Z",
-   "summaryZh": "rauchg 预言 AI 会把人类写的软件全部重写多遍：更快、更省、更安全，还能形式验证、压测、加固、写文档，认为这才是软件工程的真正诞生。"
+   "name": "Swyx",
+   "handle": "swyx",
+   "text": "ok guys pitchforks down pls we chatted and i learned a lot about why i had been missing context and communication - not a sequoia wide thing, just a small gap i got caught in. also the quoted tweet has impt inaccuracies/incomplete info i can’t share \n\nhttps://t.co/iUDPFbmf7J\n\nbut basically treat it as unrelated to the broader sequoia restructuring that was announced this week",
+   "date": "2026-11-06T03:00:08.000Z",
+   "summaryZh": "他请大家别再围攻，沟通后发现自己只是缺了上下文，这不是 Sequoia 层面的问题，也和本周宣布的重组无关。"
   },
   {
-   "id": "https://x.com/garrytan/status/2118154891176857608",
+   "id": "https://x.com/petergyang/status/2118537836098203781",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "Can folks from @suno and @Tesla add the app to the cars by default. This shit is better than any radio.\n\nLike it'll be amazing to just drive and voice dictate to create songs to listen to.",
+   "date": "2026-11-06T02:55:55.000Z",
+   "summaryZh": "他希望 Suno 和 Tesla 把应用默认装进车里，觉得边开车边语音生成歌曲来听会比任何电台都好。"
+  },
+  {
+   "id": "https://x.com/petergyang/status/2118530037431611880",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "Will tell wife I'm just buying a new internet router https://t.co/wEsJp5Cn8B",
+   "date": "2026-11-06T02:24:55.000Z",
+   "summaryZh": "他开玩笑说会跟老婆讲自己只是买了个新路由器，配图暗示买的是别的东西。"
+  },
+  {
+   "id": "https://x.com/garrytan/status/2118527182092071179",
    "type": "x",
    "kind": "X 动态",
    "name": "Garry Tan",
    "handle": "garrytan",
-   "text": "We did it guys\n\nConnie Chan is a private citizen https://t.co/0CtlQS2XNU https://t.co/kLvPG0kTUh",
-   "date": "2026-11-05T01:34:14.000Z",
-   "summaryZh": "Garry Tan 说 Connie Chan 现在是普通公民了。"
+   "text": "This is the first long horizon benchmark for PE/IB work\n\nSolving high finance is on the path to AGI https://t.co/lKR3uWVMlR",
+   "date": "2026-11-06T02:13:35.000Z",
+   "summaryZh": "他说这是首个面向 PE/IB 工作的长周期基准，认为攻克高端金融是通往 AGI 的一环。"
   },
   {
-   "id": "https://x.com/swyx/status/2118152585911869634",
+   "id": "https://x.com/amasad/status/2118506378440400951",
    "type": "x",
    "kind": "X 动态",
-   "name": "Swyx",
-   "handle": "swyx",
-   "text": "i'm still processing. what an insane run. $0 to $100B ARR in 2.5 years. https://t.co/i56rhUUFg0",
-   "date": "2026-11-05T01:25:04.000Z",
-   "summaryZh": "swyx 感叹 2.5 年从 0 做到 1000 亿美元 ARR，这波太疯狂。"
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "Replit is the only collaborative AI coding system out there. https://t.co/va9lrWiCga",
+   "date": "2026-11-06T00:50:55.000Z",
+   "summaryZh": "Amjad 宣称 Replit 是市面上唯一的协作式 AI 编程系统，并附了链接。"
   },
   {
-   "id": "https://x.com/rauchg/status/2118152230260092940",
+   "id": "https://x.com/amasad/status/2118503241390665776",
    "type": "x",
    "kind": "X 动态",
-   "name": "Guillermo Rauch",
-   "handle": "rauchg",
-   "text": "In just 24 hours 🤯\n✓ 𝟲,𝟴𝟭𝟳 vulnerabilities identified\n✓ 𝟱𝟴𝟬 critical or high\n✓ 𝟭,𝟰𝟭𝟭 already patched by Agent\n\nVercel Security Reviews are 100% free until Nov 10 https://t.co/e4mHdykByr",
-   "date": "2026-11-05T01:23:39.000Z",
-   "summaryZh": "rauchg 公布 Vercel Agent 安全审查 24 小时找出 6817 个漏洞、580 个高危、1411 个已修复，11 月 10 日前免费。"
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "There are so many Linux zero-day vulnerabilities these days, but on Replit we’re able to avoid 96% of them with our custom Kernel build.\n\nRead about our new sandbox design. https://t.co/0YrEAKUwhG https://t.co/Sk9BkvBlng",
+   "date": "2026-11-06T00:38:27.000Z",
+   "summaryZh": "他说 Linux 零日漏洞很多，但 Replit 靠自研内核构建能规避其中 96%，并介绍了新沙箱设计。"
   },
   {
-   "id": "https://x.com/thenanyu/status/2118148902125998468",
+   "id": "https://x.com/levie/status/2118498574497665316",
    "type": "x",
    "kind": "X 动态",
-   "name": "Nan Yu",
-   "handle": "thenanyu",
-   "text": "CatGPT https://t.co/2teaKfXFIr",
-   "date": "2026-11-05T01:10:26.000Z",
-   "summaryZh": "thenanyu 发了个「CatGPT」的梗。"
+   "name": "Aaron Levie",
+   "handle": "levie",
+   "text": "We’re going to have 100X more agents in the enterprise working with our data and systems than even people do today. Every AI agent deployment comes down to how successfully they can get access to the critical context to make a decision, do research, or execute tasks. \n\n90% of the data in an enterprise is unstructured data, which means this critical context is living inside of our documents, contracts, marketing assets, research materials, financial plans, design files, and more. Which means we need effective ways for agents to get access to this critical enterprise content to other work.\n\nWe’re excited to partner with NVIDIA to deliver advanced context retrieval -combining lexical and semantic search in Box- to ensure that AI agents can find the most relevant information they’re looking for. All in a way that adheres to their enterprise security, access controls, and data governance policies, so agents only work with the data they’re allowed to.\n\nGreat to work with @NVIDIAAI and @JensenHuang on this partnership. Files 🤝 GPUs.",
+   "date": "2026-11-06T00:19:54.000Z",
+   "summaryZh": "他认为企业里 agent 数量将达人的 100 倍，关键是拿到占企业数据 90% 的非结构化上下文，Box 因此联手 NVIDIA 做词法加语义检索。"
   },
   {
-   "id": "https://x.com/thsottiaux/status/2118146834325733453",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thibault Sottiaux",
-   "handle": "thsottiaux",
-   "text": "Reach out to @clintgibler if you want to work on securing the world.",
-   "date": "2026-11-05T01:02:13.000Z",
-   "summaryZh": "thsottiaux 说想参与守护世界安全的工作可以联系 Clint Gibler。"
-  },
-  {
-   "id": "https://x.com/thsottiaux/status/2118146794362405231",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thibault Sottiaux",
-   "handle": "thsottiaux",
-   "text": "We’ve assembled a world class cyber team and I’m excited for us to share more about our work over the weeks and months. https://t.co/Hj3w8j1Xf2",
-   "date": "2026-11-05T01:02:03.000Z",
-   "summaryZh": "thsottiaux 说已组建世界级网络安全团队，未来几周几个月会分享更多工作。"
-  },
-  {
-   "id": "https://x.com/nikunj/status/2118143456799494541",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nikunj Kothari",
-   "handle": "nikunj",
-   "text": "This was really fun - thanks @PeterJ_Walker and guests for coming so spontaneously. \n\nAim to do this every week so if you know someone who wants to be interviewed, please DM me. \n\nLooking for speakers who a) can speak about an area casually but in depth for 45 mins and b) who are not a household name now but will most likely be one in 12 months. \n\nPhoto post event taken by @tedkornish",
-   "date": "2026-11-05T00:48:47.000Z",
-   "summaryZh": "nikunj 说这次即兴访谈很好玩，打算每周办，想找现在不出名但一年后很可能出名、能深入聊 45 分钟的人。"
-  },
-  {
-   "id": "https://x.com/mattturck/status/2118142497188610501",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Matt Turck",
-   "handle": "mattturck",
-   "text": "2028:\n\n* Ossoff wins dem primary over Talarico (whose profile considerably increases throughout 2027) and AOC\n\n* Rubio beats JD Vance (too tied to Trump) in the GOP primary\n\n* Ossoff wins the presidency\n\n(I'm a foreign-born VC, you can totally trust my U.S. political predictions) https://t.co/IshuqUdBBE",
-   "date": "2026-11-05T00:44:59.000Z",
-   "summaryZh": "Matt Turck 开玩笑预测 2028 年美国大选：Ossoff 赢初选和总统，Rubio 赢共和党初选。"
-  },
-  {
-   "id": "https://x.com/danshipper/status/2118138941765280149",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Dan Shipper",
-   "handle": "danshipper",
-   "text": "omfg https://t.co/q9LDAvVXND",
-   "date": "2026-11-05T00:30:51.000Z",
-   "summaryZh": "Dan Shipper 发了个「omfg」表示震惊。"
-  },
-  {
-   "id": "https://x.com/thsottiaux/status/2118138764161913278",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thibault Sottiaux",
-   "handle": "thsottiaux",
-   "text": "CatGPT",
-   "date": "2026-11-05T00:30:09.000Z",
-   "summaryZh": "thsottiaux 也发了「CatGPT」的梗。"
-  },
-  {
-   "id": "https://x.com/_catwu/status/2118137612577968402",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Cat Wu",
-   "handle": "_catwu",
-   "text": "Some news: I’m joining OpenAI to lead product management for Core Products!\n\nI have a lot of respect for OpenAI for showing the world that scaling works, for bringing AI to over a billion people, and for believing great products are core to the mission.\n\nI’m excited to work with @thsottiaux, an incredible PM team, and everyone across OpenAI. Together, we’ll build agents that have your back and your team’s, and keep you in control, so you get more time for the people and work you love.\n\nLots to learn, and lots to build. Please keep your feedback coming!",
-   "date": "2026-11-05T00:25:34.000Z",
-   "summaryZh": "Cat Wu 宣布加入 OpenAI 领导核心产品 PM，想打造站在用户和团队这边、让人保有控制权的 agent。"
-  },
-  {
-   "id": "https://x.com/trq212/status/2118124292500287814",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thariq",
-   "handle": "trq212",
-   "text": "sorry I mean inshallah",
-   "date": "2026-11-04T23:32:38.000Z",
-   "summaryZh": "trq212 补了句「我是说 inshallah」。"
-  },
-  {
-   "id": "https://x.com/trq212/status/2118124218839859700",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thariq",
-   "handle": "trq212",
-   "text": "manifesting\n\n⠀⠀⠀⠀    🕯️🕯️🕯️🕯️🕯️\n⠀⠀🕯️⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀🕯️\n 🕯️⠀⠀Apple lets apps⠀   🕯️\n🕯️⠀⠀⠀build Shortcuts      🕯️\n🕯️⠀⠀⠀⠀.   for you⠀⠀ ⠀    🕯️\n⠀⠀🕯️⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀🕯️\n⠀⠀⠀⠀    🕯️🕯️🕯️🕯️🕯️",
-   "date": "2026-11-04T23:32:21.000Z",
-   "summaryZh": "trq212 用蜡烛表情许愿 Apple 允许 app 为用户构建 Shortcuts。"
-  },
-  {
-   "id": "https://x.com/zarazhangrui/status/2118120795780370768",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Zara Zhang",
-   "handle": "zarazhangrui",
-   "text": "What's the best group chat tool for engaging with a user community? Discord feels too overwhelming, WhatsApp isn't widely used in the US, iMessage is too personal, Slack feels too corporate",
-   "date": "2026-11-04T23:18:45.000Z",
-   "summaryZh": "zarazhangrui 问哪个群聊工具最适合运营用户社区，觉得 Discord 太乱、WhatsApp 在美国不普及、iMessage 太私人、Slack 太企业。"
-  },
-  {
-   "id": "https://x.com/steipete/status/2118116514700386439",
+   "id": "https://x.com/steipete/status/2118492097917628704",
    "type": "x",
    "kind": "X 动态",
    "name": "Peter Steinberger",
    "handle": "steipete",
-   "text": "Do individual limits still make sense? As capabilities increase you want to work with and support an agent that represents your project, that runs loops and evolves your codebase. The humans merely curate the automations. https://t.co/7A1dRKVtJk",
-   "date": "2026-11-04T23:01:44.000Z",
-   "summaryZh": "steipete 质疑个人额度限制是否还有意义：能力变强后，人只需策展自动化，让代表项目的 agent 跑循环、演进代码库。"
+   "text": "Is my perception off or is Apple just lying here? Anytime I build for or use Safari, it’s slower, has fewer features, weird bugs and plenty websites just don’t work. It’s a fight to get even somewhat close to Chrome’s performance. https://t.co/GkoqN84Wxd",
+   "date": "2026-11-05T23:54:10.000Z",
+   "summaryZh": "他质疑 Apple 的说法，说自己用 Safari 开发或使用时更慢、功能更少、bug 更多，很多网站还打不开。"
   },
   {
-   "id": "https://x.com/rauchg/status/2118075898830463048",
+   "id": "https://x.com/adityaag/status/2118477023891058762",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Aditya Agarwal",
+   "handle": "adityaag",
+   "text": "Full conversation with @traestephens at @spc https://t.co/tvo01XNqet",
+   "date": "2026-11-05T22:54:16.000Z",
+   "summaryZh": "他分享了在 SPC 与 traestephens 的完整对话链接。"
+  },
+  {
+   "id": "https://x.com/adityaag/status/2118477020325884357",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Aditya Agarwal",
+   "handle": "adityaag",
+   "text": "Just because someone is willing to invest at a certain valuation doesn't mean it's the right valuation for your company. https://t.co/b8ETZy4mAA https://t.co/Ch2lkkQJ8g",
+   "date": "2026-11-05T22:54:15.000Z",
+   "summaryZh": "他提醒：有人愿意按某个估值投资，不代表这个估值对你的公司就是对的。"
+  },
+  {
+   "id": "https://x.com/rauchg/status/2118474519925158186",
    "type": "x",
    "kind": "X 动态",
    "name": "Guillermo Rauch",
    "handle": "rauchg",
-   "text": "It’s so inspiring to work with people who care so much about building quality products. \n\nGreatness is the byproduct of a million iterations. Agents or otherwise. https://t.co/0hDrXe2PIX",
-   "date": "2026-11-04T20:20:20.000Z",
-   "summaryZh": "rauchg 说和在意产品质量的人共事很受鼓舞，伟大是百万次迭代的副产品，有没有 agent 都一样。"
+   "text": "① Get an X sub\n② Build with Bot / Cursor\n③ Deploy to Vercel, scales from 0 to 🌙\n④ Launch and distribute on X\n⑤ Monetize with X Money / Creators\n\nThe loop is nearly complete ♾️ https://t.co/gqqLMgi02H",
+   "date": "2026-11-05T22:44:19.000Z",
+   "summaryZh": "他列出五步闭环：订阅 X、用 Bot/Cursor 开发、部署到 Vercel、在 X 上发布分发、用 X Money 变现，说这个循环快完整了。"
   },
   {
-   "id": "https://x.com/garrytan/status/2118058438714650985",
+   "id": "https://x.com/thsottiaux/status/2118473288368406582",
    "type": "x",
    "kind": "X 动态",
-   "name": "Garry Tan",
-   "handle": "garrytan",
-   "text": "We dodged a bullet on this asset seizure tax. With any luck Prop 42 will pass. \n\nBuilders of tech in California had a good day yesterday: we want abundance and asset seizure is the one guaranteed way to kill the golden goose. \n\nHuge thanks to Sergey Brin here. https://t.co/HIznVbS14W",
-   "date": "2026-11-04T19:10:58.000Z",
-   "summaryZh": "Garry Tan 说躲过了资产没收税，希望 Prop 42 通过，认为加州的科技建设者昨天过了好日子，并感谢 Sergey Brin。"
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "Generating*",
+   "date": "2026-11-05T22:39:25.000Z",
+   "summaryZh": "他只回了一个词「Generating」，像是在纠正上一条的用词。"
   },
   {
-   "id": "https://x.com/petergyang/status/2118033608007139638",
+   "id": "https://x.com/rauchg/status/2118464177211940997",
    "type": "x",
    "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "I don't use AI to call local businesses but I literally have no sympathy for using it to call Xfinity's shitty customer support.\n\nTheir phone system won't let you talk to a human when your address has an active outage...what?! https://t.co/znuMdrusP3 https://t.co/1kqwNCppk2",
-   "date": "2026-11-04T17:32:17.000Z",
-   "summaryZh": "Peter Yang 说他不会用 AI 打本地商家电话，但对用 AI 打 Xfinity 客服毫无同情，因为其电话系统在有故障时根本转不到人工。"
+   "name": "Guillermo Rauch",
+   "handle": "rauchg",
+   "text": "SpaceXSI 🤝 Vercel\nGrok and Cursor can now build, deploy, and scale\nhttps://t.co/DSlgyVqzWA https://t.co/MxH4LvvcKL",
+   "date": "2026-11-05T22:03:13.000Z",
+   "summaryZh": "他宣布 Grok 和 Cursor 现在可以在 Vercel 上构建、部署和扩展，并配了合作图。"
   },
   {
-   "id": "https://www.youtube.com/playlist?list=PLuMcoKK9mKgHtW_o9h5sGO2vXrffKHwJL",
+   "id": "https://x.com/rauchg/status/2118440831355068671",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Guillermo Rauch",
+   "handle": "rauchg",
+   "text": "“Doing stuff for you over time” is the killer app of agents.\n\nMuse and Instinct consolidate memories at night, remind you of stuff in the morning, message you after N days passed since your last interaction…\n\nVercel Schedules are like Cron on steroids. They can be defined at runtime, scale infinitely, and sit outside of the Sandbox, which means you can cost-efficiently invoke compute as needed.",
+   "date": "2026-11-05T20:30:27.000Z",
+   "summaryZh": "他说 agent 的杀手级应用是「随时间替你做事」，Vercel Schedules 像加强版 Cron，可在运行时定义、无限扩展、跑在沙箱外。"
+  },
+  {
+   "id": "https://x.com/adityaag/status/2118440568070328555",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Aditya Agarwal",
+   "handle": "adityaag",
+   "text": "Also on YouTube https://t.co/tvo01XNqet",
+   "date": "2026-11-05T20:29:24.000Z",
+   "summaryZh": "他补充说同一段对话在 YouTube 上也能看。"
+  },
+  {
+   "id": "https://x.com/levie/status/2118429008711102831",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Aaron Levie",
+   "handle": "levie",
+   "text": "https://t.co/St1gfpCqEv",
+   "date": "2026-11-05T19:43:28.000Z",
+   "summaryZh": "他只发了一个链接，没有附加文字说明。"
+  },
+  {
+   "id": "https://x.com/danshipper/status/2118421854666838338",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Dan Shipper",
+   "handle": "danshipper",
+   "text": "Thesis: 2027 - LIVE from Brooklyn! https://t.co/3LEMTqBsHr",
+   "date": "2026-11-05T19:15:03.000Z",
+   "summaryZh": "他预告 Thesis 活动 2027 年将在布鲁克林现场举办。"
+  },
+  {
+   "id": "https://x.com/claudeai/status/2118403117779988744",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Claude",
+   "handle": "claudeai",
+   "text": "Like the rest of Claude, Personal Finance has no ads or sponsored recommendations. It helps you understand your money, and it isn’t designed to give investment advice.\n\nRolling out gradually in the US on the Pro, Max, and Ultra plans: https://t.co/BRFzh4jQRo",
+   "date": "2026-11-05T18:00:35.000Z",
+   "summaryZh": "官方强调 Personal Finance 和 Claude 其他功能一样没有广告或赞助推荐，不做投资建议，正在美国 Pro、Max、Ultra 套餐逐步推出。"
+  },
+  {
+   "id": "https://x.com/claudeai/status/2118403114890137895",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Claude",
+   "handle": "claudeai",
+   "text": "Introducing Personal Finance in Claude, in beta in the US.\n\nConnect the accounts you choose, and Claude answers your money questions in everyday language, from your own balances and transactions. Access is read-only, and Claude can't move, manage, or invest your money. https://t.co/V1JLYuWwrS",
+   "date": "2026-11-05T18:00:35.000Z",
+   "summaryZh": "Claude 在美国推出 Personal Finance 测试版，可连接自选账户、用日常语言回答余额和交易问题，只读且不能动钱。"
+  },
+  {
+   "id": "https://x.com/trq212/status/2118399561324699655",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thariq",
+   "handle": "trq212",
+   "text": "one of my favorite prompts for agents like Instinct is location based reminders\n\ne.g. \"Keep track of when I've done my laundry. If it's been more than 5 days, remind me 30 minutes after I get home on a week day and bug me until I confirm or delay\"",
+   "date": "2026-11-05T17:46:28.000Z",
+   "summaryZh": "他分享自己最爱的一类 agent 提示词：基于位置的提醒，比如跟踪洗衣天数、工作日到家 30 分钟后提醒直到确认。"
+  },
+  {
+   "id": "https://x.com/steipete/status/2118380936882803044",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Steinberger",
+   "handle": "steipete",
+   "text": "Just a normal Thursday. https://t.co/ss7kbiO9ng",
+   "date": "2026-11-05T16:32:27.000Z",
+   "summaryZh": "他只说「就是个普通的周四」，配了张图，没多解释。"
+  },
+  {
+   "id": "https://www.youtube.com/@RedpointAI",
    "type": "podcast",
    "kind": "播客",
-   "name": "AI & I by Every",
+   "name": "Unsupervised Learning",
    "handle": "",
-   "title": "The Inside Story of the 50 Who Built Modern AI With Kevin Roose",
+   "title": "Ep 97: Jev Creator on Decision Models, Benchmark Fatigue &amp; Why the Labs Missed It",
    "text": "",
-   "date": "2026-11-04T17:02:33.000Z",
-   "summaryZh": "播客《AI & I》新一期：Kevin Roose 讲构建现代 AI 的 50 人内幕故事。"
-  },
-  {
-   "id": "https://x.com/mattturck/status/2118010883754299884",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Matt Turck",
-   "handle": "mattturck",
-   "text": "As a customer, what I want: one central brain (AI) that can interact with me whether I text it or speak to it, whether I want to buy something or need support, and can actually do something helpful for me (agentic action) - 24/7, always in a good mood, instantly available.\n\nThe combination between @dialpad and @ada_cx creates a major new entrant pursuing this big vision.\n\nAs an investor since the Series A, excited for @mimurchison and team to go after it.",
-   "date": "2026-11-04T16:02:00.000Z",
-   "summaryZh": "Matt Turck 说他作为客户想要一个 24 小时在线、能听能说、能买东西能客服还能真正办事的中央 AI 大脑，认为 Dialpad 与 Ada 合并是追这个愿景的新玩家。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2118002158201340288",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "Read the written post for all 5 steps: https://t.co/Y03RZBpCJ5",
-   "date": "2026-11-04T15:27:19.000Z",
-   "summaryZh": "Peter Yang 给出五步完整版的文字链接。"
-  },
-  {
-   "id": "https://x.com/amasad/status/2117904733658845218",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Amjad Masad",
-   "handle": "amasad",
-   "text": "Wow can’t believe Michigan is under Shawerma law now",
-   "date": "2026-11-04T09:00:11.000Z",
-   "summaryZh": "amasad 开玩笑说不敢相信密歇根现在归「Shawerma 法」管了。"
-  },
-  {
-   "id": "https://x.com/zarazhangrui/status/2117869262505427072",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Zara Zhang",
-   "handle": "zarazhangrui",
-   "text": "One thing I noticed: the vast majority of people who shared their personal websites in this thread are developers or designers.\n\nIs it because only developers and designers need personal websites, or because only they know how to make one? https://t.co/mEG5Z28kyU",
-   "date": "2026-11-04T06:39:14.000Z",
-   "summaryZh": "zarazhangrui 注意到分享个人网站的人几乎全是开发者或设计师，问是只有他们需要个人网站，还是只有他们会做。"
+   "date": "2026-11-05T14:05:50.000Z",
+   "summaryZh": "Redpoint AI 播客第 97 期请来 Jev 聊决策模型、基准测试疲劳，以及为什么几家实验室都错过了它。"
   }
  ]
 }
