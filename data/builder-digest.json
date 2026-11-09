@@ -1,319 +1,219 @@
 {
- "date": "2026-11-08",
- "generatedAt": "2026-11-08T00:59:08Z",
+ "date": "2026-11-09",
+ "generatedAt": "2026-11-09T01:19:56Z",
  "model": "deepseek-flash",
- "headline": "今天 builder 们聊得最多的是：agent 越做越多，但真用起来的人太少",
+ "headline": "OpenAI 澄清 Pro 套餐无 5 小时限制，Karpathy 用 Claude Code 三分钟做出视频站",
  "bullets": [
-  "Garry Tan 说 Aside 的 computer use 很强，因为它就是个真 Chromium 浏览器，网站基本封不住",
-  "Garry Tan 还提到用 300 万 token 的普通人道德建议做训练，恶意行为降到 0%，跨代效率提升 28 倍",
-  "Rauchg 提出生成式 UI 会成为人机交互主流，用 aisdk 加 Chat SDK 和 json-render 能直接从 LLM 出 UI 到 Slack、Teams",
-  "Peter Yang 观察到能接多家模型的 app 正被各家实验室收购，剩下的多是开源项目",
-  "Nikunj 开源了 wrap2026，本地分析 iMessage、WhatsApp 和通话记录，100% 本地跑、不用 AI"
+  "OpenAI 的 thsottiaux 澄清所有 Pro 套餐都没有 5 小时限制，Pro 100/200/500 分别是 Plus 用量的 10/20/50 倍，还在问要不要出 Pro 50。",
+  "Karpathy 用 Claude Code 三分钟一次性做出 TristanTube，收录 4.7 万个硬核视频，还带电视模式。",
+  "Levie 说 AI 编程的生产力提升能到 AI 前的 10 到 100 倍，而且这个差距没在缩小，反而越滚越大。",
+  "Levie 还认为 agent 的推理可以放到远处数据中心跑，因为长任务对延迟不敏感，经济价值又高。",
+  "builder 们在聊数据中心建设变难会让现有算力持有者（hyperscaler）赢，代价是新模型训练速度被拖慢。"
  ],
- "sentiment": "整体偏吐槽加观望：一边嫌 agent 造得太多、真用软件干活的人太少，一边又对模型换代快到能删掉旧技能感到兴奋。",
- "count": 30,
- "summarised": 30,
+ "sentiment": "整体偏兴奋和观望：兴奋的是 agent 和 AI 编程带来的夸张杠杆，观望的是算力、政策和数据中心这些外部约束会不会卡住进度。",
+ "count": 20,
+ "summarised": 20,
  "posts": [
   {
-   "id": "https://x.com/garrytan/status/2118951284376285508",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Garry Tan",
-   "handle": "garrytan",
-   "text": "Computer use on Aside is *amazing* and also has an added benefit of literally being a real Chromium browser that few/almost no sites can block https://t.co/jmZVxOansa",
-   "date": "2026-11-07T06:18:49.000Z",
-   "summaryZh": "Garry Tan 夸 Aside 的 computer use 好用，因为它本质是真 Chromium 浏览器，几乎没网站能封它。"
-  },
-  {
-   "id": "https://x.com/garrytan/status/2118950671886287323",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Garry Tan",
-   "handle": "garrytan",
-   "text": "\"Using just 3 million tokens of advice from ordinary people facing complex moral dilemmas brought malicious behavior down to 0%, with a 28-fold jump in efficiency across model generations\" https://t.co/eQt5M7vZrX",
-   "date": "2026-11-07T06:16:23.000Z",
-   "summaryZh": "Garry Tan 引用数据：只用 300 万 token 的普通人道德建议训练，恶意行为降到 0%，跨代效率提升 28 倍。"
-  },
-  {
-   "id": "https://x.com/zarazhangrui/status/2118939184841052386",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Zara Zhang",
-   "handle": "zarazhangrui",
-   "text": "As I've said before, your personal website is the new resume\n\nLinkedIn shows a list of titles; your personal website shows your taste, your thinking, your actual work\n\nYou don't need to be confined by the existing social media platforms https://t.co/Eysl2kgvsa",
-   "date": "2026-11-07T05:30:44.000Z",
-   "summaryZh": "Zara Zhang 认为个人网站是新简历：LinkedIn 只列头衔，个人网站能展示品味、思考和真实作品。"
-  },
-  {
-   "id": "https://x.com/thsottiaux/status/2118939076791546000",
+   "id": "https://x.com/thsottiaux/status/2119305294291612140",
    "type": "x",
    "kind": "X 动态",
    "name": "Thibault Sottiaux",
    "handle": "thsottiaux",
-   "text": "Quite cool what you can do with a single prompt these days 👀",
-   "date": "2026-11-07T05:30:18.000Z",
-   "summaryZh": "thsottiaux 感叹现在一个 prompt 就能做出挺酷的东西。"
+   "text": "Would a Pro 50 make sense? Wdyt? https://t.co/WZi6KGXFc9",
+   "date": "2026-11-08T05:45:31.000Z",
+   "summaryZh": "他在问大家：要不要再出一个 Pro 50 套餐？想听听意见。"
   },
   {
-   "id": "https://x.com/thsottiaux/status/2118938956301779171",
+   "id": "https://x.com/thsottiaux/status/2119296267545419987",
    "type": "x",
    "kind": "X 动态",
    "name": "Thibault Sottiaux",
    "handle": "thsottiaux",
-   "text": "Get me out of the basement\n\nhttps://t.co/SsG3P83NBg https://t.co/eeASj3vnsN",
-   "date": "2026-11-07T05:29:49.000Z",
-   "summaryZh": "thsottiaux 发了句「把我从地下室放出去」，配了图，没更多信息。"
+   "text": "Saw some confusions, but all Pro plans have no 5-hour limits, and give the following usage compared to Plus.\n\n✅ Pro 100 = 10X\n✅ Pro 200 = 20X\n✅ Pro 500 = 50X, access to ultrafast",
+   "date": "2026-11-08T05:09:39.000Z",
+   "summaryZh": "他澄清所有 Pro 套餐都没有 5 小时限制，Pro 100/200/500 分别是 Plus 用量的 10/20/50 倍，Pro 500 还能用 ultrafast。"
   },
   {
-   "id": "https://x.com/rauchg/status/2118928276118986991",
+   "id": "https://x.com/steipete/status/2119264334627090514",
    "type": "x",
    "kind": "X 动态",
-   "name": "Guillermo Rauch",
-   "handle": "rauchg",
-   "text": "Imagine we get gta6.wasm before gta6",
-   "date": "2026-11-07T04:47:23.000Z",
-   "summaryZh": "Rauchg 开玩笑说，说不定 gta6.wasm 会比 GTA6 先出来。"
+   "name": "Peter Steinberger",
+   "handle": "steipete",
+   "text": "The Asahi project was all about taking something closed and restricted and opening it up.\n\nAdding new restrictions that make it harder for other projects to build on that is not the way. And that AI rejection is just silly. https://t.co/fT4O4wieQm",
+   "date": "2026-11-08T03:02:46.000Z",
+   "summaryZh": "他认为 Asahi 项目的初衷是把封闭受限的东西打开，现在加新限制让别的项目更难基于它开发是走错路，那个 AI 拒绝也很荒唐。"
   },
   {
-   "id": "https://x.com/garrytan/status/2118920030243139596",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Garry Tan",
-   "handle": "garrytan",
-   "text": "Eval-driven development loops for agent skills is necessary. Every new model gets better. You can remove things you don't need anymore. \n\nI just removed /investigate as a skill because Opus 5.5 does it better without it. \n\nYou can feel the AGI tide rising https://t.co/RTpbEAMZVU",
-   "date": "2026-11-07T04:14:37.000Z",
-   "summaryZh": "Garry Tan 说 agent 技能需要 eval 驱动的开发循环，新模型变强后可以删掉旧技能，他已删掉 /investigate，因为 Opus 5.5 自己做得更好。"
-  },
-  {
-   "id": "https://x.com/rauchg/status/2118916001152803057",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Guillermo Rauch",
-   "handle": "rauchg",
-   "text": "Somewhere, something incredible is waiting to be known",
-   "date": "2026-11-07T03:58:36.000Z",
-   "summaryZh": "Rauchg 发了句「某处有不可思议的东西等着被发现」，纯感慨。"
-  },
-  {
-   "id": "https://x.com/swyx/status/2118905788915982341",
+   "id": "https://x.com/swyx/status/2119242830707311005",
    "type": "x",
    "kind": "X 动态",
    "name": "Swyx",
    "handle": "swyx",
-   "text": "we are committing to weekly coverage of the Anthropic IPO all the way until it does or doesn't happen. \n\nHaving covered mega-IPOs from $BABA to $TEAM, I get to dust off my equity hedge fund analyst hat with my AI Engineer hat once more, this time with my good friend @jaminball who is challenging @ttunguz for writer-VC-extraordinare of his generation.",
-   "date": "2026-11-07T03:18:02.000Z",
-   "summaryZh": "swyx 宣布会每周跟踪 Anthropic IPO，直到它成或不成，并拉上 Jamin Ball 一起写。"
+   "text": "sticker game inspired by @dexhorthy @CompleteSkeptic et al https://t.co/NWvVRZ71uW https://t.co/QHmHu3ZSFG",
+   "date": "2026-11-08T01:37:19.000Z",
+   "summaryZh": "他晒了一个受 dexhorthy 等人启发的贴纸小游戏。"
   },
   {
-   "id": "https://x.com/thsottiaux/status/2118871902366441879",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thibault Sottiaux",
-   "handle": "thsottiaux",
-   "text": "It's Friday",
-   "date": "2026-11-07T01:03:22.000Z",
-   "summaryZh": "thsottiaux 只说了句「周五了」。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2118869042153095422",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "Paging my favorite ChatGPT Images PM @adele__li https://t.co/DGXQQyEP09",
-   "date": "2026-11-07T00:52:00.000Z",
-   "summaryZh": "Peter Yang 在喊 ChatGPT Images 的产品经理 Adele Li，配了图。"
-  },
-  {
-   "id": "https://x.com/trq212/status/2118859267314958761",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thariq",
-   "handle": "trq212",
-   "text": "too many people building agents and not enough people using software to improve the quality of fish https://t.co/3ewG2QhovT",
-   "date": "2026-11-07T00:13:10.000Z",
-   "summaryZh": "trq212 吐槽做 agent 的人太多，真正用软件去改善养鱼质量的人太少。"
-  },
-  {
-   "id": "https://x.com/rauchg/status/2118856239719608353",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Guillermo Rauch",
-   "handle": "rauchg",
-   "text": "Generative UI for conversational agents.\n\nCombining @aisdk with Chat SDK and 𝚓𝚜𝚘𝚗-𝚛𝚎𝚗𝚍𝚎𝚛, you can go straight from LLM to UI on platforms like Slack and Teams.\n\nI believe this will become the dominant Human-Agent Interaction (HAI) paradigm:\nhttps://t.co/MHxtLyoy7t https://t.co/tRgxRi5Hey",
-   "date": "2026-11-07T00:01:08.000Z",
-   "summaryZh": "Rauchg 说生成式 UI 会成为人机交互主流：用 aisdk 加 Chat SDK 和 json-render，能直接从 LLM 出 UI 到 Slack、Teams。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2118852799094206787",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "Alright, I just interviewed @jsnnsa and he blew my mind the most out of all my guests since probably @steipete. \n\nGoing to expedite shipping our episode. \n\nSubscribe here to get it soon: https://t.co/744uInp9aE https://t.co/cYja0eI996 https://t.co/Rma4NLvkCn",
-   "date": "2026-11-06T23:47:28.000Z",
-   "summaryZh": "Peter Yang 说刚采访的 jsnnsa 是他自 steipete 以来最让他震撼的嘉宾，要加速上线这期节目。"
-  },
-  {
-   "id": "https://x.com/nikunj/status/2118840414853861627",
+   "id": "https://x.com/nikunj/status/2119229917019971879",
    "type": "x",
    "kind": "X 动态",
    "name": "Nikunj Kothari",
    "handle": "nikunj",
-   "text": "(re) introducing texts wrapped\n\n&gt; imessage, whatsapp and phone calls analyzed\n&gt; one terminal command, full disk access and that's it (or use claude code / codex)\n&gt; runs on Mac, 100% local, no AI, open source\n&gt; fresh coat of paint, new insights, better accuracy\n\nwrap2026 dot com https://t.co/u6hprVFnBm",
-   "date": "2026-11-06T22:58:15.000Z",
-   "summaryZh": "Nikunj 重新发布 wrap2026：一条终端命令加全盘权限，本地分析 iMessage、WhatsApp 和通话，100% 本地、不用 AI、开源。"
+   "text": "Next guest up is @danielrupawalla, cofounder of @ArcanumLabs_ next Wednesday, Nov 11th at noon. \n\nFor this session, we'll be chatting about all things data (what the labs are buying, who is selling, how do i get into this business, will this market even last..)\n\nFormat:\n> 60 minute sessions (IRL only) in SF\n> For the first 45 mins, I get to ask the guest spicy questions about their expertise\n> For the last 15 mins, they get to ask me anything they want to learn about venture\n> All off the record, chatham house rules\n> Open to 10-12 guests who listen in and can ask some of their own questions\n\nRegister here if you want to join, and subscribe to the Luma for future guests: https://t.co/esETUKhcm7",
+   "date": "2026-11-08T00:46:00.000Z",
+   "summaryZh": "他预告下周三请 Arcanum Labs 联创 Daniel Rupawalla 聊数据生意：实验室在买什么、谁在卖、这市场能不能持续，线下 60 分钟、只限 10–12 人。"
   },
   {
-   "id": "https://x.com/swyx/status/2118831214308262043",
+   "id": "https://x.com/amasad/status/2119217304953053419",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "The Better Lesson: https://t.co/662AivSigr",
+   "date": "2026-11-07T23:55:53.000Z",
+   "summaryZh": "他分享了一篇叫《The Better Lesson》的内容。"
+  },
+  {
+   "id": "https://x.com/swyx/status/2119210618976944259",
    "type": "x",
    "kind": "X 动态",
    "name": "Swyx",
    "handle": "swyx",
-   "text": "@StandupPartners @ryolu_ @Microsoft @MiniMax_AI @theworldlabs @HeyGen @ExaAILabs recap video https://t.co/lHywQfrceQ",
-   "date": "2026-11-06T22:21:42.000Z",
-   "summaryZh": "swyx 转了一条活动回顾视频，提到 Microsoft、MiniMax、World Labs、HeyGen、Exa 等。"
+   "text": "https://t.co/ydo8JgYDXr",
+   "date": "2026-11-07T23:29:19.000Z",
+   "summaryZh": "他只发了一个链接，没配文字说明。"
   },
   {
-   "id": "https://x.com/swyx/status/2118829491904708834",
+   "id": "https://x.com/swyx/status/2119210582654210255",
    "type": "x",
    "kind": "X 动态",
    "name": "Swyx",
    "handle": "swyx",
-   "text": "@aditabrm @reductoai @barsisyphus unironically, @allenpark cooked https://t.co/V6rr9tqBWY",
-   "date": "2026-11-06T22:14:51.000Z",
-   "summaryZh": "swyx 说 allenpark 这次做得是真不错，不是反讽。"
+   "text": "just arrived… best swag game in the business. u guys are in for a treat next week https://t.co/4tppCNnBWf https://t.co/uBruvPBba5",
+   "date": "2026-11-07T23:29:10.000Z",
+   "summaryZh": "他说刚收到东西，夸这是业内最好的周边，并预告下周有惊喜。"
   },
   {
-   "id": "https://x.com/thenanyu/status/2118826112562434303",
+   "id": "https://x.com/garrytan/status/2119172824271360124",
    "type": "x",
    "kind": "X 动态",
-   "name": "Nan Yu",
-   "handle": "thenanyu",
-   "text": "what do the shrimp welfare ppl think about this one I wonder https://t.co/3jInoOgkac",
-   "date": "2026-11-06T22:01:25.000Z",
-   "summaryZh": "thenanyu 调侃想知道关心虾福利的人怎么看这条，配了图。"
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "WIRED is a shell of its former self https://t.co/vERIHNqbga",
+   "date": "2026-11-07T20:59:08.000Z",
+   "summaryZh": "他吐槽 WIRED 已经大不如前，只剩个空壳。"
   },
   {
-   "id": "https://x.com/trq212/status/2118822238262853904",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thariq",
-   "handle": "trq212",
-   "text": "a pattern I’m liking: creator apps like Instagram Edits and Roblox Studio shipping with built-in MCPs, so agents can do some of the work while power users can collaborate and continue the work in tools that they're used to",
-   "date": "2026-11-06T21:46:02.000Z",
-   "summaryZh": "trq212 喜欢一个新模式：Instagram Edits、Roblox Studio 这类创作 app 内置 MCP，让 agent 干活、高级用户接着协作。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2118811231545122998",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "Feels like all the apps that can use models from different labs like @conductor_build, cursor and others are getting acquired by the labs themselves.\n\nThe ones remaining like @t3dotcodes and @orca_build are open source.\n\nWonder how this will all play out. Personally I think there’s still a lot of user and enterprise demand for apps that can use models from different labs.",
-   "date": "2026-11-06T21:02:17.000Z",
-   "summaryZh": "Peter Yang 观察到能接多家模型的 app 正被各家实验室收购，剩下的多是开源，他认为用户和企业仍很需要这类 app。"
-  },
-  {
-   "id": "https://x.com/mattturck/status/2118791325394845839",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Matt Turck",
-   "handle": "mattturck",
-   "text": "How VCs who got into the 2nd tranche of a hot deal look at the VCs in the third tranche https://t.co/pU1gEhbacZ",
-   "date": "2026-11-06T19:43:11.000Z",
-   "summaryZh": "Matt Turck 用图调侃热门 deal 里第二轮进场的 VC 怎么看第三轮进场的 VC。"
-  },
-  {
-   "id": "https://x.com/trq212/status/2118788283564179513",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thariq",
-   "handle": "trq212",
-   "text": "feels like it's really coming together https://t.co/L1WyogpiW1",
-   "date": "2026-11-06T19:31:06.000Z",
-   "summaryZh": "trq212 说感觉事情正在拼到一起，配了图。"
-  },
-  {
-   "id": "https://x.com/nikunj/status/2118758688567792008",
+   "id": "https://x.com/nikunj/status/2119162212044742938",
    "type": "x",
    "kind": "X 动态",
    "name": "Nikunj Kothari",
    "handle": "nikunj",
-   "text": "ok so here's how we get to building a 100M company in two weeks before thanksgiving.. \n\nfirst, our preseed plan. we're going to raise $2M. why $2M? simple. $200k for the launch video, $200k to promote the launch video to xM impressions - i have six agencies lined up for this don't sweat with no paid partnerships tag duhh, and $500k for the tokens i'm going to obliterate to have a resemblance of a product. again its all token spend and no employee spend because vcs dont want that. solo founders is hot again so i can fully get away with this lfg.\n\nok, so next we use the token spend that i can vibe code and sell to \"wink friendly wink\" customers and have them give me LOIs and cARR - in return for using their products obviously. scratch mine, scratch yours. ok then i can fully wrap in the most creative financial metrics possible to show xM in revenue of ARR because who even knows what that means anymore. \n\nand then i'm going to run the tighteeest possible process as possible for my \"already oversubscribed seed\". get some sick angels at a discount duhh, fomo VCs, get that tier 1 TS, shop it, and tranche it to the moon baby. first at 40M, then 80M and then finally a few angels at $100M. \n\nof course i'm going to incorporate the company as late as possible even though all the machinery is there. so i can claim 0->10M in revenue on day 14 or whatever. \n\nand yeah completely forgot that i need a sick vision and a full deck, that will need $100k for someone to drill that to me cause i ain't got no clue what this category even means. don't sweat, there's a fundraising expert who might take x% and some cash or whatever to help me whisper to the right networks. yeah, that's a thing. \n\ndiligence? who needs charts and due diligence, we live in the token economy, and lfg economy baby. elections and the market selloff? don't sweat, the seed market is still red hot, it might take a day more, but this will still most def work.\n\nanyway, i'm going to go try this and i'll see you in two weeks eh?\n\n(before i get obliterated this is satire, but every sentence in there individually has personally happened to me)",
-   "date": "2026-11-06T17:33:30.000Z",
-   "summaryZh": "Nikunj 反讽式列出「两周做出 1 亿美元公司」的剧本：200 万 pre-seed 全砸在宣传视频、刷曝光和 token 上，再靠互刷 LOI 和编财务指标。"
+   "text": "ok here’s how we get investors to fomo our series A and get seven term sheets..\n\nfirst, we have to vague post revenue. or customers. this is absolutely critical. no y axis, just keep showing numbers and to the right. graphs work and of course get your investors to quote tweet it and take credit. they love doing that anyway. make it vague like “slowly but surely” or “i see an exponential when I see one”\n\nok, once you do that, you know you can do another launch video for features or even better multiple for features so you get maximum airtime. after that case studies are critical - get a trendsetter company to talk about you or even better have the labs mention you in articles. this will guarantee cold emails to grab coffee from partners. \n\nalso you know you can buy “articles” in “premier” publications. you can even run ads against it targeted to just investors too. you’re joking? no dead serious bro. \n\nok now that you have interest and top of mindshare - the most important thing is to use the magic mantras of “large ambition” and combinations of “long horizon agent swarms abilterared world models physical ai”. \n\nand finally and most importantly you don’t have a deck because of course we’re not raising, we were thinking early next year. and of course we still got pre empted so we don’t have a data room even. you get on or not it’s your call. \n\nand then you use the magic words of optimizing for the best partner but let’s be honest we both know i just want the best valuation. \n\n(again the whole thing is satire, but individually each line is true)",
+   "date": "2026-11-07T20:16:58.000Z",
+   "summaryZh": "他反讽融资套路：发模糊的收入或客户图、不给 y 轴、让投资人转发邀功、多发功能发布视频、买“顶级媒体”文章，就能拿到七份 term sheet。"
   },
   {
-   "id": "https://x.com/danshipper/status/2118757047026028939",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Dan Shipper",
-   "handle": "danshipper",
-   "text": "the @every team, nov 2026 \n\nso proud of this crew! https://t.co/qXDvQa02CL",
-   "date": "2026-11-06T17:26:59.000Z",
-   "summaryZh": "Dan Shipper 晒了 Every 团队 2026 年 11 月的合照，说为团队骄傲。"
-  },
-  {
-   "id": "https://x.com/adityaag/status/2118733093230240144",
+   "id": "https://x.com/adityaag/status/2119157297167372646",
    "type": "x",
    "kind": "X 动态",
    "name": "Aditya Agarwal",
    "handle": "adityaag",
-   "text": "Full conversation at @spc with @traestephens https://t.co/tvo01XNqet",
-   "date": "2026-11-06T15:51:48.000Z",
-   "summaryZh": "adityaag 分享了在 SPC 与 Trae Stephens 的完整对话链接。"
+   "text": "If building datacenters becomes harder, it is obvious that you should be super long anyone who has existing capacity (aka hyperscalers).\n\nIt's not like the demand for the spice is going way -- it is only continuing to go up.\n\nThus the spice holders will win big.\n\nWhat will suffer is the rate of new model training. \n\nI guess we will pace the frontier after all. The body politic speaketh.",
+   "date": "2026-11-07T19:57:26.000Z",
+   "summaryZh": "他认为建数据中心变难，就该重仓已有算力的 hyperscaler，因为需求只增不减；代价是新模型训练速度被拖慢，前沿进展会被动放慢。"
   },
   {
-   "id": "https://x.com/adityaag/status/2118733089887170878",
+   "id": "https://x.com/garrytan/status/2119146939514278238",
    "type": "x",
    "kind": "X 动态",
-   "name": "Aditya Agarwal",
-   "handle": "adityaag",
-   "text": "SpaceX didn’t build Starship overnight. Ambitious technology demands both urgency &amp; patience. https://t.co/TfJgO7wkIu https://t.co/Ch2lkkQbiI",
-   "date": "2026-11-06T15:51:47.000Z",
-   "summaryZh": "adityaag 说 SpaceX 不是一夜造出 Starship，雄心技术既需要紧迫也需要耐心。"
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "We could have abundance \n\nThis is going to be the defining political issue of the next decade: can we have human progress in science, medicine and engineering through superintelligence? \n\nOr will we choose the darkness? https://t.co/efmVMYZwsM",
+   "date": "2026-11-07T19:16:16.000Z",
+   "summaryZh": "他说我们本可以走向丰裕，未来十年核心政治议题是：能不能靠超级智能推动科学、医学和工程进步，还是选择黑暗。"
   },
   {
-   "id": "https://x.com/levie/status/2118723097901846580",
+   "id": "https://x.com/garrytan/status/2119142686422859899",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "Man don’t show this essay to the NIMBYs https://t.co/n7W3CQaHH8",
+   "date": "2026-11-07T18:59:22.000Z",
+   "summaryZh": "他调侃说这篇长文可别给 NIMBY（反对本地开发的人）看到。"
+  },
+  {
+   "id": "https://x.com/amasad/status/2119126064815608270",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "Really enjoyed Kazakhstan — super AI pilled government. And a great place for the Network School. https://t.co/Mt9rIomS6q",
+   "date": "2026-11-07T17:53:19.000Z",
+   "summaryZh": "他说在哈萨克斯坦待得很开心，政府很信 AI，也是办 Network School 的好地方。"
+  },
+  {
+   "id": "https://x.com/karpathy/status/2119114537442189652",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Andrej Karpathy",
+   "handle": "karpathy",
+   "text": "Earlier this week Tristan published his top YouTube channels:\nhttps://t.co/NZ3UCNo6cT\nWhich looked excellent so clearly I had to turn it into TristanTube:\nhttps://t.co/l0KyW1WdNH\n47K super nerdy videos +TV mode for laid back watching. (One-shotted with Claude Code in 3 minutes) https://t.co/FZU0ltwVxL",
+   "date": "2026-11-07T17:07:31.000Z",
+   "summaryZh": "他把 Tristan 推荐的 YouTube 频道做成 TristanTube，收录 4.7 万个硬核视频并带电视模式，用 Claude Code 三分钟一次搞定。"
+  },
+  {
+   "id": "https://x.com/levie/status/2119111328099168409",
    "type": "x",
    "kind": "X 动态",
    "name": "Aaron Levie",
    "handle": "levie",
-   "text": "The future is files. And GPUs. https://t.co/fbI1NHn8u5",
-   "date": "2026-11-06T15:12:05.000Z",
-   "summaryZh": "Levie 一句话：未来是文件，还有 GPU。"
+   "text": "This sounds extreme and I wouldn’t have believed it even a year ago, but we’re starting to see plenty of examples of productivity gains that are an order of magnitude or two above output levels pre-AI. \n\nWith the right harness, a deep understanding of your domain of what you want to build, likely a relatively new codebase (with some exceptions), a fluency of how to work with multiple agents at once, and a setup that makes it so you can test and deploy with limited friction, outputs on this level feel realistic in coding.  \n\nWhat’s crazy is this gap doesn’t appear to be diminishing over time. You’d think that we’d see a convergence in the lines because of AI, but it turns out the more depth you had before -and willingness now to take a different approach- gives you crazy leverage. And that is only compounding as the models can take on larger work and harder problems.\n\nRight now this is most pronounced in software engineering for the obvious reasons. But there’s no reason we don’t start to see this in a number of other computer-use-sensitive domains like other scientific fields, AEC, finance, cyber, and more. Going to get quite wild.",
+   "date": "2026-11-07T16:54:46.000Z",
+   "summaryZh": "他说现在不少例子里 AI 编程产出比 AI 前高 10 到 100 倍，前提是工具链对、懂领域、代码库较新、会同时用多个 agent；而且这个差距没在缩小，反而在扩大。"
   },
   {
-   "id": "https://www.youtube.com/@LatentSpacePod",
+   "id": "https://x.com/zarazhangrui/status/2118968862557475298",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Zara Zhang",
+   "handle": "zarazhangrui",
+   "text": "So many people speak of startup as if their fates are predestined: X idea will never work out; the market for Y is too niche...\n\nBut startups' fates are MADE, not predetermined. Given one idea, there are 1000 ways to execute it, 100 people will have 100 different approaches. Brilliant people with brilliant execution often create something when there was nothing, or make the impossible seem obvious in hindsight.",
+   "date": "2026-11-07T07:28:40.000Z",
+   "summaryZh": "她认为创业成败不是命中注定的，同一个点子有上千种执行方式，牛人靠执行能把不可能变成事后看来理所当然。"
+  },
+  {
+   "id": "https://x.com/levie/status/2118953909524050288",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Aaron Levie",
+   "handle": "levie",
+   "text": "The interesting thing about AI agents is that as a theoretical matter, their inference can kind of run anywhere. AI is one of the few areas of technology that isn’t *as* sensitive to latency back to the user. \n\nLong running agents are now going to be the norm, which means it’s ok to send off work to an AI factory somewhere and that work can essentially be largely done within that remote data center and a final result spit back to the user. The data can pass into these systems in an encrypted manner, be combed through by agents, and then disregarded right after. \n\nAnd because the economic value of the task is so high relative to the latency sensitivity (eg getting back $500 in value from an automated task, but it takes an extra second to return), you don’t have to have the inference to be particularly close to the user. \n\nAlso, because inference is a temporary process with no sensitive data needing to be stored long term where the inference is happening, you can effectively treat AI factories as ephemeral systems, changing some of the data residency dynamics slightly.\n\nCombined, this means you have more flexibility in where you can begin to deploy AI data centers. This is both a huge economic opportunity for the states or countries (or space) that want to take advantage of this fact. And it’s a loss to the states or countries that decide to forgo the opportunity.",
+   "date": "2026-11-07T06:29:14.000Z",
+   "summaryZh": "他说 agent 的推理理论上可以放在任何地方，因为长任务对延迟不敏感、任务经济价值高，数据加密进去、用完就丢，不必靠近用户。"
+  },
+  {
+   "id": "https://x.com/thsottiaux/status/2118953362725159104",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "Cyber https://t.co/SEBUvxdyEj",
+   "date": "2026-11-07T06:27:04.000Z",
+   "summaryZh": "他只发了一个词“Cyber”，配了张图。"
+  },
+  {
+   "id": "https://www.youtube.com/@NoPriorsPodcast",
    "type": "podcast",
    "kind": "播客",
-   "name": "Latent Space",
+   "name": "No Priors",
    "handle": "",
-   "title": "Controlling Biology - Fabian Theis, Helmholtz Munich",
+   "title": "Tokenization, Agentic Trading, Harmonic: Robinhood's Mission to Expand Ownership with CEO Vlad Tenev",
    "text": "",
-   "date": "2026-11-06T14:48:24.000Z",
-   "summaryZh": "Latent Space 播客新一期请到 Helmholtz Munich 的 Fabian Theis，聊如何用 AI 控制生物学。"
-  },
-  {
-   "id": "https://x.com/danshipper/status/2118707652918485148",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Dan Shipper",
-   "handle": "danshipper",
-   "text": "banger https://t.co/Qm1EH443Nf",
-   "date": "2026-11-06T14:10:42.000Z",
-   "summaryZh": "Dan Shipper 只发了句「炸裂」，配了图。"
-  },
-  {
-   "id": "https://x.com/nikunj/status/2118606231405547841",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nikunj Kothari",
-   "handle": "nikunj",
-   "text": "When I see a startup talking about their views on X..\n\n(when most of them were paid partnerships) https://t.co/D8yIYK5t82",
-   "date": "2026-11-06T07:27:42.000Z",
-   "summaryZh": "Nikunj 吐槽创业公司在 X 上谈观点，其实大多是付费合作。"
+   "date": "2026-11-05T11:00:00.000Z",
+   "summaryZh": "No Priors 播客请来 Robinhood CEO Vlad Tenev，聊 tokenization、agent 交易和 Harmonic，以及 Robinhood 扩大所有权覆盖的使命。"
   }
  ]
 }
