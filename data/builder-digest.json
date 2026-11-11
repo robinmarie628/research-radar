@@ -1,239 +1,319 @@
 {
- "date": "2026-11-10",
- "generatedAt": "2026-11-10T03:55:11Z",
+ "date": "2026-11-11",
+ "generatedAt": "2026-11-11T01:37:01Z",
  "model": "deepseek-flash",
- "headline": "Levie 说 agent 集群让生产力上限消失，garrytan 实测 particle-1 比原文更好",
+ "headline": "Anthropic 发布 Claude Fable 5.2，全场都在晒它做出来的东西",
  "bullets": [
-  "Levie 认为 AI 从「聊天式产出」进入「派一群 agent 并行干活」阶段，生产力增益不再有上限。",
-  "garrytan 用 gstack-evals 复现 Jev Engineering 文章，发现原文可复现，且 particle-1 表现更好。",
-  "garrytan 还喊话「你迟早会想要自己的软件工厂」，并说前沿模型让改软件太容易，现有 bug 变得难以忍受。",
-  "zarazhangrui 说「vibe coding」这个词带贬义，想换个词来形容认真投入的 AI 编程。",
-  "thenanyu 建议选「最笨」而不是「最简单」的方案起步，简单是迭代出来的。"
+  "Anthropic 上线 Claude Fable 5.2，所有付费计划可用，另设面向网络安全和生物医学研究的 Claude Mythos 5.2 申请通道。",
+  "老用户订阅越久，Fable 重置次数越多：Pro 一次，Max、Ultra、Team Premium 最多三次。",
+  "Vercel 提前内测后说这代模型能并行扛下大量工作，瓶颈变成你的野心和算力，得配云沙箱。",
+  "MCP 新增 Events，agent 可以订阅事件而不是反复轮询，Vercel 自家 MCP 已支持。",
+  "Fable 5.2 顺手做出物理预印本成果，还被人拿来把达芬奇手稿变成可交互的东西。"
  ],
- "sentiment": "整体偏兴奋和务实：builder 们对 agent 并行干活、软件工厂这类新能力很来劲，同时也在吐槽旧词和旧 bug。",
- "count": 22,
- "summarised": 22,
+ "sentiment": "整体是兴奋，主要冲着 Fable 5.2 的发布，大家在晒自己用它做出的游戏、工具和视频编辑器。",
+ "count": 30,
+ "summarised": 30,
  "posts": [
   {
-   "id": "https://x.com/nikunj/status/2119670529254981756",
+   "id": "https://x.com/thenanyu/status/2120037431261184454",
    "type": "x",
    "kind": "X 动态",
-   "name": "Nikunj Kothari",
-   "handle": "nikunj",
-   "text": "If you are visiting SF, and trying to meet more people, here are a random list of things you should remove from your vocabulary..\n\n> swap notes\n> \"synergies\"\n> pick your brain\n> networking\n> \"san fran\" (tourist tell)\n> grab coffee if you're free\n\nIf you want to meet interesting people here, show your work. The most interesting people I know in the city are not attending that fancy large conference - they are probably at their office. \n\nSo what's the work? It can be as simple as a thoughtful cold email, a five line pointed DM, or complex as some side projects that you have shipped, or a meetup that you are organizing.\n\nIf you put in the effort, it shows, yes, even in this AI era. I still get so much slop across the board, that if I see anyone put in the effort, I try to go out of my way to meet them. \n\nEven the busiest people have 15 mins to give you, if you give them a reason to!",
-   "date": "2026-11-09T05:56:50.000Z",
-   "summaryZh": "nikunj 说来旧金山想认识人别用「换名片」「networking」这类词，直接展示你做的东西，哪怕一封认真的冷邮件，最忙的人也能挤出 15 分钟。"
+   "name": "Nan Yu",
+   "handle": "thenanyu",
+   "text": "PSA since it took me a second to discover it: \nIf you wanna get some untapped value out of your ChatGPT subscription, go into settings and turn on global dictation\n\nIt uses the same fast and accurate transcription path as the in-app dictation https://t.co/BS8CDVlPeQ",
+   "date": "2026-11-10T06:14:46.000Z",
+   "summaryZh": "他提醒：在 ChatGPT 设置里打开全局听写，用的是和应用内听写一样快而准的转写，别浪费订阅价值。"
   },
   {
-   "id": "https://x.com/petergyang/status/2119657833516171384",
+   "id": "https://x.com/petergyang/status/2120026112722137345",
    "type": "x",
    "kind": "X 动态",
    "name": "Peter Yang",
    "handle": "petergyang",
-   "text": "This affair is going to destroy billions in shareholder value isn’t it",
-   "date": "2026-11-09T05:06:23.000Z",
-   "summaryZh": "petergyang 吐槽这桩事恐怕要毁掉几十亿美元的股东价值。"
+   "text": "This is the future of work 😂 https://t.co/p9UX0PjnbH",
+   "date": "2026-11-10T05:29:48.000Z",
+   "summaryZh": "他发了个搞笑图，调侃这就是未来的工作方式。"
   },
   {
-   "id": "https://x.com/garrytan/status/2119624260675350605",
+   "id": "https://x.com/thsottiaux/status/2120021043876106429",
    "type": "x",
    "kind": "X 动态",
-   "name": "Garry Tan",
-   "handle": "garrytan",
-   "text": "My gstack-evals project took a look at this Jev Engineering article and tried to replicate it, and I also told it to try particle-1 and it turns out this article replicates, and particle-1 is even better https://t.co/Lf4QULKRnF https://t.co/FfCzahr6UJ",
-   "date": "2026-11-09T02:52:59.000Z",
-   "summaryZh": "garrytan 用 gstack-evals 复现 Jev Engineering 那篇文章，结果原文可复现，而且 particle-1 表现还更好。"
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "Dots can now control many machines in addition to its own little cloud computer that we provide by default. https://t.co/VtVYz5DcAB",
+   "date": "2026-11-10T05:09:39.000Z",
+   "summaryZh": "Dots 现在除了默认自带的小云电脑，还能控制多台机器。"
   },
   {
-   "id": "https://x.com/garrytan/status/2119615647592395037",
+   "id": "https://x.com/petergyang/status/2120020729546862979",
    "type": "x",
    "kind": "X 动态",
-   "name": "Garry Tan",
-   "handle": "garrytan",
-   "text": "You're really going to want your own software factory https://t.co/lmk0Mati0N",
-   "date": "2026-11-09T02:18:45.000Z",
-   "summaryZh": "garrytan 说你早晚会想要一个属于自己的「软件工厂」。"
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "Turned my 8-year-old's drawings into kart racers - time to upgrade the characters https://t.co/CdbzbaEWp2 https://t.co/UhS2NVQc9P",
+   "date": "2026-11-10T05:08:24.000Z",
+   "summaryZh": "他把 8 岁孩子的画做成了卡丁车游戏，正打算升级角色。"
   },
   {
-   "id": "https://x.com/garrytan/status/2119612084220842483",
+   "id": "https://x.com/petergyang/status/2120019538763002179",
    "type": "x",
    "kind": "X 动态",
-   "name": "Garry Tan",
-   "handle": "garrytan",
-   "text": "Once you realize software is so easily changed with frontier models, these bugs become a little bit unbearable\n\nAnd simultaneously, it seems obvious personal just-in-time software will be inevitable",
-   "date": "2026-11-09T02:04:36.000Z",
-   "summaryZh": "garrytan 说一旦意识到前沿模型改软件这么容易，现有 bug 就变得难以忍受，个人即时软件是必然的。"
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "Upgrading the music right now https://t.co/9awRRcZIq8",
+   "date": "2026-11-10T05:03:40.000Z",
+   "summaryZh": "他说正在给这个游戏升级音乐。"
   },
   {
-   "id": "https://x.com/swyx/status/2119611058881192187",
+   "id": "https://x.com/realmadhuguru/status/2119999748086362466",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Madhu Guru",
+   "handle": "realmadhuguru",
+   "text": "If you are a product leader, here is a simple exercise: draw out your product lifecycle.\n\ne.g. market understanding -> design -> development -> GTM.\n\nChances are your PMs spend more time in some stages than others - because of the nature of your product, your org or their comfort zones.\n\nThis is a handoff-heavy, lossy process.\n\nNow ask yourself: using AI, how much deeper can PMs go on every stage?\n\nPMs should be able to\n- build a much deeper, broader understanding of users and the market\n- iterate fast from ideas to working prototypes\n- explore the codebase to study technical constraints and tradeoffs\n- run their own analytics and investigate questions as they emerge\n- understand the GTM funnel deeply enough to shape product strategy\n\nNow, this is not about PMs replacing every role. As the function that spans the entire lifecycle, this is about  raising the bar on the PM role, so they combine their breadth with much greater depth.",
+   "date": "2026-11-10T03:45:02.000Z",
+   "summaryZh": "他建议产品负责人画出产品生命周期，看 PM 在哪些阶段花时间多，并思考用 AI 让 PM 在每个阶段都扎得更深。"
+  },
+  {
+   "id": "https://x.com/swyx/status/2119990961459921395",
    "type": "x",
    "kind": "X 动态",
    "name": "Swyx",
    "handle": "swyx",
-   "text": "are you listening anon? https://t.co/52rrkgKNg5 https://t.co/CFJg15NMCt",
-   "date": "2026-11-09T02:00:31.000Z",
-   "summaryZh": "swyx 转发并喊话「anon 你在听吗」，没展开更多。"
+   "text": "signups https://t.co/M8tHHd2cR8 for new media creators",
+   "date": "2026-11-10T03:10:07.000Z",
+   "summaryZh": "他放出了面向新媒体创作者的报名链接。"
   },
   {
-   "id": "https://x.com/petergyang/status/2119595860057288967",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "“Both of my parents got diagnosed with two cancers each within a week of each other.”\n\nFrom @AshleyYuki, VP of Product at @OpenAI:\n\n“I just decided to take a month [off work]. It was one of the best things I could have done in that moment to care for my parents.\n\nYou also have to care for yourself as a caregiver. We don’t talk about that enough. It’s still a really big cognitive load, emotional load, just pure time load to be a caregiver. You have to make sure you’re budgeting time for your own mental health.”\n\n📌 Watch our full episode here: https://t.co/Z3HibgPP8S",
-   "date": "2026-11-09T01:00:07.000Z",
-   "summaryZh": "OpenAI 产品 VP Ashley Yuki 讲父母一周内各确诊两种癌症，她请假一个月照顾，并提醒照护者也要给自己的心理留时间。"
-  },
-  {
-   "id": "https://x.com/zarazhangrui/status/2119592080318341128",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Zara Zhang",
-   "handle": "zarazhangrui",
-   "text": "I’ve almost stopped using the term “vibe coding” because there’s a negative connotation to it \n\nIt implies that you didn’t put a lot of effort or soul into the output and it’s just AI slop\n\nBut oftentimes people ARE putting their heart and soul into the work even when using AI coding tools. The 2 are not contradictory\n\nWe need a better word for describing this",
-   "date": "2026-11-09T00:45:06.000Z",
-   "summaryZh": "zarazhangrui 说「vibe coding」带贬义、暗示没投入心血，但很多人用 AI 编程也很认真，需要换个词。"
-  },
-  {
-   "id": "https://x.com/levie/status/2119592025440092192",
+   "id": "https://x.com/levie/status/2119987129204047894",
    "type": "x",
    "kind": "X 动态",
    "name": "Aaron Levie",
    "handle": "levie",
-   "text": "We’re moving from an era of AI where the output comes roughly at the rate that you can chat back and forth with the AI to work with you, to a period where you can set a problem for a set of agents to go off and do an arbitrarily large amount of work for you. This means productivity gains that are maybe 20-50% to gains that don’t really have an upper limit.\n\nAgent swarms and the ability to fan out complex work across many agents doing tasks in parallel provide a massive unlock in a lot of spaces. This will lead to qualitatively different outcomes in my fields. \n\nThis has already been seen across the coding domain. Next, cyber is almost entirely a problem space where more agents reviewing more things will lead to far better outcomes. We’re seeing the same now in many scientific fields, and this almost certainly will change life sciences. \n\nBut this will increasingly be true in any field where you can parallelize computer-based work to complete something faster or do something at a totally different quality level. Which is actually are some of the most valuable domains of knowledge work today. \n\nOur brains aren’t really wired for the new scenario we’re heading into where compute becomes the variable that we can flex to solve any problem that we want. We’re used to thinking that the amount of time that goes into a task is correlated to the output that we get from it. And most domains of knowledge work or science have generally always been correlated with this. That’s changing forever.",
-   "date": "2026-11-09T00:44:53.000Z",
-   "summaryZh": "Levie 说 AI 正从聊天式产出转向派一群 agent 并行干大量活，生产力增益从 20-50% 变成没有上限，编码已应验，网络安全和生命科学是下一站。"
+   "text": "It turns out the advancements we’re getting in coding and computer use, combined with industry specific understand and general reasoning, can bring automation to a large number of areas of knowledge work.\n\nWe’re entering the era of autonomous collaborators in a number of industries that haven’t yet had their claude code or codex moment yet. But now this is going to happen. \n\nWe’ll see it in animation, film production, gaming, manufacturing, architecture, product design, robotics, and more. All of these fields have the potential of driving far more output similar to what we’ve seen in software engineering. There’s no inherent finite demand for these categories of work.\n\n“Software is eating the world” is finally in a much bigger way happening because of AI.",
+   "date": "2026-11-10T02:54:53.000Z",
+   "summaryZh": "他认为编码和电脑操作能力的进步，会让动画、影视、游戏、制造、建筑、机器人等行业迎来自己的 Claude Code 时刻。"
   },
   {
-   "id": "https://x.com/ryolu_/status/2119586846657454152",
+   "id": "https://x.com/amasad/status/2119965240066752682",
    "type": "x",
    "kind": "X 动态",
-   "name": "Ryo Lu",
-   "handle": "ryolu_",
-   "text": "when we can do anything,\ndo we still know what we want?\n\nthe full talk from @aiDotEngineer shanghai. every slide handmade in keynote, subs in 中文 and english https://t.co/EeyHu7l3Fc",
-   "date": "2026-11-09T00:24:18.000Z",
-   "summaryZh": "ryolu_ 发布在上海 aiDotEngineer 的完整演讲，主题是「什么都能做时，我们还知道自己想要什么吗」，幻灯片全手工做，中英字幕。"
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "I showed Paul Graham vibe coding before it was called that back in July ‘24, and this was his reaction: https://t.co/K6FaCFefId",
+   "date": "2026-11-10T01:27:54.000Z",
+   "summaryZh": "他说 2024 年 7 月就给 Paul Graham 演示过还没叫 vibe coding 的玩法，并晒了对方当时的反应。"
   },
   {
-   "id": "https://x.com/petergyang/status/2119556651636441416",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "Anecdotally, I think cheating is far more common in Asia. \n\nPlenty of guys who have their wife and kids living in the US/Canada, while they do business in Asia and have another girlfriend or even family in a 二奶村.\n\nMost of the time their wife knows about this too. Not saying any of this is right but just what I've seen and heard 🤷\n\nJust randomly came across this article",
-   "date": "2026-11-08T22:24:19.000Z",
-   "summaryZh": "petergyang 说他观察到的现象：亚洲出轨更常见，不少人在美加有妻儿、在亚洲另组家庭，妻子多半也知道，他不评判只是分享见闻。"
-  },
-  {
-   "id": "https://x.com/swyx/status/2119550477629379009",
+   "id": "https://x.com/swyx/status/2119935240202539147",
    "type": "x",
    "kind": "X 动态",
    "name": "Swyx",
    "handle": "swyx",
-   "text": "and a special pod! https://t.co/LGOjNlcyAR",
-   "date": "2026-11-08T21:59:47.000Z",
-   "summaryZh": "swyx 预告还有一期特别播客。"
+   "text": "bro just proved fermat's last theorem AS A DEMO for the fable 5.2 launch\n\nand casually told me he's got something bigger planned  for his aie code talk\n\nlol anthropic u guys are wildin https://t.co/2Js2LkmTIM",
+   "date": "2026-11-09T23:28:42.000Z",
+   "summaryZh": "他调侃有人把证明费马大定理当 Fable 5.2 发布演示，还说后面有更大的，直呼 Anthropic 太猛。"
   },
   {
-   "id": "https://x.com/swyx/status/2119543788192600450",
+   "id": "https://x.com/alexalbert__/status/2119916954337349737",
    "type": "x",
    "kind": "X 动态",
-   "name": "Swyx",
-   "handle": "swyx",
-   "text": "if youre wondering how, ask their VP of FDE Pauline Brunet (thanks @realbasilchatha for curating this)\n\nhttps://t.co/KMjK2emil8",
-   "date": "2026-11-08T21:33:12.000Z",
-   "summaryZh": "swyx 说想知道怎么做到的，去问他们的 FDE VP Pauline Brunet。"
+   "name": "Alex Albert",
+   "handle": "alexalbert__",
+   "text": "I gave Fable 5.2 a PDF of one of Leonardo da Vinci’s 500-year-old notebooks and it made his inventions real for me to interact with.\n\nSuch an exciting time for education. Anything from history that’s been stuck on a page can now be something you explore. https://t.co/MVSz3pc4To",
+   "date": "2026-11-09T22:16:02.000Z",
+   "summaryZh": "他给 Fable 5.2 一份达芬奇 500 年前的手稿 PDF，模型把里面的发明做成可交互的，他觉得这对教育很振奋。"
   },
   {
-   "id": "https://www.youtube.com/watch?v=dpY7YzZo4kE",
-   "type": "podcast",
-   "kind": "播客",
-   "name": "Latent Space",
-   "handle": "",
-   "title": "[One Million AI Engineer Special] How Stanford Teaches AI-Native Engineering — Mihail Eric, Monaco",
-   "text": "",
-   "date": "2026-11-08T21:23:29.000Z",
-   "summaryZh": "Latent Space 百万 AI 工程师特辑，请 Mihail Eric 讲斯坦福怎么教「AI 原生」工程。"
+   "id": "https://x.com/amasad/status/2119909166764667292",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "If you're in Japan, check out \"Enterprise Vibe Coding,\" a new book from SMFL's digital innovation team on how AI is transforming enterprise software development.\n\nComing November 27. Honored to be on the cover! https://t.co/qfF1k6HsvY",
+   "date": "2026-11-09T21:45:06.000Z",
+   "summaryZh": "他推荐 SMFL 数字创新团队 11 月 27 日出的日文新书《Enterprise Vibe Coding》，并说自己上了封面。"
   },
   {
-   "id": "https://x.com/rauchg/status/2119536313712230802",
+   "id": "https://x.com/claudeai/status/2119899492778398163",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Claude",
+   "handle": "claudeai",
+   "text": "Claude Fable 5.2 is available today on all paid plans.\n\nOrganizations pursuing beneficial applications in cybersecurity or biomedical research can apply for access to Claude Mythos 5.2.\n\nRead more: https://t.co/50jMVOmUG7",
+   "date": "2026-11-09T21:06:39.000Z",
+   "summaryZh": "官方宣布 Claude Fable 5.2 当天在所有付费计划上线，做网络安全或生物医学有益应用的机构可申请 Claude Mythos 5.2。"
+  },
+  {
+   "id": "https://x.com/claudeai/status/2119899491310432269",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Claude",
+   "handle": "claudeai",
+   "text": "Both physics results are written up in preprints.\n\nOn the abrupt transition in very small universes: https://t.co/He3fWJc3u9\n\nOn the exact limit of a technique used to rule out candidate theories of quantum gravity: https://t.co/TwAyTW9Jxw",
+   "date": "2026-11-09T21:06:39.000Z",
+   "summaryZh": "官方说两项物理结果都写成了预印本，并给出两篇链接。"
+  },
+  {
+   "id": "https://x.com/claudeai/status/2119899488995131439",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Claude",
+   "handle": "claudeai",
+   "text": "In the second physics problem, Fable 5.2 found the exact limit of the simplest version of a 15-year-old technique known as “modular bootstrapping.” The technique is used to rule out candidate theories of quantum gravity in theoretical universes. https://t.co/sYDD812X0w",
+   "date": "2026-11-09T21:06:38.000Z",
+   "summaryZh": "官方介绍 Fable 5.2 在第二个物理问题上，求出了有 15 年历史的 modular bootstrapping 技术最简单版本的精确极限。"
+  },
+  {
+   "id": "https://x.com/amasad/status/2119893236747780567",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "\"But who maintains vibe coded apps?\"\n\nHow about self-healing software... https://t.co/sDWytCG4gK",
+   "date": "2026-11-09T20:41:48.000Z",
+   "summaryZh": "面对“vibe coding 的应用谁来维护”，他抛出“自愈软件”这个方向。"
+  },
+  {
+   "id": "https://x.com/rauchg/status/2119891138450755670",
    "type": "x",
    "kind": "X 动态",
    "name": "Guillermo Rauch",
    "handle": "rauchg",
-   "text": "Built a physical simulation of a record player with WebGL2 and Web Audio. It's *shockingly* accurate: https://t.co/MBNaTfKoai.\n\nInstead of playing a song, it works by converting it into the physical shape of a groove. Then a simulated stylus rides those walls 384,000 times a second, and you hear the voltage that motion would induce in a cartridge.\n\nSo the crackle, the pops, the wow/flutter, the dull inner grooves are natural byproducts of the simulation. You can also \"DJ\" the record.\n\n(The converted songs are in the public domain or CC-licensed. Code is linked for you to remix and re-deploy.)",
-   "date": "2026-11-08T21:03:30.000Z",
-   "summaryZh": "rauchg 用 WebGL2 和 Web Audio 做了个黑胶唱机物理模拟，把歌转成纹路形状、模拟唱针每秒 38.4 万次读取，爆豆声和抖晃都是自然产物，代码开源可改。"
+   "text": "So bullish on MCP. Its utility exceeds the \"M\" part: even AI aside, it'll be a civilization-scale accomplishment to get all our systems communicating through one universal open protocol.\n\nA missing piece was how to get arbitrary callbacks across sessions. MCP could read and write, but it couldn't tell you later \"this event happened.\" MCP Events fixes this.\n\nWe're adding support in our own MCP. Say an agent makes a deployment, and wants to know when it's complete. Instead of polling, it can subscribe to 𝚍𝚎𝚙𝚕𝚘𝚢𝚖𝚎𝚗𝚝.𝚜𝚞𝚌𝚌𝚎𝚎𝚍𝚎𝚍.\n\nPSA: With Vercel Queues and Workflows, writing the backend machinery for your own MCPs to do this is easy peasy.",
+   "date": "2026-11-09T20:33:27.000Z",
+   "summaryZh": "他非常看好 MCP，说新增的 MCP Events 补上了跨会话回调这块，agent 可以订阅事件而不用轮询，Vercel 自家 MCP 已支持。"
   },
   {
-   "id": "https://x.com/mattturck/status/2119525416780361766",
+   "id": "https://x.com/bcherny/status/2119890820186976763",
    "type": "x",
    "kind": "X 动态",
-   "name": "Matt Turck",
-   "handle": "mattturck",
-   "text": "ok lol trolls coming out in full force - Elon is a business genius, a visionary and and the richest man in the world, it’s ok for comedians to attempt to poke some fun, relax!",
-   "date": "2026-11-08T20:20:12.000Z",
-   "summaryZh": "mattturck 回怼喷子：Elon 是商业天才和远见者，喜剧演员拿他开开玩笑没什么，大家放松点。"
+   "name": "Boris Cherny",
+   "handle": "bcherny",
+   "text": "Pro users get one reset, and Max, Ultra, and Team Premium get up to three, depending on how long you've subscribed:\nhttps://t.co/JkknwZZGyh",
+   "date": "2026-11-09T20:32:11.000Z",
+   "summaryZh": "他说 Pro 用户有一次重置，Max、Ultra 和 Team Premium 按订阅时长最多三次。"
   },
   {
-   "id": "https://x.com/levie/status/2119502716770902234",
+   "id": "https://x.com/alexalbert__/status/2119884951550386671",
    "type": "x",
    "kind": "X 动态",
-   "name": "Aaron Levie",
-   "handle": "levie",
-   "text": "A good lesson in AI is that you need to check back in on the latest with every 3 to 6 months to try something that wasn’t possible before and see if it works again.\n\nAt no point in AI’s history is that more true than today. Just the past six months of model progress around computer and tool use, less context rot, better reasoning, multimodality, and deeper domain expertise in a number of key fields, these models are vastly more capable on what they can execute.\n\nThis is opening up a new vector of what AI systems will be able to autonomously work on. Essentially, anything with an API (and even many things without), we can anticipate that an agent will be able to control and utilize as an underlying capability to complete a process.\n\nThis means that we are no longer dependent on *just* the models generating everything from whole cloth, but instead they can fully utilize existing systems (or new ones purpose built for them) very effectively. This creates immense leverage for agents.\n\nSecurity agents can leverage existing data feeds and cyber tooling, IT agents that can execute workflows reliably across software stacks, data agents that can migrate data or processes between systems, architect and design agents can leverage CAD and design tools, and on and on. And any of today’s tools that don’t work will likely be replaced by agent-friendly or OSS tooling that does the same. \n\nWhen you combine this with the domain understanding being trained into agents, you started to get autonomous collaborators for every job function and industry. This will open up a ton of new opportunities in AI if you build with this understanding in mind.",
-   "date": "2026-11-08T18:50:00.000Z",
-   "summaryZh": "Levie 说用 AI 要每 3-6 个月回头重试以前做不到的事，过去半年模型在电脑和工具使用、减少上下文退化、推理、多模态上进步很大，凡有 API 的东西 agent 都能操控。"
+   "name": "Alex Albert",
+   "handle": "alexalbert__",
+   "text": "Every time we have a new model, I run the same simple prompt on all my projects:\n\n\"Read this entire project and find everything that’s broken, inconsistent, inefficient, or no longer needed. Fix what you’re sure about and list the rest for me to review.\"\n\nhighly recommend trying",
+   "date": "2026-11-09T20:08:52.000Z",
+   "summaryZh": "他每出新模型就跑同一个提示词：通读整个项目，找出坏掉、不一致、低效和多余的东西，确定的直接修，其余列出来。"
   },
   {
-   "id": "https://x.com/thenanyu/status/2119493015190249556",
+   "id": "https://x.com/garrytan/status/2119882192088391751",
    "type": "x",
    "kind": "X 动态",
-   "name": "Nan Yu",
-   "handle": "thenanyu",
-   "text": "This is a good question. And you should definitely pick \"dumbest\" over \"simplest\". \n\nSimple is something you iterate to. Dumb is the correct starting point. Otherwise, you start to outsmart yourself. \n \nhttps://t.co/KdxEVgEmhm",
-   "date": "2026-11-08T18:11:27.000Z",
-   "summaryZh": "thenanyu 说该选「最笨」而不是「最简单」的方案，简单是迭代出来的，笨才是正确起点，否则容易聪明反被聪明误。"
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "Red letter day: New frontier model = every one of your projects gets a step function improvement\n\nI'm not sure if I'll ever get sick of frontier model release days https://t.co/Xrhi6YX5Jz https://t.co/hBVJHDnAob",
+   "date": "2026-11-09T19:57:54.000Z",
+   "summaryZh": "他说新前沿模型发布日意味着每个项目都台阶式变好，这种日子他永远不腻。"
   },
   {
-   "id": "https://x.com/thenanyu/status/2119462979179892925",
+   "id": "https://x.com/swyx/status/2119878742063641056",
    "type": "x",
    "kind": "X 动态",
-   "name": "Nan Yu",
-   "handle": "thenanyu",
-   "text": "This is basically true in all aspects of software. Choose the dumbest architecture that’ll work. choose the dumbest design that gets the job done. Being clever means your users also have to be just as clever to understand your cleverness https://t.co/aUC8OeQjU9",
-   "date": "2026-11-08T16:12:06.000Z",
-   "summaryZh": "thenanyu 说软件各方面都该选最笨但能用的架构和设计，耍聪明会让用户也得一样聪明才看得懂。"
+   "name": "Swyx",
+   "handle": "swyx",
+   "text": "btw by complete coincidence the $ANT IPO roadshow across wall street started today. they had this in the chamber and its also nice that it came after Astra, Argon and Carbon… https://t.co/3ctN4iMteB https://t.co/7DHAJZFNGn",
+   "date": "2026-11-09T19:44:12.000Z",
+   "summaryZh": "他提到 $ANT 的 IPO 路演当天在华尔街开始，说时间点纯属巧合。"
   },
   {
-   "id": "https://x.com/thenanyu/status/2119462224721002560",
+   "id": "https://x.com/rauchg/status/2119878364794372162",
    "type": "x",
    "kind": "X 动态",
-   "name": "Nan Yu",
-   "handle": "thenanyu",
-   "text": "Software got a lot easier if you know what you wanna build, and a lot harder if you don’t. \n\nWith clarity, you can straight-shot to the solution. Without it, you’ll ship a pile of junk and spend a lot of money doing it. Pre-AI era you would ship nothing, which is an improvement.",
-   "date": "2026-11-08T16:09:06.000Z",
-   "summaryZh": "thenanyu 说知道要做什么时软件变简单了，不知道时反而更难，没想清楚就会花大钱产出一堆垃圾，而 AI 之前你至少什么都发不出来。"
+   "name": "Guillermo Rauch",
+   "handle": "rauchg",
+   "text": "At @vercel we got to test this model before release. Best way to summarize it: astonishingly brilliant.\n\nOne interesting takeaway: it's very clear that this new generation of models can take on unprecedented bodies of parallel work.\n\nTo actually seize this intelligence, you need cloud sandboxes. Full stop. The model can delegate and orchestrate far more than a single computer can handle. Likely far more than you can even imagine it can handle.\n\nYour bottleneck is now ① your ambition and ② your parallel computing power.\n\nBtw, I learned from @cramforce you don't need to overcomplicate it. Install Vercel CLI, setup the Plugin and tell the agent to use /𝚘𝚏𝚏𝚕𝚘𝚊𝚍-𝚝𝚘-𝚜𝚊𝚗𝚍𝚋𝚘𝚡 skill. It'll provision and de-allocate cloud sandboxes as needed. You don't need a \"multi-agent remote harness ralph orchestrator\" 😆",
+   "date": "2026-11-09T19:42:42.000Z",
+   "summaryZh": "Vercel 提前测过这代模型，他说聪明得惊人，能并行扛大量工作，必须配云沙箱，瓶颈只剩野心和算力。"
   },
   {
-   "id": "https://x.com/mattturck/status/2119457959625498698",
+   "id": "https://x.com/bcherny/status/2119873095129550880",
    "type": "x",
    "kind": "X 动态",
-   "name": "Matt Turck",
-   "handle": "mattturck",
-   "text": "Lol not Elon now, after nailing the Tucker Carlson impersonation 😂Absolutely epic run from Jeremy Culhane https://t.co/m26EQ0PBC0",
-   "date": "2026-11-08T15:52:09.000Z",
-   "summaryZh": "mattturck 笑说这次不是 Elon，Jeremy Culhane 模仿 Tucker Carlson 太像，这波表现堪称史诗级。"
+   "name": "Boris Cherny",
+   "handle": "bcherny",
+   "text": "We wanted to do more for the people who’ve been with us the longest. So with Fable 5.2, the longer you’ve been subscribed, the more Fable resets you get. https://t.co/g2Y5cwS0L2 https://t.co/kXTaE829XU",
+   "date": "2026-11-09T19:21:45.000Z",
+   "summaryZh": "他说为了回馈老用户，Fable 5.2 下订阅越久，拿到的 Fable 重置次数越多。"
   },
   {
-   "id": "https://x.com/zarazhangrui/status/2119342420412510686",
+   "id": "https://x.com/danshipper/status/2119871917104455924",
    "type": "x",
    "kind": "X 动态",
-   "name": "Zara Zhang",
-   "handle": "zarazhangrui",
-   "text": "The joy of building a product comes from the collision between the predictability of how technology behaves &amp; the unpredictability of how humans behave",
-   "date": "2026-11-08T08:13:03.000Z",
-   "summaryZh": "zarazhangrui 说做产品的乐趣来自技术行为的可预测与人类行为的不可预测之间的碰撞。"
+   "name": "Dan Shipper",
+   "handle": "danshipper",
+   "text": "Vibe Check dropping soon: https://t.co/pY1lpUDlOL",
+   "date": "2026-11-09T19:17:05.000Z",
+   "summaryZh": "他预告 Vibe Check 马上就来。"
+  },
+  {
+   "id": "https://x.com/alexalbert__/status/2119869925288558799",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Alex Albert",
+   "handle": "alexalbert__",
+   "text": "btw robotics will fall to the bitter lesson too https://t.co/cqftOw2OAM",
+   "date": "2026-11-09T19:09:10.000Z",
+   "summaryZh": "他断言机器人领域最终也会被 bitter lesson 拿下。"
+  },
+  {
+   "id": "https://x.com/danshipper/status/2119869228207546638",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Dan Shipper",
+   "handle": "danshipper",
+   "text": "BREAKING:\n\n@AnthropicAI just dropped Claude Fable 5.2. It’s a paradigm-shifting model if you have a project ambitious enough to give it.\n\nWe’ve been testing it at @every, and I’ve seen this crazy explosion of creativity on the team. People are making their own creative software, games for their kids, and documentaries instead of slide decks.\n\nHere’s your day zero vibe check:\n\n• Coding: @kieranklaassen built Everycut, a video editor with the features we use from Premiere, Descript, and other tools—all in one app, with an agent built in. The first version was live in 3 days, and we immediately used it for our internal show-and-tell. This feels like a new era of professionals building their own professional tools, tailored to exactly how they work.\n\n• Games and design: @jackcheng gave it a photo of his toddler’s messy playroom. It turned the actual toys into a playable racing game, with fun details like a stray shoe as an obstacle and a sippy cup as a power-up.\n\n• Knowledge work: @hammer_mt turned his research into a documentary. The model came up with interview questions, he answered them on camera, and it cut the footage together. He called this the most productive 3 weeks of his career.\n\n• A different way of working: Give it a big job and leave it running overnight or over a weekend. But tell it what “done” means: Mike found it could finish the build, then spend another day or two testing. Set the goal, the budget, and how much checking you need before walking away.\n\n• The catch: It’s slow and burns through tokens. Our early-access usage was free, and these projects would have been expensive at API rates. It’s 20% cheaper than Fable 5.1, but for everyday writing, emails, or quick back-and-forth coding, I’d usually reach for something else.\n\nThe clearest signal: When our early access ended, @TylerNishida stopped working on some projects until he could get this model back. He didn’t want to build them with anything else.\n\nThe best measure of a new model is whether it makes you try things you wouldn’t have tried before.\n\nFable 5.2 absolutely does that.\n\nHere’s our full day-zero Vibe Check:",
+   "date": "2026-11-09T19:06:23.000Z",
+   "summaryZh": "他称 Fable 5.2 是范式级模型，团队里有人三天做出带 agent 的视频编辑器，有人把孩子玩具照片变成赛车游戏。"
+  },
+  {
+   "id": "https://x.com/danshipper/status/2119868362838663650",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Dan Shipper",
+   "handle": "danshipper",
+   "text": "Fable 5.2 Vibe Check https://t.co/QT6e9t8jke",
+   "date": "2026-11-09T19:02:57.000Z",
+   "summaryZh": "他发了 Fable 5.2 的 Vibe Check 链接。"
+  },
+  {
+   "id": "https://x.com/adityaag/status/2119858043869683935",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Aditya Agarwal",
+   "handle": "adityaag",
+   "text": "Huge launch from the @nuance_ai team today. Try it out now. https://t.co/ReI56ync88",
+   "date": "2026-11-09T18:21:57.000Z",
+   "summaryZh": "他给 nuance_ai 团队当天的发布站台，让大家去试。"
+  },
+  {
+   "id": "https://x.com/nikunj/status/2119850705901191339",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Nikunj Kothari",
+   "handle": "nikunj",
+   "text": "Ever since I read Niklas Gruhn's excellent article (https://t.co/ojHWKndeEL), I think about this every day..\n\nIf you don't think people notice that you are feeding everything to AI and regurgitating it back, people actually do!!\n\n(because they are probably already getting an opinion with the same agents)",
+   "date": "2026-11-09T17:52:47.000Z",
+   "summaryZh": "他引用 Niklas Gruhn 的文章说，把一切喂给 AI 再吐出来，别人是看得出来的，因为对方可能用同样的 agent。"
+  },
+  {
+   "id": "https://www.youtube.com/@LatentSpacePod",
+   "type": "podcast",
+   "kind": "播客",
+   "name": "Latent Space",
+   "handle": "",
+   "title": "What Frontier Labs Buy: A Data Deep Dive with Handshake AI — Garrett Lord &amp; Team",
+   "text": "",
+   "date": "2026-11-09T16:41:48.000Z",
+   "summaryZh": "Latent Space 播客请来 Handshake AI 的 Garrett Lord 团队，从数据角度聊前沿实验室到底在买什么。"
   }
  ]
 }
