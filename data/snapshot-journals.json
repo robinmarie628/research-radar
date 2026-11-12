@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-12T02:28:39Z",
+ "generatedAt": "2026-11-12T04:29:34Z",
  "windowDays": 15,
  "journals": 68,
  "rawFetched": 870,
@@ -5711,14 +5711,14 @@
    "date": "2026-11-05",
    "ts": 0,
    "year": "2026",
-   "authors": "Gerald P",
+   "authors": "Ponath G",
    "pmid": "42988164",
    "doi": "10.1016/j.kint.2026.10.013",
    "keywords": [
-    "Lupus nephritis",
-    "Systemic lupus erythematosus",
     "cell therapy",
+    "lupus nephritis",
     "regulatory B cells",
+    "systemic lupus erythematosus",
     "tertiary lymphoid structures",
     "tolerance"
    ],
