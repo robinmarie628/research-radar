@@ -1,239 +1,289 @@
 {
- "date": "2026-11-15",
- "generatedAt": "2026-11-15T01:26:37Z",
+ "date": "2026-11-16",
+ "generatedAt": "2026-11-16T01:29:35Z",
  "model": "deepseek-flash",
- "headline": "Fable 5.2 比 Opus 5.5 贵 2.8 倍，效果却差不多",
+ "headline": "Gemini 接入 Google Wallet，AI agent 能直接读你的消费数据",
  "bullets": [
-  "Garry Tan 实测：Claude Code 里 Fable 5.2 和 Opus 5.5 解题率接近，但每个任务贵 2.80 倍，建议继续用 Opus 5.5 写代码。",
-  "Vercel 发布 Workflow SDK 5 和 Vercel Workflows，主打 agent 的启动速度、步骤间隔、加密安全和可靠性，还开源了可复用的 durable-harness。",
-  "Peter Yang 做了个免费 /fuck-cancer skill，把病人病历丢给 ChatGPT 或 Claude 就能生成一页简报、查临床试验。",
-  "Nikunj 吐槽 benchmark-maxxing 又回来了，认为只有真拿模型跑自己工作流才知道哪个好用。",
-  "Replit 和 Visa 合作做 agent 支付，还帮 StandWithJensen 网站提了限流。"
+  "Gemini 新功能：连接 Google Wallet，可生成消费图表、揪出偷偷涨价的订阅、按去年实际花销做节日预算，先在美国上线。",
+  "Aside Browser 被 builder 称为所有 AI agent 的「大解锁」，agent 直接操作浏览器的路子越来越被看好。",
+  "rauchg 演示用两个 prompt 做出纯 Web Components 应用，agent 直接复用 14 个 UI SDK 行为，不用框架。",
+  "Fable 5.2 配套的 prompt-audit 提示词火了：一条命令审计你的 Claude Code 配置和 skill。",
+  "builder 们反复在说：现在 AI 的 UX 还太差，模型便宜到用不完，但交互方式远远没跟上。"
  ],
- "sentiment": "整体偏观望加吐槽：一边是模型跑分和价格越来越难分辨，一边是 FAA 停飞、Jensen 事件这类突发新闻刷屏，builder 们有点看热闹的心态。",
- "count": 22,
- "summarised": 22,
+ "sentiment": "整体偏兴奋，主要对 agent 能直接操作浏览器、软件和真实数据这件事，同时夹杂对 AI 产品 UX 太烂的吐槽。",
+ "count": 27,
+ "summarised": 27,
  "posts": [
   {
-   "id": "https://x.com/swyx/status/2121473082372292885",
+   "id": "https://x.com/thsottiaux/status/2121845965997101118",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "Cyber team wants your feedback on Daybreak. Models, codex plugins, blue/red access, documentation, red teaming &amp; defense factory... What can we do better or improve?",
+   "date": "2026-11-15T06:01:14.000Z",
+   "summaryZh": "Cyber 团队公开征集 Daybreak 的反馈，涵盖模型、codex 插件、红蓝队访问、文档和防御工厂，问大家哪里能改进。"
+  },
+  {
+   "id": "https://x.com/nikunj/status/2121832102182453518",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Nikunj Kothari",
+   "handle": "nikunj",
+   "text": "Eagerly looking forward to reading the incident reports from this week.. https://t.co/lBWP8PxXWU",
+   "date": "2026-11-15T05:06:09.000Z",
+   "summaryZh": "他半开玩笑地说很期待读这周的事故报告，暗示最近出了不少状况。"
+  },
+  {
+   "id": "https://x.com/rauchg/status/2121825273373229134",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Guillermo Rauch",
+   "handle": "rauchg",
+   "text": "An awesome day for humanity\n\n✦        ·\n   ✧\n ·       ✦      ·\n      ✧        ✧\n         ·      ✦\n       ✧        ·    ✧ https://t.co/PFq6pBdxcS",
+   "date": "2026-11-15T04:39:01.000Z",
+   "summaryZh": "rauchg 感叹这是人类的大好日子，情绪非常正面。"
+  },
+  {
+   "id": "https://x.com/garrytan/status/2121824006819258485",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "Aside Browser is a huge unlock for every AI agent https://t.co/lo8Tgqnu9J",
+   "date": "2026-11-15T04:33:59.000Z",
+   "summaryZh": "Garry Tan 认为 Aside Browser 对每个 AI agent 都是巨大的解锁。"
+  },
+  {
+   "id": "https://x.com/swyx/status/2121815348370612414",
    "type": "x",
    "kind": "X 动态",
    "name": "Swyx",
    "handle": "swyx",
-   "text": "come to https://t.co/Jlx1Lz0P5U tmr !\n\nhttps://t.co/3Zb9a9HZlY",
-   "date": "2026-11-14T05:19:32.000Z",
-   "summaryZh": "swyx 喊大家明天来参加活动，附了链接和图片。"
+   "text": "holy shit u guys like a lot of poteto https://t.co/vZn94FofDx https://t.co/39aoCIMcSK",
+   "date": "2026-11-15T03:59:35.000Z",
+   "summaryZh": "swyx 惊讶大家这么喜欢 poteto，反应远超预期。"
   },
   {
-   "id": "https://x.com/garrytan/status/2121464508225053153",
+   "id": "https://x.com/rauchg/status/2121804295381377342",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Guillermo Rauch",
+   "handle": "rauchg",
+   "text": "Got to experience the magic of @uisdk.\n\nTwo prompts of fx + Gemini Argon. Pure Web Components. No framework.\n\nThe agent reused 14 UI SDK behaviors out of the box 🤯: window resizing, drag, menubar hover-switching,  typeahead, roving toolbar focus, 10-band EQ sliders, scoped hotkeys, ARIA, and WebMCP agent control.\n\nhttps://t.co/1Ol3xqKWJz (source linked)\nMusic by @suno.",
+   "date": "2026-11-15T03:15:39.000Z",
+   "summaryZh": "rauchg 用两个 prompt 加 Gemini 做出纯 Web Components 应用，agent 开箱复用 14 个 UI SDK 行为，包括拖拽、菜单、ARIA 和 WebMCP 控制。"
+  },
+  {
+   "id": "https://x.com/garrytan/status/2121768476775989404",
    "type": "x",
    "kind": "X 动态",
    "name": "Garry Tan",
    "handle": "garrytan",
-   "text": "Keep Opus 5.5 as your coding default in Claude Code. On 52 coding tasks in Claude Code 2.1.322, Fable 5.2 solved about as many (82.7% vs 84.6%) but cost 2.80x as much per solved task.\n\nOpus already solves most of these tasks, though, so telling the two apart will take harder ones.\n\nhttps://t.co/SfIvr9pHNg",
-   "date": "2026-11-14T04:45:28.000Z",
-   "summaryZh": "Garry Tan 建议 Claude Code 里继续默认用 Opus 5.5：52 个编码任务上 Fable 5.2 解题率 82.7% 对 84.6%，但每个解出的任务贵 2.80 倍。"
+   "text": "Do all this and use it with gbrain :-) https://t.co/WxlVS6Elf9",
+   "date": "2026-11-15T00:53:20.000Z",
+   "summaryZh": "Garry Tan 建议照做并配合 gbrain 一起用。"
   },
   {
-   "id": "https://x.com/garrytan/status/2121463161069228382",
+   "id": "https://x.com/amasad/status/2121765647168483589",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "Autonomous Businesses are here. https://t.co/4pISz57GP9",
+   "date": "2026-11-15T00:42:05.000Z",
+   "summaryZh": "Amjad 宣布「自主运营的企业」已经到来。"
+  },
+  {
+   "id": "https://x.com/swyx/status/2121757606801023085",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Swyx",
+   "handle": "swyx",
+   "text": "obviously correct, we are so suboptimal in AI UX rn it is crazy esp given existence of models too cheap to meter https://t.co/6S0eWejPXK",
+   "date": "2026-11-15T00:10:08.000Z",
+   "summaryZh": "swyx 认同现在 AI 的 UX 差得离谱，尤其模型已经便宜到可以随便用。"
+  },
+  {
+   "id": "https://x.com/joshwoodward/status/2121755283785699376",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Josh Woodward",
+   "handle": "joshwoodward",
+   "text": "Available to all Gemini app users in the USA to start\n\nhttps://t.co/LMhEmp58DA",
+   "date": "2026-11-15T00:00:54.000Z",
+   "summaryZh": "该功能先向美国所有 Gemini app 用户开放。"
+  },
+  {
+   "id": "https://x.com/joshwoodward/status/2121755282326102417",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Josh Woodward",
+   "handle": "joshwoodward",
+   "text": "New in Gemini: Connect Google Wallet for personal finance insights\n\nThis is powerful for things like:\n+ making instant charts to visualize your spend\n+ finding sneaky subscription price hikes\n+ making a holiday budget based on what you actually spent last year https://t.co/wzrBpwYpxm",
+   "date": "2026-11-15T00:00:54.000Z",
+   "summaryZh": "Gemini 新增连接 Google Wallet 做个人财务洞察，能画消费图表、发现偷偷涨价的订阅、按去年花销做节日预算。"
+  },
+  {
+   "id": "https://x.com/rauchg/status/2121739228698886454",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Guillermo Rauch",
+   "handle": "rauchg",
+   "text": "Subagents on https://t.co/3Z4NESzNKd work so well… extremely delightful. Amazing how much goodness fits in 6.33mb 😁\n\nAll my projects are built by planning with the smartest model + delegating to fast model subagents. It's a 1-line instruction in ~/.𝚏𝚡/𝙰𝙶𝙴𝙽𝚃𝚂.𝚖𝚍. https://t.co/27S2By5smT",
+   "date": "2026-11-14T22:57:06.000Z",
+   "summaryZh": "rauchg 说 subagent 用起来极爽，他的做法是用最强模型规划、再派给快模型执行，只需在 AGENTS.md 写一行指令。"
+  },
+  {
+   "id": "https://x.com/swyx/status/2121738675705029005",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Swyx",
+   "handle": "swyx",
+   "text": "there WILL be audience participation https://t.co/GqGaekFHtl",
+   "date": "2026-11-14T22:54:54.000Z",
+   "summaryZh": "swyx 预告会有观众参与环节。"
+  },
+  {
+   "id": "https://x.com/garrytan/status/2121727702025765094",
    "type": "x",
    "kind": "X 动态",
    "name": "Garry Tan",
    "handle": "garrytan",
-   "text": "Here's my open source harness eval repo and what it found\n\nhttps://t.co/v0sQymE8qM https://t.co/XWp5KliSlN",
-   "date": "2026-11-14T04:40:07.000Z",
-   "summaryZh": "Garry Tan 开源了自己的 harness 评测仓库，并公布评测结果。"
+   "text": "It turns out paper chart and copper wire and an antiquated system that is brittle and doesn’t have enough failsafe let alone any modern software is not serving the people of America properly. \n\nModernize the FAA. https://t.co/J4wbogmVSy",
+   "date": "2026-11-14T22:11:18.000Z",
+   "summaryZh": "Garry Tan 吐槽 FAA 还在用纸质航图和铜线，系统老旧缺冗余，呼吁现代化。"
   },
   {
-   "id": "https://x.com/garrytan/status/2121462697787342932",
+   "id": "https://x.com/steipete/status/2121706904917520875",
    "type": "x",
    "kind": "X 动态",
-   "name": "Garry Tan",
-   "handle": "garrytan",
-   "text": "Jensen deserves due process, not whatever is happening right now. I signed. \n\n#standwithjensen https://t.co/3yTMpxHJoC",
-   "date": "2026-11-14T04:38:16.000Z",
-   "summaryZh": "Garry Tan 签署 Stand with Jensen 请愿，认为 Jensen 应得到正当程序对待。"
+   "name": "Peter Steinberger",
+   "handle": "steipete",
+   "text": "🍿 https://t.co/nKrqXP5ZWD",
+   "date": "2026-11-14T20:48:40.000Z",
+   "summaryZh": "只发了个爆米花表情，表示在吃瓜看戏。"
   },
   {
-   "id": "https://x.com/petergyang/status/2121431117526134923",
+   "id": "https://x.com/levie/status/2121686564078297461",
    "type": "x",
    "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "And here's a story from an NVIDIA employee. Btw, I encourage anyone reading this to do your own research.\n\nhttps://t.co/Yf5NhhhArY",
-   "date": "2026-11-14T02:32:47.000Z",
-   "summaryZh": "Peter Yang 转述一位 NVIDIA 员工的说法，并提醒读者自己去做调查。"
+   "name": "Aaron Levie",
+   "handle": "levie",
+   "text": "AI models are inevitably going to keep getting better and better at all coding, tool and computer use, math, and other coding-related tasks. As a result, agents that can use software to do their work, or generate code from scratch, will improve at a faster rate than all other domains of knowledge work.\n\nOn one hand that could mean that only a small subset of work can get automated. But probably what happens is that more and more work just becomes coding-shaped to adapt to what agents are good at.\n\nYou can see it in the most recent examples of model releases in the past couple of months, where agents can generate code that becomes animated videos, games, 3D models for products, and so on. We also know that tool use gives agents the ability to work with much of the same software that people already work with. This helps in cyber, life sciences, finance, and a number of other domains.\n\nOur mental model traditionally has been that the models have to be able to know everything about anything to generate value, but in reality they *really* have to know how to use or generate software effectively combined with deep domain expertise to make the right judgment calls inside of workflows. \n\nWhen you have that powerful combination, almost everything else gets unlocked. This is why the acceleration of agents in knowledge work is only going to increase from here.",
+   "date": "2026-11-14T19:27:50.000Z",
+   "summaryZh": "Levie 认为 agent 在编程和工具使用上进步最快，结果越来越多工作会被改造成「编程形状」来适配 agent，而不只是小部分工作被自动化。"
   },
   {
-   "id": "https://x.com/petergyang/status/2121430819667579031",
+   "id": "https://x.com/zarazhangrui/status/2121654053453357342",
    "type": "x",
    "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "Here's some evidence of the questionable reporting - it's still unclear that Alice Huang is a spy despite WSJ jumping to conclusions.\n\nThis is from the Singapore gov: https://t.co/6WnZqOt0KH https://t.co/TvUEyV1bOB",
-   "date": "2026-11-14T02:31:36.000Z",
-   "summaryZh": "Peter Yang 引用新加坡政府材料，认为 WSJ 报道草率，目前仍无法证明 Alice Huang 是间谍。"
+   "name": "Zara Zhang",
+   "handle": "zarazhangrui",
+   "text": "True https://t.co/9AdjpBTBzF",
+   "date": "2026-11-14T17:18:39.000Z",
+   "summaryZh": "她只回了句「真的」，表示认同。"
   },
   {
-   "id": "https://x.com/petergyang/status/2121430386685395022",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "If you know a loved one suffering from cancer or another long-term illness:\n\n1. Upload all of the patient's medical records (e.g., to a Google Drive folder)\n\n2. Tell ChatGPT or Claude to install my free /fuck-cancer skill (just point them at the link: https://t.co/4fi5N8hsSG)\n\n3. Point the skill at the folder to create a one-page brief, research clinical trials, and more.\n\nYou're also welcome to fork the skill and modify it for other long-term conditions. \n\ntl:dr Use the full power of AI to beat shitty diseases.",
-   "date": "2026-11-14T02:29:53.000Z",
-   "summaryZh": "Peter Yang 推出免费 /fuck-cancer skill：把病人病历放进文件夹，让 ChatGPT 或 Claude 生成一页简报、查临床试验，也可 fork 改给其他慢性病用。"
-  },
-  {
-   "id": "https://x.com/amasad/status/2121428406764204199",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Amjad Masad",
-   "handle": "amasad",
-   "text": "It's been great partnering with @Visa on agentic commerce. More features and use cases are coming! https://t.co/R15wSaMQ7c",
-   "date": "2026-11-14T02:22:01.000Z",
-   "summaryZh": "Amjad 说和 Visa 在 agent 支付上合作顺利，后面还有更多功能和场景。"
-  },
-  {
-   "id": "https://x.com/amasad/status/2121389001546567837",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Amjad Masad",
-   "handle": "amasad",
-   "text": "Worked with the owner of the StandWithJensen page, which is built and hosted on Replit, to raise the rate limit. It should now scale!\n\nFeel free to share @GavinSBaker https://t.co/7fMPobz2ud",
-   "date": "2026-11-13T23:45:26.000Z",
-   "summaryZh": "Amjad 帮建在 Replit 上的 StandWithJensen 页面提高限流，现在能扛住流量了。"
-  },
-  {
-   "id": "https://x.com/amasad/status/2121377395244749097",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Amjad Masad",
-   "handle": "amasad",
-   "text": "Read the Stand with Jensen letter and consider adding your name. #standwithjensen https://t.co/eZvYNAc43r",
-   "date": "2026-11-13T22:59:18.000Z",
-   "summaryZh": "Amjad 号召大家读 Stand with Jensen 公开信并签名。"
-  },
-  {
-   "id": "https://x.com/adityaag/status/2121372222292201767",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Aditya Agarwal",
-   "handle": "adityaag",
-   "text": "We are in an extremely weird timeline right now.",
-   "date": "2026-11-13T22:38:45.000Z",
-   "summaryZh": "Aditya Agarwal 感叹现在的时间线实在太诡异了。"
-  },
-  {
-   "id": "https://x.com/danshipper/status/2121367890095960507",
+   "id": "https://x.com/danshipper/status/2121652571211510094",
    "type": "x",
    "kind": "X 动态",
    "name": "Dan Shipper",
    "handle": "danshipper",
-   "text": "stuff like this seems to be getting more common. extremely impt it gets fixed, and everyone in AI should be willing to help make sure it does https://t.co/SahVGlswJ4",
-   "date": "2026-11-13T22:21:32.000Z",
-   "summaryZh": "Dan Shipper 说这类问题越来越常见，必须修好，AI 圈的人都该出力。"
+   "text": "live look of how Fable wrote an email for me this morning https://t.co/DfgwzjXHeG",
+   "date": "2026-11-14T17:12:46.000Z",
+   "summaryZh": "Dan Shipper 调侃 Fable 早上替他写邮件的样子。"
   },
   {
-   "id": "https://x.com/nikunj/status/2121366466905981435",
+   "id": "https://x.com/petergyang/status/2121649295950762363",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "Two very useful prompts to try with Fable 5.2:\n\n\"/doctor prompt-audit\": Audits your Claude Code setup (Claude md, skills, commands) and proposes fixes.\n\n\"/claude-api prompt-audit [skill name]\": Audits one skill in depth.\n\nI wish Claude Code auto-suggested running these every time Anthropic releases a new model.\n\n📌 Watch my full tutorial on how I use Fable and Opus here: https://t.co/slyEbWvvqA",
+   "date": "2026-11-14T16:59:45.000Z",
+   "summaryZh": "Peter Yang 推荐 Fable 5.2 的两个提示词：一个审计你的 Claude Code 配置，一个深挖单个 skill，他希望 Claude Code 每次出新模型都自动提示跑一遍。"
+  },
+  {
+   "id": "https://x.com/nikunj/status/2121640157443215824",
    "type": "x",
    "kind": "X 动态",
    "name": "Nikunj Kothari",
    "handle": "nikunj",
-   "text": "Just to shed some light on how crazy the FAA ground stop is, this is only the THIRD time in modern history it's ever happened..\n\nFirst time was 9/11, second time was the NOTAM system outage in 2023, and now today (reasons unclear).\n\nHappy Friday the 13th to all the agents celebrating 💀",
-   "date": "2026-11-13T22:15:53.000Z",
-   "summaryZh": "Nikunj 说 FAA 全国停飞在现代史上只是第三次，前两次是 9/11 和 2023 年 NOTAM 故障，原因不明。"
+   "text": "2026 Startup Bookshelf 📕 https://t.co/HB7yBJg6dW",
+   "date": "2026-11-14T16:23:26.000Z",
+   "summaryZh": "Nikunj 晒出 2026 创业书单。"
   },
   {
-   "id": "https://x.com/mattturck/status/2121358328169132503",
+   "id": "https://x.com/petergyang/status/2121637240132735289",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "And please consider starring the repo to help more people discover it: https://t.co/gcEOz8a8sw",
+   "date": "2026-11-14T16:11:50.000Z",
+   "summaryZh": "Peter Yang 请大家给仓库点星，让更多人发现它。"
+  },
+  {
+   "id": "https://x.com/danshipper/status/2121626458745639162",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Dan Shipper",
+   "handle": "danshipper",
+   "text": "experiment writeup + code here: https://t.co/T92y6fRzit",
+   "date": "2026-11-14T15:29:00.000Z",
+   "summaryZh": "Dan Shipper 放出实验写法和代码链接。"
+  },
+  {
+   "id": "https://x.com/danshipper/status/2121620539655819305",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Dan Shipper",
+   "handle": "danshipper",
+   "text": "if you want all of the raw alpha from @every you should have your agent read our frontier feed\n\nwe publish all of our frontier team's experiments with AI including raw code and short writeups\n\nno faster way to get inspired 👇\nhttps://t.co/S9TTJQsfnB https://t.co/yN5rjLUWxr",
+   "date": "2026-11-14T15:05:29.000Z",
+   "summaryZh": "Dan Shipper 说 Every 把前沿团队的 AI 实验连代码带短文全公开，让 agent 去读是最快的找灵感方式。"
+  },
+  {
+   "id": "https://x.com/mattturck/status/2121608999053492408",
    "type": "x",
    "kind": "X 动态",
    "name": "Matt Turck",
    "handle": "mattturck",
-   "text": "Breaking news: VCs to opine shortly on FAA nationwide airport ground stop.",
-   "date": "2026-11-13T21:43:33.000Z",
-   "summaryZh": "Matt Turck 调侃：突发新闻，VC 们马上要对 FAA 全国机场停飞发表意见了。"
+   "text": "Great take.  NVIDIA is the one deep pocketed player that has a clear business interest in open weights AI, and was willing to make founder-type big bets. What happens now? https://t.co/bZF2QMkz5K",
+   "date": "2026-11-14T14:19:37.000Z",
+   "summaryZh": "Matt Turck 认同 NVIDIA 是唯一有明确商业利益、又敢下重注支持开放权重 AI 的巨头，并追问接下来会怎样。"
   },
   {
-   "id": "https://x.com/rauchg/status/2121351007615811799",
+   "id": "https://x.com/amasad/status/2121549054173757554",
    "type": "x",
    "kind": "X 动态",
-   "name": "Guillermo Rauch",
-   "handle": "rauchg",
-   "text": "Co-sign https://t.co/BaaFgrSaXG",
-   "date": "2026-11-13T21:14:27.000Z",
-   "summaryZh": "Rauch 转发并附议一条内容，附了链接。"
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "Technology is inherently recursively self-improving and the degree of autonomy has been going up overtime. AI is an accelerant but it didn’t not start this cycle.\n\nDouglas Engelbart understood this. https://t.co/J3Zp1YNFXC",
+   "date": "2026-11-14T10:21:25.000Z",
+   "summaryZh": "Amjad 认为技术本身就在递归自我改进，AI 只是加速器，这个循环不是 AI 才开始的，Douglas Engelbart 早就看明白了。"
   },
   {
-   "id": "https://x.com/rauchg/status/2121347136965210286",
+   "id": "https://x.com/amasad/status/2121519931741127144",
    "type": "x",
    "kind": "X 动态",
-   "name": "Guillermo Rauch",
-   "handle": "rauchg",
-   "text": "Vercel Sandbox is inevitable https://t.co/w25tdheX95",
-   "date": "2026-11-13T20:59:04.000Z",
-   "summaryZh": "Rauch 断言 Vercel Sandbox 是大势所趋。"
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "We’ve entered Murphy’s world. Anything that can go wrong will go wrong. With billions of things happening at once, recursively interdependent and accelerating rapidly, what’s once considered a rare failure is now a daily thing.",
+   "date": "2026-11-14T08:25:42.000Z",
+   "summaryZh": "Amjad 说我们进入了墨菲定律的世界：数十亿件事同时发生、互相依赖又加速，以前的罕见故障现在天天出现。"
   },
   {
-   "id": "https://x.com/nikunj/status/2121320899161010360",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nikunj Kothari",
-   "handle": "nikunj",
-   "text": "I thought after Llama 4 we had stopped benchmark-maxxing as a flex.. but it seems like the cartel is back again. \n\nThere’s no substitute to really using the models for your workflows to understand the best ones that actually work for your workflows. \n\nIn reality, there’s only very very few benchmarks that truly matter, and the real ones know. \n\nRest is primarily posturing or hill climbing on one just to use as marketing (which in reality does work for a select group of companies but won’t last over time)",
-   "date": "2026-11-13T19:14:49.000Z",
-   "summaryZh": "Nikunj 认为 Llama 4 之后大家本该不刷榜了，现在 benchmark-maxxing 又回来了；真正有用的基准很少，还是得拿模型跑自己的流程才知道好坏。"
-  },
-  {
-   "id": "https://x.com/adityaag/status/2121281677238604148",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Aditya Agarwal",
-   "handle": "adityaag",
-   "text": "Proud of our companies in the AI 100.\n\nBaseten, Render, Profound, Replit, Gamma, Cog and Density. https://t.co/Z3s327MaF0",
-   "date": "2026-11-13T16:38:58.000Z",
-   "summaryZh": "Aditya Agarwal 为入选 AI 100 的被投公司感到骄傲，点名 Baseten、Render、Profound、Replit、Gamma、Cog 和 Density。"
-  },
-  {
-   "id": "https://x.com/rauchg/status/2121277727940776114",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Guillermo Rauch",
-   "handle": "rauchg",
-   "text": "Workflow SDK 5 and Vercel Workflows are a monumental step forward for agents.\n\n◾ The 'time to first step' and 'time between steps' have massively improved.\n\n◾ We doubled down on encryption and security.\n\n◾ The reliability of the overall system has been proven at massive scale. We've ironed out many subtle details and exercised many disaster-recovery scenarios.\n\n◾ We made the underlying durability log reusable for any agent harness. 𝚍𝚞𝚛𝚊𝚋𝚕𝚎-𝚑𝚊𝚛𝚗𝚎𝚜𝚜 was born.\n\nCheck it out:",
-   "date": "2026-11-13T16:23:16.000Z",
-   "summaryZh": "Rauch 发布 Workflow SDK 5 和 Vercel Workflows：首步时间和步骤间隔大幅改善，加密安全加强，可靠性经大规模验证，还把持久化日志做成可复用的 durable-harness。"
-  },
-  {
-   "id": "https://x.com/danshipper/status/2121248233510818003",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Dan Shipper",
-   "handle": "danshipper",
-   "text": "why teams still pay for software even when Fable 5.2 can vibe code anything:\nhttps://t.co/x2ijjgwjaN https://t.co/IqaqbBkjLW",
-   "date": "2026-11-13T14:26:04.000Z",
-   "summaryZh": "Dan Shipper 探讨：Fable 5.2 都能随手 vibe code 出东西了，为什么团队还在为软件付费。"
-  },
-  {
-   "id": "https://x.com/danshipper/status/2121243400293007866",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Dan Shipper",
-   "handle": "danshipper",
-   "text": "musing: \n\nthe most important formula in AI https://t.co/YWBzxClRSb https://t.co/PeIwGrrziD",
-   "date": "2026-11-13T14:06:52.000Z",
-   "summaryZh": "Dan Shipper 分享一个思考：AI 里最重要的公式是什么。"
-  },
-  {
-   "id": "https://www.youtube.com/playlist?list=PLOhHNjZItNnMm5tdW61JpnyxeYH5NDDx8",
+   "id": "https://www.youtube.com/@RedpointAI",
    "type": "podcast",
    "kind": "播客",
-   "name": "Training Data",
+   "name": "Unsupervised Learning",
    "handle": "",
-   "title": "A Model For Everyone: How Ronak From Trajectory Is Building Products For Continual Learning",
+   "title": "Ep 97: Jev Creator on Decision Models, Benchmark Fatigue &amp; Why the Labs Missed It",
    "text": "",
-   "date": "2026-11-05T10:00:00.000Z",
-   "summaryZh": "Training Data 播客请来 Trajectory 的 Ronak，聊怎么为持续学习做产品、做一个面向所有人的模型。"
+   "date": "2026-11-05T14:05:50.000Z",
+   "summaryZh": "播客第 97 期请来 Jev 创作者，聊决策模型、基准测试疲劳，以及为什么各大实验室都错过了它。"
   }
  ]
 }
