@@ -8,7 +8,7 @@
  *   Variable name: AI
  *   Then redeploy.
  *
- * mode "titles"    — up to 10 titles, qwen3 system prompt, JSON array back
+ * mode "titles"    — up to 10 titles, medical system prompt, JSON array back
  * mode "selection" — one highlighted span, short medical prompt
  * mode "quotes"    — 3 or 4 verbatim excerpts plus Chinese, for the share card
  * Drug names are masked as [D1]… before the model call and restored after.
@@ -16,7 +16,7 @@
  */
 import {
   MT_MODEL, TITLE_SYSTEM, SELECTION_SYSTEM, TITLE_BATCH, DEFAULT_OVERRIDES,
-  SELECTION_MAX, TITLE_MAX,
+  SELECTION_MAX, TITLE_MAX, mtRequest,
   maskDrugs, restoreDrugs, applyGlossary, parseTranslationArray, isTranslatedZh, stripTitleStop,
   extractAiText, isQuotaError, normTitle, sha256Hex, settleTitleZh,
 } from '../_lib/mt.js';
@@ -122,14 +122,7 @@ async function runModel(env, system, user, maxTokens) {
   assertAi(env);
   let result;
   try {
-    result = await env.AI.run(MT_MODEL, {
-      messages: [
-        { role: 'system', content: system },
-        { role: 'user', content: '/no_think\n' + user },
-      ],
-      temperature: 0.1,
-      max_tokens: maxTokens,
-    });
+    result = await env.AI.run(MT_MODEL, mtRequest(system, user, maxTokens));
   } catch (err) {
     if (isQuotaError(err)) {
       const e = new Error('quota');

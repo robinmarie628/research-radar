@@ -22,7 +22,7 @@ import {
 } from './quotes.js';
 import { handleTranslate, __setMtResources } from '../api/translate.js';
 import { extractPassages, extractHtmlPassages, openAccessPassages } from './fulltext.js';
-import { isTranslatedZh } from './mt.js';
+import { isTranslatedZh, MT_MODEL } from './mt.js';
 
 const require = createRequire(import.meta.url);
 const cite = require('../../assets/cite.js');
@@ -513,9 +513,13 @@ test('quotes mode translates a line again when the model copies the English', as
   let calls = 0;
   const env = {
     AI: {
-      async run(_model, payload) {
+      async run(model, payload) {
         calls++;
-        const user = payload.messages[1].content.replace(/^\/no_think\n/, '');
+        assert.equal(model, MT_MODEL);
+        assert.equal(payload.chat_template_kwargs.enable_thinking, false);
+        assert.equal(payload.max_completion_tokens, 2000);
+        const user = payload.messages[1].content;
+        assert.equal(user.includes('/no_think'), false);
         if (user.includes('[0]')) {
           return { response: JSON.stringify({ quotes: [
             { role: 'finding', i: 0, zh: '特定抗抑郁药对QTc间期的影响在抑郁症成人中有所不同。' },
@@ -547,8 +551,11 @@ test('quotes mode translates a plain abstract instead of returning 502', async (
   const abstract = 'Methods We conducted a prospective cohort study. Results Antidepressant treatment was associated with QTc prolongation and early major adverse cardiovascular events. Conclusions Clinicians should monitor electrocardiograms when initiating treatment.';
   const env = {
     AI: {
-      async run(_model, payload) {
-        const user = payload.messages[1].content.replace(/^\/no_think\n/, '');
+      async run(model, payload) {
+        assert.equal(model, MT_MODEL);
+        assert.equal(payload.chat_template_kwargs.enable_thinking, false);
+        const user = payload.messages[1].content;
+        assert.equal(user.includes('/no_think'), false);
         if (user.includes('[0]')) return { response: '{"quotes":[]}' };
         const arr = JSON.parse(user);
         return { response: JSON.stringify(arr.map(() => '译文：抗抑郁治疗与QTc延长及早期主要心血管不良事件相关，开始治疗时应监测心电图。')) };

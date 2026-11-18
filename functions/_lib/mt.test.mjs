@@ -4,11 +4,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
-  TITLE_SYSTEM, DEFAULT_OVERRIDES, maskDrugs, restoreDrugs, applyGlossary, stripTitleStop,
+  TITLE_SYSTEM, SELECTION_SYSTEM, DEFAULT_OVERRIDES, maskDrugs, restoreDrugs, applyGlossary, stripTitleStop,
   parseTranslationArray, isDrugToken, normTitle, titleZhCutoff, TITLE_ZH_DAYS, isAcronym,
-  extractAiText, preserveTitleContrast, exactTitleZh, settleTitleZh, sha256Hex,
+  extractAiText, stripModelThinking, mtRequest, MT_MODEL, MT_MAX_TOKENS,
+  preserveTitleContrast, exactTitleZh, settleTitleZh, sha256Hex,
 } from './mt.js';
 import { handleTranslate, __setMtResources } from '../api/translate.js';
+import { parseQuoteResponse } from './quotes.js';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const glossary = JSON.parse(fs.readFileSync(path.join(root, 'data/glossary.json'), 'utf8'));
@@ -159,11 +161,57 @@ test('JSON array parser drops think tags and fences', () => {
   const raw = '<think>secret</think>\n```json\n["甲","乙"]\n```';
   assert.deepEqual(parseTranslationArray(raw, 2), ['甲', '乙']);
   assert.throws(() => parseTranslationArray('["甲"]', 2));
+  assert.throws(() => parseTranslationArray('<think>still going and no answer', 1));
+  const quoted = parseQuoteResponse('<think>{"quotes":[{"role":"finding","i":0,"zh":"思考"}]}</think>{"quotes":[{"role":"finding","i":1,"zh":"真正的译文"}]}');
+  assert.equal(quoted.length, 1);
+  assert.equal(quoted[0].i, 1);
+  assert.equal(quoted[0].zh, '真正的译文');
+  assert.deepEqual(parseQuoteResponse('<think>{"quotes":[{"role":"finding","i":0,"zh":"未写完"}]}'), []);
 });
 
-test('extractAiText reads Workers AI and chat-completions shapes', () => {
+test('extractAiText reads the GLM chat completion and ignores reasoning', () => {
   assert.equal(extractAiText({ response: '甲' }), '甲');
   assert.equal(extractAiText({ choices: [{ message: { content: '乙' } }] }), '乙');
+  assert.equal(extractAiText({
+    choices: [{
+      message: {
+        content: '<think>draft the wording</think>心力衰竭失代偿',
+        reasoning_content: 'draft the wording',
+      },
+      finish_reason: 'stop',
+    }],
+  }), '心力衰竭失代偿');
+  assert.equal(extractAiText({
+    result: {
+      choices: [{ message: { content: '<think></think>["甲"]' } }],
+    },
+  }), '["甲"]');
+  assert.equal(extractAiText({
+    choices: [{
+      finish_reason: 'length',
+      message: { content: '<think>spent the completion cap', reasoning_content: 'spent the completion cap' },
+    }],
+  }), '');
+  assert.equal(extractAiText({
+    choices: [{ message: { content: null, reasoning_content: '只在思考里出现的译文' } }],
+  }), '');
+  assert.equal(stripModelThinking('</think>译文'), '译文');
+});
+
+test('GLM request disables thinking and caps completion tokens', () => {
+  const req = mtRequest(TITLE_SYSTEM, '["Heart failure"]', MT_MAX_TOKENS);
+  assert.equal(MT_MODEL, '@cf/zai-org/glm-4.7-flash');
+  assert.equal(req.temperature, 0.1);
+  assert.equal(req.max_tokens, 2000);
+  assert.equal(req.max_completion_tokens, 2000);
+  assert.deepEqual(req.chat_template_kwargs, { enable_thinking: false });
+  assert.equal(req.messages[0].content, TITLE_SYSTEM);
+  assert.equal(req.messages[1].content, '["Heart failure"]');
+  assert.equal(req.messages[1].content.includes('/no_think'), false);
+  const short = mtRequest(SELECTION_SYSTEM, 'Heart failure', 50.9);
+  assert.equal(short.max_completion_tokens, 50);
+  assert.equal(short.max_tokens, 50);
+  assert.equal(short.messages[0].content, SELECTION_SYSTEM);
 });
 
 test('default overrides match the data file', () => {
@@ -178,10 +226,14 @@ test('handler masks drugs, restores them, and caches nothing without the Cache A
     AI: {
       async run(model, input) {
         calls.push({ model, input });
-        const user = input.messages[1].content.replace(/^\/no_think\n/, '');
+        const user = input.messages[1].content;
         const arr = JSON.parse(user);
         assert.equal(input.temperature, 0.1);
+        assert.equal(input.max_tokens, 2000);
+        assert.equal(input.max_completion_tokens, 2000);
+        assert.deepEqual(input.chat_template_kwargs, { enable_thinking: false });
         assert.equal(input.messages[0].content, TITLE_SYSTEM);
+        assert.equal(user.includes('/no_think'), false);
         assert.doesNotMatch(arr[0], /durvalumab/);
         assert.match(arr[0], /\[D1\]/);
         return { response: JSON.stringify(arr.map(t => `译${t}。`)) };
@@ -205,7 +257,8 @@ test('handler masks drugs, restores them, and caches nothing without the Cache A
   assert.equal(data.items[0].zh.endsWith('。'), false);
   assert.equal(data.items[0].zh.endsWith('.'), false);
   assert.equal(calls.length, 1);
-  assert.match(calls[0].model, /qwen3-30b-a3b-fp8/);
+  assert.equal(calls[0].model, MT_MODEL);
+  assert.equal(calls[0].model.includes('qwen'), false);
 });
 
 const AMD_EN = 'Management of Neovascular Age-Related Macular Degeneration in Routine US Clinical Practice: Impact of Delayed Treatment Initiation.';
@@ -315,6 +368,146 @@ test('selection over 1500 characters is rejected before the model', async () => 
   assert.equal(res.status, 400);
   assert.equal((await res.json()).error, 'too_long');
   assert.equal(called, false);
+});
+
+function glmChoice(content, extra = {}) {
+  return {
+    id: 'chatcmpl-test',
+    object: 'chat.completion',
+    choices: [{
+      index: 0,
+      finish_reason: extra.finish_reason || 'stop',
+      message: {
+        role: 'assistant',
+        content,
+        refusal: null,
+        reasoning_content: extra.reasoning_content || '',
+      },
+    }],
+    usage: {
+      prompt_tokens: 20,
+      completion_tokens: 12,
+      total_tokens: 32,
+      completion_tokens_details: { reasoning_tokens: extra.reasoning_tokens || 0 },
+    },
+  };
+}
+
+test('titles, selection, and quotes all call GLM with thinking off', async () => {
+  __setMtResources({ glossary: [], overrides: [] });
+  const origin = 'https://research-radar-f5j.pages.dev';
+  const seen = [];
+  const env = {
+    AI: {
+      async run(model, input) {
+        seen.push({ model, input, mode: input.messages[0].content.slice(0, 24) });
+        const user = input.messages[1].content;
+        assert.equal(model, MT_MODEL);
+        assert.equal(input.chat_template_kwargs.enable_thinking, false);
+        assert.equal(input.max_completion_tokens, MT_MAX_TOKENS);
+        assert.equal(user.includes('/no_think'), false);
+        if (user.startsWith('[')) {
+          const arr = JSON.parse(user);
+          return glmChoice(JSON.stringify(arr.map(() => '心力衰竭的中文译文')));
+        }
+        if (user.includes('[0]')) {
+          return glmChoice(JSON.stringify({
+            quotes: [{ role: 'finding', i: 0, zh: '早期复查容量状态比常规护理降低了死亡率。' }],
+          }));
+        }
+        return glmChoice('<think>pick the medical term</think>心力衰竭失代偿');
+      },
+    },
+  };
+  const post = (body) => handleTranslate(new Request(origin + '/api/translate', {
+    method: 'POST',
+    headers: { Origin: origin, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  }), env);
+
+  const titles = await post({ mode: 'titles', items: [{ id: '10.1/a', text: 'Heart failure decompensation' }] });
+  assert.equal(titles.status, 200);
+  const titleBody = await titles.json();
+  assert.equal(titleBody.items[0].zh, '心力衰竭的中文译文');
+  assert.equal(titleBody.items[0].cached, false);
+
+  const selection = await post({ mode: 'selection', text: 'Heart failure decompensation' });
+  assert.equal(selection.status, 200);
+  const selBody = await selection.json();
+  assert.equal(selBody.zh, '心力衰竭失代偿');
+  assert.equal(selBody.zh.includes('pick the medical'), false);
+  assert.equal(selBody.zh.includes('<think>'), false);
+
+  const quoteAbstract = 'Thus, early review of volume status reduced mortality compared with usual care among adults with heart failure.';
+  const quotes = await post({
+    mode: 'quotes',
+    doi: '10.1/glm',
+    abstract: quoteAbstract,
+  });
+  assert.equal(quotes.status, 200);
+  const quoteBody = await quotes.json();
+  assert.ok(quoteBody.quotes.length >= 1);
+  for (const q of quoteBody.quotes) {
+    assert.equal(quoteAbstract.includes(q.en.replace(/^…\s*/, '').replace(/\s*…$/, '').split(' … ')[0]), true);
+    assert.equal(q.zh.includes('<think>'), false);
+    assert.equal(q.zh.includes('pick the medical'), false);
+    assert.match(q.zh, /[\u4e00-\u9fff]/);
+  }
+  assert.equal(seen.length >= 3, true);
+  assert.equal(seen.every(call => call.model === '@cf/zai-org/glm-4.7-flash'), true);
+});
+
+test('a reasoning-only GLM completion is not cached as a translation', async () => {
+  __setMtResources({ glossary: [], overrides: [] });
+  const origin = 'https://research-radar-f5j.pages.dev';
+  const store = new Map();
+  const previous = globalThis.caches;
+  globalThis.caches = {
+    default: {
+      async match(req) {
+        const hit = store.get(new URL(req.url).pathname);
+        return hit ? new Response(hit, { headers: { 'Content-Type': 'application/json' } }) : undefined;
+      },
+      async put(req, res) {
+        store.set(new URL(req.url).pathname, await res.text());
+      },
+    },
+  };
+  try {
+    const res = await handleTranslate(new Request(origin + '/api/translate', {
+      method: 'POST',
+      headers: { Origin: origin },
+      body: JSON.stringify({ mode: 'selection', text: 'Heart failure decompensation' }),
+    }), {
+      AI: {
+        async run() {
+          return glmChoice(null, {
+            finish_reason: 'length',
+            reasoning_content: 'The user wants a translation of heart failure.',
+            reasoning_tokens: 1800,
+          });
+        },
+      },
+    });
+    assert.equal(res.status, 502);
+    assert.equal((await res.json()).error, 'ai_failed');
+    assert.equal(store.size, 0);
+  } finally {
+    if (previous === undefined) delete globalThis.caches;
+    else globalThis.caches = previous;
+  }
+});
+
+test('active translation files do not call the retiring Qwen model', () => {
+  const retired = '@cf/qwen/qwen3-30b-a3b-fp8';
+  for (const rel of ['functions/_lib/mt.js', 'functions/api/translate.js', 'functions/_lib/quotes.js']) {
+    const src = fs.readFileSync(path.join(root, rel), 'utf8');
+    assert.equal(src.includes(retired), false, rel);
+    assert.equal(src.includes('/no_think'), false, rel);
+  }
+  assert.match(fs.readFileSync(path.join(root, 'functions/_lib/mt.js'), 'utf8'), /@cf\/zai-org\/glm-4\.7-flash/);
+  const seed = fs.readFileSync(path.join(root, 'data/title-zh.json'), 'utf8');
+  assert.match(seed, /qwen3-30b-a3b-fp8/);
 });
 
 test('the journal pool drops dates older than 15 days and keeps a favorite locally', () => {
