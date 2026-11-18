@@ -1,219 +1,319 @@
 {
- "date": "2026-11-17",
- "generatedAt": "2026-11-17T04:15:17Z",
+ "date": "2026-11-18",
+ "generatedAt": "2026-11-18T03:15:23Z",
  "model": "deepseek-flash",
- "headline": "Codex 修好了容量报错，Anthropic 设计师聊 Claude 设计套路，有人做了毫秒级 X 帖子渲染器",
+ "headline": "AI 编码终于能用了，token 消耗还看不到顶",
  "bullets": [
-  "Codex 团队称已修复困扰用户的「模型容量不足」报错。",
-  "Anthropic 的 Nate Parrott 透露，Claude 做设计总爱用衬线字、米白底、橙色和卡片边条，他们在提示词里明确禁用才好转。",
-  "Vercel 的 rauchg 发布 xeet：纯 Rust/wasm 的 X 帖子渲染器，约 1ms 出 PNG，不用浏览器。",
-  "Dan Shipper 团队做出能自我迭代的「技能」，写上下文摘要能达到他 80% 的口味。",
-  "Nate Parrott 说原型周期从几周压到一两天，但把东西交到用户手里验证的周期没变短。"
+  "Levie 说 token 人均消耗曲线还没见顶，编码模型最近才真正好用，接下来是工具和电脑使用。",
+  "Google Labs 收编 Howie 团队，要把日历排程能力做进面向小企业的 AI 工具。",
+  "rauchg 提「拥有自己的智能路线图」：开放 SDK、网关选模型、自己管 trace 和数据、私有推理。",
+  "Gemini Notebook 能把资料一键变成可分享的交互网站。",
+  "builder 们吐槽 macOS 权限弹窗太多，agent 干活还得人盯着。"
  ],
- "sentiment": "整体偏兴奋，builder 们对 agent 工具链越做越细、原型速度大幅提升感到乐观，也夹杂对模型设计同质化的吐槽。",
- "count": 20,
- "summarised": 20,
+ "sentiment": "整体偏兴奋，觉得编码 agent 刚跨过可用门槛、token 消耗远没到头，同时对基础设施混战和权限摩擦有点吐槽。",
+ "count": 30,
+ "summarised": 30,
  "posts": [
   {
-   "id": "https://x.com/thsottiaux/status/2122206990101536852",
+   "id": "https://x.com/garrytan/status/2122576951080792543",
    "type": "x",
    "kind": "X 动态",
-   "name": "Thibault Sottiaux",
-   "handle": "thsottiaux",
-   "text": "Codex team might have actually fixed the \"model at capacity\" errors that have been pestering you. https://t.co/EgS0HkOATY",
-   "date": "2026-11-16T05:55:49.000Z",
-   "summaryZh": "Codex 团队可能已经修好了那个一直烦人的「模型容量不足」报错。"
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "Fun project for GBrain coming in the next few weeks using Vorflux as my software factory: GBrain backend engine written in Rust\n\nThis will replace postgres+pgvector or pglite as the backing store for vector search, graph search, embeddings, RAG and HNSW",
+   "date": "2026-11-17T06:25:55.000Z",
+   "summaryZh": "Garry Tan 说几周内用 Vorflux 做 GBrain 的 Rust 后端引擎，替掉 postgres+pgvector 做向量、图、RAG 和 HNSW 检索。"
   },
   {
-   "id": "https://x.com/amasad/status/2122185760799609017",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Amjad Masad",
-   "handle": "amasad",
-   "text": "It’s been an interesting 48 hours. https://t.co/t4IOusuJn0",
-   "date": "2026-11-16T04:31:28.000Z",
-   "summaryZh": "Amjad 说过去 48 小时很有意思，但没展开说是什么事。"
-  },
-  {
-   "id": "https://x.com/rauchg/status/2122184794209714368",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Guillermo Rauch",
-   "handle": "rauchg",
-   "text": "Introducing 𝚡𝚎𝚎𝚝: https://t.co/YaLEMbmKwf.\n\nA hermetic, pixel-perfect X post renderer in safe Rust / wasm. Zero browser, network, filesystem, system fonts. Renders a post to PNG in ~1ms (and 0.4 ms for @jack's \"setting up my twttr\" 😁).\n\nX is the global town square, and the medium is the message. Being able to preview what things will look like before posting is great for both humans and agents.\n\nRendering with xeet is is 100x-1000x faster than booting up a browser and taking a screenshot, yet it's just as accurate.\n\nIt reproduces Blink & HarfBuzz text shaping, 1/64px line breaking, RTL bidi, 28 Chirp font subsets, CJK/Math/Emoji fallbacks, \"Show more\" rules, etc. It's the kind of thing that would be wildly impractical, if not impossible, for a human engineer to pull off.\n\nExcept 𝚡𝚎𝚎𝚝 is structured as an \"autorepo.\" An oracle boots up Chrome, and verifies tens of thousands of text layout rules. A CI canary then watches the evolution of the original, and files signed PRs for agents to act on. It was conceived from the ground up around 'verification engineering', and the result speaks for itself.\n\nEnjoy!",
-   "date": "2026-11-16T04:27:37.000Z",
-   "summaryZh": "rauchg 发布 xeet：纯 Rust/wasm 的 X 帖子渲染器，不依赖浏览器和网络，约 1ms 渲染成 PNG，比截图快百倍以上。"
-  },
-  {
-   "id": "https://x.com/trq212/status/2122154124024381828",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thariq",
-   "handle": "trq212",
-   "text": "a new arena and two new characters https://t.co/e8nHEldjoD https://t.co/hLIVplRPrW",
-   "date": "2026-11-16T02:25:45.000Z",
-   "summaryZh": "作者预告上线一个新竞技场和两个新角色。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2122132596352327816",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "\"When you ask Claude to create something, it's operating in a fresh context where it thinks: Oh my God, the user asked me to make an app. I'm going to invent the most brilliant visual style.\"\n\nFrom @nateparrott at Anthropic on how to get Claude to avoid the same designs:\n\n\"It's going to be serif text, an off-white background, orange, and these bars on the edges of the cards. Because in Claude's mind, it's only ever done this once, so it thinks this is totally original.\n\nSo in our Claude Design prompt, we tell Claude, 'For this particular model, you tend to overly bias toward these two fonts and colors. So don't use them unless the user asks you to.' That tends to help a lot.\"\n\n📌 Watch our full episode here: https://t.co/HPX5HjXafX",
-   "date": "2026-11-16T01:00:12.000Z",
-   "summaryZh": "Anthropic 的 Nate Parrott 说 Claude 每次做设计都以为自己是首创，其实总用衬线字、米白底、橙色和卡片边条，只能在提示词里明确禁用。"
-  },
-  {
-   "id": "https://x.com/rauchg/status/2122127120055034258",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Guillermo Rauch",
-   "handle": "rauchg",
-   "text": "AI models are getting really good at naming things. I created a little CLI to diagnose system slowdowns, and it named it 𝚑𝚘𝚐 🐖, which I love. Given they're already good at cache invalidation, maybe computer science's hardest problems are solved after all 😂",
-   "date": "2026-11-16T00:38:27.000Z",
-   "summaryZh": "rauchg 调侃 AI 起名已经很在行，他写的诊断 CLI 被命名为 hog，还开玩笑说计算机科学两大难题都解决了。"
-  },
-  {
-   "id": "https://x.com/thenanyu/status/2122096965865664924",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nan Yu",
-   "handle": "thenanyu",
-   "text": "What’s the best home automation hub out there if I just wanna use Codex to control everything?\n\nIdeally, something plug-and-play that my Codex just sees as another computer, more or less https://t.co/VEvCTzc1zi",
-   "date": "2026-11-15T22:38:37.000Z",
-   "summaryZh": "作者在问有没有即插即用的智能家居中枢，能让 Codex 像操作一台电脑一样控制全家。"
-  },
-  {
-   "id": "https://x.com/thenanyu/status/2122096121946468451",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nan Yu",
-   "handle": "thenanyu",
-   "text": "It’s cute that my Waymo turns on its windshield wipers in the rain",
-   "date": "2026-11-15T22:35:16.000Z",
-   "summaryZh": "作者觉得自己的 Waymo 下雨会开雨刷这件事很可爱。"
-  },
-  {
-   "id": "https://x.com/danshipper/status/2122091033001337134",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Dan Shipper",
-   "handle": "danshipper",
-   "text": "we've been working hard on compounding skills lately (skills that get better every time you use them) \n\nand i think @hammer_mt finally cracked it\n\nthis weekend i made a skill to help us write context window summaries, and used autoresearch to iterate until it hit 80% of my taste on summaries vs. a no-skill baseline\n\nfull writeup for your agnets on the @every frontier feed: https://t.co/2MT0NTucoK",
-   "date": "2026-11-15T22:15:03.000Z",
-   "summaryZh": "Dan Shipper 团队做出会越用越好的「技能」，用自动研究迭代出的摘要技能达到他 80% 的口味。"
-  },
-  {
-   "id": "https://x.com/swyx/status/2122066060769952161",
+   "id": "https://x.com/swyx/status/2122566522094915765",
    "type": "x",
    "kind": "X 动态",
    "name": "Swyx",
    "handle": "swyx",
-   "text": "apparently it is pretty normal\n\nhttps://t.co/br8TZ6oKOM",
-   "date": "2026-11-15T20:35:49.000Z",
-   "summaryZh": "swyx 表示某件事 apparently 挺正常的，没多解释。"
+   "text": "together deleted megkernels\n\nhttps://t.co/3mcdXAmmdR",
+   "date": "2026-11-17T05:44:28.000Z",
+   "summaryZh": "swyx 提到 Together 删掉了 megkernels。"
   },
   {
-   "id": "https://x.com/amasad/status/2122062419010961439",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Amjad Masad",
-   "handle": "amasad",
-   "text": "Good summary. https://t.co/KThCywHmZt",
-   "date": "2026-11-15T20:21:21.000Z",
-   "summaryZh": "Amjad 转发并称赞一份总结写得好。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2122060856498524510",
+   "id": "https://x.com/petergyang/status/2122558387162652701",
    "type": "x",
    "kind": "X 动态",
    "name": "Peter Yang",
    "handle": "petergyang",
-   "text": "\"Do you find being a designer more fun now that you can easily prototype everything?\"\n\nThat's the question I asked @nateparrott (Anthropic). His answer:\n\n\"I'm a little weird in that I have an engineering background. Before Anthropic, I worked at The Browser Company, where we made a browser called Arc.\n\nWe spent a year in pre-production before we released Arc. It took us a couple weeks to build out each idea and see which worked.\n\nNow at Anthropic, you can kind of do that in one to two days.\n\nSo you've really compressed the cycle of building. What you haven't compressed is the cycle of putting it in people's hands and understanding if they're going to use it.\"\n\n📌 Watch our full episode here: https://t.co/HPX5HjXafX",
-   "date": "2026-11-15T20:15:08.000Z",
-   "summaryZh": "Nate Parrott 说现在一两天就能做出原型，但让用户真正用起来、验证需求的周期并没有变快。"
+   "text": "This is like AI slop it literally says nothing? Did Megaspeed violate laws or not? https://t.co/SnFyxhyIBw",
+   "date": "2026-11-17T05:12:09.000Z",
+   "summaryZh": "Peter Yang 吐槽一篇关于 Megaspeed 的文章像 AI 废话，根本没讲清有没有违法。"
   },
   {
-   "id": "https://x.com/nikunj/status/2122042319419609105",
+   "id": "https://x.com/nikunj/status/2122543500814336281",
    "type": "x",
    "kind": "X 动态",
    "name": "Nikunj Kothari",
    "handle": "nikunj",
-   "text": "Next guest up in this weekly series is @kanavg1, cofounder of @coreauto on Friday, Nov 20th at noon. \n\nFor this session, we'll be chatting about all things RL (methods, synthetic data, loops, automation etc)\n\nFormat:\n> 60 minute sessions (IRL only) in SF\n> For the first 45 mins, I get to ask the guest spicy questions about their expertise\n> For the last 15 mins, they get to ask me anything they want to learn about venture\n> All off the record, chatham house rules\n> Open to 15 guests who listen in and can ask some of their own questions\n\nRegister here if you want to join, and subscribe to the Luma for future guests: https://t.co/gOHqA2XtZB",
-   "date": "2026-11-15T19:01:29.000Z",
-   "summaryZh": "Nikunj 预告周五访谈 CoreAuto 联创 Kanav，聊 RL 方法、合成数据和自动化，线下限 15 人。"
+   "text": "2026 infra wars in a nutshell..\n\nVibe coding in Q1 \nHarnesses in Q2 \nSandboxes in Q3 \nAgentic CI in Q4\n\nMore providers than I can keep track of. \n\nAny guesses for what comes next?",
+   "date": "2026-11-17T04:13:00.000Z",
+   "summaryZh": "Nikunj 把 2026 基础设施战争总结成四季度：Q1 vibe coding、Q2 harness、Q3 沙箱、Q4 agentic CI，供应商多到数不清。"
   },
   {
-   "id": "https://x.com/petergyang/status/2122039657001300125",
+   "id": "https://x.com/danshipper/status/2122541401804054826",
    "type": "x",
    "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "Alright I can't help it:\n\nNYTimes published this article that \"US intelligence had believed\" Alice Huang was a spy: https://t.co/DQSjGBRsaE\n\nBut there's still no proof one way or another whether she was a spy or not, per CNN: https://t.co/c5lwbDl2R5\n\nSo where did this spy narrative come from? Show us the evidence?",
-   "date": "2026-11-15T18:50:54.000Z",
-   "summaryZh": "Peter Yang 质疑 Alice Huang 的间谍说法：纽约时报说情报界「曾认为」她是间谍，但 CNN 说没有证据，他要求拿出证据。"
+   "name": "Dan Shipper",
+   "handle": "danshipper",
+   "text": "musing:\n\nwhat if the best way to rank a feed in the AI age is proof of work. \n\nallow agents to report how many tokens they’ve used based on a piece of content, and use that to rank it on a feed that humans and agents read \n\nhttps://t.co/HoJvzKELBP https://t.co/ZJe1gZMFbM",
+   "date": "2026-11-17T04:04:39.000Z",
+   "summaryZh": "Dan Shipper 设想用「工作量证明」排序信息流：让 agent 报告为某内容花了多少 token，据此给人和 agent 共读的 feed 排名。"
   },
   {
-   "id": "https://x.com/swyx/status/2122032217430032548",
+   "id": "https://x.com/garrytan/status/2122517681740124271",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "If you want individual employee brains rolling up into team brains and then a top level company brain, GBrain's Hosted option supports it out of the box \n\nMemory works the way you want it to\n\nhttps://t.co/3z3j2G3Oyl https://t.co/myV5KlcvmK",
+   "date": "2026-11-17T02:30:24.000Z",
+   "summaryZh": "Garry Tan 说 GBrain 托管版开箱支持个人记忆汇总成团队记忆、再汇总成公司记忆。"
+  },
+  {
+   "id": "https://x.com/joshwoodward/status/2122514247045496978",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Josh Woodward",
+   "handle": "joshwoodward",
+   "text": "Welcome! Welcome! https://t.co/vJHr1az0rL",
+   "date": "2026-11-17T02:16:45.000Z",
+   "summaryZh": "Josh Woodward 发了一条欢迎性质的动态。"
+  },
+  {
+   "id": "https://x.com/swyx/status/2122512082835067151",
    "type": "x",
    "kind": "X 动态",
    "name": "Swyx",
    "handle": "swyx",
-   "text": "clanker wrote up the talk https://t.co/hxZj0VaJV4",
-   "date": "2026-11-15T18:21:20.000Z",
-   "summaryZh": "swyx 说 clanker 把这场演讲整理成文了。"
+   "text": "women are destroying the men, wtf is happening rn https://t.co/KckmQKykvy",
+   "date": "2026-11-17T02:08:09.000Z",
+   "summaryZh": "swyx 感叹女性表现碾压男性，不知道发生了什么。"
   },
   {
-   "id": "https://x.com/swyx/status/2122031563961684032",
+   "id": "https://x.com/levie/status/2122508098351038532",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Aaron Levie",
+   "handle": "levie",
+   "text": "The chart of token spend per employee still has no ceiling in sight. And the closer you are to AI right now the deeper the sense is that we’re actually still in the early part of the curve of token use and adoption. \n\nThis summer and fall’s model releases have continued to push the state of the art forward at a rate that already felt hard to maintain. As a result, for most productive use-cases the models are only now starting to actually work, and the feeling is that things will only accelerate from here.\n\nCoding, in retrospect, was basically trash even 12 months ago. Now it’s finally starting to get good. And now that coding is actually working, you’re getting tool and computer use, which open up a wide variety of knowledge work domains that weren’t possible to throw agents at before.\n\nOnce you have agents that can code, use computers, leverage any tool out there, and understand a variety of domains, you can begin to throw them at a wide variety of knowledge work tasks that were hard to bring automation to across finance, life sciences, cyber, and more. So that brings agents to a broad set of work that we’re not really using them in yet at scale. \n\nThen comes the new form factors of agents. Agent swarms and background agents are going to eat up vastly more tokens than anything we can imagine. You’ll have agents running in most enterprises workflows processing data, validating work, doing research, providing decision support, and so on. And we’ll have swarms that fan out in parallel in areas like cyber, life sciences, coding, and more.\n\nSo basically tokens are only going up from here.",
+   "date": "2026-11-17T01:52:19.000Z",
+   "summaryZh": "Levie 认为人均 token 消耗远未见顶，编码模型最近才真正好用，工具和电脑使用会打开更多知识工作场景。"
+  },
+  {
+   "id": "https://x.com/nikunj/status/2122490852497125485",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Nikunj Kothari",
+   "handle": "nikunj",
+   "text": "Like a phoenix, we’re going to see the entire internet burn down to emerge stronger on the other side. \n\nHugops to every single infra company 🙏 https://t.co/hkGgv2hmcZ",
+   "date": "2026-11-17T00:43:47.000Z",
+   "summaryZh": "Nikunj 说整个互联网会像凤凰一样烧一遍再更强地重生，向所有基础设施公司致意。"
+  },
+  {
+   "id": "https://x.com/garrytan/status/2122487869780742304",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "True drone autonomy on top of almost any other flight platform is now here\n\nDegla is already working with mission critical government agencies for search &amp; rescue https://t.co/VFcnBzZGmZ",
+   "date": "2026-11-17T00:31:56.000Z",
+   "summaryZh": "Garry Tan 说 Degla 已能在几乎任何飞行平台上实现真正无人机自主，并和政府部门合作搜救。"
+  },
+  {
+   "id": "https://x.com/amasad/status/2122463916114813249",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "💪 https://t.co/OwGRhdeacL",
+   "date": "2026-11-16T22:56:45.000Z",
+   "summaryZh": "Amjad Masad 发了个肌肉表情，没配文字说明。"
+  },
+  {
+   "id": "https://x.com/steipete/status/2122463466304971068",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Steinberger",
+   "handle": "steipete",
+   "text": "People: Please reduce the number of permission alerts so agents can work on macOS without constant babysitting\n\nApple: I hear you, here’s some new scary alerts https://t.co/Saw8ftcNNW",
+   "date": "2026-11-16T22:54:58.000Z",
+   "summaryZh": "steipete 吐槽用户求减少权限弹窗，Apple 反而加了更吓人的新提示，agent 在 macOS 上还得人盯着。"
+  },
+  {
+   "id": "https://x.com/GoogleLabs/status/2122461899178820069",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Google Labs",
+   "handle": "GoogleLabs",
+   "text": "We’re excited to welcome Howie to Google Labs! \n\nThe @Howie_ai team has spent years figuring out scheduling and calendar management.  We can’t wait to learn from them as we build the next generation of intuitive AI tools together for small businesses 🤝 https://t.co/8bzjebeGdD",
+   "date": "2026-11-16T22:48:44.000Z",
+   "summaryZh": "Google Labs 欢迎 Howie 团队加入，看中其多年日历排程经验，要一起为小企业做下一代 AI 工具。"
+  },
+  {
+   "id": "https://x.com/rauchg/status/2122458782294847807",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Guillermo Rauch",
+   "handle": "rauchg",
+   "text": "Own your intelligence roadmap:\n① Use open SDKs &amp; harnesses\n② Own model choice with Gateways\n③ Own your traces and data, enforce ZDR\n④ Own your models with private inference https://t.co/4Y1dyKDxlm",
+   "date": "2026-11-16T22:36:21.000Z",
+   "summaryZh": "rauchg 给出拥有智能路线图四步：用开放 SDK 和 harness、用网关自选模型、自管 trace 和数据并强制 ZDR、用私有推理自持模型。"
+  },
+  {
+   "id": "https://x.com/joshwoodward/status/2122453269842886788",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Josh Woodward",
+   "handle": "joshwoodward",
+   "text": "Turn your sources into interactive sites with @Gemini_Notebook - we made one with all the periodic table names. :) These are easy to make, easy to share. https://t.co/7atKNhzskL",
+   "date": "2026-11-16T22:14:27.000Z",
+   "summaryZh": "Josh Woodward 演示用 Gemini Notebook 把资料变成可交互、易分享的网站，还拿元素周期表做了个例子。"
+  },
+  {
+   "id": "https://x.com/thenanyu/status/2122438864791110126",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Nan Yu",
+   "handle": "thenanyu",
+   "text": "look, a sane person https://t.co/PejOwWp8RZ",
+   "date": "2026-11-16T21:17:13.000Z",
+   "summaryZh": "thenanyu 转发并称赞某人是「清醒的人」。"
+  },
+  {
+   "id": "https://x.com/trq212/status/2122438328079524159",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thariq",
+   "handle": "trq212",
+   "text": "for example, this is me working with agents on a new character for my game https://t.co/jfWNcszyin",
+   "date": "2026-11-16T21:15:05.000Z",
+   "summaryZh": "trq212 举例说自己正和 agent 一起给游戏做新角色。"
+  },
+  {
+   "id": "https://x.com/trq212/status/2122438326431154210",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thariq",
+   "handle": "trq212",
+   "text": "software factories feel like a temporary problem. the models will learn to build them for you\n\nthe more interesting question to me is how to build a workspace where agents can collaborate with you",
+   "date": "2026-11-16T21:15:04.000Z",
+   "summaryZh": "trq212 认为软件工厂是暂时的问题、模型迟早会自己建，真正有意思的是怎么搭一个 agent 能和你协作的工作空间。"
+  },
+  {
+   "id": "https://x.com/swyx/status/2122427240441131203",
    "type": "x",
    "kind": "X 动态",
    "name": "Swyx",
    "handle": "swyx",
-   "text": "clanker wrote up a short recap of the talk\nhttps://t.co/1tWf4s9R60",
-   "date": "2026-11-15T18:18:44.000Z",
-   "summaryZh": "swyx 说 clanker 写了一份这场演讲的简短回顾。"
+   "text": "gmail has no gcal search despite cal is sent via gmail https://t.co/EzdQbPNP6s",
+   "date": "2026-11-16T20:31:01.000Z",
+   "summaryZh": "swyx 吐槽 Gmail 里搜不到 GCal 内容，尽管日历邀请就是通过 Gmail 发的。"
   },
   {
-   "id": "https://x.com/zarazhangrui/status/2122021380745290202",
+   "id": "https://x.com/amasad/status/2122422367557464548",
    "type": "x",
    "kind": "X 动态",
-   "name": "Zara Zhang",
-   "handle": "zarazhangrui",
-   "text": "Being good at LinkedIn probably makes you bad at X https://t.co/dFYRSQLn9V",
-   "date": "2026-11-15T17:38:17.000Z",
-   "summaryZh": "作者认为擅长 LinkedIn 的人往往在 X 上表现不佳。"
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "Deranged cult https://t.co/FmC9L8N1ZL",
+   "date": "2026-11-16T20:11:39.000Z",
+   "summaryZh": "Amjad Masad 用「疯狂的邪教」评价某个对象。"
   },
   {
-   "id": "https://x.com/zarazhangrui/status/2122021053442703852",
+   "id": "https://x.com/rauchg/status/2122415506451841215",
    "type": "x",
    "kind": "X 动态",
-   "name": "Zara Zhang",
-   "handle": "zarazhangrui",
-   "text": "I love this store so much 😭 https://t.co/SNteDhX5uA",
-   "date": "2026-11-15T17:36:59.000Z",
-   "summaryZh": "作者表达对一家店的强烈喜爱。"
+   "name": "Guillermo Rauch",
+   "handle": "rauchg",
+   "text": "The old way: users are human, you run user interviews, get inspired, mock up user journeys.\n\nThe new way: users are agents, you run evals, evals inform the software engineering loop.\n\nGood read on how we do evals at Vercel. https://t.co/zkre5Qbohe",
+   "date": "2026-11-16T19:44:23.000Z",
+   "summaryZh": "rauchg 说过去用户是人、做用户访谈，现在用户是 agent、要跑 eval，eval 直接驱动工程循环，并推荐 Vercel 的 eval 做法。"
   },
   {
-   "id": "https://x.com/adityaag/status/2122003237335343457",
+   "id": "https://x.com/nikunj/status/2122412013251162592",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Nikunj Kothari",
+   "handle": "nikunj",
+   "text": "Make your own here: https://t.co/EADcTLXI4H",
+   "date": "2026-11-16T19:30:31.000Z",
+   "summaryZh": "Nikunj 分享了一个可以自己动手做的链接。"
+  },
+  {
+   "id": "https://x.com/rauchg/status/2122396034186014919",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Guillermo Rauch",
+   "handle": "rauchg",
+   "text": "A new era of software is upon us. Personalized, fully owned, open source. And higher quality than what it replaces. https://t.co/r2HlwWWvvl",
+   "date": "2026-11-16T18:27:01.000Z",
+   "summaryZh": "rauchg 宣布软件新时代：个性化、完全自有、开源，而且质量比被替代的更高。"
+  },
+  {
+   "id": "https://x.com/adityaag/status/2122386960862056629",
    "type": "x",
    "kind": "X 动态",
    "name": "Aditya Agarwal",
    "handle": "adityaag",
-   "text": "One of our aerospace companies in India shared this with me today morning.\n\nThe journey to the stars starts with a single plane on a remote runway on an early Sunday morning. \n\nAd Astra.\n\n@shreepoorna365 @arctusaerospace https://t.co/XTdk1wVU5q",
-   "date": "2026-11-15T16:26:11.000Z",
-   "summaryZh": "Aditya 分享印度一家航天公司周日清晨跑道上的飞机照片，感慨通往星辰的路从一架飞机开始。"
+   "text": "https://t.co/XnkC6s7c5A",
+   "date": "2026-11-16T17:50:58.000Z",
+   "summaryZh": "Aditya Agarwal 发了一个链接，没配文字说明。"
   },
   {
-   "id": "https://www.youtube.com/@NoPriorsPodcast",
+   "id": "https://x.com/adityaag/status/2122386958101959118",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Aditya Agarwal",
+   "handle": "adityaag",
+   "text": "Two thoughts:\n1/ Embedding AI as close to the silicon as possible will be critical for a lot of hardtech.\n2/ We can build semi-conductors in India. People said it wasn’t possible. We are proving them wrong.\n\nWe’re excited to lead @BharatSemi_'s $24M seed round with Redstart Ventures and IndusBridge. \n\nOnwards.",
+   "date": "2026-11-16T17:50:57.000Z",
+   "summaryZh": "adityaag 说硬科技要把 AI 尽量贴近芯片，并宣布领投 BharatSemi 2400 万美元种子轮，证明印度也能造半导体。"
+  },
+  {
+   "id": "https://x.com/thenanyu/status/2122371754731708883",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Nan Yu",
+   "handle": "thenanyu",
+   "text": "Be like jori https://t.co/gnjCetIAS6",
+   "date": "2026-11-16T16:50:32.000Z",
+   "summaryZh": "thenanyu 发了一句「像 jori 那样」。"
+  },
+  {
+   "id": "https://x.com/adityaag/status/2122367547312119843",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Aditya Agarwal",
+   "handle": "adityaag",
+   "text": "Our goal when starting an interpretability work was to develop confidence in our methods to the point where we could apply it to leading frontier models.\n\nReally happy that day is here. This is super critical to get right. https://t.co/f2SCVVl9Ag",
+   "date": "2026-11-16T16:33:49.000Z",
+   "summaryZh": "adityaag 说做可解释性研究的目标就是有信心用到前沿模型上，现在这一天到了，这事必须做对。"
+  },
+  {
+   "id": "https://x.com/petergyang/status/2122347721298510021",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "My top 5 takeaways from @nateparrott on how to get Claude to design without AI slop:\n\n1. Give Claude context upfront.\n\nShare screenshots, pages you like, and your past work. For an existing product, have Claude rebuild the real screens from code.\n\n2. Research familiar UX patterns.\n\nFor hard layout problems, ask Claude to research familiar products that solve something similar and note the layouts people already know how to use.\n\n3. Make Claude aware of its design biases.\n\n\"The model has no idea what its own biases are.\" In your design.md or another file, consider discouraging Claude's tells like serif text, off-white backgrounds, and card-edge bars.\n\n4. Start with wireframes.\n\nHave Claude create wireframes first and give it feedback to nail your core user flows before going deep on fonts and colors.\n\n5. Ask for multiple options, then remix them.\n\nAsk Claude for 5 options for key screens with different fonts, colors, and styles. Then pick the parts you like and ask it to remix and create 5 more options.\n\n📌 Watch the full episode now: https://t.co/HPX5HjXafX\n\nAlso available as a written post: https://t.co/jcofmkQc01",
+   "date": "2026-11-16T15:15:02.000Z",
+   "summaryZh": "Peter Yang 总结 Nate Parrott 让 Claude 做设计不出 AI 味的五招：先给上下文、研究熟悉 UX、提醒模型自身偏见、先画线框、多要几版再混搭。"
+  },
+  {
+   "id": "https://www.youtube.com/@LatentSpacePod",
    "type": "podcast",
    "kind": "播客",
-   "name": "No Priors",
+   "name": "Latent Space",
    "handle": "",
-   "title": "Tokenization, Agentic Trading, Harmonic: Robinhood's Mission to Expand Ownership with CEO Vlad Tenev",
+   "title": "[One Million AI Engineer Special] How Stanford Teaches AI-Native Engineering — Mihail Eric, Monaco",
    "text": "",
-   "date": "2026-11-05T11:00:00.000Z",
-   "summaryZh": "No Priors 播客对话 Robinhood CEO Vlad Tenev，聊代币化、agent 交易和扩大持股人群的使命。"
+   "date": "2026-11-08T21:23:29.000Z",
+   "summaryZh": "Latent Space 百万 AI 工程师特辑请来 Mihail Eric，聊斯坦福怎么教 AI 原生工程。"
   }
  ]
 }
