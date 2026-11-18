@@ -3,10 +3,15 @@
  * the seed script, and node:test. No network, no Workers globals.
  *
  * Drug tokens are swapped for [D1]… before the model sees them and restored
- * afterwards. Qwen otherwise invents a different Chinese drug name.
+ * afterwards. The model otherwise invents a different Chinese drug name.
  */
 
-export const MT_MODEL = '@cf/qwen/qwen3-30b-a3b-fp8';
+/** Workers AI text model for titles, selection, and share-card quotes.
+ *  GLM-4.7-Flash stays on the Workers Free neuron allowance. */
+export const MT_MODEL = '@cf/zai-org/glm-4.7-flash';
+/** Same completion ceiling the previous model used. On GLM this cap includes
+ *  reasoning tokens, so thinking stays off and the budget is the translation. */
+export const MT_MAX_TOKENS = 2000;
 export const TITLE_BATCH = 10;
 export const TITLE_ZH_DAYS = 15;
 export const SELECTION_MAX = 1500;
@@ -292,19 +297,66 @@ export function applyGlossary(en, zh, glossary = [], overrides = DEFAULT_OVERRID
   return out.trim();
 }
 
+/** Drop GLM reasoning. A closed think block is removed; an unclosed one means
+ *  the completion cap was spent before the answer, so nothing after it is kept.
+ *  Reasoning text is not a translation. */
+export function stripModelThinking(text) {
+  let s = String(text || '');
+  s = s.replace(/<think>[\s\S]*?<\/think>/gi, '');
+  s = s.replace(/<think>[\s\S]*$/gi, '');
+  s = s.replace(/<\/think>/gi, '');
+  return s.replace(/^\uFEFF/, '').trim();
+}
+
+/**
+ * Visible answer only. GLM-4.7-Flash's catalog output is an OpenAI chat
+ * completion (`choices[0].message.content`). Older Workers AI bindings return
+ * `{ response }`. `reasoning_content` is never the translation.
+ */
 export function extractAiText(result) {
   if (result == null) return '';
-  if (typeof result === 'string') return result;
-  if (typeof result.response === 'string') return result.response;
-  const choice = result.choices && result.choices[0];
-  if (!choice) return '';
-  if (typeof choice.text === 'string') return choice.text;
-  const msg = choice.message || choice.delta || {};
-  if (typeof msg.content === 'string') return msg.content;
-  if (Array.isArray(msg.content)) {
-    return msg.content.map(p => (typeof p === 'string' ? p : p?.text || '')).join('');
+  if (typeof result === 'string') return stripModelThinking(result);
+  if (
+    result.result &&
+    typeof result.result === 'object' &&
+    typeof result.response !== 'string' &&
+    !result.choices
+  ) {
+    return extractAiText(result.result);
   }
-  return '';
+  let raw = '';
+  if (typeof result.response === 'string') raw = result.response;
+  else {
+    const choice = result.choices && result.choices[0];
+    if (choice) {
+      if (typeof choice.text === 'string') raw = choice.text;
+      else {
+        const msg = choice.message || choice.delta || {};
+        if (typeof msg.content === 'string') raw = msg.content;
+        else if (Array.isArray(msg.content)) {
+          raw = msg.content.map(p => (typeof p === 'string' ? p : p?.text || '')).join('');
+        }
+      }
+    }
+  }
+  return stripModelThinking(raw);
+}
+
+/** Messages input from the GLM-4.7-Flash schema. Thinking defaults on; leave
+ *  it off so reasoning tokens do not consume max_completion_tokens or the
+ *  free daily neurons. max_tokens is the deprecated alias of the same cap. */
+export function mtRequest(system, user, maxTokens = MT_MAX_TOKENS) {
+  const cap = Math.max(1, Math.floor(Number(maxTokens) || MT_MAX_TOKENS));
+  return {
+    messages: [
+      { role: 'system', content: String(system || '') },
+      { role: 'user', content: String(user || '') },
+    ],
+    temperature: 0.1,
+    max_tokens: cap,
+    max_completion_tokens: cap,
+    chat_template_kwargs: { enable_thinking: false },
+  };
 }
 
 /**
@@ -326,9 +378,7 @@ export function isTranslatedZh(en, zh) {
 }
 
 export function parseTranslationArray(raw, n) {
-  let s = String(raw || '');
-  s = s.replace(/<think>[\s\S]*?<\/think>/gi, '');
-  s = s.replace(/^\uFEFF/, '').trim();
+  let s = stripModelThinking(raw);
   s = s.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
   const a = s.indexOf('[');
   const b = s.lastIndexOf(']');

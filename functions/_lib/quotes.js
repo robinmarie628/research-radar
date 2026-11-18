@@ -5,6 +5,8 @@
  * Each quote is a full or nearly full sentence from the abstract or the open-access full text.
  */
 
+import { stripModelThinking } from './mt.js';
+
 export const ABSTRACT_MAX = 14000;
 export const QUOTE_MIN = 3;
 export const QUOTE_MAX = 4;
@@ -711,9 +713,7 @@ function topUpQuotes(picked, sentences, indexed, modelQuotes) {
 }
 
 export function parseQuoteResponse(raw) {
-  let s = String(raw || '');
-  s = s.replace(/<think>[\s\S]*?<\/think>/gi, '');
-  s = s.replace(/^\uFEFF/, '').trim();
+  let s = stripModelThinking(raw);
   s = s.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
   const a = s.indexOf('{');
   const b = s.lastIndexOf('}');

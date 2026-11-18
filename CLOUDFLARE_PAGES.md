@@ -36,7 +36,10 @@ the repo-root `wrangler.toml`:
 binding = "AI"
 ```
 
-Model: `@cf/qwen/qwen3-30b-a3b-fp8`, thinking off (`/no_think`), temperature 0.1.
+Model: `@cf/zai-org/glm-4.7-flash` (Workers Free). Thinking is off
+(`chat_template_kwargs.enable_thinking: false`). `max_completion_tokens` is 2000,
+the same ceiling as before, and temperature is 0.1. The Qwen `/no_think` prefix
+is not sent. `@cf/qwen/qwen3-30b-a3b-fp8` is scheduled to stop on 2026-11-20.
 A preview deploy of a branch that contains that file should receive the binding.
 `wrangler.toml` becomes the Pages source of truth for bindings once Pages accepts it
 (`pages_build_output_dir` is set). This project had no dashboard bindings.

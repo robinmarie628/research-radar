@@ -7,7 +7,7 @@
 | 🔬 **科研顶刊** | 临床顶刊 + 基础/分子医学每日速递，按领域分类，标注研究类型与临床/基础 | [PubMed](https://pubmed.ncbi.nlm.nih.gov/)（15 天池）+ [Crossref](https://api.crossref.org)（最近一周的在线日期、全文 PII） |
 | 🤖 **AI Builder** | 26 位一线 AI builder 的 X 动态、播客、官方博客 | [follow-builders](https://github.com/zarazhangrui/follow-builders) 公共 feed |
 
-**打开即最新**：科研页每次打开向 PubMed 拉 15 天池；PubMed 失败时用同一窗口的快照，快照也空才用 Europe PMC。AI 页读 follow-builders。结果缓存在浏览器本地 30 分钟。GitHub Actions 每天刷新兜底快照，并用 DeepSeek 写一次每日摘要。机翻标题、划词和分享金句走 Cloudflare Workers AI（`qwen3-30b`）。页面里不放 API key。
+**打开即最新**：科研页每次打开向 PubMed 拉 15 天池；PubMed 失败时用同一窗口的快照，快照也空才用 Europe PMC。AI 页读 follow-builders。结果缓存在浏览器本地 30 分钟。GitHub Actions 每天刷新兜底快照，并用 DeepSeek 写一次每日摘要。机翻标题、划词和分享金句走 Cloudflare Workers AI（`glm-4.7-flash`，关闭思考）。页面里不放 API key。
 
 ---
 
@@ -133,7 +133,7 @@ PubMed 的结构化摘要带 `AbstractText` 的 `Label`（`BACKGROUND` / `METHOD
 
 任务文档要求的「创新 / 看点」需要模型精读摘要才能写，静态前端做不到。做法是**每天用 GitHub Action 调 LLM 生成，结果提交成静态数据** `data/digest.json`，页面直接读——不需要任何服务器。
 
-- **脚本**：`scripts/build_digest.py`，OpenAI 兼容格式，默认 DeepSeek（`deepseek-flash`，关闭思考模式）。机翻标题、划词翻译和分享卡片金句不走这条，它们用 Workers AI `qwen3-30b`
+- **脚本**：`scripts/build_digest.py`，OpenAI 兼容格式，默认 DeepSeek（`deepseek-flash`，关闭思考模式）。机翻标题、划词翻译和分享卡片金句不走这条，它们用 Workers AI `glm-4.7-flash`（关闭思考）
 - **提示词**：把当日精选 8 篇的**摘要原文**一起发给模型，要求用**大白话**写，
   语气像跟同科室同事讲「这篇为什么能上顶刊」。五个部分按叙事顺序：
   - `background` **背景** —— 这个病/问题为什么重要？此前卡在哪、缺什么
