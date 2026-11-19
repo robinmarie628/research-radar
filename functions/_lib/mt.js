@@ -314,7 +314,9 @@ function choiceText(choice) {
   const msg = choice.message || choice.delta || {};
   if (typeof msg.content === 'string') return msg.content;
   if (Array.isArray(msg.content)) {
-    return msg.content.map(p => (typeof p === 'string' ? p : p?.text || '')).join('');
+    const textParts = msg.content.filter(p => p && typeof p === 'object' && p.type === 'text' && typeof p.text === 'string');
+    if (textParts.length) return textParts.map(p => p.text).join('');
+    return msg.content.map(p => (typeof p === 'string' ? p : '')).join('');
   }
   return '';
 }
@@ -456,29 +458,99 @@ export function isTranslatedZh(en, zh) {
   return true;
 }
 
-export function parseTranslationArray(raw, n) {
-  let s = stripModelThinking(raw);
-  s = s.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
-  const a = s.indexOf('[');
-  const b = s.lastIndexOf(']');
-  if (a < 0 || b <= a) {
-    const err = new Error('no_json_array');
-    err.code = 'bad_model';
-    throw err;
+function badModel(message) {
+  const err = new Error(message);
+  err.code = 'bad_model';
+  return err;
+}
+
+function zhField(item) {
+  if (!item || typeof item !== 'object' || Array.isArray(item)) return '';
+  for (const key of ['zh', 'translation']) {
+    if (typeof item[key] === 'string' && item[key].trim()) return item[key].trim();
   }
-  let arr;
-  try { arr = JSON.parse(s.slice(a, b + 1)); }
-  catch {
-    const err = new Error('bad_json');
-    err.code = 'bad_model';
-    throw err;
+  return '';
+}
+
+/** Arrays of length n, last opening bracket first. A preamble `[0]` must not
+ *  swallow the answer array. Object `en` is ignored so a model cannot replace
+ *  the excerpt. */
+function translationArrays(s, n) {
+  const opens = [];
+  const closes = [];
+  for (let i = 0; i < s.length; i++) {
+    if (s[i] === '[') opens.push(i);
+    else if (s[i] === ']') closes.push(i);
   }
-  if (!Array.isArray(arr) || arr.length !== n) {
-    const err = new Error('len_mismatch');
-    err.code = 'bad_model';
-    throw err;
+  const found = [];
+  let tries = 0;
+  for (let oi = opens.length - 1; oi >= 0 && tries < 40; oi--) {
+    for (let ci = closes.length - 1; ci >= 0 && tries < 40; ci--) {
+      if (closes[ci] <= opens[oi]) break;
+      tries++;
+      let arr;
+      try { arr = JSON.parse(s.slice(opens[oi], closes[ci] + 1)); }
+      catch { continue; }
+      if (!Array.isArray(arr) || arr.length !== n) continue;
+      const items = arr.map(item => {
+        if (typeof item === 'string') return item.trim();
+        return zhField(item);
+      });
+      if (items.every(Boolean)) {
+        found.push(items);
+        break;
+      }
+    }
   }
-  return arr.map(x => String(x ?? '').trim());
+  return found;
+}
+
+function plainOne(s, source) {
+  let t = String(s || '').trim();
+  if (!t || !source) return '';
+  if (t.startsWith('"') && t.endsWith('"')) {
+    try {
+      const parsed = JSON.parse(t);
+      if (typeof parsed === 'string') t = parsed.trim();
+    } catch { /* not a JSON string */ }
+  }
+  if (t.startsWith('{') && t.endsWith('}')) {
+    try {
+      const zh = zhField(JSON.parse(t));
+      if (zh && isTranslatedZh(source, zh)) return zh;
+    } catch { /* not one object */ }
+    return '';
+  }
+  const structural = t.replace(/\[D\d+\]/g, '');
+  if (/[\[{]/.test(structural)) return '';
+  if (t.length > Math.max(String(source).length * 4, 280)) return '';
+  if (!isTranslatedZh(source, t)) return '';
+  return t;
+}
+
+/**
+ * JSON array of length n, searching from the last `[` so an echoed list does
+ * not invalidate a later array. For one source, a Chinese sentence or a
+ * `{zh}` object is enough. Two or more sources stay fail-closed without an
+ * array of that length. `en` fields are never returned.
+ */
+export function parseTranslationArray(raw, n, sources) {
+  const s = stripModelThinking(raw).replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+  const lists = translationArrays(s, n);
+  const src = Array.isArray(sources) && sources.length === n ? sources : null;
+  if (src) {
+    const good = lists.find(items => items.every((zh, i) => isTranslatedZh(src[i], zh)));
+    if (good) return good;
+    const han = lists.find(items => items.every(zh => /[\u4e00-\u9fff]/.test(zh)));
+    if (han) return han;
+    if (n === 1) {
+      const plain = plainOne(s, src[0]);
+      if (plain) return [plain];
+    }
+  } else if (lists.length) {
+    return lists[0];
+  }
+  throw badModel(lists.length ? 'untranslated_array' : 'no_json_array');
 }
 
 export function isQuotaError(err) {

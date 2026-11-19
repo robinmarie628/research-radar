@@ -163,6 +163,35 @@ test('JSON array parser drops think tags and fences', () => {
   assert.deepEqual(parseTranslationArray(raw, 2), ['甲', '乙']);
   assert.throws(() => parseTranslationArray('["甲"]', 2));
   assert.throws(() => parseTranslationArray('<think>still going and no answer', 1));
+  const echoed = '["Heart failure decompensation"]\n["心力衰竭失代偿"]';
+  assert.deepEqual(
+    parseTranslationArray(echoed, 1, ['Heart failure decompensation']),
+    ['心力衰竭失代偿'],
+  );
+  assert.deepEqual(
+    parseTranslationArray('心力衰竭失代偿', 1, ['Heart failure decompensation']),
+    ['心力衰竭失代偿'],
+  );
+  assert.deepEqual(
+    parseTranslationArray('{"zh":"心力衰竭失代偿","en":"An invented English title."}', 1, ['Heart failure decompensation']),
+    ['心力衰竭失代偿'],
+  );
+  assert.throws(() => parseTranslationArray(
+    '第一句译文。\n第二句译文。',
+    2,
+    ['First sentence here.', 'Second sentence here.'],
+  ));
+  assert.throws(() => parseTranslationArray('Heart failure decompensation', 1, ['Heart failure decompensation']));
+  assert.deepEqual(extractAiText({
+    choices: [{
+      message: {
+        content: [
+          { type: 'reasoning', text: '[0] do not parse this' },
+          { type: 'text', text: '心力衰竭失代偿' },
+        ],
+      },
+    }],
+  }), '心力衰竭失代偿');
   const quoted = parseQuoteResponse('<think>{"quotes":[{"role":"finding","i":0,"zh":"思考"}]}</think>{"quotes":[{"role":"finding","i":1,"zh":"真正的译文"}]}');
   assert.equal(quoted.length, 1);
   assert.equal(quoted[0].i, 1);
@@ -621,6 +650,59 @@ test('share failure names the category and does not echo the provider body', asy
   assert.match(share, /err\.message/);
   assert.match(app, /data\.message \|\| '摘句翻译失败/);
   assert.match(app, /data\.message \|\| '标题翻译失败/);
+});
+
+test('a single title may be plain Chinese, and a quote keeps the abstract sentence', async () => {
+  __setMtResources({ glossary, overrides });
+  const origin = 'https://research-radar-f5j.pages.dev';
+  const abstract = 'Thus, early review of volume status reduced mortality compared with usual care among adults with heart failure.';
+  const env = {
+    AI: {
+      async run(_model, input) {
+        const user = input.messages[1].content;
+        if (user.includes('[0]')) return { response: '{"quotes":[]}' };
+        if (user.startsWith('[')) {
+          const arr = JSON.parse(user);
+          if (arr.length === 1 && /Heart failure/.test(arr[0])) return { response: '心力衰竭失代偿' };
+          if (arr.length === 1 && /Macular/.test(arr[0])) {
+            return { response: '美国常规临床实践中新生血管性年龄相关性黄斑变性的管理' };
+          }
+          return {
+            response: JSON.stringify(arr.map(() => ({
+              en: 'An invented sentence that is not in the abstract.',
+              zh: '早期复查容量状态比常规护理降低了心衰成人的死亡率。',
+            }))),
+          };
+        }
+        return { response: '不该走到这里' };
+      },
+    },
+  };
+  const post = (body) => handleTranslate(new Request(origin + '/api/translate', {
+    method: 'POST',
+    headers: { Origin: origin, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  }), env);
+  const titles = await post({
+    mode: 'titles',
+    items: [{ id: '10.1/plain', text: 'Heart failure decompensation.' }],
+  });
+  assert.equal(titles.status, 200);
+  assert.equal((await titles.json()).items[0].zh, '心力衰竭失代偿');
+
+  const shortened = await post({
+    mode: 'titles',
+    items: [{ id: '10.1/amd', text: AMD_EN }],
+  });
+  assert.equal(shortened.status, 200);
+  assert.equal((await shortened.json()).items[0].zh, AMD_ZH);
+
+  const quotes = await post({ mode: 'quotes', doi: '10.1/plain', abstract });
+  const quoteBody = await quotes.json();
+  assert.equal(quotes.status, 200, quoteBody.message || '');
+  assert.ok(quoteBody.quotes.every(q => abstract.includes(q.en.replace(/^…\s*/, '').split(' … ')[0])));
+  assert.equal(quoteBody.quotes.some(q => /invented sentence/.test(q.en)), false);
+  assert.ok(quoteBody.quotes.some(q => /死亡率/.test(q.zh)));
 });
 
 test('a reasoning-only GLM completion is not cached as a translation', async () => {

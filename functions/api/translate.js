@@ -251,7 +251,7 @@ async function translateTitles(request, env, body) {
       JSON.stringify(masked.map(m => m.text)),
       2000,
     );
-    parts = parseTranslationArray(raw, pending.length);
+    parts = parseTranslationArray(raw, pending.length, pending.map(i => clean[i].text));
   } catch (err) {
     if (out.some(Boolean)) {
       return json({
@@ -375,7 +375,7 @@ async function translateQuotes(request, env, body) {
         JSON.stringify(masked.map(m => m.text)),
         2000,
       );
-      const parts = parseTranslationArray(raw, jobs.length);
+      const parts = parseTranslationArray(raw, jobs.length, jobs.map(p => p.en));
       jobs.forEach((p, j) => {
         const zh = applyGlossary(p.en, restoreDrugs(parts[j], masked[j].drugs), glossary, overrides);
         if (isTranslatedZh(p.en, zh)) p.zh = zh;
