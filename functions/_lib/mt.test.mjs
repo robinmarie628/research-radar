@@ -7,6 +7,7 @@ import {
   TITLE_SYSTEM, SELECTION_SYSTEM, DEFAULT_OVERRIDES, maskDrugs, restoreDrugs, applyGlossary, stripTitleStop,
   parseTranslationArray, isDrugToken, normTitle, titleZhCutoff, TITLE_ZH_DAYS, isAcronym,
   extractAiText, stripModelThinking, mtRequest, MT_MODEL, MT_MAX_TOKENS,
+  classifyCompletion, failureSentence, providerFailure,
   preserveTitleContrast, exactTitleZh, settleTitleZh, sha256Hex,
 } from './mt.js';
 import { handleTranslate, __setMtResources } from '../api/translate.js';
@@ -514,6 +515,112 @@ test('share quotes and titles accept a parsed JSON response instead of the gener
   assert.equal(quoteBody.message, undefined);
   assert.ok(quoteBody.quotes.some(q => /死亡率/.test(q.zh)));
   assert.equal(quoteBody.quotes.every(q => abstract.includes(q.en.replace(/^…\s*/, '').split(' … ')[0])), true);
+});
+
+test('completion categories follow the chat-completion output schema', () => {
+  assert.equal(classifyCompletion({
+    choices: [{ finish_reason: 'stop', message: { content: '["甲"]' } }],
+  }).category, 'ok');
+  assert.equal(classifyCompletion({
+    choices: [{ finish_reason: 'stop', message: { content: null } }],
+  }).category, 'empty');
+  assert.equal(classifyCompletion({
+    choices: [{ finish_reason: 'length', message: { content: '<think>still reasoning' } }],
+  }).category, 'truncated');
+  assert.equal(classifyCompletion({ response: '' }).category, 'empty');
+  const paid = Object.assign(new Error('Bearer secret — This model requires a Workers Paid plan'), { status: 403 });
+  paid.message = '5035: This model requires a Workers Paid plan. Bearer secret. ' + 'A'.repeat(400);
+  const info = providerFailure(paid);
+  assert.equal(failureSentence(info), '翻译失败，请再试一次。（provider 403/5035）');
+  assert.equal(failureSentence(info).includes('Bearer'), false);
+  assert.equal(failureSentence(info).includes('Paid plan'), false);
+  assert.equal(failureSentence({ category: 'empty' }), '翻译失败，请再试一次。（empty）');
+  assert.equal(failureSentence({ category: 'truncated' }), '翻译失败，请再试一次。（truncated）');
+  assert.equal(failureSentence({ category: 'parse' }), '翻译失败，请再试一次。（parse）');
+});
+
+test('share failure names the category and does not echo the provider body', async () => {
+  __setMtResources({ glossary: [], overrides: [] });
+  const origin = 'https://research-radar-f5j.pages.dev';
+  const abstract = 'Thus, early review of volume status reduced mortality compared with usual care among adults with heart failure.';
+  const post = (env, body) => handleTranslate(new Request(origin + '/api/translate', {
+    method: 'POST',
+    headers: { Origin: origin, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  }), env);
+
+  const paid = await post({
+    AI: {
+      async run() {
+        const err = new Error('5035: This model requires a Workers Paid plan. prompt=' + abstract);
+        err.status = 403;
+        throw err;
+      },
+    },
+  }, { mode: 'quotes', doi: '10.1/diag', abstract });
+  assert.equal(paid.status, 502);
+  const paidBody = await paid.json();
+  assert.equal(paidBody.message, '翻译失败，请再试一次。（provider 403/5035）');
+  assert.equal(paidBody.message.includes(abstract.slice(0, 24)), false);
+  assert.equal(paidBody.message.includes('Paid plan'), false);
+
+  const timed = await post({
+    AI: {
+      async run() {
+        const err = new Error('3007: Request timeout');
+        err.status = 408;
+        throw err;
+      },
+    },
+  }, { mode: 'titles', items: [{ id: '10.1/diag', text: 'Heart failure decompensation' }] });
+  assert.equal((await timed.json()).message, '翻译失败，请再试一次。（provider 408/3007）');
+
+  const truncated = await post({
+    AI: {
+      async run() {
+        return {
+          choices: [{
+            finish_reason: 'length',
+            message: { content: '<think>do not show this reasoning', reasoning_content: 'hidden' },
+          }],
+        };
+      },
+    },
+  }, { mode: 'selection', text: 'Heart failure decompensation' });
+  const truncatedBody = await truncated.json();
+  assert.equal(truncatedBody.message, '翻译失败，请再试一次。（truncated）');
+  assert.equal(truncatedBody.message.includes('reasoning'), false);
+
+  const empty = await post({
+    AI: { async run() { return { choices: [{ finish_reason: 'stop', message: { content: null } }] }; } },
+  }, { mode: 'selection', text: 'Heart failure decompensation' });
+  assert.equal((await empty.json()).message, '翻译失败，请再试一次。（empty）');
+
+  const parsed = await post({
+    AI: { async run() { return { response: 'not a json array' }; } },
+  }, { mode: 'titles', items: [{ id: '10.1/diag', text: 'Heart failure decompensation' }] });
+  const parsedBody = await parsed.json();
+  assert.equal(parsedBody.message, '翻译失败，请再试一次。（parse）');
+  assert.equal(parsedBody.message.includes('not a json'), false);
+
+  const quota = await post({
+    AI: {
+      async run() {
+        const err = new Error('3036: You have used up your daily free allocation of 10,000 neurons');
+        err.status = 429;
+        throw err;
+      },
+    },
+  }, { mode: 'selection', text: 'Heart failure decompensation' });
+  assert.equal(quota.status, 429);
+  assert.match((await quota.json()).message, /明天会恢复/);
+
+  const app = fs.readFileSync(path.join(root, 'assets/app.js'), 'utf8');
+  const share = app.slice(app.indexOf('async function showShareImage'), app.indexOf('function paintShareResult'));
+  assert.match(share, /quoteRes\.error/);
+  assert.match(share, /err\.message/);
+  assert.match(app, /data\.message \|\| '摘句翻译失败/);
+  assert.match(app, /data\.message \|\| '标题翻译失败/);
 });
 
 test('a reasoning-only GLM completion is not cached as a translation', async () => {

@@ -19,6 +19,7 @@ import {
   SELECTION_MAX, TITLE_MAX, mtRequest,
   maskDrugs, restoreDrugs, applyGlossary, parseTranslationArray, isTranslatedZh, stripTitleStop,
   extractAiText, isQuotaError, normTitle, sha256Hex, settleTitleZh,
+  providerFailure, classifyCompletion, failureSentence,
 } from '../_lib/mt.js';
 import {
   QUOTE_SYSTEM, ABSTRACT_MAX, splitSentences, resolveQuotePicks, parseQuoteResponse,
@@ -129,7 +130,13 @@ async function runModel(env, system, user, maxTokens) {
       e.code = 'quota';
       throw e;
     }
-    throw err;
+    const info = providerFailure(err);
+    throw Object.assign(new Error('provider'), {
+      code: 'ai_failed',
+      category: 'provider',
+      status: info.status,
+      providerCode: info.code,
+    });
   }
   if (result && result.success === false) {
     const msg = JSON.stringify(result.errors || result);
@@ -138,16 +145,22 @@ async function runModel(env, system, user, maxTokens) {
       e.code = 'quota';
       throw e;
     }
-    const e = new Error(msg);
-    e.code = 'ai_failed';
+    const info = providerFailure(result);
+    throw Object.assign(new Error('provider'), {
+      code: 'ai_failed',
+      category: 'provider',
+      status: info.status,
+      providerCode: info.code,
+    });
+  }
+  const inspected = classifyCompletion(result);
+  if (inspected.category !== 'ok') {
+    const e = new Error(inspected.category);
+    e.code = 'bad_model';
+    e.category = inspected.category;
     throw e;
   }
   const text = extractAiText(result);
-  if (!text) {
-    const e = new Error('empty');
-    e.code = 'bad_model';
-    throw e;
-  }
   if (isQuotaError(text)) {
     const e = new Error('quota');
     e.code = 'quota';
@@ -156,12 +169,23 @@ async function runModel(env, system, user, maxTokens) {
   return text;
 }
 
+function failureInfo(err) {
+  if (err?.category === 'provider') {
+    return { category: 'provider', status: err.status, code: err.providerCode };
+  }
+  if (err?.category === 'empty' || err?.category === 'truncated' || err?.category === 'untranslated') {
+    return { category: err.category };
+  }
+  if (err?.code === 'bad_model') return { category: 'parse' };
+  return providerFailure(err);
+}
+
 function fail(err) {
   if (err?.code === 'quota' || isQuotaError(err)) return json(quotaBody(), 429);
   if (err?.code === 'ai_unconfigured') {
     return json({ error: 'ai_unconfigured', message: '翻译服务还没准备好，稍后再试。' }, 503);
   }
-  return json({ error: 'ai_failed', message: '翻译失败，请再试一次。' }, 502);
+  return json({ error: 'ai_failed', message: failureSentence(failureInfo(err)) }, 502);
 }
 
 async function translateSelection(request, env, body) {
@@ -371,7 +395,9 @@ async function translateQuotes(request, env, body) {
     }
     return isTranslatedZh(p.en, p.zh);
   });
-  if (!picks.length) return fail(translateErr || Object.assign(new Error('untranslated'), { code: 'ai_failed' }));
+  if (!picks.length) {
+    return fail(translateErr || Object.assign(new Error('untranslated'), { code: 'ai_failed', category: 'untranslated' }));
+  }
   for (const p of picks) {
     if (p.pieces?.length) {
       const ready = p.pieces.filter(part => part.en && part.zh);
@@ -398,7 +424,9 @@ async function translateQuotes(request, env, body) {
       source: fromFull ? 'fulltext' : 'abstract',
     };
   });
-  if (!quotes.length) return json({ error: 'ai_failed', message: '摘句翻译失败，请再试一次。' }, 502);
+  if (!quotes.length) {
+    return json({ error: 'ai_failed', message: failureSentence({ category: 'untranslated' }) }, 502);
+  }
   if (oaStatus !== 'error') await cachePut(request, key, { quotes });
   return json({ quotes, cached: false, source: passage ? 'fulltext' : 'abstract' });
 }

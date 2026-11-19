@@ -350,6 +350,77 @@ export function extractAiText(result) {
   return stripModelThinking(direct.trim() ? direct : choice);
 }
 
+/** Workers AI error codes whose numeric value is safe to show. The message
+ *  around the code is not shown: it can echo the prompt. */
+const PROVIDER_CODES = new Set([
+  3003, 3006, 3007, 3008, 3023, 3036, 3039, 3040, 3041, 3042,
+  5004, 5005, 5006, 5007, 5016, 5018, 5019, 5028, 5035, 7003,
+]);
+
+function providerCode(value) {
+  const n = Number(value);
+  return PROVIDER_CODES.has(n) ? n : 0;
+}
+
+function codesInText(text) {
+  const found = [];
+  for (const match of String(text || '').slice(0, 180).matchAll(/\b(\d{4})\b/g)) {
+    const code = providerCode(match[1]);
+    if (code) found.push(code);
+  }
+  return found;
+}
+
+/** Status and allowlisted code only. No message text, prompt, or body. */
+export function providerFailure(err) {
+  let status = Number(err?.status || err?.statusCode || 0);
+  if (!(status >= 400 && status <= 599)) status = 0;
+  let code = providerCode(err?.internalCode) || providerCode(err?.code);
+  if (!code && Array.isArray(err?.errors)) {
+    for (const item of err.errors) {
+      code = providerCode(item?.code);
+      if (code) break;
+    }
+  }
+  if (!code) code = codesInText(err?.message)[0] || 0;
+  return { category: 'provider', status, code };
+}
+
+/**
+ * Official GLM-4.7-Flash output is a chat completion: `choices[0].message.content`
+ * is a string or null, and `finish_reason` is `stop` or `length`. An unclosed
+ * think block means the cap was spent before the answer.
+ */
+export function classifyCompletion(result) {
+  const text = extractAiText(result);
+  const choice = result?.choices?.[0] || result?.result?.choices?.[0] || null;
+  const finish = String(choice?.finish_reason || '');
+  const raw = [
+    typeof result?.response === 'string' ? result.response : '',
+    typeof choice?.message?.content === 'string' ? choice.message.content : '',
+  ].join('\n');
+  const unclosed = /<think>/i.test(raw) && !/<\/think>/i.test(raw);
+  if (text) return { category: 'ok' };
+  if (finish === 'length' || unclosed) return { category: 'truncated' };
+  return { category: 'empty' };
+}
+
+const FAILURE_CATEGORIES = new Set(['provider', 'empty', 'truncated', 'parse', 'untranslated']);
+
+export function failureLabel(info) {
+  const category = FAILURE_CATEGORIES.has(info?.category) ? info.category : 'unknown';
+  if (category !== 'provider') return category;
+  const status = Number(info.status) >= 400 && Number(info.status) <= 599 ? String(info.status) : '';
+  const code = providerCode(info.code) ? String(info.code) : '';
+  const bits = [status, code].filter(Boolean);
+  return bits.length ? `provider ${bits.join('/')}` : 'provider';
+}
+
+/** Sentence the share sheet already prints from `data.message`. */
+export function failureSentence(info) {
+  return `翻译失败，请再试一次。（${failureLabel(info)}）`;
+}
+
 /** GLM-4.7-Flash input. This model has no `reasoning_effort` levels; thinking
  *  defaults on and is switched off with `enable_thinking: false`. One token
  *  cap only: `max_tokens`, the field the Workers AI binding provider sends.
