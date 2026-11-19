@@ -196,6 +196,15 @@ test('extractAiText reads the GLM chat completion and ignores reasoning', () => 
     choices: [{ message: { content: null, reasoning_content: '只在思考里出现的译文' } }],
   }), '');
   assert.equal(stripModelThinking('</think>译文'), '译文');
+  assert.equal(extractAiText({ response: ['心力衰竭的中文译文'] }), '["心力衰竭的中文译文"]');
+  assert.equal(
+    extractAiText({ response: { quotes: [{ role: 'finding', i: 0, zh: '真正的译文' }] }, tool_calls: [], usage: {} }),
+    '{"quotes":[{"role":"finding","i":0,"zh":"真正的译文"}]}',
+  );
+  assert.equal(extractAiText({
+    response: '',
+    choices: [{ message: { content: '["丙"]', reasoning_content: 'hidden' } }],
+  }), '["丙"]');
 });
 
 test('GLM request disables thinking and caps completion tokens', () => {
@@ -203,14 +212,15 @@ test('GLM request disables thinking and caps completion tokens', () => {
   assert.equal(MT_MODEL, '@cf/zai-org/glm-4.7-flash');
   assert.equal(req.temperature, 0.1);
   assert.equal(req.max_tokens, 2000);
-  assert.equal(req.max_completion_tokens, 2000);
+  assert.equal('max_completion_tokens' in req, false);
+  assert.equal('reasoning_effort' in req, false);
   assert.deepEqual(req.chat_template_kwargs, { enable_thinking: false });
   assert.equal(req.messages[0].content, TITLE_SYSTEM);
   assert.equal(req.messages[1].content, '["Heart failure"]');
   assert.equal(req.messages[1].content.includes('/no_think'), false);
   const short = mtRequest(SELECTION_SYSTEM, 'Heart failure', 50.9);
-  assert.equal(short.max_completion_tokens, 50);
   assert.equal(short.max_tokens, 50);
+  assert.equal('max_completion_tokens' in short, false);
   assert.equal(short.messages[0].content, SELECTION_SYSTEM);
 });
 
@@ -230,7 +240,8 @@ test('handler masks drugs, restores them, and caches nothing without the Cache A
         const arr = JSON.parse(user);
         assert.equal(input.temperature, 0.1);
         assert.equal(input.max_tokens, 2000);
-        assert.equal(input.max_completion_tokens, 2000);
+        assert.equal('max_completion_tokens' in input, false);
+        assert.equal('reasoning_effort' in input, false);
         assert.deepEqual(input.chat_template_kwargs, { enable_thinking: false });
         assert.equal(input.messages[0].content, TITLE_SYSTEM);
         assert.equal(user.includes('/no_think'), false);
@@ -404,7 +415,9 @@ test('titles, selection, and quotes all call GLM with thinking off', async () =>
         const user = input.messages[1].content;
         assert.equal(model, MT_MODEL);
         assert.equal(input.chat_template_kwargs.enable_thinking, false);
-        assert.equal(input.max_completion_tokens, MT_MAX_TOKENS);
+        assert.equal(input.max_tokens, MT_MAX_TOKENS);
+        assert.equal('max_completion_tokens' in input, false);
+        assert.equal('reasoning_effort' in input, false);
         assert.equal(user.includes('/no_think'), false);
         if (user.startsWith('[')) {
           const arr = JSON.parse(user);
@@ -455,6 +468,52 @@ test('titles, selection, and quotes all call GLM with thinking off', async () =>
   }
   assert.equal(seen.length >= 3, true);
   assert.equal(seen.every(call => call.model === '@cf/zai-org/glm-4.7-flash'), true);
+});
+
+test('share quotes and titles accept a parsed JSON response instead of the generic failure', async () => {
+  __setMtResources({ glossary: [], overrides: [] });
+  const origin = 'https://research-radar-f5j.pages.dev';
+  const abstract = 'Thus, early review of volume status reduced mortality compared with usual care among adults with heart failure.';
+  const env = {
+    AI: {
+      async run(_model, input) {
+        const user = input.messages[1].content;
+        assert.equal(input.max_tokens, 2000);
+        assert.equal('max_completion_tokens' in input, false);
+        assert.equal('reasoning_effort' in input, false);
+        assert.equal(input.chat_template_kwargs.enable_thinking, false);
+        if (user.includes('[0]')) {
+          return {
+            response: { quotes: [{ role: 'finding', i: 0, zh: '早期复查容量状态比常规护理降低了心衰成人的死亡率。' }] },
+            tool_calls: [],
+            usage: { prompt_tokens: 40, completion_tokens: 30, total_tokens: 70 },
+          };
+        }
+        const arr = JSON.parse(user);
+        return { response: arr.map(() => '心力衰竭的中文译文') };
+      },
+    },
+  };
+  const post = (body) => handleTranslate(new Request(origin + '/api/translate', {
+    method: 'POST',
+    headers: { Origin: origin, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  }), env);
+
+  const titles = await post({
+    mode: 'titles',
+    items: [{ id: '10.1/share', text: 'Heart failure decompensation' }],
+  });
+  assert.equal(titles.status, 200);
+  const titleBody = await titles.json();
+  assert.equal(titleBody.items[0].zh, '心力衰竭的中文译文');
+
+  const quotes = await post({ mode: 'quotes', doi: '10.1/share', abstract });
+  const quoteBody = await quotes.json();
+  assert.equal(quotes.status, 200, quoteBody.message || quotes.status);
+  assert.equal(quoteBody.message, undefined);
+  assert.ok(quoteBody.quotes.some(q => /死亡率/.test(q.zh)));
+  assert.equal(quoteBody.quotes.every(q => abstract.includes(q.en.replace(/^…\s*/, '').split(' … ')[0])), true);
 });
 
 test('a reasoning-only GLM completion is not cached as a translation', async () => {

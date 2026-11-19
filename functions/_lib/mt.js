@@ -308,10 +308,30 @@ export function stripModelThinking(text) {
   return s.replace(/^\uFEFF/, '').trim();
 }
 
+function choiceText(choice) {
+  if (!choice) return '';
+  if (typeof choice.text === 'string') return choice.text;
+  const msg = choice.message || choice.delta || {};
+  if (typeof msg.content === 'string') return msg.content;
+  if (Array.isArray(msg.content)) {
+    return msg.content.map(p => (typeof p === 'string' ? p : p?.text || '')).join('');
+  }
+  return '';
+}
+
+/** Native `/ai/run` puts the completion in `response`. A JSON title or quote
+ *  can come back already parsed (array or object). An empty string must not
+ *  hide `choices[0].message.content`. Reasoning fields are not the answer. */
+function responseText(response) {
+  if (typeof response === 'string') return response;
+  if (Array.isArray(response)) return JSON.stringify(response);
+  if (response && typeof response === 'object') return JSON.stringify(response);
+  return '';
+}
+
 /**
- * Visible answer only. GLM-4.7-Flash's catalog output is an OpenAI chat
- * completion (`choices[0].message.content`). Older Workers AI bindings return
- * `{ response }`. `reasoning_content` is never the translation.
+ * Visible answer only. GLM-4.7-Flash's typed output is a chat completion.
+ * The binding also returns `{ response }`. `reasoning_content` is never the translation.
  */
 export function extractAiText(result) {
   if (result == null) return '';
@@ -320,31 +340,20 @@ export function extractAiText(result) {
     result.result &&
     typeof result.result === 'object' &&
     typeof result.response !== 'string' &&
+    !Array.isArray(result.response) &&
     !result.choices
   ) {
     return extractAiText(result.result);
   }
-  let raw = '';
-  if (typeof result.response === 'string') raw = result.response;
-  else {
-    const choice = result.choices && result.choices[0];
-    if (choice) {
-      if (typeof choice.text === 'string') raw = choice.text;
-      else {
-        const msg = choice.message || choice.delta || {};
-        if (typeof msg.content === 'string') raw = msg.content;
-        else if (Array.isArray(msg.content)) {
-          raw = msg.content.map(p => (typeof p === 'string' ? p : p?.text || '')).join('');
-        }
-      }
-    }
-  }
-  return stripModelThinking(raw);
+  const direct = responseText(result.response);
+  const choice = choiceText(result.choices && result.choices[0]);
+  return stripModelThinking(direct.trim() ? direct : choice);
 }
 
-/** Messages input from the GLM-4.7-Flash schema. Thinking defaults on; leave
- *  it off so reasoning tokens do not consume max_completion_tokens or the
- *  free daily neurons. max_tokens is the deprecated alias of the same cap. */
+/** GLM-4.7-Flash input. This model has no `reasoning_effort` levels; thinking
+ *  defaults on and is switched off with `enable_thinking: false`. One token
+ *  cap only: `max_tokens`, the field the Workers AI binding provider sends.
+ *  A second `max_completion_tokens` is not sent. */
 export function mtRequest(system, user, maxTokens = MT_MAX_TOKENS) {
   const cap = Math.max(1, Math.floor(Number(maxTokens) || MT_MAX_TOKENS));
   return {
@@ -354,7 +363,6 @@ export function mtRequest(system, user, maxTokens = MT_MAX_TOKENS) {
     ],
     temperature: 0.1,
     max_tokens: cap,
-    max_completion_tokens: cap,
     chat_template_kwargs: { enable_thinking: false },
   };
 }
