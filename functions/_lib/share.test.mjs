@@ -517,7 +517,9 @@ test('quotes mode translates a line again when the model copies the English', as
         calls++;
         assert.equal(model, MT_MODEL);
         assert.equal(payload.chat_template_kwargs.enable_thinking, false);
-        assert.equal(payload.max_completion_tokens, 2000);
+        assert.equal(payload.max_tokens, 2000);
+        assert.equal('max_completion_tokens' in payload, false);
+        assert.equal('reasoning_effort' in payload, false);
         const user = payload.messages[1].content;
         assert.equal(user.includes('/no_think'), false);
         if (user.includes('[0]')) {

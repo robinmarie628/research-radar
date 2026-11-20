@@ -7,6 +7,7 @@ import {
   TITLE_SYSTEM, SELECTION_SYSTEM, DEFAULT_OVERRIDES, maskDrugs, restoreDrugs, applyGlossary, stripTitleStop,
   parseTranslationArray, isDrugToken, normTitle, titleZhCutoff, TITLE_ZH_DAYS, isAcronym,
   extractAiText, stripModelThinking, mtRequest, MT_MODEL, MT_MAX_TOKENS,
+  classifyCompletion, failureSentence, providerFailure,
   preserveTitleContrast, exactTitleZh, settleTitleZh, sha256Hex,
 } from './mt.js';
 import { handleTranslate, __setMtResources } from '../api/translate.js';
@@ -162,6 +163,35 @@ test('JSON array parser drops think tags and fences', () => {
   assert.deepEqual(parseTranslationArray(raw, 2), ['甲', '乙']);
   assert.throws(() => parseTranslationArray('["甲"]', 2));
   assert.throws(() => parseTranslationArray('<think>still going and no answer', 1));
+  const echoed = '["Heart failure decompensation"]\n["心力衰竭失代偿"]';
+  assert.deepEqual(
+    parseTranslationArray(echoed, 1, ['Heart failure decompensation']),
+    ['心力衰竭失代偿'],
+  );
+  assert.deepEqual(
+    parseTranslationArray('心力衰竭失代偿', 1, ['Heart failure decompensation']),
+    ['心力衰竭失代偿'],
+  );
+  assert.deepEqual(
+    parseTranslationArray('{"zh":"心力衰竭失代偿","en":"An invented English title."}', 1, ['Heart failure decompensation']),
+    ['心力衰竭失代偿'],
+  );
+  assert.throws(() => parseTranslationArray(
+    '第一句译文。\n第二句译文。',
+    2,
+    ['First sentence here.', 'Second sentence here.'],
+  ));
+  assert.throws(() => parseTranslationArray('Heart failure decompensation', 1, ['Heart failure decompensation']));
+  assert.deepEqual(extractAiText({
+    choices: [{
+      message: {
+        content: [
+          { type: 'reasoning', text: '[0] do not parse this' },
+          { type: 'text', text: '心力衰竭失代偿' },
+        ],
+      },
+    }],
+  }), '心力衰竭失代偿');
   const quoted = parseQuoteResponse('<think>{"quotes":[{"role":"finding","i":0,"zh":"思考"}]}</think>{"quotes":[{"role":"finding","i":1,"zh":"真正的译文"}]}');
   assert.equal(quoted.length, 1);
   assert.equal(quoted[0].i, 1);
@@ -196,6 +226,15 @@ test('extractAiText reads the GLM chat completion and ignores reasoning', () => 
     choices: [{ message: { content: null, reasoning_content: '只在思考里出现的译文' } }],
   }), '');
   assert.equal(stripModelThinking('</think>译文'), '译文');
+  assert.equal(extractAiText({ response: ['心力衰竭的中文译文'] }), '["心力衰竭的中文译文"]');
+  assert.equal(
+    extractAiText({ response: { quotes: [{ role: 'finding', i: 0, zh: '真正的译文' }] }, tool_calls: [], usage: {} }),
+    '{"quotes":[{"role":"finding","i":0,"zh":"真正的译文"}]}',
+  );
+  assert.equal(extractAiText({
+    response: '',
+    choices: [{ message: { content: '["丙"]', reasoning_content: 'hidden' } }],
+  }), '["丙"]');
 });
 
 test('GLM request disables thinking and caps completion tokens', () => {
@@ -203,14 +242,15 @@ test('GLM request disables thinking and caps completion tokens', () => {
   assert.equal(MT_MODEL, '@cf/zai-org/glm-4.7-flash');
   assert.equal(req.temperature, 0.1);
   assert.equal(req.max_tokens, 2000);
-  assert.equal(req.max_completion_tokens, 2000);
+  assert.equal('max_completion_tokens' in req, false);
+  assert.equal('reasoning_effort' in req, false);
   assert.deepEqual(req.chat_template_kwargs, { enable_thinking: false });
   assert.equal(req.messages[0].content, TITLE_SYSTEM);
   assert.equal(req.messages[1].content, '["Heart failure"]');
   assert.equal(req.messages[1].content.includes('/no_think'), false);
   const short = mtRequest(SELECTION_SYSTEM, 'Heart failure', 50.9);
-  assert.equal(short.max_completion_tokens, 50);
   assert.equal(short.max_tokens, 50);
+  assert.equal('max_completion_tokens' in short, false);
   assert.equal(short.messages[0].content, SELECTION_SYSTEM);
 });
 
@@ -230,7 +270,8 @@ test('handler masks drugs, restores them, and caches nothing without the Cache A
         const arr = JSON.parse(user);
         assert.equal(input.temperature, 0.1);
         assert.equal(input.max_tokens, 2000);
-        assert.equal(input.max_completion_tokens, 2000);
+        assert.equal('max_completion_tokens' in input, false);
+        assert.equal('reasoning_effort' in input, false);
         assert.deepEqual(input.chat_template_kwargs, { enable_thinking: false });
         assert.equal(input.messages[0].content, TITLE_SYSTEM);
         assert.equal(user.includes('/no_think'), false);
@@ -404,7 +445,9 @@ test('titles, selection, and quotes all call GLM with thinking off', async () =>
         const user = input.messages[1].content;
         assert.equal(model, MT_MODEL);
         assert.equal(input.chat_template_kwargs.enable_thinking, false);
-        assert.equal(input.max_completion_tokens, MT_MAX_TOKENS);
+        assert.equal(input.max_tokens, MT_MAX_TOKENS);
+        assert.equal('max_completion_tokens' in input, false);
+        assert.equal('reasoning_effort' in input, false);
         assert.equal(user.includes('/no_think'), false);
         if (user.startsWith('[')) {
           const arr = JSON.parse(user);
@@ -455,6 +498,211 @@ test('titles, selection, and quotes all call GLM with thinking off', async () =>
   }
   assert.equal(seen.length >= 3, true);
   assert.equal(seen.every(call => call.model === '@cf/zai-org/glm-4.7-flash'), true);
+});
+
+test('share quotes and titles accept a parsed JSON response instead of the generic failure', async () => {
+  __setMtResources({ glossary: [], overrides: [] });
+  const origin = 'https://research-radar-f5j.pages.dev';
+  const abstract = 'Thus, early review of volume status reduced mortality compared with usual care among adults with heart failure.';
+  const env = {
+    AI: {
+      async run(_model, input) {
+        const user = input.messages[1].content;
+        assert.equal(input.max_tokens, 2000);
+        assert.equal('max_completion_tokens' in input, false);
+        assert.equal('reasoning_effort' in input, false);
+        assert.equal(input.chat_template_kwargs.enable_thinking, false);
+        if (user.includes('[0]')) {
+          return {
+            response: { quotes: [{ role: 'finding', i: 0, zh: '早期复查容量状态比常规护理降低了心衰成人的死亡率。' }] },
+            tool_calls: [],
+            usage: { prompt_tokens: 40, completion_tokens: 30, total_tokens: 70 },
+          };
+        }
+        const arr = JSON.parse(user);
+        return { response: arr.map(() => '心力衰竭的中文译文') };
+      },
+    },
+  };
+  const post = (body) => handleTranslate(new Request(origin + '/api/translate', {
+    method: 'POST',
+    headers: { Origin: origin, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  }), env);
+
+  const titles = await post({
+    mode: 'titles',
+    items: [{ id: '10.1/share', text: 'Heart failure decompensation' }],
+  });
+  assert.equal(titles.status, 200);
+  const titleBody = await titles.json();
+  assert.equal(titleBody.items[0].zh, '心力衰竭的中文译文');
+
+  const quotes = await post({ mode: 'quotes', doi: '10.1/share', abstract });
+  const quoteBody = await quotes.json();
+  assert.equal(quotes.status, 200, quoteBody.message || quotes.status);
+  assert.equal(quoteBody.message, undefined);
+  assert.ok(quoteBody.quotes.some(q => /死亡率/.test(q.zh)));
+  assert.equal(quoteBody.quotes.every(q => abstract.includes(q.en.replace(/^…\s*/, '').split(' … ')[0])), true);
+});
+
+test('completion categories follow the chat-completion output schema', () => {
+  assert.equal(classifyCompletion({
+    choices: [{ finish_reason: 'stop', message: { content: '["甲"]' } }],
+  }).category, 'ok');
+  assert.equal(classifyCompletion({
+    choices: [{ finish_reason: 'stop', message: { content: null } }],
+  }).category, 'empty');
+  assert.equal(classifyCompletion({
+    choices: [{ finish_reason: 'length', message: { content: '<think>still reasoning' } }],
+  }).category, 'truncated');
+  assert.equal(classifyCompletion({ response: '' }).category, 'empty');
+  const paid = Object.assign(new Error('Bearer secret — This model requires a Workers Paid plan'), { status: 403 });
+  paid.message = '5035: This model requires a Workers Paid plan. Bearer secret. ' + 'A'.repeat(400);
+  const info = providerFailure(paid);
+  assert.equal(failureSentence(info), '翻译失败，请再试一次。（provider 403/5035）');
+  assert.equal(failureSentence(info).includes('Bearer'), false);
+  assert.equal(failureSentence(info).includes('Paid plan'), false);
+  assert.equal(failureSentence({ category: 'empty' }), '翻译失败，请再试一次。（empty）');
+  assert.equal(failureSentence({ category: 'truncated' }), '翻译失败，请再试一次。（truncated）');
+  assert.equal(failureSentence({ category: 'parse' }), '翻译失败，请再试一次。（parse）');
+});
+
+test('share failure names the category and does not echo the provider body', async () => {
+  __setMtResources({ glossary: [], overrides: [] });
+  const origin = 'https://research-radar-f5j.pages.dev';
+  const abstract = 'Thus, early review of volume status reduced mortality compared with usual care among adults with heart failure.';
+  const post = (env, body) => handleTranslate(new Request(origin + '/api/translate', {
+    method: 'POST',
+    headers: { Origin: origin, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  }), env);
+
+  const paid = await post({
+    AI: {
+      async run() {
+        const err = new Error('5035: This model requires a Workers Paid plan. prompt=' + abstract);
+        err.status = 403;
+        throw err;
+      },
+    },
+  }, { mode: 'quotes', doi: '10.1/diag', abstract });
+  assert.equal(paid.status, 502);
+  const paidBody = await paid.json();
+  assert.equal(paidBody.message, '翻译失败，请再试一次。（provider 403/5035）');
+  assert.equal(paidBody.message.includes(abstract.slice(0, 24)), false);
+  assert.equal(paidBody.message.includes('Paid plan'), false);
+
+  const timed = await post({
+    AI: {
+      async run() {
+        const err = new Error('3007: Request timeout');
+        err.status = 408;
+        throw err;
+      },
+    },
+  }, { mode: 'titles', items: [{ id: '10.1/diag', text: 'Heart failure decompensation' }] });
+  assert.equal((await timed.json()).message, '翻译失败，请再试一次。（provider 408/3007）');
+
+  const truncated = await post({
+    AI: {
+      async run() {
+        return {
+          choices: [{
+            finish_reason: 'length',
+            message: { content: '<think>do not show this reasoning', reasoning_content: 'hidden' },
+          }],
+        };
+      },
+    },
+  }, { mode: 'selection', text: 'Heart failure decompensation' });
+  const truncatedBody = await truncated.json();
+  assert.equal(truncatedBody.message, '翻译失败，请再试一次。（truncated）');
+  assert.equal(truncatedBody.message.includes('reasoning'), false);
+
+  const empty = await post({
+    AI: { async run() { return { choices: [{ finish_reason: 'stop', message: { content: null } }] }; } },
+  }, { mode: 'selection', text: 'Heart failure decompensation' });
+  assert.equal((await empty.json()).message, '翻译失败，请再试一次。（empty）');
+
+  const parsed = await post({
+    AI: { async run() { return { response: 'not a json array' }; } },
+  }, { mode: 'titles', items: [{ id: '10.1/diag', text: 'Heart failure decompensation' }] });
+  const parsedBody = await parsed.json();
+  assert.equal(parsedBody.message, '翻译失败，请再试一次。（parse）');
+  assert.equal(parsedBody.message.includes('not a json'), false);
+
+  const quota = await post({
+    AI: {
+      async run() {
+        const err = new Error('3036: You have used up your daily free allocation of 10,000 neurons');
+        err.status = 429;
+        throw err;
+      },
+    },
+  }, { mode: 'selection', text: 'Heart failure decompensation' });
+  assert.equal(quota.status, 429);
+  assert.match((await quota.json()).message, /明天会恢复/);
+
+  const app = fs.readFileSync(path.join(root, 'assets/app.js'), 'utf8');
+  const share = app.slice(app.indexOf('async function showShareImage'), app.indexOf('function paintShareResult'));
+  assert.match(share, /quoteRes\.error/);
+  assert.match(share, /err\.message/);
+  assert.match(app, /data\.message \|\| '摘句翻译失败/);
+  assert.match(app, /data\.message \|\| '标题翻译失败/);
+});
+
+test('a single title may be plain Chinese, and a quote keeps the abstract sentence', async () => {
+  __setMtResources({ glossary, overrides });
+  const origin = 'https://research-radar-f5j.pages.dev';
+  const abstract = 'Thus, early review of volume status reduced mortality compared with usual care among adults with heart failure.';
+  const env = {
+    AI: {
+      async run(_model, input) {
+        const user = input.messages[1].content;
+        if (user.includes('[0]')) return { response: '{"quotes":[]}' };
+        if (user.startsWith('[')) {
+          const arr = JSON.parse(user);
+          if (arr.length === 1 && /Heart failure/.test(arr[0])) return { response: '心力衰竭失代偿' };
+          if (arr.length === 1 && /Macular/.test(arr[0])) {
+            return { response: '美国常规临床实践中新生血管性年龄相关性黄斑变性的管理' };
+          }
+          return {
+            response: JSON.stringify(arr.map(() => ({
+              en: 'An invented sentence that is not in the abstract.',
+              zh: '早期复查容量状态比常规护理降低了心衰成人的死亡率。',
+            }))),
+          };
+        }
+        return { response: '不该走到这里' };
+      },
+    },
+  };
+  const post = (body) => handleTranslate(new Request(origin + '/api/translate', {
+    method: 'POST',
+    headers: { Origin: origin, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  }), env);
+  const titles = await post({
+    mode: 'titles',
+    items: [{ id: '10.1/plain', text: 'Heart failure decompensation.' }],
+  });
+  assert.equal(titles.status, 200);
+  assert.equal((await titles.json()).items[0].zh, '心力衰竭失代偿');
+
+  const shortened = await post({
+    mode: 'titles',
+    items: [{ id: '10.1/amd', text: AMD_EN }],
+  });
+  assert.equal(shortened.status, 200);
+  assert.equal((await shortened.json()).items[0].zh, AMD_ZH);
+
+  const quotes = await post({ mode: 'quotes', doi: '10.1/plain', abstract });
+  const quoteBody = await quotes.json();
+  assert.equal(quotes.status, 200, quoteBody.message || '');
+  assert.ok(quoteBody.quotes.every(q => abstract.includes(q.en.replace(/^…\s*/, '').split(' … ')[0])));
+  assert.equal(quoteBody.quotes.some(q => /invented sentence/.test(q.en)), false);
+  assert.ok(quoteBody.quotes.some(q => /死亡率/.test(q.zh)));
 });
 
 test('a reasoning-only GLM completion is not cached as a translation', async () => {

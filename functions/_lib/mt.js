@@ -308,10 +308,32 @@ export function stripModelThinking(text) {
   return s.replace(/^\uFEFF/, '').trim();
 }
 
+function choiceText(choice) {
+  if (!choice) return '';
+  if (typeof choice.text === 'string') return choice.text;
+  const msg = choice.message || choice.delta || {};
+  if (typeof msg.content === 'string') return msg.content;
+  if (Array.isArray(msg.content)) {
+    const textParts = msg.content.filter(p => p && typeof p === 'object' && p.type === 'text' && typeof p.text === 'string');
+    if (textParts.length) return textParts.map(p => p.text).join('');
+    return msg.content.map(p => (typeof p === 'string' ? p : '')).join('');
+  }
+  return '';
+}
+
+/** Native `/ai/run` puts the completion in `response`. A JSON title or quote
+ *  can come back already parsed (array or object). An empty string must not
+ *  hide `choices[0].message.content`. Reasoning fields are not the answer. */
+function responseText(response) {
+  if (typeof response === 'string') return response;
+  if (Array.isArray(response)) return JSON.stringify(response);
+  if (response && typeof response === 'object') return JSON.stringify(response);
+  return '';
+}
+
 /**
- * Visible answer only. GLM-4.7-Flash's catalog output is an OpenAI chat
- * completion (`choices[0].message.content`). Older Workers AI bindings return
- * `{ response }`. `reasoning_content` is never the translation.
+ * Visible answer only. GLM-4.7-Flash's typed output is a chat completion.
+ * The binding also returns `{ response }`. `reasoning_content` is never the translation.
  */
 export function extractAiText(result) {
   if (result == null) return '';
@@ -320,31 +342,91 @@ export function extractAiText(result) {
     result.result &&
     typeof result.result === 'object' &&
     typeof result.response !== 'string' &&
+    !Array.isArray(result.response) &&
     !result.choices
   ) {
     return extractAiText(result.result);
   }
-  let raw = '';
-  if (typeof result.response === 'string') raw = result.response;
-  else {
-    const choice = result.choices && result.choices[0];
-    if (choice) {
-      if (typeof choice.text === 'string') raw = choice.text;
-      else {
-        const msg = choice.message || choice.delta || {};
-        if (typeof msg.content === 'string') raw = msg.content;
-        else if (Array.isArray(msg.content)) {
-          raw = msg.content.map(p => (typeof p === 'string' ? p : p?.text || '')).join('');
-        }
-      }
-    }
-  }
-  return stripModelThinking(raw);
+  const direct = responseText(result.response);
+  const choice = choiceText(result.choices && result.choices[0]);
+  return stripModelThinking(direct.trim() ? direct : choice);
 }
 
-/** Messages input from the GLM-4.7-Flash schema. Thinking defaults on; leave
- *  it off so reasoning tokens do not consume max_completion_tokens or the
- *  free daily neurons. max_tokens is the deprecated alias of the same cap. */
+/** Workers AI error codes whose numeric value is safe to show. The message
+ *  around the code is not shown: it can echo the prompt. */
+const PROVIDER_CODES = new Set([
+  3003, 3006, 3007, 3008, 3023, 3036, 3039, 3040, 3041, 3042,
+  5004, 5005, 5006, 5007, 5016, 5018, 5019, 5028, 5035, 7003,
+]);
+
+function providerCode(value) {
+  const n = Number(value);
+  return PROVIDER_CODES.has(n) ? n : 0;
+}
+
+function codesInText(text) {
+  const found = [];
+  for (const match of String(text || '').slice(0, 180).matchAll(/\b(\d{4})\b/g)) {
+    const code = providerCode(match[1]);
+    if (code) found.push(code);
+  }
+  return found;
+}
+
+/** Status and allowlisted code only. No message text, prompt, or body. */
+export function providerFailure(err) {
+  let status = Number(err?.status || err?.statusCode || 0);
+  if (!(status >= 400 && status <= 599)) status = 0;
+  let code = providerCode(err?.internalCode) || providerCode(err?.code);
+  if (!code && Array.isArray(err?.errors)) {
+    for (const item of err.errors) {
+      code = providerCode(item?.code);
+      if (code) break;
+    }
+  }
+  if (!code) code = codesInText(err?.message)[0] || 0;
+  return { category: 'provider', status, code };
+}
+
+/**
+ * Official GLM-4.7-Flash output is a chat completion: `choices[0].message.content`
+ * is a string or null, and `finish_reason` is `stop` or `length`. An unclosed
+ * think block means the cap was spent before the answer.
+ */
+export function classifyCompletion(result) {
+  const text = extractAiText(result);
+  const choice = result?.choices?.[0] || result?.result?.choices?.[0] || null;
+  const finish = String(choice?.finish_reason || '');
+  const raw = [
+    typeof result?.response === 'string' ? result.response : '',
+    typeof choice?.message?.content === 'string' ? choice.message.content : '',
+  ].join('\n');
+  const unclosed = /<think>/i.test(raw) && !/<\/think>/i.test(raw);
+  if (text) return { category: 'ok' };
+  if (finish === 'length' || unclosed) return { category: 'truncated' };
+  return { category: 'empty' };
+}
+
+const FAILURE_CATEGORIES = new Set(['provider', 'empty', 'truncated', 'parse', 'untranslated']);
+
+export function failureLabel(info) {
+  const category = FAILURE_CATEGORIES.has(info?.category) ? info.category : 'unknown';
+  if (category !== 'provider') return category;
+  const status = Number(info.status) >= 400 && Number(info.status) <= 599 ? String(info.status) : '';
+  const code = providerCode(info.code) ? String(info.code) : '';
+  const bits = [status, code].filter(Boolean);
+  return bits.length ? `provider ${bits.join('/')}` : 'provider';
+}
+
+/** Sentence the share sheet already prints from `data.message`. */
+export function failureSentence(info) {
+  return `翻译失败，请再试一次。（${failureLabel(info)}）`;
+}
+
+/** GLM-4.7-Flash input. This model has no `reasoning_effort` levels; thinking
+ *  defaults on and is switched off with `enable_thinking: false`. One token
+ *  cap only: `max_tokens`, the field the Workers AI binding provider sends.
+ *  A second `max_completion_tokens` is not sent. */
 export function mtRequest(system, user, maxTokens = MT_MAX_TOKENS) {
   const cap = Math.max(1, Math.floor(Number(maxTokens) || MT_MAX_TOKENS));
   return {
@@ -354,7 +436,6 @@ export function mtRequest(system, user, maxTokens = MT_MAX_TOKENS) {
     ],
     temperature: 0.1,
     max_tokens: cap,
-    max_completion_tokens: cap,
     chat_template_kwargs: { enable_thinking: false },
   };
 }
@@ -377,29 +458,99 @@ export function isTranslatedZh(en, zh) {
   return true;
 }
 
-export function parseTranslationArray(raw, n) {
-  let s = stripModelThinking(raw);
-  s = s.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
-  const a = s.indexOf('[');
-  const b = s.lastIndexOf(']');
-  if (a < 0 || b <= a) {
-    const err = new Error('no_json_array');
-    err.code = 'bad_model';
-    throw err;
+function badModel(message) {
+  const err = new Error(message);
+  err.code = 'bad_model';
+  return err;
+}
+
+function zhField(item) {
+  if (!item || typeof item !== 'object' || Array.isArray(item)) return '';
+  for (const key of ['zh', 'translation']) {
+    if (typeof item[key] === 'string' && item[key].trim()) return item[key].trim();
   }
-  let arr;
-  try { arr = JSON.parse(s.slice(a, b + 1)); }
-  catch {
-    const err = new Error('bad_json');
-    err.code = 'bad_model';
-    throw err;
+  return '';
+}
+
+/** Arrays of length n, last opening bracket first. A preamble `[0]` must not
+ *  swallow the answer array. Object `en` is ignored so a model cannot replace
+ *  the excerpt. */
+function translationArrays(s, n) {
+  const opens = [];
+  const closes = [];
+  for (let i = 0; i < s.length; i++) {
+    if (s[i] === '[') opens.push(i);
+    else if (s[i] === ']') closes.push(i);
   }
-  if (!Array.isArray(arr) || arr.length !== n) {
-    const err = new Error('len_mismatch');
-    err.code = 'bad_model';
-    throw err;
+  const found = [];
+  let tries = 0;
+  for (let oi = opens.length - 1; oi >= 0 && tries < 40; oi--) {
+    for (let ci = closes.length - 1; ci >= 0 && tries < 40; ci--) {
+      if (closes[ci] <= opens[oi]) break;
+      tries++;
+      let arr;
+      try { arr = JSON.parse(s.slice(opens[oi], closes[ci] + 1)); }
+      catch { continue; }
+      if (!Array.isArray(arr) || arr.length !== n) continue;
+      const items = arr.map(item => {
+        if (typeof item === 'string') return item.trim();
+        return zhField(item);
+      });
+      if (items.every(Boolean)) {
+        found.push(items);
+        break;
+      }
+    }
   }
-  return arr.map(x => String(x ?? '').trim());
+  return found;
+}
+
+function plainOne(s, source) {
+  let t = String(s || '').trim();
+  if (!t || !source) return '';
+  if (t.startsWith('"') && t.endsWith('"')) {
+    try {
+      const parsed = JSON.parse(t);
+      if (typeof parsed === 'string') t = parsed.trim();
+    } catch { /* not a JSON string */ }
+  }
+  if (t.startsWith('{') && t.endsWith('}')) {
+    try {
+      const zh = zhField(JSON.parse(t));
+      if (zh && isTranslatedZh(source, zh)) return zh;
+    } catch { /* not one object */ }
+    return '';
+  }
+  const structural = t.replace(/\[D\d+\]/g, '');
+  if (/[\[{]/.test(structural)) return '';
+  if (t.length > Math.max(String(source).length * 4, 280)) return '';
+  if (!isTranslatedZh(source, t)) return '';
+  return t;
+}
+
+/**
+ * JSON array of length n, searching from the last `[` so an echoed list does
+ * not invalidate a later array. For one source, a Chinese sentence or a
+ * `{zh}` object is enough. Two or more sources stay fail-closed without an
+ * array of that length. `en` fields are never returned.
+ */
+export function parseTranslationArray(raw, n, sources) {
+  const s = stripModelThinking(raw).replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+  const lists = translationArrays(s, n);
+  const src = Array.isArray(sources) && sources.length === n ? sources : null;
+  if (src) {
+    const good = lists.find(items => items.every((zh, i) => isTranslatedZh(src[i], zh)));
+    if (good) return good;
+    const han = lists.find(items => items.every(zh => /[\u4e00-\u9fff]/.test(zh)));
+    if (han) return han;
+    if (n === 1) {
+      const plain = plainOne(s, src[0]);
+      if (plain) return [plain];
+    }
+  } else if (lists.length) {
+    return lists[0];
+  }
+  throw badModel(lists.length ? 'untranslated_array' : 'no_json_array');
 }
 
 export function isQuotaError(err) {
