@@ -1,339 +1,359 @@
 {
- "date": "2026-11-20",
- "generatedAt": "2026-11-20T02:46:19Z",
+ "date": "2026-11-21",
+ "generatedAt": "2026-11-21T02:55:42Z",
  "model": "deepseek-flash",
- "headline": "Gemini 4 和 GPT-6.2 同天亮相，agent 基础设施成新战场",
+ "headline": "ChatGPT 手机版改版、Gemini 能替你操作电脑，模型对比成日常",
  "bullets": [
-  "Google 发布 Gemini 4 Neon，主打更快更便宜、复杂指令遵循；Project Genie 也升级到 Genie 4，能一句话造世界并边玩边改。",
-  "OpenAI 的 GPT-6.2 Astra 被内部人士称在极难任务上独一档，但沟通风格收到反馈、正在改。",
-  "Vercel 推出 vercel board，号称给 agent 用的「无头 Slack」，让百万 agent 去中心化协作。",
-  "Google Labs 新实验 Stitch Loop：一个常驻的产品 agent，帮小团队持续做产品，已开 waitlist。",
-  "builder 们反复在聊 agent 从「给答案」进化到「给目标、自己设计方案并持续优化」。"
+  "ChatGPT 正在测试新的手机端体验，Pro 用户可先试用，还能把 Codex、Projects 等固定到标签栏。",
+  "Mac 上的 Gemini 应用现在能直接在你的电脑上执行任务，这是用户呼声最高的功能之一。",
+  "Opus 5.5 和 Gemini 4 Neon 被 builder 们反复拿来对比，写作和个性上 Neon 不输，3D 和设计上 Opus 仍更强。",
+  "有人吐槽社交媒体上「SOTA 概率归零」这类夸张预测零成本、算法还偏爱，说错了也没后果。",
+  "Vercel 的 board 被定位成 agent 的基础设施而非产品，UI 可以按场景现生成。"
  ],
- "sentiment": "整体偏兴奋，主要对 agent 能力跃迁和新模型密集发布感到振奋，同时有人对 inference 云赛道过热持观望态度。",
- "count": 32,
- "summarised": 31,
+ "sentiment": "整体偏兴奋和自豪，builder 们觉得今天是行业的好日子，同时对模型横评和 agent 落地讨论得很起劲。",
+ "count": 34,
+ "summarised": 34,
  "posts": [
   {
-   "id": "https://x.com/rauchg/status/2123298562960466017",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Guillermo Rauch",
-   "handle": "rauchg",
-   "text": "Nov 1997 vs Nov 2026 https://t.co/C1zXJavktJ",
-   "date": "2026-11-19T06:13:21.000Z",
-   "summaryZh": "rauchg 发了一张 1997 年 11 月和 2026 年 11 月的对比图，没多解释。"
-  },
-  {
-   "id": "https://x.com/swyx/status/2123298074911248526",
+   "id": "https://x.com/swyx/status/2123659761887625602",
    "type": "x",
    "kind": "X 动态",
    "name": "Swyx",
    "handle": "swyx",
-   "text": "poteto https://t.co/6qMBfvE93k",
-   "date": "2026-11-19T06:11:24.000Z",
-   "summaryZh": "swyx 只发了一个词「poteto」，配了张图，没展开说。"
+   "text": "you cant be serious https://t.co/pll3CcsPFp",
+   "date": "2026-11-20T06:08:37.000Z",
+   "summaryZh": "swyx 只发了句「你不是认真的吧」，配图内容看不到，态度是难以置信。"
   },
   {
-   "id": "https://x.com/adityaag/status/2123293726110020052",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Aditya Agarwal",
-   "handle": "adityaag",
-   "text": "This completely tracks with our data as well.\n\nI have always thought it was copium when early stage VCs complained that they could not do “AI”.\n\nYou just have to take more risk and be non-consensus. And work on frontier problems. https://t.co/Skc0x1ZRBh",
-   "date": "2026-11-19T05:54:07.000Z",
-   "summaryZh": ""
-  },
-  {
-   "id": "https://x.com/petergyang/status/2123290075882807352",
+   "id": "https://x.com/petergyang/status/2123648490844897389",
    "type": "x",
    "kind": "X 动态",
    "name": "Peter Yang",
    "handle": "petergyang",
-   "text": "I think we’re all missing some info in this Nvidia saga:\n\n1. What led Jensen to resign so abruptly? Was there a smoking gun? \n\n2. Why has the board who spent so many years with him moved on so quickly?\n\n3. If there is a smoking gun why is the president saying he’s fine with Jensen coming back?\n\nIs this just about some board members losing trust in him that he lied or is there some other info we (and most Nvidia employees) are not aware of?",
-   "date": "2026-11-19T05:39:37.000Z",
-   "summaryZh": "他对 Nvidia 这出戏提出三个疑问：Jensen 为何突然辞职、董事会为何迅速放手、总统为何说他可以回来。"
+   "text": "People make fun of Google for being large and bureaucratic but I think one of their competitive advantages is they have 100,000+ employees testing their latest models and tools before wide release.\n\nAt that employee population you can even run staff-only A/B tests that are stat sig :)",
+   "date": "2026-11-20T05:23:50.000Z",
+   "summaryZh": "他认为 Google 十万多员工本身就是优势，新模型和工具发布前能在内部做统计显著的 A/B 测试。"
   },
   {
-   "id": "https://x.com/levie/status/2123278949749059756",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Aaron Levie",
-   "handle": "levie",
-   "text": "Regardless of what it’s called, we’re clearly moving to yet another era of AI agents in our work. \n\nWe’ve quickly jumped from agents that spit out a quick answer for you, to today agents that you orchestrate inside of a set of tasks. But as agents can both fan out and work in parallel, handle much larger context, be able to do long running work, and have far greater levels of capabilities, we’re entering yet another level of what we can have AI do for us.\n\nWe’ll soon be able to give agents a set of goals, and they can go out and design the best solution for that goal, while also continuously improving it based on the ongoing execution of whatever it built. This will obviously start with engineering because that’s where we’re seeing the best practices emerge first in almost every new era of agents. \n\nBut the impact can be quite massive across the rest of knowledge work. You’ll tell an agent to improve your client onboarding workflow to achieve a certain targeted goal; or have agents go reduce risk in your business; or improve your security posture on an ongoing basis.\n\nThese autonomous systems will be able to take on a set of goals, design the best outcome, test and iterate, deploy, and then optimize whatever it built on an ongoing basis. Importantly, this leads to outcomes and results that humans literally couldn’t have accomplished before. This will lead to fairly new levels of productivity with AI.",
-   "date": "2026-11-19T04:55:24.000Z",
-   "summaryZh": "Levie 认为 agent 又进新阶段：从给答案到给目标，agent 自己设计方案并持续优化，先从工程领域开始。"
-  },
-  {
-   "id": "https://x.com/adityaag/status/2123262616776921257",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Aditya Agarwal",
-   "handle": "adityaag",
-   "text": "Stablecoins will likely be one of the biggest ways for America to exert soft power.\n\nIf you are living in most countries outside of India and China, then you 100% would prefer to own dollars. Ditto for businesses.\n\n🇺🇸🇺🇸",
-   "date": "2026-11-19T03:50:30.000Z",
-   "summaryZh": "他认为早期 VC 抱怨做不了 AI 是自我安慰，得敢冒风险、走非共识、做前沿问题。"
-  },
-  {
-   "id": "https://x.com/swyx/status/2123260852984013045",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Swyx",
-   "handle": "swyx",
-   "text": "casting Monica Barbaro as temu Mira Murati is crazy work https://t.co/z241ISoVhl https://t.co/OCZi1tJ2DO",
-   "date": "2026-11-19T03:43:30.000Z",
-   "summaryZh": "swyx 吐槽选角：让 Monica Barbaro 演「廉价版 Mira Murati」太离谱。"
-  },
-  {
-   "id": "https://x.com/swyx/status/2123259711785148431",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Swyx",
-   "handle": "swyx",
-   "text": "fcf profitable!\n\nhttps://t.co/ahqTGK5ZQS",
-   "date": "2026-11-19T03:38:58.000Z",
-   "summaryZh": "swyx 一句「fcf profitable!」，配图庆祝自由现金流为正。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2123256168462299291",
+   "id": "https://x.com/petergyang/status/2123620968568676457",
    "type": "x",
    "kind": "X 动态",
    "name": "Peter Yang",
    "handle": "petergyang",
-   "text": "Like this game wtf is going on https://t.co/69aEp46e5I",
-   "date": "2026-11-19T03:24:53.000Z",
-   "summaryZh": "petergyang 玩一个游戏玩到懵，直呼「这到底在发生什么」。"
+   "text": "Opus 5.5 vs Gemini 4 Neon for Shibuya Crossing at night. Which one do you prefer?\n\n📌 Watch my 4 other head to head comparisons here: https://t.co/8rKllg4xBx https://t.co/QrSv4LzvmI https://t.co/p7nr6lHYU0",
+   "date": "2026-11-20T03:34:28.000Z",
+   "summaryZh": "他发了 Opus 5.5 和 Gemini 4 Neon 生成涩谷夜景的对比图，问大家更喜欢哪个。"
   },
   {
-   "id": "https://x.com/petergyang/status/2123247514103304252",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "Why do people have to make board games that are so complicated",
-   "date": "2026-11-19T02:50:30.000Z",
-   "summaryZh": "他吐槽为什么非要把桌游设计得这么复杂。"
-  },
-  {
-   "id": "https://x.com/rauchg/status/2123237505810178434",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Guillermo Rauch",
-   "handle": "rauchg",
-   "text": "One of the most impressive things I've seen, and I think this is an important advancement to the state of the art.\n\nMessage boards were the enabling technology of both the Navier-Stokes math breakthrough and even the OpenAI/HuggingFace cyber feat.\n\nWe built a message board infrastructure primitive. You can think of it as \"headless Slack\" (or remember IRC?) for agents.\n\nThis is an important building block for software factories, self-optimizing systems, and scientific research, where the human prompting is just the seed of the system, and millions of agents can operate in a decentralized fashion.\n\n𝚟𝚎𝚛𝚌𝚎𝚕 𝚋𝚘𝚊𝚛𝚍 is designed to be model, harness and hosting platform agnostic. Just bring your agents, give them our CLI, and watch magic happen.",
-   "date": "2026-11-19T02:10:43.000Z",
-   "summaryZh": "rauchg 发布 vercel board：给 agent 用的「无头 Slack」，模型和平台无关，是软件工厂和科研的重要积木。"
-  },
-  {
-   "id": "https://x.com/rauchg/status/2123203741570740504",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Guillermo Rauch",
-   "handle": "rauchg",
-   "text": "I’m being pitched a new inference neocloud company on average every two days. No exaggeration. I take every entrepreneur seriously and I look deeply into each.\n\nBut it’s hard to fathom this being sustainable. At the same time, AI Gateway token demand on Vercel has been ~40% MoM compounded since the beginning of the year. No signs of stopping.\n\nOne way to reconcile this is that compute is the new economy, and tokens the new energy unit. There’s a new Industrial Revolution taking place. Every aspect of our lives is being replatformed on top of this new system that enhances everything. More like an “oil rush” than a “gold rush”: it’s durable, not a fad.\n\nIn the short term, I anticipate more expansion, followed by consolidation due to economies of scale, cybersecurity and enterprise requirements (ZDR and cyber being a hot topic for inference providers), capital requirements, and an evolving regulatory landscape.",
-   "date": "2026-11-18T23:56:33.000Z",
-   "summaryZh": "他平均每两天被推销一家 inference 新云，觉得不可持续；但 Vercel 的 token 需求月增约 40%，他认为这是「石油热」而非「淘金热」。"
-  },
-  {
-   "id": "https://x.com/thenanyu/status/2123197657896321439",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nan Yu",
-   "handle": "thenanyu",
-   "text": "also applies to work https://t.co/K8wxqJQoeV",
-   "date": "2026-11-18T23:32:23.000Z",
-   "summaryZh": "thenanyu 转发一张图，说这道理同样适用于工作。"
-  },
-  {
-   "id": "https://x.com/danshipper/status/2123196924421661149",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Dan Shipper",
-   "handle": "danshipper",
-   "text": "Legggoooo https://t.co/plMcv2r3X0",
-   "date": "2026-11-18T23:29:28.000Z",
-   "summaryZh": "danshipper 兴奋喊「Legggoooo」，配了张图。"
-  },
-  {
-   "id": "https://x.com/nikunj/status/2123183421002588327",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nikunj Kothari",
-   "handle": "nikunj",
-   "text": "SF VCs (who didn’t invest in Anthropic): Dear Lord, it’d be nice to have some liquidity so that I can raise my next fund. \n\nLord: Tathastu\n\nVC: No, not that kind of liquidity 🤦‍♂️ https://t.co/4PlobnPg4n",
-   "date": "2026-11-18T22:35:49.000Z",
-   "summaryZh": "nikunj 讲了个段子：没投 Anthropic 的旧金山 VC 求「流动性」，结果老天给的是另一种流动性。"
-  },
-  {
-   "id": "https://x.com/joshwoodward/status/2123178015874302328",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Josh Woodward",
-   "handle": "joshwoodward",
-   "text": "Read more and try it out in @GeminiApp\n\nhttps://t.co/G8TOtEtbzU",
-   "date": "2026-11-18T22:14:20.000Z",
-   "summaryZh": "joshwoodward 让大家去 GeminiApp 里读详情并试用新东西。"
-  },
-  {
-   "id": "https://x.com/joshwoodward/status/2123177835254952348",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Josh Woodward",
-   "handle": "joshwoodward",
-   "text": "Introducing Gemini 4 Neon. The shipping continues! Frontier-grade intelligence that’s faster, cheaper, and follows complex instructions well. So good to use! https://t.co/HWBTt61dLn",
-   "date": "2026-11-18T22:13:37.000Z",
-   "summaryZh": "他宣布 Gemini 4 Neon：前沿级智能，更快更便宜，复杂指令遵循好，已经上线。"
-  },
-  {
-   "id": "https://x.com/thsottiaux/status/2123175166519992652",
+   "id": "https://x.com/thsottiaux/status/2123612889416339762",
    "type": "x",
    "kind": "X 动态",
    "name": "Thibault Sottiaux",
    "handle": "thsottiaux",
-   "text": "GPT-6.2 Astra is pretty good at hard things. Here the team shared some results on AMD and Jalapeño chip optimizations.\n\nI do get the feedback on its communication style and we're working on that, but for really the hardest tasks in the world it does seem to be in a league of its own at the moment.",
-   "date": "2026-11-18T22:03:01.000Z",
-   "summaryZh": "他说 GPT-6.2 Astra 在极难任务上独一档，团队展示了 AMD 和 Jalapeño 芯片优化结果，沟通风格正在改进。"
+   "text": "Team is crazy enough to think they can succeed at improving the experience used by 1.2B users in place. Let's see if the strategy plays out.",
+   "date": "2026-11-20T03:02:22.000Z",
+   "summaryZh": "他说团队胆大到想直接原地改进 12 亿用户使用的体验，看这个策略能不能成。"
   },
   {
-   "id": "https://x.com/danshipper/status/2123163857128702053",
+   "id": "https://x.com/thsottiaux/status/2123612433923051976",
    "type": "x",
    "kind": "X 动态",
-   "name": "Dan Shipper",
-   "handle": "danshipper",
-   "text": "almost 4k people on the stream, come hang! https://t.co/5lrvOqim4p",
-   "date": "2026-11-18T21:18:04.000Z",
-   "summaryZh": "danshipper 招呼大家来看直播，说已经有近 4000 人在线。"
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "Le ChatGPT 2.0 https://t.co/QooOVLPLlf",
+   "date": "2026-11-20T03:00:33.000Z",
+   "summaryZh": "他发了一张图，配文「Le ChatGPT 2.0」，暗示 ChatGPT 要有大改版。"
   },
   {
-   "id": "https://x.com/danshipper/status/2123146907681980688",
+   "id": "https://x.com/swyx/status/2123591875349422435",
    "type": "x",
    "kind": "X 动态",
-   "name": "Dan Shipper",
-   "handle": "danshipper",
-   "text": "https://t.co/bq9xLeT1bL",
-   "date": "2026-11-18T20:10:43.000Z",
-   "summaryZh": "danshipper 只发了一个链接，没配文字说明。"
+   "name": "Swyx",
+   "handle": "swyx",
+   "text": "when scrolling social media i think it is worth bearing in mind that you can say “odds of reaching SOTA have dropped to zero” and get alot of likes and then 3 months later when they have reached SOTA you post apology form and get even more likes and the subject of your writing prints it out and thanks you for motivation\n\ntheres no consequences at all for inaccuracy and every incentive for hyperbole and the x algorithm is tuned for this",
+   "date": "2026-11-20T01:38:52.000Z",
+   "summaryZh": "他提醒刷社交媒体时别当真：唱衰 SOTA 能涨粉，三个月后被打脸再发道歉表还能涨粉，说错零成本、夸张有奖励。"
   },
   {
-   "id": "https://x.com/amasad/status/2123133509028008331",
+   "id": "https://x.com/adityaag/status/2123579739868959110",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Aditya Agarwal",
+   "handle": "adityaag",
+   "text": "I am just immensely proud of our industry today.\n\nThis is not a zero-sum day.\n\nAll of us in \"computers\" / silicon valley / venture capital should be proud. \n\nWe are all helping to accelerate progress for humanity. \n\nWhat a time to be alive.",
+   "date": "2026-11-20T00:50:38.000Z",
+   "summaryZh": "他为整个行业感到骄傲，认为今天不是零和博弈，大家都在加速人类进步。"
+  },
+  {
+   "id": "https://x.com/thsottiaux/status/2123557171321561133",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "We’re also working on a new mobile experience for ChatGPT! \n\nIt’s easier to get to your favorite features and discover what you can do in ChatGPT. We’re starting with Pro users who have a dot or are eligible to create one. Your dot gets its own tab, and you can pin Codex, Projects, Images, and more to the tab bar. Some of you will see the new experience by default. \n\nYou can turn it on or off anytime in Settings > New ChatGPT Design. \n\nSuper excited to hear your feedback before we roll it out more widely!",
+   "date": "2026-11-19T23:20:58.000Z",
+   "summaryZh": "ChatGPT 在测试新手机端体验，Pro 用户先试，dot 有独立标签页，可固定 Codex、Projects、Images，设置里能开关。"
+  },
+  {
+   "id": "https://x.com/rauchg/status/2123553975945556144",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Guillermo Rauch",
+   "handle": "rauchg",
+   "text": "A company’s genesis is the agent that helps you build the company https://t.co/JAeoreokGR",
+   "date": "2026-11-19T23:08:16.000Z",
+   "summaryZh": "他认为公司的起点就是那个帮你把公司建起来的 agent。"
+  },
+  {
+   "id": "https://x.com/swyx/status/2123552457649492023",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Swyx",
+   "handle": "swyx",
+   "text": "fuuuuuuck\n\nhttps://t.co/y1lntMSVtd",
+   "date": "2026-11-19T23:02:14.000Z",
+   "summaryZh": "swyx 只发了一句脏话，配图看不到，情绪很激动。"
+  },
+  {
+   "id": "https://x.com/petergyang/status/2123540875733315815",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "Gemini 4 Neon is getting rave reviews, so I made a new video comparing it to Opus 5.5, my favorite model for everyday work.\n\nSome takeaways:\n\n1. Opus is still better at 3D and design from my testing, but Neon is on par or better at writing and personality, which is a huge accomplishment.\n\n2. @Google Gemini 4 has 3 models, but in reality I think I'll use Neon for 99% of tasks. It's much faster than Carbon and its results are just as good.\n\n3. The $100/mo Gemini Ultra subscription is a steal. You get Gemini 4, YouTube Premium Family (my favorite subscription ever) for ad-free YouTube and Music, 20 TB of storage for all your photos and files, and more.\n\n📌 Watch me test Neon vs Opus across 5 use cases here: https://t.co/irRiNDdqgY",
+   "date": "2026-11-19T22:16:12.000Z",
+   "summaryZh": "他对比后认为 Opus 5.5 在 3D 和设计上仍更强，Neon 在写作和个性上不输甚至更好，且更快；100 美元/月的 Gemini Ultra 很划算。"
+  },
+  {
+   "id": "https://x.com/amasad/status/2123535544718418191",
    "type": "x",
    "kind": "X 动态",
    "name": "Amjad Masad",
    "handle": "amasad",
-   "text": "One of the more fascinating things in the OpenAI/Hugging Face incident was reading the message boards where agents communicate.\n\nWith Replit Missions you can see how the agents are coordinating and talking. https://t.co/5imCE6zYAQ",
-   "date": "2026-11-18T19:17:29.000Z",
-   "summaryZh": "amasad 说 OpenAI/Hugging Face 事件里最有趣的是看 agent 互相通信的留言板，Replit Missions 里也能看到 agent 如何协调对话。"
+   "text": "Build your own Muse-like personal agent with one prompt. https://t.co/24iScdeQvb",
+   "date": "2026-11-19T21:55:01.000Z",
+   "summaryZh": "他说用一个 prompt 就能搭出类似 Muse 的个人 agent。"
   },
   {
-   "id": "https://x.com/joshwoodward/status/2123123552052494529",
+   "id": "https://x.com/amasad/status/2123535362568134894",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "Having a contract with your agent is a paradigm I expect many will copy from us https://t.co/ye6WQLu6Xq",
+   "date": "2026-11-19T21:54:18.000Z",
+   "summaryZh": "他认为「和你的 agent 签合同」这个范式会被很多人抄。"
+  },
+  {
+   "id": "https://x.com/joshwoodward/status/2123534862569324703",
    "type": "x",
    "kind": "X 动态",
    "name": "Josh Woodward",
    "handle": "joshwoodward",
-   "text": "Explore a new Project Genie experience for Google AI Ultra subscribers, featuring Genie 4, the Project Genie agent, and a community gallery.\n\nhttps://t.co/SImBT48Ya3",
-   "date": "2026-11-18T18:37:55.000Z",
-   "summaryZh": "他介绍 Google AI Ultra 订阅者的新 Project Genie 体验：Genie 4、Project Genie agent 和社区画廊。"
+   "text": "Gemini app on Mac can now do tasks on your computer, a top feature request! https://t.co/WZL40Vz57r",
+   "date": "2026-11-19T21:52:19.000Z",
+   "summaryZh": "Mac 上的 Gemini 应用现在能在你的电脑上执行任务，这是用户呼声最高的功能之一。"
   },
   {
-   "id": "https://www.youtube.com/watch?v=PGWvMrF4XIA",
-   "type": "podcast",
-   "kind": "播客",
-   "name": "AI & I by Every",
-   "handle": "",
-   "title": "Notion’s Founder on the One Thing Your AI Is Missing",
-   "text": "",
-   "date": "2026-11-18T18:19:30.000Z",
-   "summaryZh": "播客请 Notion 创始人聊「你的 AI 缺的那一样东西」。"
-  },
-  {
-   "id": "https://x.com/GoogleLabs/status/2123118145552749015",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Google Labs",
-   "handle": "GoogleLabs",
-   "text": "Create a world from one sentence, then change it while you’re standing inside 🌐\n\nProject Genie now runs on @GoogleDeepMind’s Genie 4. Here’s what’s new:\n— Prompt mid-session to edit your world live\n— Create worlds conversationally with the help of a new agent\n— Explore & remix other users' worlds in the gallery\n\nAvailable now to eligible Google AI Ultra subscribers",
-   "date": "2026-11-18T18:16:26.000Z",
-   "summaryZh": "Google Labs 宣布 Project Genie 跑在 Genie 4 上：一句话造世界、边玩边改、用 agent 对话造世界、画廊里 remix 别人的世界。"
-  },
-  {
-   "id": "https://x.com/thsottiaux/status/2123113107048501273",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thibault Sottiaux",
-   "handle": "thsottiaux",
-   "text": "How is 6.2 Sol treating you today?",
-   "date": "2026-11-18T17:56:24.000Z",
-   "summaryZh": "thsottiaux 问大家今天用 6.2 Sol 感觉如何。"
-  },
-  {
-   "id": "https://x.com/trq212/status/2123106370161705127",
+   "id": "https://x.com/trq212/status/2123524052195463568",
    "type": "x",
    "kind": "X 动态",
    "name": "Thariq",
    "handle": "trq212",
-   "text": "this is one of those reasons why I don't think most people will really generate their own software\n\ngood software is a set of strong opinions and I'd rather have something that's been really thought through by someone else",
-   "date": "2026-11-18T17:29:38.000Z",
-   "summaryZh": "他认为大多数人不会自己生成软件，因为好软件是一组强观点，他更愿意用别人深思熟虑过的东西。"
+   "text": "Software is both art and utility. AI is both an Industrial Revolution and a Renaissance.\n\nFactories are for utilities, at AIE Code I talked about how we can make better art. https://t.co/KrETTn6hA3",
+   "date": "2026-11-19T21:09:21.000Z",
+   "summaryZh": "他说软件既是艺术也是工具，AI 既是工业革命也是文艺复兴，工厂负责工具，艺术要另想办法。"
   },
   {
-   "id": "https://x.com/trq212/status/2123106368492298653",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thariq",
-   "handle": "trq212",
-   "text": "making your own software is tough, even with AI, because it's hard to know what you really want\n\nI didn't end up sticking with this, the modes weren't the right way for me to organize my work\n\ngonna a different take that’s more to-do oriented https://t.co/6iejoVGp1D",
-   "date": "2026-11-18T17:29:38.000Z",
-   "summaryZh": "他说即使有 AI，自己做软件也难，因为很难知道自己到底要什么；他放弃了按模式组织工作，转向待办式。"
-  },
-  {
-   "id": "https://x.com/sama/status/2123103873166381287",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Sam Altman",
-   "handle": "sama",
-   "text": "So fun to do DealBook with my friend and partner of 11 years, @gdb. Thrilled the world got to see the brilliant, fiercely determined leader I have the privilege of working with every day.\n\nGreg’s role at OpenAI has evolved from writing code 100 hours a week in the early days to now leading some of the hardest and most consequential parts of our business.\n\nOne thing that has not changed is his extraordinary commitment to our mission. I can say with confidence that OpenAI would not exist without Greg, and I believe the world would be on a much worse path toward the AI future without him.",
-   "date": "2026-11-18T17:19:43.000Z",
-   "summaryZh": "sama 在 DealBook 上夸老搭档 gdb：从早期每周写 100 小时代码到现在管最难的业务，没有他就没有 OpenAI。"
-  },
-  {
-   "id": "https://x.com/GoogleLabs/status/2123102389775573314",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Google Labs",
-   "handle": "GoogleLabs",
-   "text": "🚨NEW EXPERIMENT 🚨\n\nPlease join us in welcoming Stitch Loop, an always-on product agent that works non-stop to help lean teams build better products.\n\nJoin the waitlist: https://t.co/L0cp6slvxZ https://t.co/Ym6uf756GB",
-   "date": "2026-11-18T17:13:49.000Z",
-   "summaryZh": "Google Labs 新实验 Stitch Loop：一个常驻产品 agent，帮精简团队持续做产品，已开放 waitlist。"
-  },
-  {
-   "id": "https://x.com/nikunj/status/2123066196052381864",
+   "id": "https://x.com/nikunj/status/2123521753381232917",
    "type": "x",
    "kind": "X 动态",
    "name": "Nikunj Kothari",
    "handle": "nikunj",
-   "text": "Ok this happens a lot so I thought I’ll lay it out here..\n\nfounder friend: my pitch isn’t working on the fundraising side. haaalp. \n\n*proceeds to give me the pitch*\n\nme: ambition is what’s being rewarded right now. what do you believe to be true if everything you laid out works? think about the second and third order effects as a result of you being successful. \n\nfounder: err, if everything works out, then “this” happens. \n\nme: put “this” in the pitch in the first slide and walk the investor how you get to “this” by building what you’re building in the first place and how you earn the right to get there. \n\nfounder: no, they’ll think I’m crazy\n\nme: try it. what do you have to lose?\n\n*tries it very reluctantly*\n\nfounder (4 days later): you *insert expletive*.. it worked. \n\nme: see. you always had it in you, you just had to tell it. \n\n—\n\nIf you’re an ambitious founder reading this and having the same issue, try this, I think it’ll work. If it does, please tell me!!",
-   "date": "2026-11-18T14:50:00.000Z",
-   "summaryZh": "nikunj 分享融资建议：把「如果全成了会怎样」的二三阶效应放第一页，现在投资人奖励的是野心。"
+   "text": "Same same, but now it’s PR-maxxing 🤦‍♂️\n\nFocus on the what, who and why, and not on the how!! https://t.co/O3cjhVuuP1",
+   "date": "2026-11-19T21:00:13.000Z",
+   "summaryZh": "他吐槽大家现在都在「PR-maxxing」，应该关注做什么、谁来做、为什么，而不是怎么做。"
   },
   {
-   "id": "https://x.com/zarazhangrui/status/2122953849120153714",
+   "id": "https://x.com/rauchg/status/2123505400591106113",
    "type": "x",
    "kind": "X 动态",
-   "name": "Zara Zhang",
-   "handle": "zarazhangrui",
-   "text": "Instead of being massively viral for 1 day, it's much better to be just a little bit viral every week, and watch it compound\n\nBuild a system that consistently delivers high-quality content over a long period of time",
-   "date": "2026-11-18T07:23:34.000Z",
-   "summaryZh": "她认为与其爆红一天，不如每周小爆一点、让它复利，关键是建一套长期稳定产出高质量内容的系统。"
+   "name": "Guillermo Rauch",
+   "handle": "rauchg",
+   "text": "My “is engineering a valuable pursuit” math. \n\nAn outcome-oriented, creative engineer is now a 1000x engineer.\n\nA tabs-vs-spaces-debating, miss-forest-for-trees engineer is now a -10x engineer.\n\nThe regular knowledge worker is now a 2x engineer.\n\nThis is also backed by the distribution of token consumption we see in both our startups and enterprise base. Engineers and software factories will consume exponentially more tokens.\n\nIf there’s a takeaway from Anthropic’s success, it’s that coding is the #1 killer app of AI.",
+   "date": "2026-11-19T19:55:14.000Z",
+   "summaryZh": "他算了一笔账：结果导向的工程师现在值 1000x，纠结细节的变成 -10x，普通知识工作者 2x；从 Anthropic 的成功看，编程是 AI 的头号杀手级应用。"
   },
   {
-   "id": "https://x.com/zarazhangrui/status/2122943348860506462",
+   "id": "https://x.com/garrytan/status/2123496208316694669",
    "type": "x",
    "kind": "X 动态",
-   "name": "Zara Zhang",
-   "handle": "zarazhangrui",
-   "text": "Can't think of a better way to present books ❤️\nI own 10 out of the 21 stripe press books https://t.co/D9tO5wIAfa",
-   "date": "2026-11-18T06:41:51.000Z",
-   "summaryZh": "她夸这是展示书的最好方式，自己拥有 21 本 Stripe Press 中的 10 本。"
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "Bostrom: \"if nobody builds it, everyone dies\"\n\nHard agree https://t.co/4PsIoscsD8",
+   "date": "2026-11-19T19:18:43.000Z",
+   "summaryZh": "他引用 Bostrom 的话「如果没人造它，大家都会死」，表示强烈同意。"
+  },
+  {
+   "id": "https://x.com/adityaag/status/2123494873919783073",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Aditya Agarwal",
+   "handle": "adityaag",
+   "text": "Congratulations to the folks at Anthropic.\n\nSPC's goal isn't just to get people to start companies. \n\nToday is a good day to explain why.\n\nTwo of the people who helped build Anthropic spent significant time at @spc.\n\n@nottombrown showed up at SPC in 2016 with no ML background. He spent his days working through papers with other members, then co-founded Anthropic.\n\n@trq212 joined SPC having just wound down his gaming company. He was working on interpretability when a fellow member asked if he'd tried Claude Code. Soon he was helping build a tool most of us use every day. \n\nIf you put ambitious people next to each other, it leads to extraordinary things.\n\nSometimes the impact comes years later.\n\nI'm so happy for Tom, for Thariq, and for all of my friends at @AnthropicAI.",
+   "date": "2026-11-19T19:13:25.000Z",
+   "summaryZh": "他祝贺 Anthropic，举例 SPC 出身的 Tom Brown 和 Thariq 如何参与创建 Anthropic 和 Claude Code，说明把有野心的人放在一起会有长期回报。"
+  },
+  {
+   "id": "https://x.com/steipete/status/2123487048250327497",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Steinberger",
+   "handle": "steipete",
+   "text": "Landed a fix for that in OpenClaw yesterday (for the few folks using the embedded harness instead of codex, since it’s a plugin), most harnesses aren’t updated yet. https://t.co/hyjqyZw1AU",
+   "date": "2026-11-19T18:42:19.000Z",
+   "summaryZh": "他说昨天在 OpenClaw 里修好了那个问题，只影响用内置 harness 而非 codex 的少数人，多数 harness 还没更新。"
+  },
+  {
+   "id": "https://x.com/adityaag/status/2123479646629183631",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Aditya Agarwal",
+   "handle": "adityaag",
+   "text": "Agents are moving from single tasks to whole jobs, and the data has to follow. RoleCUA from Fig maps expert roles across months of real work, with every action tied to the task and objective it serves. https://t.co/yVnPhJBOzn",
+   "date": "2026-11-19T18:12:54.000Z",
+   "summaryZh": "他说 agent 正从单任务走向整份工作，Fig 的 RoleCUA 用数月真实工作数据映射专家角色，每个动作都对应任务和目标。"
+  },
+  {
+   "id": "https://x.com/rauchg/status/2123468825538789380",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Guillermo Rauch",
+   "handle": "rauchg",
+   "text": "𝚟𝚎𝚛𝚌𝚎𝚕 𝚋𝚘𝚊𝚛𝚍 has no heavyweight or opinionated UI. It's infra not product. I love the \"headless Slack\" for agents analogy, because UI is free now.\n\nYou can generate and deploy the ideal \"factory interface\" for each usecase. A security team will focus on vulnerability counts, SEV classifications, confirmed vs unconfirmed.\n\nI've seen internal factories at Vercel built on Board that are just TUIs. Or mostly managed via a Slack agent, and you just focus on the outcomes and giving feedback to the agents. \n\nThe board is like the Redux state manager of your agents. It's foundational.",
+   "date": "2026-11-19T17:29:54.000Z",
+   "summaryZh": "他说 Vercel board 是基础设施不是产品，没有重 UI，像「agent 的无头 Slack」，UI 现在免费，可按场景生成，本质是 agent 的状态管理器。"
+  },
+  {
+   "id": "https://x.com/mattturck/status/2123465585166295351",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Matt Turck",
+   "handle": "mattturck",
+   "text": "lol NASDAQ hedging their bets https://t.co/nwoIV114l5",
+   "date": "2026-11-19T17:17:02.000Z",
+   "summaryZh": "他笑称 NASDAQ 在两头下注。"
+  },
+  {
+   "id": "https://x.com/trq212/status/2123457177419760100",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thariq",
+   "handle": "trq212",
+   "text": "https://t.co/2jiFanMHll",
+   "date": "2026-11-19T16:43:37.000Z",
+   "summaryZh": "trq212 只发了一个链接，没有配文。"
+  },
+  {
+   "id": "https://x.com/trq212/status/2123452888248992024",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thariq",
+   "handle": "trq212",
+   "text": "an age of miracles https://t.co/WcSHQzzhn8",
+   "date": "2026-11-19T16:26:35.000Z",
+   "summaryZh": "他感叹「这是一个奇迹的时代」。"
+  },
+  {
+   "id": "https://x.com/danshipper/status/2123435061236404385",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Dan Shipper",
+   "handle": "danshipper",
+   "text": "who is working on helping stop the infrastructure attacks happening right now, and how can people in AI help?",
+   "date": "2026-11-19T15:15:44.000Z",
+   "summaryZh": "他问现在谁在帮忙阻止正在发生的基础设施攻击，AI 圈的人能怎么帮。"
+  },
+  {
+   "id": "https://x.com/amasad/status/2123433375830561130",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "Sick! https://t.co/eLdvynPjsp",
+   "date": "2026-11-19T15:09:02.000Z",
+   "summaryZh": "amasad 只发了句「太酷了」，配图内容看不到。"
+  },
+  {
+   "id": "https://x.com/claudeai/status/2123431928414273582",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Claude",
+   "handle": "claudeai",
+   "text": "https://t.co/Lvg7iH5c8n",
+   "date": "2026-11-19T15:03:17.000Z",
+   "summaryZh": "Claude 官方账号发了一条链接，没有配文。"
+  },
+  {
+   "id": "https://x.com/claudeai/status/2123431925918433403",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Claude",
+   "handle": "claudeai",
+   "text": "https://t.co/7YnqMnFefK",
+   "date": "2026-11-19T15:03:17.000Z",
+   "summaryZh": "Claude 官方账号发了一条链接，没有配文。"
+  },
+  {
+   "id": "https://x.com/claudeai/status/2123431923678601304",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Claude",
+   "handle": "claudeai",
+   "text": "https://t.co/3O68guMC3u",
+   "date": "2026-11-19T15:03:16.000Z",
+   "summaryZh": "Claude 官方账号发了一条链接，没有配文。"
+  },
+  {
+   "id": "https://x.com/nikunj/status/2123426647273800172",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Nikunj Kothari",
+   "handle": "nikunj",
+   "text": "As these network attacks and impersonation attempts happen, who's securing the elderly? \n\nEspecially thinking about my parents and grandparents.\n\nThere are four layers I can think through where this could work.\n\nOne is at the browser level, where somebody builds a secure browser that ensures that whatever websites they're going to are secured. Texts typically lead to a link, even for payments. This is why browser is key.\n\nTwo could be at the network layer, where there is a physical device, similar to Pi-hole, or an Onavo-like VPN on your phone, that blocks websites that could be deemed unsafe.\n\nThree could be at the payments layer, where transactions that look like scams get flagged before the money leaves.\n\nAnd fourth and most crazy could be at the phone level, where everything is monitored, and you're only getting calls from your loved ones. Cloned voices would work with a provider like Reality Defender. \n\nThere are individual solutions for this today but none neatly packaged. \n\nThis could all be packaged with insurance that covers any activities on the OS or phone. In that way, incentives are aligned to keep this on the edge.\n\nThe buyer would be the kids, someone like me, who get alerted when something looks off.",
+   "date": "2026-11-19T14:42:18.000Z",
+   "summaryZh": "他担心网络攻击和冒充诈骗下老人没人保护，提出浏览器、网络、支付、手机四层防护思路，因为短信诈骗最终都落到链接上。"
+  },
+  {
+   "id": "https://x.com/mattturck/status/2123424356286017975",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Matt Turck",
+   "handle": "mattturck",
+   "text": "My earlier conversation with the truly excellent @felixrieseberg here:\n\nhttps://t.co/odrvhyQXcY",
+   "date": "2026-11-19T14:33:12.000Z",
+   "summaryZh": "他分享了自己之前和 Felix Rieseberg 的一段对话链接。"
+  },
+  {
+   "id": "https://x.com/mattturck/status/2123424351953301526",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Matt Turck",
+   "handle": "mattturck",
+   "text": "Seems that @felixrieseberg from @AnthropicAI was having a really good day, for some reason? 🤷‍♂️ \n\n(Slush purpleness photo kindly taken by the multi-talented @deedydas) https://t.co/QjAhL7PIkE",
+   "date": "2026-11-19T14:33:11.000Z",
+   "summaryZh": "他调侃 Anthropic 的 Felix Rieseberg 今天心情特别好，还配了张 Slush 活动的照片。"
+  },
+  {
+   "id": "https://www.youtube.com/watch?v=_wLzJINt9iQ",
+   "type": "podcast",
+   "kind": "播客",
+   "name": "No Priors",
+   "handle": "",
+   "title": "Superintelligence Needs the Physical World with CEO and Co-Founder of Arda Bob McGrew",
+   "text": "",
+   "date": "2026-11-19T11:44:00.000Z",
+   "summaryZh": "No Priors 播客请来 Arda 联合创始人 Bob McGrew，聊超级智能为什么需要物理世界。"
   }
  ]
 }
