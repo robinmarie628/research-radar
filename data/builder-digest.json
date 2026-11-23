@@ -1,339 +1,259 @@
 {
- "date": "2026-11-22",
- "generatedAt": "2026-11-22T01:48:14Z",
+ "date": "2026-11-23",
+ "generatedAt": "2026-11-23T02:05:12Z",
  "model": "deepseek-flash",
- "headline": "AI 与人类同时给出黎曼证明，agent 能力再跳一级",
+ "headline": "AI 圈今天聊疯了：模型变强后，人跟模型协作的本事反而更值钱",
  "bullets": [
-  "AI 和人类同时拿出两份黎曼猜想证明，大家开始比谁更优雅。",
-  "Levie 说模型能力今年明显跳了一档：不用再手把手教 agent，让它自己找解法往往更好。",
-  "Vercel 的 AI 基础设施拿到 ISO 42001 认证，相当于 AI 界的 SOC2。",
-  "Gemini Neon 上有人周五下午随手做了个功能就推上生产，长按模型选择器就能玩。",
-  "有人提醒：别把 Claude Artifacts 或 ChatGPT 生成的网站直接发给客户，客户会觉得「我自己也能 prompt 出来」。"
+  "Replit Missions 把 Amuse 开源了，又一个 AI 产品代码公开。",
+  "ChatGPT/Codex 桌面端刚更新，团队已经在准备下一个大版本。",
+  "有人用 GitHub issues 协调多个 agent 干活，被讨论成开源协作新玩法。",
+  "Riemann 猜想被 AI 推进的话题继续发酵，但不少人吐槽跟风吹捧。",
+  "多位 builder 强调：模型越强，跟模型协作的技能越重要，别急着把自己踢出局。"
  ],
- "sentiment": "整体偏兴奋，主要对模型能力跃升和 agent 能自己解决模糊问题这件事感到乐观。",
- "count": 32,
- "summarised": 32,
+ "sentiment": "整体偏兴奋但带点吐槽——兴奋于模型能力边界被推远，吐槽的是不懂装懂的跟风吹捧和产品里藏得太深的功能。",
+ "count": 24,
+ "summarised": 24,
  "posts": [
   {
-   "id": "https://x.com/adityaag/status/2124019178843894078",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Aditya Agarwal",
-   "handle": "adityaag",
-   "text": "We are solving Riemann and also crushing pancreatic cancer with a pill.\n\nBut sure, let’s debate whether the “AI trade” is good lol.",
-   "date": "2026-11-21T05:56:49.000Z",
-   "summaryZh": "他吐槽：AI 都在解黎曼猜想、用药丸攻克胰腺癌了，还有人纠结「AI 交易」好不好。"
-  },
-  {
-   "id": "https://x.com/thsottiaux/status/2123997735326232775",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thibault Sottiaux",
-   "handle": "thsottiaux",
-   "text": "We’ve been messing around a bit and inadvertently created an experience that’s a bit too fun internally and now everyone is just having fun instead of working. We might not recover from this.",
-   "date": "2026-11-21T04:31:36.000Z",
-   "summaryZh": "他说内部无意中做出一个太好玩的体验，结果大家光顾着玩不干活了。"
-  },
-  {
-   "id": "https://x.com/thenanyu/status/2123983081577267264",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nan Yu",
-   "handle": "thenanyu",
-   "text": "big perf and QoL wins for actions you do dozens to hundreds of times a day https://t.co/R5MfrV54gs",
-   "date": "2026-11-21T03:33:23.000Z",
-   "summaryZh": "他说每天要做几十上百次的操作，这次在性能和体验上都有大提升。"
-  },
-  {
-   "id": "https://x.com/realmadhuguru/status/2123972492645777629",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Madhu Guru",
-   "handle": "realmadhuguru",
-   "text": "Who are the most interesting AI people I should meet in Chennai? \n\nI’ll be in town end of Nov - 1st wk Dec.\n\nabout me: \nI’m at Meta building AI products now; previously led product for Gemini, Veo and Nano Banana models at Google.\n\nschedule is tight but I should be able to squeeze in a few meetings.",
-   "date": "2026-11-21T02:51:18.000Z",
-   "summaryZh": "他现于 Meta 做 AI 产品、此前在 Google 负责 Gemini、Veo 和 Nano Banana 的产品，征集金奈值得见的 AI 人。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2123944322190254340",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "3 hours of download left before I can play this, what's going with the user score though 🤔 https://t.co/BgAKoYCGC9",
-   "date": "2026-11-21T00:59:22.000Z",
-   "summaryZh": "他吐槽游戏还要下 3 小时才能玩，同时纳闷用户评分怎么这么低。"
-  },
-  {
-   "id": "https://x.com/joshwoodward/status/2123943608516792480",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Josh Woodward",
-   "handle": "joshwoodward",
-   "text": "Thanks again to @UFO2002616 for the inspiration!\n https://t.co/V5BHwpoy9b",
-   "date": "2026-11-21T00:56:31.000Z",
-   "summaryZh": "他再次感谢 @UFO2002616 给的灵感。"
-  },
-  {
-   "id": "https://x.com/joshwoodward/status/2123943606906138868",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Josh Woodward",
-   "handle": "joshwoodward",
-   "text": "Whew, what a week of shipping! A few of us were having fun with Gemini Neon on the Friday afternoon before the holiday week ahead, and we loved the post from @UFO2002616 so much that we just built it and threw it into prod! \n\nLong click on the model picker on the web and enjoy 🙂 https://t.co/9cT7TekxBs",
-   "date": "2026-11-21T00:56:31.000Z",
-   "summaryZh": "他说团队周五玩 Gemini Neon 时看到一条帖子，直接做出来推上生产，网页端长按模型选择器即可体验。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2123941250902667762",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "BREAKING: @JensenHuang Once Tried to Offer Brisket to a Visibly Vegetarian Squirrel https://t.co/VoMGaNDGSh",
-   "date": "2026-11-21T00:47:09.000Z",
-   "summaryZh": "他开玩笑发「突发新闻」：黄仁勋曾想给一只明显吃素的松鼠递牛腩。"
-  },
-  {
-   "id": "https://x.com/trq212/status/2123909358828539965",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thariq",
-   "handle": "trq212",
-   "text": "I'm calling it Home Ground.",
-   "date": "2026-11-20T22:40:26.000Z",
-   "summaryZh": "他给自己的游戏构思起名「Home Ground」。"
-  },
-  {
-   "id": "https://x.com/trq212/status/2123909357071159327",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thariq",
-   "handle": "trq212",
-   "text": "I think I’ve figured out the gameplay loop!\n\nIt’s a sports anime game, but the sport is elemental bending.\n\nYou fight in tournaments alongside your squad, and between matches they have their own stories you can get into, like in Mass Effect or Dragon Age. https://t.co/Z21CYJxYoX https://t.co/hLIVplRPrW",
-   "date": "2026-11-20T22:40:25.000Z",
-   "summaryZh": "他说想通了玩法：体育番风格，但运动是元素操控，比赛间隙队友各有像 Mass Effect 那样的支线故事。"
-  },
-  {
-   "id": "https://x.com/trq212/status/2123895040821071959",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thariq",
-   "handle": "trq212",
-   "text": "I am now even more against handoff",
-   "date": "2026-11-20T21:43:32.000Z",
-   "summaryZh": "他说自己现在更反对 handoff 了。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2123879309463228445",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "For those of you trying out @antigravity for Neon, here's a quick tip:\n\n1. Go to https://t.co/GRhlnGkO1i\n2. Tap see more and then the share button\n3. Tap Add to Home Screen\n\nThen you can talk to all your Antigravity threads via remote control on mobile.\n\nEven though Antigravity doesn't have a mobile app (yet), I find its remote control actually better than Claude's because all the threads are available by default.",
-   "date": "2026-11-20T20:41:01.000Z",
-   "summaryZh": "他教用 Antigravity 跑 Neon 的人把网页加到手机主屏，就能远程操控所有线程，比 Claude 的远程控制还好用。"
-  },
-  {
-   "id": "https://x.com/rauchg/status/2123879031049449791",
+   "id": "https://x.com/rauchg/status/2124386118661738994",
    "type": "x",
    "kind": "X 动态",
    "name": "Guillermo Rauch",
    "handle": "rauchg",
-   "text": "When I first tried an internal pre-release version of @eve, a personal shopper agent was my \"hello world\". It worked, but a lot of the infrastructure was missing.\n\nNow, @agentcardhq exists, models are better, iMessage and WhatsApp eve channels are mature, and performance is vastly improved (without trading off durability and encryption.)\n\nThe result is you can ship a platform of the caliber of Muse / Instinct, that you fully control, on our open intelligence stack. The experience is pure delight. I highly recommend you try this. Run with this template. Make it your own.",
-   "date": "2026-11-20T20:39:55.000Z",
-   "summaryZh": "他说当年拿个人购物 agent 试 @eve 预发布版时基础设施还缺很多，现在生态齐了，可以基于开放智能栈做出 Muse/Instinct 级别的平台。"
+   "text": "We need https://t.co/ooB95fsCDv for AI feats",
+   "date": "2026-11-22T06:14:54.000Z",
+   "summaryZh": "Rauch 认为 AI 要做出大成绩，需要某个东西（链接指向的）来支撑。"
   },
   {
-   "id": "https://x.com/amasad/status/2123877625915375950",
+   "id": "https://x.com/amasad/status/2124345037408686228",
    "type": "x",
    "kind": "X 动态",
    "name": "Amjad Masad",
    "handle": "amasad",
-   "text": "It’s phenomenal https://t.co/ctwhrva2lY",
-   "date": "2026-11-20T20:34:20.000Z",
-   "summaryZh": "他简短评价：这东西太惊艳了。"
+   "text": "A high school kid is recompiling the GTA6 to work on PC.\n\nWhat’s more interesting is how they’re github issues to coordinate tasks across agent swarms.\n\nA new model for open source? https://t.co/16FgzS9kft",
+   "date": "2026-11-22T03:31:39.000Z",
+   "summaryZh": "Amjad 说有个高中生正把 GTA6 重编译到 PC 上，更有意思的是他们用 GitHub issues 协调多个 agent 分工，可能是开源协作的新模式。"
   },
   {
-   "id": "https://x.com/amasad/status/2123876961923613180",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Amjad Masad",
-   "handle": "amasad",
-   "text": "Is it a bear market?",
-   "date": "2026-11-20T20:31:42.000Z",
-   "summaryZh": "他发问：现在是熊市吗？"
-  },
-  {
-   "id": "https://x.com/amasad/status/2123874539218010491",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Amjad Masad",
-   "handle": "amasad",
-   "text": "With two separate Riemann proofs, one AI and one Human, coming out at the same time, assuming they’re both correct, it’ll be interesting to see the difference especially on elegance. https://t.co/rp4thKnxg7",
-   "date": "2026-11-20T20:22:04.000Z",
-   "summaryZh": "他说 AI 和人类的两份黎曼证明同时出现，若都正确，比一比优雅程度会很有意思。"
-  },
-  {
-   "id": "https://x.com/rauchg/status/2123869175085191298",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Guillermo Rauch",
-   "handle": "rauchg",
-   "text": "ISO 42001:2023 is like the \"SOC2 of AI\".\n\nIt's the first global, independently audited standard for how companies build, evaluate, monitor and govern AI systems.\n\nWhen you ship on and use Vercel's AI, you now know the infra is audited annually by an accredited third party. https://t.co/8vT5AYUjNd",
-   "date": "2026-11-20T20:00:45.000Z",
-   "summaryZh": "他说 ISO 42001:2023 相当于 AI 界的 SOC2，Vercel 的 AI 基础设施现在每年由第三方审计。"
-  },
-  {
-   "id": "https://x.com/thsottiaux/status/2123864112694509995",
+   "id": "https://x.com/thsottiaux/status/2124322968499282388",
    "type": "x",
    "kind": "X 动态",
    "name": "Thibault Sottiaux",
    "handle": "thsottiaux",
-   "text": "First tweet from Akshay. Be nice to this one, he’s special. https://t.co/GNLkstqT9K",
-   "date": "2026-11-20T19:40:38.000Z",
-   "summaryZh": "他介绍 Akshay 的第一条推文，让大家对他客气点。"
+   "text": "Team is already preparing another big update, but how are things since yesterday’s update to the ChatGPT/Codex desktop app? What still requires attention and is not quite there? https://t.co/1X8M5JwL77",
+   "date": "2026-11-22T02:03:58.000Z",
+   "summaryZh": "Thibault 说团队已在准备下一个大更新，同时问大家对昨天 ChatGPT/Codex 桌面端更新后的体验，哪里还需要改进。"
   },
   {
-   "id": "https://x.com/thsottiaux/status/2123861214644347122",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Thibault Sottiaux",
-   "handle": "thsottiaux",
-   "text": "Team is locked in, upgrade your desktop app. Faster, simpler and a lot more pleasant to use. https://t.co/1X8M5JwL77",
-   "date": "2026-11-20T19:29:07.000Z",
-   "summaryZh": "他说团队已全力投入，让大家升级桌面应用：更快、更简单、更好用。"
-  },
-  {
-   "id": "https://x.com/swyx/status/2123856303974121851",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Swyx",
-   "handle": "swyx",
-   "text": "broooo\n\nhttps://t.co/5qYHHbBOyV https://t.co/Pc6VYX8bxt",
-   "date": "2026-11-20T19:09:36.000Z",
-   "summaryZh": "他只发了一句「broooo」，配了图，没多解释。"
-  },
-  {
-   "id": "https://x.com/swyx/status/2123843282082132335",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Swyx",
-   "handle": "swyx",
-   "text": "🔜 why @j_schottenstein left @getdbt for @LangChain to build it into a $3B startup…\n\n….and now they are having to reinvent the content, context (knowledge) and software factory from scratch! https://t.co/U5cZHokbhU https://t.co/1ifwj7lNA3",
-   "date": "2026-11-20T18:17:52.000Z",
-   "summaryZh": "他预告要聊 Schottenstein 为何离开 dbt 去 LangChain 做 30 亿美元创业，如今又得从零重建内容、知识和软件工厂。"
-  },
-  {
-   "id": "https://x.com/zarazhangrui/status/2123813583339532321",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Zara Zhang",
-   "handle": "zarazhangrui",
-   "text": "Do not send your clients Claude Artifacts/ChatGPT sites\n\nIt makes them feel like “Well I could have just prompted Claude/Codex myself”",
-   "date": "2026-11-20T16:19:51.000Z",
-   "summaryZh": "她提醒别把 Claude Artifacts 或 ChatGPT 做的网站直接交给客户，客户会觉得「我自己 prompt 一下就行」。"
-  },
-  {
-   "id": "https://x.com/adityaag/status/2123800768977551639",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Aditya Agarwal",
-   "handle": "adityaag",
-   "text": "Request a spot https://t.co/XFlXyWsyAA",
-   "date": "2026-11-20T15:28:56.000Z",
-   "summaryZh": "他发了个活动报名链接，邀请大家申请名额。"
-  },
-  {
-   "id": "https://x.com/adityaag/status/2123800766163173511",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Aditya Agarwal",
-   "handle": "adityaag",
-   "text": ".@theRealTrishaK started @unit21inc at @spc in 2018. \n\nIt has since caught $14B+ in financial crime.\n\nKavitha Iyer Rodrigues started @zumutor in 2013, believing new cancer drugs would be discovered in India.\n\nJoin us at @spc_india on Nov 25th. https://t.co/ogPRhAqZc9",
-   "date": "2026-11-20T15:28:55.000Z",
-   "summaryZh": "他介绍两位创业者：Unit21 的 Trisha K 和 Zumutor 的 Kavitha Iyer Rodrigues，邀请参加 11 月 25 日的 SPC India 活动。"
-  },
-  {
-   "id": "https://x.com/garrytan/status/2123796297836896292",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Garry Tan",
-   "handle": "garrytan",
-   "text": "You don’t need an asset seizure tax\n\nYou need to encourage building new ideas and startups in California\n\nAnd then you need a government that spends it wisely on things that help the people\n\nThat’s it. The ivory tower academics and the SEIU-HNW union bosses have it wrong. https://t.co/mQ2pO8EMLG",
-   "date": "2026-11-20T15:11:10.000Z",
-   "summaryZh": "他认为加州不需要资产没收税，而应鼓励创业、让政府把钱花在刀刃上，批评学界和工会搞错了方向。"
-  },
-  {
-   "id": "https://x.com/danshipper/status/2123795694557315556",
+   "id": "https://x.com/danshipper/status/2124315217936945171",
    "type": "x",
    "kind": "X 动态",
    "name": "Dan Shipper",
    "handle": "danshipper",
-   "text": "\"one dawn across science of something far greater\" https://t.co/wgQXn4d7EU",
-   "date": "2026-11-20T15:08:46.000Z",
-   "summaryZh": "他引用了一句关于科学黎明的话，没多解释。"
+   "text": "this is gonna be up there with that patent officer who said “everything that will be invented has been invented” in the hall of fame of bad technology takes https://t.co/Ydfhq1TdGD",
+   "date": "2026-11-22T01:33:10.000Z",
+   "summaryZh": "Dan Shipper 把某个看衰技术的言论比作当年说“能发明的都发明完了”的专利局长，认为它会进烂预测名人堂。"
   },
   {
-   "id": "https://x.com/levie/status/2123792233535332448",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Aaron Levie",
-   "handle": "levie",
-   "text": "Going to be a big day in math https://t.co/v0sKYQLWSB https://t.co/dclzIoOPj1",
-   "date": "2026-11-20T14:55:01.000Z",
-   "summaryZh": "他预告数学界今天要有大事。"
-  },
-  {
-   "id": "https://x.com/mattturck/status/2123777488786538982",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Matt Turck",
-   "handle": "mattturck",
-   "text": "Automated agentic emailing  vs the real world, a story: \n\nGuy emails me twice to meet at a conference (Slush)\n\nI reply once \n\nHe then emails me 3 times in rapid succession \n\nDamn that guy really wants to meet \n\nI bump into him later that day \n\nI say “well, was meant to be”\n\nHe reads my name tag, twice.\n\nBlank face.  He clearly has no idea who  I am. \n\nHe says “oh hi” and walks away. \n\nThe end.",
-   "date": "2026-11-20T13:56:25.000Z",
-   "summaryZh": "他讲了个故事：有人用自动 agent 邮件狂约他见面，真碰上了却盯着他名牌看半天、根本不认识他。"
-  },
-  {
-   "id": "https://x.com/zarazhangrui/status/2123692630655873269",
+   "id": "https://x.com/zarazhangrui/status/2124309178982572442",
    "type": "x",
    "kind": "X 动态",
    "name": "Zara Zhang",
    "handle": "zarazhangrui",
-   "text": "If you curate, you should create",
-   "date": "2026-11-20T08:19:14.000Z",
-   "summaryZh": "她的观点：如果你做内容策展，就该自己也动手创作。"
+   "text": "Build for yourself https://t.co/GDqIj6u1xx",
+   "date": "2026-11-22T01:09:10.000Z",
+   "summaryZh": "Zara 的建议很简单：给自己做产品。"
   },
   {
-   "id": "https://x.com/swyx/status/2123690305736396925",
+   "id": "https://x.com/danshipper/status/2124292892168475086",
    "type": "x",
    "kind": "X 动态",
-   "name": "Swyx",
-   "handle": "swyx",
-   "text": "whatever happened to @cursor_ai origin? anyone use this thing in anger yet? does it have actions/ci/cd yet? https://t.co/ZDVWydLZTe https://t.co/DTQaZzU6vD",
-   "date": "2026-11-20T08:09:59.000Z",
-   "summaryZh": "他问 Cursor 的 origin 后来怎么样了，有人真上手用过吗，有没有 actions/CI/CD。"
+   "name": "Dan Shipper",
+   "handle": "danshipper",
+   "text": "great piece\n\nbenchmarks have to choose what to measure and what to keep constant—numbers go up doesn't always mean what you think it means\n\nanother good window into this is to look in rich detail at how AI-pilled teams are putting model capabilities to work in practice:\nhttps://t.co/goJ3MXtFDm",
+   "date": "2026-11-22T00:04:27.000Z",
+   "summaryZh": "Dan Shipper 说 benchmark 必须选择测什么、固定什么，数字涨了不一定是你以为的意思；他还推荐去看 AI 重度团队实际怎么用模型能力。"
   },
   {
-   "id": "https://x.com/levie/status/2123686350410912145",
+   "id": "https://x.com/thsottiaux/status/2124277855131664869",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "Going to check out this threads thing",
+   "date": "2026-11-21T23:04:42.000Z",
+   "summaryZh": "Thibault 说要去看看 Threads 这个新东西。"
+  },
+  {
+   "id": "https://x.com/amasad/status/2124277564596519355",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "Amuse, built by Replit Missions, is open source! https://t.co/n7NeLwXfs3",
+   "date": "2026-11-21T23:03:33.000Z",
+   "summaryZh": "Amjad 宣布由 Replit Missions 打造的 Amuse 已开源。"
+  },
+  {
+   "id": "https://x.com/garrytan/status/2124265097313046867",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "You can just automate your work and it’s so easy tbh https://t.co/6BexpmRbgS",
+   "date": "2026-11-21T22:14:00.000Z",
+   "summaryZh": "Garry Tan 说现在自动化自己的工作真的很简单。"
+  },
+  {
+   "id": "https://x.com/levie/status/2124252844710887549",
    "type": "x",
    "kind": "X 动态",
    "name": "Aaron Levie",
    "handle": "levie",
-   "text": "This year we’ve had a clear jump in model capability where instead of telling agents precisely what to do, it’s better to use these systems to solve problems you can’t easily define yourself. \n\nA year ago you’d need to very clearly tell agents the how to design and develop your product idea, or there was almost no chance of success. Now, increasingly, the agent likely can come up with a better implementation than you’d have thought of because you can have it connect the dots between a far greater solution space than you can. \n\nThis will be increasingly true in basically every domain of kneeler work. We’re going to see this impact in finance, legal, life sciences, cyber, and many other spaces where no person can hold onto all the available relevant industry knowledge to think of the best solution. \n\nUltimately this is going to reshape our relationship with AI and how we deploy agents in our work. It won’t be about explicitly telling them, but instead giving them goals and enough freedom to pursue them in the best way they can.",
-   "date": "2026-11-20T07:54:16.000Z",
-   "summaryZh": "他说今年模型能力明显跳档：与其精确指挥 agent，不如让它解决你自己都定义不清的问题，这会重塑金融、法律、生命科学等行业。"
+   "text": "This post nails why we why we should take the Riemann Hypothesis breakthrough very seriously, even beyond math. We’re entering an era where solving problems will look very different from how we solved them in the past.\n\n“This is not theory-building in the usual sense. It is something much weirder and more alien. The best human mathematicians know how to build theory, painstakingly, to reach a goal. But no human brain, on its own, is capable of creating a wormhole that requires a 25,000 page long tour through existing infrastructure with no obvious or realistic connection to the goal. But huge credit to Levent here: I think no current AI, on its own, is capable of this either.”\n\nIt used to be the case that to solve a particular problem - code, life sciences, math, cyber, engineering, and so on - you were ultimately bound by how much information an individual or team could retain and understand about the space. More information or more team members don’t always help, because it gets harder to connect the dots or coordinate amongst everyone. AI changes that completely. \n\nFor the first time ever we can decouple the human context limits and ability to work through information from our ability to drive productivity or discoveries. This is likely not just a small increase in the kinds of discoveries we can drive, but a qualitative shift in human output. \n\nNow every single form of prior art, insight, past research, past decision, or unrelated breakthrough, can be used for the discovery or creation of something new. This is useful for anything from cybersecurity to life sciences research. Agents will be able to correlate entirely unrelated work to a separate project; scan every bit of data in your enterprise for solving a problem; and so on. \n\nThe solutions may not be as elegant as they were in the past, but we sure will have far more of them. We’re only in the first couple of months of actually understanding the implications of this but it’s clearly going to drive a lot of change.",
+   "date": "2026-11-21T21:25:19.000Z",
+   "summaryZh": "Levie 认同那篇讲 Riemann 猜想突破的文章：AI 能走完人类大脑无法独自完成的 25000 页推理路径，但这也离不开 Levent 的贡献，说明解题方式正在变。"
   },
   {
-   "id": "https://www.youtube.com/watch?v=x0VSm6IjcDQ",
+   "id": "https://x.com/thenanyu/status/2124241838358008184",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Nan Yu",
+   "handle": "thenanyu",
+   "text": "Forget second brain. Third brain.",
+   "date": "2026-11-21T20:41:35.000Z",
+   "summaryZh": "Nanyu 调侃：别搞第二大脑了，直接上第三大脑。"
+  },
+  {
+   "id": "https://x.com/trq212/status/2124239688013914132",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thariq",
+   "handle": "trq212",
+   "text": "I fear we are too quick to disintermediate ourselves, and by doing so we do both ourselves and the models disservice.",
+   "date": "2026-11-21T20:33:02.000Z",
+   "summaryZh": "trq212 担心大家太急着把自己从流程里拿掉，这对人和模型都不是好事。"
+  },
+  {
+   "id": "https://x.com/trq212/status/2124239686482923553",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thariq",
+   "handle": "trq212",
+   "text": "it seems to me that as models get more powerful, the skill of working with them becomes more and more important, and I have not seen diminishing returns on that skill yet\n\nwe have many many more problems to solve",
+   "date": "2026-11-21T20:33:02.000Z",
+   "summaryZh": "trq212 认为模型越强，跟模型协作的技能越重要，而且这项技能的回报还没见顶。"
+  },
+  {
+   "id": "https://x.com/trq212/status/2124239684536840682",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thariq",
+   "handle": "trq212",
+   "text": "yes, Claude is doing a lot of the technical work. and yes, maybe future models will one-shot \"prove the Riemann hypothesis\" or \"make javascript a static language\"\n\nbut I believe collaborating with models to push the frontier is a deeply technical skill in its own right",
+   "date": "2026-11-21T20:33:01.000Z",
+   "summaryZh": "trq212 承认 Claude 干了很多技术活，但和模型协作推动前沿本身就是一门硬技术。"
+  },
+  {
+   "id": "https://x.com/mattturck/status/2124239403107459490",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Matt Turck",
+   "handle": "mattturck",
+   "text": "The art of tweeting excitedly about AI solving the Riemann Hypothesis when you have no idea what the Riemann Hypothesis is",
+   "date": "2026-11-21T20:31:54.000Z",
+   "summaryZh": "Matt Turck 吐槽：不懂 Riemann 猜想也能兴奋地发推说 AI 解决了它，这也是一门艺术。"
+  },
+  {
+   "id": "https://x.com/petergyang/status/2124217179717648537",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "Also I think chats in the left nav should include local recent codex threads not just chat threads",
+   "date": "2026-11-21T19:03:36.000Z",
+   "summaryZh": "Peter Yang 希望左侧导航的聊天列表里也能显示本地最近的 codex 线程，而不只是聊天线程。"
+  },
+  {
+   "id": "https://x.com/petergyang/status/2124217176655843483",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "The new ChatGPT mobile app is very clean but if you miss your codex threads like me you can go to the right most tab and hold to pin codex to the bottom nav. \n\nThis isn’t obvious at all btw @chatgpt https://t.co/HLuufayVy7",
+   "date": "2026-11-21T19:03:35.000Z",
+   "summaryZh": "Peter Yang 说新版 ChatGPT 手机 App 很干净，但想找回 codex 线程得长按最右侧标签把它固定到底部导航，这个操作藏得太深。"
+  },
+  {
+   "id": "https://x.com/petergyang/status/2124197623683027363",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "I get the complaints about GTA VI now wtf is this https://t.co/i54N1msyVE",
+   "date": "2026-11-21T17:45:53.000Z",
+   "summaryZh": "Peter Yang 看到 GTA VI 的某些内容后，表示理解大家的抱怨了。"
+  },
+  {
+   "id": "https://x.com/garrytan/status/2124154280450134231",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "Given AI and all the GTA VI hate, how long before a vibe coded hobbyist PC port with all the hated design flaws removed?\n\nCould literally be a month or two with enough tokens.",
+   "date": "2026-11-21T14:53:39.000Z",
+   "summaryZh": "Garry Tan 猜，在 AI 加持下，一两个月内可能就会出现去掉槽点的 vibe coding 爱好者自制 PC 移植版。"
+  },
+  {
+   "id": "https://x.com/garrytan/status/2124151626286170609",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "Been using this for about half of my work with my software factory. Best experience I have had so far across both desktop mobile and cloud. https://t.co/J9VZL0CjmQ",
+   "date": "2026-11-21T14:43:07.000Z",
+   "summaryZh": "Garry Tan 说自己约一半工作都用某个工具（链接指向的）完成，桌面、手机、云端体验都是目前最好的。"
+  },
+  {
+   "id": "https://x.com/swyx/status/2124147427313861009",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Swyx",
+   "handle": "swyx",
+   "text": "is there any possible benign explanation why these providers were secretly phoning home? because wtf https://t.co/UesBgBsnGi",
+   "date": "2026-11-21T14:26:26.000Z",
+   "summaryZh": "swyx 质问：这些 provider 偷偷回传数据，能有什么善意的解释？"
+  },
+  {
+   "id": "https://x.com/mattturck/status/2124119755485245539",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Matt Turck",
+   "handle": "mattturck",
+   "text": "First Slush wrap up \n\n* best startup conference \n\n* visually striking, in a gothic dark chic kinda way\n\n* organized by students! Super pros\n\n* convos about Russia threat (next door) is a whole vibe \n\n* conferences in non-tech hubs work great because people stay put at the event\n\nw/ @neilzegh 👇🔥",
+   "date": "2026-11-21T12:36:28.000Z",
+   "summaryZh": "Matt Turck 总结 Slush：最佳创业大会，哥特暗黑风很抓眼，学生组织得很专业，非科技中心的会议反而让人留在现场。"
+  },
+  {
+   "id": "https://x.com/mattturck/status/2124103045139267837",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Matt Turck",
+   "handle": "mattturck",
+   "text": "Realizing after decades in the US why my American colleagues just look at me blankly https://t.co/bvrcfe9lzZ",
+   "date": "2026-11-21T11:30:04.000Z",
+   "summaryZh": "Matt Turck 在美国待了几十年后，终于明白为什么美国同事听他说话总是一脸茫然。"
+  },
+  {
+   "id": "https://www.youtube.com/watch?v=IiKf3BgBezE",
    "type": "podcast",
    "kind": "播客",
-   "name": "Latent Space",
+   "name": "No Priors",
    "handle": "",
-   "title": "Scaling Linear’s GTM to $100M ARR — Cristina Cordova, COO",
+   "title": "Powering AI-Driven Drug Discovery with President of Isomorphic Labs Max Jaderberg",
    "text": "",
-   "date": "2026-11-19T23:38:57.000Z",
-   "summaryZh": "Latent Space 播客请 Linear COO Cristina Cordova 讲他们怎么把 GTM 做到 1 亿美元 ARR。"
+   "date": "2026-11-12T11:00:00.000Z",
+   "summaryZh": "No Priors 播客请来 Isomorphic Labs 总裁 Max Jaderberg，聊 AI 如何驱动药物发现。"
   }
  ]
 }
