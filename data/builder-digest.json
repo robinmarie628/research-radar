@@ -1,249 +1,418 @@
 {
- "date": "2026-11-24",
- "generatedAt": "2026-11-24T05:41:48Z",
+ "date": "2026-11-25",
+ "generatedAt": "2026-11-25T04:42:34Z",
  "model": "deepseek-flash",
- "headline": "OpenAI 提议用困惑度做行业自律指标，agent 成软件新用户引热议",
+ "headline": "Claude 把连接器和技能合并成插件，Replit 开源 agent 集群研究",
  "bullets": [
-  "OpenAI 提出用 perplexity 作为跨实验室的通用衡量指标，为前沿模型开发设共同上限。",
-  "微软 Copilot 高管说 agent 是「很苛刻的客户」，会按性能、价格、可靠性挑软件，API 和界面要为 agent 做专门模式。",
-  "Replit 联合 Windows 为 Replit Desktop 做安全模型，称桌面 AI 应用普遍有安全隐私问题。",
-  "Vercel 的 rauchg 警告「免费 stealth 模型」可能是大规模数据外泄，强调自家 AI Gateway 没走这种捷径。",
-  "swyx 转述 OpenAI 观点：过去一年 AI 进展按某指标看超过 2022–2025 总和，但体感不明显。"
+  "Claude 上线 plugins，把连接工具和教新技能合成一个入口，免费到 Ultra 都能用，可浏览 1 万多个插件。",
+  "Claude 为 Team 和 Enterprise 推出 Claude Ship 测试版，自动跑代码审查、修 PR、按策略批准。",
+  "Replit 发布 agent 集群扩展规律研究，32 个 agent 能把 NumPy 加速从 3.7 倍拉到 18.9 倍，并开源 Optimization-Bench。",
+  "OpenAI 的 dots 被内部当成主要干活方式，有人说 dots 在造 dots 系统。",
+  "Nvidia 相关的人事变动成了 builder 们刷屏的话题，Jensen 回归被反复提起。"
  ],
- "sentiment": "整体偏警惕和观望：一边为 agent 架构和安全问题兴奋讨论，一边对免费模型的数据风险、VC 高估值回报和 AI 安全事件感到不安。",
- "count": 23,
- "summarised": 23,
+ "sentiment": "整体偏兴奋又带点看戏心态，一边为 Claude 插件和 agent 集群的新能力叫好，一边围观 Nvidia 的人事大新闻。",
+ "count": 40,
+ "summarised": 40,
  "posts": [
   {
-   "id": "https://x.com/swyx/status/2124730733147390347",
+   "id": "https://x.com/adityaag/status/2125112140260638905",
    "type": "x",
    "kind": "X 动态",
-   "name": "Swyx",
-   "handle": "swyx",
-   "text": "incredible founder journey breakdown from founding to acquisition complete with regrets and advice. not enough founders document this! please do, it saves others potentially a lot of pain\n\nhighlights \n- @theallinpod top ticking saas market\n- IP assignment woes\n- do not brag about your SEO\n- how to draw @naval’s interest\n- hiring advice and layoff advice\n- how to fish for an acquisition\n- how to clear roadblocks for an acquisition\n- there are CTO coaches??",
-   "date": "2026-11-23T05:04:17.000Z",
-   "summaryZh": "swyx 推荐一位创始人从创立到被收购的完整复盘，含遗憾和建议，认为这类记录太少、能帮别人少踩坑。"
+   "name": "Aditya Agarwal",
+   "handle": "adityaag",
+   "text": "Most good organizations when faced with an existential crisis that doesn’t destroy them will return meaner and out for blood.\n\nThey have seen what failure could look like and are ready to go to war to make sure that never happens.\n\nI felt this over and over again at Meta. \n\nNvidia isn’t going to hold back now.",
+   "date": "2026-11-24T06:19:51.000Z",
+   "summaryZh": "他认为经历过生死危机的组织会变得更狠，Meta 如此，Nvidia 现在也不会手软。"
   },
   {
-   "id": "https://x.com/petergyang/status/2124723140437959022",
+   "id": "https://x.com/realmadhuguru/status/2125102190196859156",
    "type": "x",
    "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "Just played this with fam and wow highly recommended for coop games https://t.co/McJsuqNmPN",
-   "date": "2026-11-23T04:34:06.000Z",
-   "summaryZh": "Peter Yang 和家人玩了一款合作类游戏，强烈推荐。"
+   "name": "Madhu Guru",
+   "handle": "realmadhuguru",
+   "text": "Part of the disconnect is that the name “data” massively undersells what it truly represents in model development.\n\nPeople who are not close to model development think of data as this  inert commodity you buy and shovel into a model, like coal.\n\nIn reality great data encodes incredibly high value knowledge, taste and expertise, often articulated and structured in ways that did not exist previously. \n\nThis makes it one of THE fundamental building blocks for creating increasingly capable intelligence across domains. \n\nData will continue to be incredibly central to the intelligence industry .",
+   "date": "2026-11-24T05:40:19.000Z",
+   "summaryZh": "他说“数据”这名字严重低估了它的价值，好数据编码了高价值的知识和品味，是智能产业的核心。"
   },
   {
-   "id": "https://x.com/petergyang/status/2124695613971603850",
+   "id": "https://x.com/adityaag/status/2125096073228439683",
    "type": "x",
    "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "@grok list all the recommendations by most recommended and write 1 sentence each why",
-   "date": "2026-11-23T02:44:43.000Z",
-   "summaryZh": "Peter Yang 让 grok 把推荐按推荐度排序，并各写一句理由。"
+   "name": "Aditya Agarwal",
+   "handle": "adityaag",
+   "text": "Sometimes you need to travel abroad to deeply appreciate just how inspirational America is to the rest of the world.\n\nCountries and individuals aspire to have an entreprenurial ecosystem like ours. A capital market base like ours.\n\nThey don't want to be like China or the UK or Denmark. \n\nThey want to be like America.\n\nAnd this is particularly true for the most ambitious people in every country. They are students of how America builds.\n\nThis doesn't mean we cannot do better ourselves. We must and we will.",
+   "date": "2026-11-24T05:16:00.000Z",
+   "summaryZh": "他出国后更感到美国创业生态的吸引力，各国最有野心的人都想学美国怎么建公司。"
   },
   {
-   "id": "https://x.com/mattturck/status/2124671699245257037",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Matt Turck",
-   "handle": "mattturck",
-   "text": "Breaking: AI fails to solve the most intractable math problem, how VCs are going to return those huge funds when the entry valuation of their deals is  &gt; $1B pre-product",
-   "date": "2026-11-23T01:09:42.000Z",
-   "summaryZh": "Matt Turck 调侃：AI 解不出最难的数学题，而 VC 在项目还没产品就估值超 10 亿美元时，该怎么把大基金的钱赚回来。"
-  },
-  {
-   "id": "https://x.com/amasad/status/2124671335700091020",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Amjad Masad",
-   "handle": "amasad",
-   "text": "Spectacle https://t.co/UFQgu06XJF",
-   "date": "2026-11-23T01:08:15.000Z",
-   "summaryZh": "Amjad Masad 只发了一个词「Spectacle」，配了张图。"
-  },
-  {
-   "id": "https://x.com/petergyang/status/2124669298191090033",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Peter Yang",
-   "handle": "petergyang",
-   "text": "\"Agents are very harsh customers.\"\n\nFrom @clamanna (EVP @Microsoft Copilot) on what happens when agents become the main users of software:\n\n\"[Agents] will look for the best performance, price, and reliability. What an agent prefers isn't always what a person would prefer.\n\nWhen a person does a search, you give them 10 links with small snippets. An agent doesn't care. You can return a thousand results.\n\nOur APIs and user experiences will start to evolve and have modes that better support agents.\"\n\n📌 Watch our full episode here: https://t.co/asVgmPQ9wF",
-   "date": "2026-11-23T01:00:09.000Z",
-   "summaryZh": "微软 Copilot 的 Claman 说 agent 是苛刻客户，只看性能价格可靠性，未来 API 和界面要出专门服务 agent 的模式。"
-  },
-  {
-   "id": "https://x.com/levie/status/2124658150771188157",
+   "id": "https://x.com/levie/status/2125089009018040779",
    "type": "x",
    "kind": "X 动态",
    "name": "Aaron Levie",
    "handle": "levie",
-   "text": "Yes to all of this. As agents take on more and more long running project work, and you have swarms of agents that parallelize work against a goal, the agent harness and architecture for orchestration will have to evolve. \n\nOne of the biggest shifts is how those agents collectively share their knowledge, keep track of the tasks, and also coordinate with human users. This in theory is technically straightforward, but there’s a ton of complexity to get right to ensure agents can both get access to the revenant resources without too much or little exposure.\n\nThere are a lot of lessons to pull from based on how people already do this kind of work together (people share their files, have computers to work with, community in chats and inboxes, and so on). But equally the primitives need to be able to enable this work at a throughput far higher than people, and in a world where agents can much more easily become a vector of security risk. \n\nGoing to be super fun building out this next generation of how agents operate. Lots of opportunity here both for horizontal and vertical specific approaches to bring this to life.",
-   "date": "2026-11-23T00:15:52.000Z",
-   "summaryZh": "Levie 认同：agent 承担长任务、成群并行后，编排架构必须进化，难点在 agent 间共享知识、跟踪任务和与人协作。"
+   "text": "This is a pretty key insight. Services businesses are always held back by their ability to deliver outcomes to customers. \n\nThat scaling essentially only could come from headcount, and no matter how much demand you saw, there was always a finite amount of talent you could get for the problem you were going after. Not to mention, the customer generally always wants the work done faster, at a lower price, or at a higher quality.\n\nAgents entirely change the calculus here, because now we can scale output in a way that’s decoupled from the among of time that goes in. A single engineer can have the output of dozens of engineers before. A single designer can probably build out your entire design system and brand. And so on.\n\nWell why isn’t this just all agents then? Because the key is to still have experts on the front end that actually can ensure the right outcomes are delivered from agents.\n\nIt’s likely that we’re going to see this in a wide variety of categories. You’ll see this in cyber security, advertising and marketing, legal, accounting, IT transformation, and a number of other historically people-only services industries.\n\nIt’s a great time if you’re starting one of these businesses, or if you have the capability to transform an existing one.",
+   "date": "2026-11-24T04:47:56.000Z",
+   "summaryZh": "他认为 agent 让服务业的产出不再受人力限制，但前端仍需专家把关，确保交付正确结果。"
   },
   {
-   "id": "https://x.com/rauchg/status/2124654108124848350",
+   "id": "https://x.com/zarazhangrui/status/2125074988210463019",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Zara Zhang",
+   "handle": "zarazhangrui",
+   "text": "How to prevent AI slop in design (without being a designer): https://t.co/xKfBQTQXns https://t.co/49RO5JiyR1",
+   "date": "2026-11-24T03:52:13.000Z",
+   "summaryZh": "她分享了一篇教非设计师如何避免 AI 味设计的方法。"
+  },
+  {
+   "id": "https://x.com/petergyang/status/2125060785667969399",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": ".@ChatGPT Dots still feels very buggy - it sends emails without me reviewing and randomly just stops responding.\n\nI really want to like this product but maybe I’m prompting it wrong?",
+   "date": "2026-11-24T02:55:47.000Z",
+   "summaryZh": "他吐槽 ChatGPT Dots 还很 bug，会不审核就发邮件、还会突然不回话。"
+  },
+  {
+   "id": "https://x.com/rauchg/status/2125057274213507253",
    "type": "x",
    "kind": "X 动态",
    "name": "Guillermo Rauch",
    "handle": "rauchg",
-   "text": "Rather than art, we ought to point AI towards human-understandability and conceptualization.\n\nThe Riemann proof should come with a paper, a walkthrough, new concepts and insights.\n\nMuch like the intermediate representation of high-level code is desirable even in a world where LLM will go straight to CPU instructions output.",
-   "date": "2026-11-22T23:59:48.000Z",
-   "summaryZh": "rauchg 认为 AI 该指向人类可理解性，比如黎曼猜想的证明应附带论文、讲解和新概念，而不只是给答案。"
+   "text": "▲ + 🇯🇵\nVercel is doubling down on Japan! https://t.co/IthdxqQCiv",
+   "date": "2026-11-24T02:41:50.000Z",
+   "summaryZh": "Vercel 宣布加码日本市场。"
   },
   {
-   "id": "https://x.com/nikunj/status/2124646168428966181",
+   "id": "https://x.com/petergyang/status/2125034054663999684",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "Ok I admit I'm just salty for not being able to play GTA 6 during the day haha",
+   "date": "2026-11-24T01:09:34.000Z",
+   "summaryZh": "他开玩笑说自己只是酸白天玩不了 GTA 6。"
+  },
+  {
+   "id": "https://x.com/nikunj/status/2125033540287131901",
    "type": "x",
    "kind": "X 动态",
    "name": "Nikunj Kothari",
    "handle": "nikunj",
-   "text": "The worst cold email does not exi- https://t.co/lgw2iwWFwv",
-   "date": "2026-11-22T23:28:15.000Z",
-   "summaryZh": "Nikunj 吐槽收到一封烂到极点的冷邮件，配了截图。"
+   "text": "2027 job descriptions be like…\n\nFounder: Swarm Overlord\nProduct Manager: Swarm Rider\nDesigner: Swarm Choreographer\nSystems Engineer: Swarm Architect\nForward Deployed Engineer: Swarm Wrangler\nMarketer: Swarm Propagandist\nVC: Swarm Speculator",
+   "date": "2026-11-24T01:07:31.000Z",
+   "summaryZh": "他调侃 2027 年的职位名称会全变成“集群”头衔，从创始人到 VC 都是 swarm 什么。"
   },
   {
-   "id": "https://x.com/amasad/status/2124604574606795002",
+   "id": "https://x.com/petergyang/status/2125030140577296647",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Peter Yang",
+   "handle": "petergyang",
+   "text": "I think it's kinda BS that schools have so many no school days like this whole week is no school while the parents still have to work",
+   "date": "2026-11-24T00:54:01.000Z",
+   "summaryZh": "他吐槽学校放假太多，家长还得上班。"
+  },
+  {
+   "id": "https://x.com/thsottiaux/status/2125027477877887231",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "Worth listening to if you're curious what goes on in the minds of the people at OpenAI who are obsessively trying to patch all the flaws in OSS software and infrastructure we all rely on https://t.co/afNTCaRewj",
+   "date": "2026-11-24T00:43:26.000Z",
+   "summaryZh": "他推荐一档播客，讲 OpenAI 里那些死磕开源软件和基础设施缺陷的人在想什么。"
+  },
+  {
+   "id": "https://x.com/amasad/status/2125008810041610359",
    "type": "x",
    "kind": "X 动态",
    "name": "Amjad Masad",
    "handle": "amasad",
-   "text": "Desktop AI apps are generally a security &amp; privacy nightmare.\n\nWe worked with Windows to ship a world-class security model for Replit Desktop.\n\nWhich is why Christie’s, the world’s preeminent custodian of rare art, chose Replit for secure agentic work! https://t.co/58YGxzHp1o",
-   "date": "2026-11-22T20:42:58.000Z",
-   "summaryZh": "Amjad Masad 说桌面 AI 应用普遍是安全隐私噩梦，Replit 与 Windows 合作为 Replit Desktop 做了安全模型，佳士得因此选用。"
+   "text": "Great meeting with VP @JDVance on Friday to discuss American AI leadership, cybersecurity, and modernizing our nation’s software infrastructure.\n\nWe also discussed an issue close to my heart: American leadership in open-weight AI. \n\nOur allies want sovereign AI and are increasingly looking to Chinese open models. At home, American startups need a competitive model ecosystem.\n\nAmerica could win the frontier AI race and still lose the global AI ecosystem.\n\nVery happy to see Jensen back at Nvidia. He’s been one of the most important champions of American open-weight AI.",
+   "date": "2026-11-23T23:29:15.000Z",
+   "summaryZh": "他说和 JD Vance 聊了美国 AI 领导力与开源权重模型，担心美国赢了前沿却输掉全球生态。"
   },
   {
-   "id": "https://x.com/nikunj/status/2124597844808196252",
+   "id": "https://x.com/amasad/status/2125001371472871659",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "The man is severely underpaid. https://t.co/tPp4K55neH",
+   "date": "2026-11-23T22:59:42.000Z",
+   "summaryZh": "他转发某人并感叹这人薪水严重偏低。"
+  },
+  {
+   "id": "https://x.com/thsottiaux/status/2124998553856844186",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "You should feel a significant jump in quality of answers on ChatGPT once rolled out to you.\n\nTogether with all the investments we are making across simplifying the app, making it faster and merging chat & work, it's going to be quite the improvement in day to day experience by the end of the year.",
+   "date": "2026-11-23T22:48:30.000Z",
+   "summaryZh": "他说 ChatGPT 回答质量会有明显提升，加上简化应用、提速、合并聊天与工作，年底体验会大改。"
+  },
+  {
+   "id": "https://x.com/trq212/status/2124987187406275037",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thariq",
+   "handle": "trq212",
+   "text": "X payouts are such a good model for future software companies\n\nkeep a lean core team and pay the users who help it grow, get better with feedback, sell, etc.",
+   "date": "2026-11-23T22:03:20.000Z",
+   "summaryZh": "他认为 X 的分成模式值得未来软件公司借鉴：核心团队精简，给帮它成长的用户付钱。"
+  },
+  {
+   "id": "https://x.com/claudeai/status/2124970294523945328",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Claude",
+   "handle": "claudeai",
+   "text": "There’s now one way to connect your tools to Claude, teach it a new skill, or do both.\n\nConnectors and skills come together as plugins. Live on Free, Pro, Max, and Ultra plans, with Team and Enterprise coming soon.\n\nBrowse 10,000+ plugins: https://t.co/gSwpY9HDPY https://t.co/K78lwls8qh",
+   "date": "2026-11-23T20:56:12.000Z",
+   "summaryZh": "Claude 把连接器和技能合并成 plugins，免费到 Ultra 都能用，可浏览 1 万多个插件。"
+  },
+  {
+   "id": "https://x.com/amasad/status/2124969305674748175",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Amjad Masad",
+   "handle": "amasad",
+   "text": "New research from Replit on scaling laws for agent swarms. \n\nWe show that scaling the number of agents can yield dramatic performance gains, but unlike traditional scaling laws, more compute doesn't necessarily translate into better results, and how agents organize themselves matters.\n\n- Given a fixed two-hour window, Opus 5.5 went from a 3.7x speedup on NumPy with one agent to 18.9x with 32 agents.\n\n- GPT-6.2 Astra was the strongest solo agent but exhibited negative scaling beyond 8 agents.\n\n- Models spontaneously developed different organizational structures. Decentralized swarms scaled better than those that relied on centralized coordination.\n\n- The parallelizability of the problem was a strong predictor of swarm performance.\n\n- Interestingly, individual model intelligence is a poor predictor of collective intelligence.\n\nWe’re also open-sourcing Optimization-Bench to advance research into this new dimension of inference-time scaling.\n\nhttps://t.co/RXBU7aM5FE",
+   "date": "2026-11-23T20:52:17.000Z",
+   "summaryZh": "Replit 研究 agent 集群扩展：32 个 agent 让 NumPy 加速 18.9 倍，去中心化组织比集中协调更好，并开源 Optimization-Bench。"
+  },
+  {
+   "id": "https://x.com/bcherny/status/2124961488691740941",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Boris Cherny",
+   "handle": "bcherny",
+   "text": "Anyone can use /ship. If you’re on a Team or Enterprise plan, your admin can turn on Claude Ship per GitHub repo. I’d start with one repo and run Approvals in observe mode until you trust it.\n\nhttps://t.co/p0T6zDSIwM",
+   "date": "2026-11-23T20:21:13.000Z",
+   "summaryZh": "他说 Claude Ship 谁都能用，Team 和 Enterprise 管理员可按仓库开启，建议先拿一个仓库用观察模式跑审批。"
+  },
+  {
+   "id": "https://x.com/bcherny/status/2124961487454384442",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Boris Cherny",
+   "handle": "bcherny",
+   "text": "It multiplies my velocity. I don’t need to wait around for code review or babysit PRs, and the results are better.\nCode Review looks for bugs, PR Steward works on fixes and failing checks, and Claude Approvals approves what your team’s policy allows (the last two are in beta).",
+   "date": "2026-11-23T20:21:13.000Z",
+   "summaryZh": "他说 Claude Ship 让他不用等代码审查、不用盯 PR，Code Review 找 bug、PR Steward 修问题、Approvals 按策略放行。"
+  },
+  {
+   "id": "https://x.com/bcherny/status/2124961485801836573",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Boris Cherny",
+   "handle": "bcherny",
+   "text": "A year ago we launched Opus 4.5, the first model to write 100% of my code.\n\nShipping PRs hasn’t caught up, so today we’re launching Claude Ship in beta for Team and Enterprise. I use it all day every day and can’t imagine shipping without it. https://t.co/IfK0Oua6rZ",
+   "date": "2026-11-23T20:21:12.000Z",
+   "summaryZh": "他宣布 Claude Ship 在 Team 和 Enterprise 上线测试版，说自己天天用，已经离不开。"
+  },
+  {
+   "id": "https://x.com/adityaag/status/2124947675913367832",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Aditya Agarwal",
+   "handle": "adityaag",
+   "text": "This is an agent you don't have to prompt. It's proactive. \n\nExcited about this launch. https://t.co/KrINO0HQUT",
+   "date": "2026-11-23T19:26:20.000Z",
+   "summaryZh": "他推荐一个不用提示词、会主动干活的 agent。"
+  },
+  {
+   "id": "https://x.com/levie/status/2124930801485930564",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Aaron Levie",
+   "handle": "levie",
+   "text": "2026 is just waking up each day to the magnitude of news that could only have happened once per decade before 2026.",
+   "date": "2026-11-23T18:19:17.000Z",
+   "summaryZh": "他感叹 2026 年每天醒来都是过去十年一遇级别的大新闻。"
+  },
+  {
+   "id": "https://x.com/claudeai/status/2124929946925793294",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Claude",
+   "handle": "claudeai",
+   "text": "EFS is available on the Claude Platform, Claude Platform on AWS, Amazon Bedrock, and Claude on Google Cloud. Support for EFS in Microsoft Foundry is coming soon.",
+   "date": "2026-11-23T18:15:53.000Z",
+   "summaryZh": "Claude 的 EFS 已上线 Claude Platform、AWS 版、Bedrock 和 Google Cloud，Microsoft Foundry 稍后支持。"
+  },
+  {
+   "id": "https://x.com/claudeai/status/2124929944530587712",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Claude",
+   "handle": "claudeai",
+   "text": "Zero data retention (ZDR) with Enterprise Frontier Safeguards (EFS) is now in public beta for eligible businesses. It looks for misuse across many requests while remaining compatible with ZDR.\n\nWe developed it with over 100 customers.\n\nRead more: https://t.co/M8riFzHDPY https://t.co/eOonILkHt3",
+   "date": "2026-11-23T18:15:52.000Z",
+   "summaryZh": "Claude 推出零数据保留加企业前沿防护的公开测试版，能在不存数据的前提下跨请求查滥用，和 100 多家客户共同开发。"
+  },
+  {
+   "id": "https://x.com/thsottiaux/status/2124923055072043052",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thibault Sottiaux",
+   "handle": "thsottiaux",
+   "text": "Inside OpenAI, dots are quickly becoming the primary way to get things done. We have dots building the dots system. https://t.co/5YtdTspKBk",
+   "date": "2026-11-23T17:48:30.000Z",
+   "summaryZh": "他说 OpenAI 内部 dots 正成为主要干活方式，dots 在造 dots 系统。"
+  },
+  {
+   "id": "https://x.com/nikunj/status/2124915267864301581",
    "type": "x",
    "kind": "X 动态",
    "name": "Nikunj Kothari",
    "handle": "nikunj",
-   "text": "2026 Docusign stock holders must be the smuggest of people rn.. https://t.co/wLk0Zs03Kg",
-   "date": "2026-11-22T20:16:13.000Z",
-   "summaryZh": "Nikunj 调侃 2026 年 Docusign 股东现在最得意，配了张图。"
+   "text": "If you like news and drama, there’s simply no month like November for AI.. https://t.co/yMFFGz3Qg6",
+   "date": "2026-11-23T17:17:33.000Z",
+   "summaryZh": "他调侃 AI 圈的新闻和八卦，没有哪个月比得上十一月。"
   },
   {
-   "id": "https://x.com/rauchg/status/2124595496849445079",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Guillermo Rauch",
-   "handle": "rauchg",
-   "text": "This aged extremely well.\n\nThere's a tweet out there (will likely get deleted soon) of a provider giving you \"free\" inference of a \"stealth model\" that's \"ZDR\" with millions of views.\n\nThese stealth models are mechanisms of industrial scale data exfiltration to nation state programs, I strongly suspect, and the Dragos research seems to confirm.\n\nImagine explaining to your boss: sorry chief, I *had* to try this really cool ZDR free stealth model… all our secrets, customer data, and code are now in a different continent!\n\nVercel AI Gateway built up tremendous, real-world token volume without taking any of these shortcuts. More to come tomorrow on how we will push the trust, privacy, and security bar even higher.",
-   "date": "2026-11-22T20:06:54.000Z",
-   "summaryZh": "rauchg 怀疑「免费 stealth 模型」是国家级数据外泄手段，称 Vercel AI Gateway 没走这种捷径。"
-  },
-  {
-   "id": "https://x.com/thenanyu/status/2124592238974156861",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nan Yu",
-   "handle": "thenanyu",
-   "text": "I found a secret prompt that makes all your vibecoded projects scale and perform better, with higher reliability. \n\n“Use Postgres”",
-   "date": "2026-11-22T19:53:57.000Z",
-   "summaryZh": "thenanyu 开玩笑说让 vibe coding 项目更能扩展、更可靠的秘密提示词就是「用 Postgres」。"
-  },
-  {
-   "id": "https://x.com/swyx/status/2124590240539259381",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Swyx",
-   "handle": "swyx",
-   "text": "by this metric we have seen more ai progress this year than in 2022-2025. is that true? doesn’t suuuper feel like it but who knows we could be cooked by algorithm and/or metric only translates at frontier math level",
-   "date": "2026-11-22T19:46:00.000Z",
-   "summaryZh": "swyx 质疑按某指标今年 AI 进展超过 2022–2025 总和的说法，觉得体感不像，可能只是前沿数学层面的提升。"
-  },
-  {
-   "id": "https://x.com/nikunj/status/2124585398362128469",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Nikunj Kothari",
-   "handle": "nikunj",
-   "text": "On the list now 🫡 - thank you Tesla friend (not @ ing to avoid the deluge)",
-   "date": "2026-11-22T19:26:46.000Z",
-   "summaryZh": "Nikunj 说经特斯拉的朋友帮忙，自己已上了某个名单。"
-  },
-  {
-   "id": "https://x.com/swyx/status/2124583459356373052",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Swyx",
-   "handle": "swyx",
-   "text": "OpenAI proposes perplexity as the universal metric for industry self regulation and pacing (as opposed to eg FLOPS)\n\n“Given that the main way new surprising capabilities emerge is by progress on compression, a measure rooted in perplexity could give us a shared benchmark for general intelligence, regardless of the degree of automation of the development process. Extrapolating from recent progress, we should expect further transformative capabilities as we enter the ~0.68-0.7 log-perplexity window.”\n\nthis chart is one of the most beautiful ways to tell the story of the last 4 years. it also shows that a lot of the post training issues we debate is kinda the B plot to the overall A plot of large scale pretrain progress.",
-   "date": "2026-11-22T19:19:04.000Z",
-   "summaryZh": "swyx 转述 OpenAI 提议用 perplexity 而非 FLOPS 做行业自律指标，认为这张图很好地讲了四年进展，后训练争论只是支线。"
-  },
-  {
-   "id": "https://x.com/danshipper/status/2124567533449613819",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Dan Shipper",
-   "handle": "danshipper",
-   "text": "i am usually not alarmist but assuming this is caused by an AI-assisted cyber attack it's very bad\n\nif you want to make all of the security measures we have in place from 9/11 onward to prevent human hijackers irrelevant all you have to do is be able to mess with a plane and pilot's ability to know its own weight, how much fuel is left, and where it is\n\nwithout knowing any more information about this, you'd also expect smaller attakcs like this to find edges and what's possible\n\ni am not an expert on the systems inside airplanes, and i know most planes have manual overrides for example. but still extremely tricky when visibility is bad \n\nif you know more than me about this please weigh in!",
-   "date": "2026-11-22T18:15:47.000Z",
-   "summaryZh": "Dan Shipper 担心若某事件是 AI 辅助的网络攻击，那只要干扰飞机和飞行员对重量、油量、位置的判断，9·11 以来的防人劫机措施就失效了。"
-  },
-  {
-   "id": "https://x.com/sama/status/2124558713646428663",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Sam Altman",
-   "handle": "sama",
-   "text": "Labs agreed under the White House Accords to establish standards and best practices to improve the safety of their systems, and I believe a discussion about the use of perplexity can further these goals.",
-   "date": "2026-11-22T17:40:44.000Z",
-   "summaryZh": "Sam Altman 说各实验室已在白宫协议下同意建立安全标准和最佳实践，讨论 perplexity 的使用能推进这些目标。"
-  },
-  {
-   "id": "https://x.com/sama/status/2124555601745441130",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Sam Altman",
-   "handle": "sama",
-   "text": "i meant \"field\" ugh",
-   "date": "2026-11-22T17:28:22.000Z",
-   "summaryZh": "Sam Altman 更正上一条，说自己想写的是「field」。"
-  },
-  {
-   "id": "https://x.com/sama/status/2124551883130114403",
-   "type": "x",
-   "kind": "X 动态",
-   "name": "Sam Altman",
-   "handle": "sama",
-   "text": "\"I believe frontier model developers should jointly endeavour to establish shared norms for how to evaluate such models and red-team safety cases for them by the time they are first used, including shared transparency standards.\n\nI further propose common limits, based on perplexity and other measurements, that developers are committed to not crossing until our ability to understand and monitor AI behavior achieves a certain concrete milestone (such as the development of a successor to CoT monitors).\n\nThat is, I’d like an industry standard that specifies a first limit on development, measured by some key metric we can track across labs, and what concretely we’d need to achieve before going beyond it.\"",
-   "date": "2026-11-22T17:13:35.000Z",
-   "summaryZh": "Sam Altman 提议前沿模型开发者共同制定评估和红队规范，并以 perplexity 等指标设共同开发上限，直到监控能力达到具体里程碑。"
-  },
-  {
-   "id": "https://x.com/mattturck/status/2124515224946422095",
+   "id": "https://x.com/mattturck/status/2124908682626613368",
    "type": "x",
    "kind": "X 动态",
    "name": "Matt Turck",
    "handle": "mattturck",
-   "text": "Had been years in the making, but sometime in 2026, tech street advertising completely took over NYC, making it look like SF.   It’s everywhere now, every billboard, every subway car, every taxi. Can’t say that I love it tbh.",
-   "date": "2026-11-22T14:47:55.000Z",
-   "summaryZh": "Matt Turck 说 2026 年科技街头广告彻底占领纽约、变得像旧金山，他不太喜欢。"
+   "text": "People on LinkedIn are going to go WILD when they hear about Jensen returning, next week",
+   "date": "2026-11-23T16:51:23.000Z",
+   "summaryZh": "他预告 Jensen 回归的消息下周会让 LinkedIn 炸锅。"
   },
   {
-   "id": "https://x.com/ryolu_/status/2124473853858725907",
+   "id": "https://x.com/garrytan/status/2124905972296560973",
    "type": "x",
    "kind": "X 动态",
-   "name": "Ryo Lu",
-   "handle": "ryolu_",
-   "text": "ryOS Karaoke, native on iOS, almost one-shotted with @airbuild\n\nhalf fold the iPhone Duo and it's a tiny karaoke machine 🎤 https://t.co/KAl0YsTvqj",
-   "date": "2026-11-22T12:03:32.000Z",
-   "summaryZh": "ryolu 用 airbuild 几乎一次成型做出 iOS 原生 ryOS Karaoke，在折叠的 iPhone Duo 上像个小卡拉 OK 机。"
+   "name": "Garry Tan",
+   "handle": "garrytan",
+   "text": "One trick a startup can use to self-prompt in a loop: ask yourself “are we dying?”\n\nIf you ask you might spot the thing killing you and avert it https://t.co/oJuZIg115y",
+   "date": "2026-11-23T16:40:37.000Z",
+   "summaryZh": "他建议创业公司反复自问“我们是不是要死了”，这样可能提前发现并避开致命问题。"
   },
   {
-   "id": "https://www.youtube.com/watch?v=WstNofgQF5Q",
-   "type": "podcast",
-   "kind": "播客",
-   "name": "AI & I by Every",
-   "handle": "",
-   "title": "A New Vision for Human Work After Automation",
-   "text": "",
-   "date": "2026-11-11T15:30:00.000Z",
-   "summaryZh": "Every 的 AI & I 播客讨论自动化之后人类工作的新愿景。"
+   "id": "https://x.com/zarazhangrui/status/2124905740095885414",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Zara Zhang",
+   "handle": "zarazhangrui",
+   "text": "You can post on social media every day and still be a very private person; the two are not contradictory \n\nMany people have the misconception that sharing your thoughts online means turning your whole life into an open book for others to see. This can’t be further from the truth\n\nI post almost every day but I only share a tiny sliver of my life & thoughts, probably less than 1%. I only share what I’m comfortable with sharing\n\nThe key is to find out which 1% is at the intersection of “interesting to others” and “comfortable for you”",
+   "date": "2026-11-23T16:39:41.000Z",
+   "summaryZh": "她说天天发社交媒体和做注重隐私的人不矛盾，她只分享自己舒服且对别人有趣的那 1%。"
+  },
+  {
+   "id": "https://x.com/danshipper/status/2124896430783447510",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Dan Shipper",
+   "handle": "danshipper",
+   "text": "here's how to make a personal benchmark, courtesy our very own @hammer_mt: https://t.co/aZMpB64xSl",
+   "date": "2026-11-23T16:02:42.000Z",
+   "summaryZh": "他分享同事写的如何做个人 benchmark 的方法。"
+  },
+  {
+   "id": "https://x.com/sama/status/2124894264564092952",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Sam Altman",
+   "handle": "sama",
+   "text": "This is really really good: https://t.co/LcWViyLKii",
+   "date": "2026-11-23T15:54:05.000Z",
+   "summaryZh": "他转发某内容并说“这真的非常好”。"
+  },
+  {
+   "id": "https://x.com/sama/status/2124887162206495228",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Sam Altman",
+   "handle": "sama",
+   "text": "Jensen!",
+   "date": "2026-11-23T15:25:52.000Z",
+   "summaryZh": "他只喊了一声“Jensen！”，呼应 Nvidia 人事新闻。"
+  },
+  {
+   "id": "https://x.com/danshipper/status/2124886826909622653",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Dan Shipper",
+   "handle": "danshipper",
+   "text": "You need to be personal benchmark maxxing https://t.co/p8owPoAMhP",
+   "date": "2026-11-23T15:24:32.000Z",
+   "summaryZh": "他主张大家要拼命做个人 benchmark。"
+  },
+  {
+   "id": "https://x.com/rauchg/status/2124881919506886832",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Guillermo Rauch",
+   "handle": "rauchg",
+   "text": "An actually good board! https://t.co/x0h7508SXG",
+   "date": "2026-11-23T15:05:02.000Z",
+   "summaryZh": "他夸一块板子“确实不错”。"
+  },
+  {
+   "id": "https://x.com/rauchg/status/2124880074168242369",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Guillermo Rauch",
+   "handle": "rauchg",
+   "text": "I asked Fable to study all my https://t.co/3Z4NESzNKd coding sessions and decide whether Opus or Gemini Neon is best. Think of it as a 'personal eval'.\n\nIt picked Neon. Google being so, so back seems widely (and wildly) under-discussed. https://t.co/W6s4WZPvnU",
+   "date": "2026-11-23T14:57:42.000Z",
+   "summaryZh": "他让 Fable 研究自己所有编程会话做个人评测，结果选了 Gemini Neon，认为 Google 回归被严重低估。"
+  },
+  {
+   "id": "https://x.com/nikunj/status/2124874329238466842",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Nikunj Kothari",
+   "handle": "nikunj",
+   "text": "Nvidia board took this one personally 😂 https://t.co/HSDRzghDMi",
+   "date": "2026-11-23T14:34:53.000Z",
+   "summaryZh": "他调侃 Nvidia 董事会这次是真被惹到了。"
+  },
+  {
+   "id": "https://x.com/mattturck/status/2124867013684367396",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Matt Turck",
+   "handle": "mattturck",
+   "text": "BREAKING: AI JESUS IS RISEN",
+   "date": "2026-11-23T14:05:48.000Z",
+   "summaryZh": "他用“AI 耶稣复活了”来形容某条突发消息。"
+  },
+  {
+   "id": "https://x.com/swyx/status/2124780264916423021",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Swyx",
+   "handle": "swyx",
+   "text": "microsoft answers the call!!!!! oh my, am I a @mustafasuleyman stan?? https://t.co/wvFVavk1qs\n\ni think we need @alexandr_wang to join in and that will be the tipping point for all labs to unite on this effort",
+   "date": "2026-11-23T08:21:06.000Z",
+   "summaryZh": "他惊呼微软也加入某个行动，还喊话 Alexandr Wang 一起推动各家实验室联合。"
+  },
+  {
+   "id": "https://x.com/trq212/status/2124767804247379968",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Thariq",
+   "handle": "trq212",
+   "text": "they cut the scene in Hitchhiker's Guide where the computer follows 42 with 500 million pages of Lean",
+   "date": "2026-11-23T07:31:35.000Z",
+   "summaryZh": "他开玩笑说《银河系漫游指南》被剪掉的镜头是电脑说完 42 后跟了五亿页 Lean。"
+  },
+  {
+   "id": "https://x.com/swyx/status/2124766474736976240",
+   "type": "x",
+   "kind": "X 动态",
+   "name": "Swyx",
+   "handle": "swyx",
+   "text": "@theallinpod also this FTX SBF quote https://t.co/Pursth2YcR",
+   "date": "2026-11-23T07:26:18.000Z",
+   "summaryZh": "他转了一条 All-In 播客里关于 FTX 和 SBF 的引用。"
   }
  ]
 }
